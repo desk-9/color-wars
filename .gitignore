@@ -1,0 +1,8 @@
+# Ignore everything by default.
+/*
+/*/
+!.gitignore
+
+# Include deliverables.
+!/Assets/
+!/ProjectSettings/
