@@ -6,3 +6,39 @@
 # Include deliverables.
 !/Assets/
 !/ProjectSettings/
+
+/Assets/AssetStoreTools*
+
+# Ignore common but unwanted extensions.
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+
+# Unity3D generated meta files
+*.pidb.meta
+*.pdb.meta
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+
+# Builds
+*.apk
+*.unitypackage
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ethumbs.db
+thumbs.db
