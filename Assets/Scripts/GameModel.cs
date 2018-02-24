@@ -42,7 +42,7 @@ public class GameModel : MonoBehaviour {
     }
     
     public void IncrementScore(TeamManager team) {
-        ++scores[team.teamNumber];
+        scores[team.teamNumber] += 1;
         scoreDisplayer?.UpdateScores();
     }
 
