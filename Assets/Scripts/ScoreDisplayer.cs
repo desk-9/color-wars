@@ -19,8 +19,8 @@ public class ScoreDisplayer : MonoBehaviour {
 
     public void UpdateScores() {
         string scoreText = "";
-        foreach (var score in GameModel.instance.scores) {
-            scoreText += "Team " + score.Key.ToString() + ": " + score.Value.ToString() + "\n";
+        foreach (var team in GameModel.instance.teams) {
+            scoreText += "Team " + team.teamNumber.ToString() + ": " + team.GetScore().ToString() + "\n";
         }
         scoreDisplay.text = scoreText;
     }
