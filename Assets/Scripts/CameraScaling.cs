@@ -18,12 +18,13 @@ public class CameraScaling : MonoBehaviour {
 		var camera = GetComponent<Camera>();
 		float expected_ratio = default_width / default_height;
 		float actual_ratio = (float) Screen.width / Screen.height;
-		// orthographicSize is the vertical worldspace units the camera will
-		// show. Multiplying by expected_ratio gives the expected number of
-		// horizontal worldspace units.
-		float minimum_horizontal_size = camera.orthographicSize * expected_ratio;
+
 		// Potentially not enough width
 		if (actual_ratio < expected_ratio) {
+			// orthographicSize is the vertical worldspace units the camera will
+			// show. Multiplying by expected_ratio gives the expected number of
+			// horizontal worldspace units.
+			float minimum_horizontal_size = camera.orthographicSize * expected_ratio;
 			float current_orthographic_width = camera.orthographicSize * (actual_ratio);
 			float conversion_factor = minimum_horizontal_size / current_orthographic_width;
 			camera.orthographicSize = conversion_factor * camera.orthographicSize;
