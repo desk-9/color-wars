@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class ScoreDisplayer : MonoBehaviour {
 
-    public Text ScoreDisplay;
+    public Text scoreDisplay;
     public SortedDictionary<int, int> scores = new SortedDictionary<int, int>();
 
     public static ScoreDisplayer instance;
@@ -41,7 +41,7 @@ public class ScoreDisplayer : MonoBehaviour {
         foreach (var score in scores) {
             scoreText += "Team " + score.Key.ToString() + ": " + score.Value.ToString() + "\n";
         }
-        ScoreDisplay.text = scoreText;
+        scoreDisplay.text = scoreText;
     }
 
     public void SetScore(int teamNumber, int newScore) {
