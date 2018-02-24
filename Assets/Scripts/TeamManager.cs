@@ -4,23 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class TeamManager : MonoBehaviour {
-
-    public int teamNumber;
-
-    int score = 0;
-
+	public int teamNumber = 0;
+	
 	void Start () {
-        ScoreDisplayer.instance.RegisterTeam(teamNumber);
+        GameModel.instance.RegisterTeam(this);
 	}
-
-    public void ResetScore() {
-        score = 0;
-        ScoreDisplayer.instance.SetScore(teamNumber, score);
-    }
-    
-    public void IncrementScore() {
-        ++score;
-        ScoreDisplayer.instance.SetScore(teamNumber, score);
-    }
     
 }

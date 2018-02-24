@@ -6,28 +6,9 @@ using UnityEngine.UI;
 public class ScoreDisplayer : MonoBehaviour {
 
     public Text scoreDisplay;
-    public SortedDictionary<int, int> scores = new SortedDictionary<int, int>();
-
-    public static ScoreDisplayer instance;
-    void Awake() {
-        if (instance == null) {
-            instance = this;
-        }
-        else {
-            Destroy(gameObject);
-        }
-    }
 
     void Start() {
         StartCoroutine(InitScores());
-    }
-
-    public void RegisterTeam(int teamNumber) {
-        if (scores.ContainsKey(teamNumber)) {
-            Debug.LogWarning("Tried to register team " + teamNumber.ToString() + " twice!");
-            return;
-        }
-        scores[teamNumber] = 0;
     }
 
     IEnumerator InitScores() {
@@ -36,17 +17,12 @@ public class ScoreDisplayer : MonoBehaviour {
         UpdateScores();
     }
 
-    void UpdateScores() {
+    public void UpdateScores() {
         string scoreText = "";
-        foreach (var score in scores) {
+        foreach (var score in GameModel.instance.scores) {
             scoreText += "Team " + score.Key.ToString() + ": " + score.Value.ToString() + "\n";
         }
         scoreDisplay.text = scoreText;
-    }
-
-    public void SetScore(int teamNumber, int newScore) {
-        scores[teamNumber] = newScore;
-        UpdateScores();
     }
     
 
