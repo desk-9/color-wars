@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using InControl;
+
+using InputDevice = InControl.InputDevice;
+using InputManager = InControl.InputManager;
 
 // InputManager
 public class PlayerInputManager : MonoBehaviour {
