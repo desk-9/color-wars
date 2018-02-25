@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour {
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine;
-    DummyPlayerInput playerInput;
+    PlayerInputManager playerInput;
 
     public void StartPlayerMovement()
     {
@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
             rb2d.velocity = movementSpeed * direction;
 
-            // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees 
+            // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
             // and player snaps to up direction
             if (direction != Vector2.zero) {
                 rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rb2d = GetComponent<Rigidbody2D>();
-        playerInput = GetComponent<DummyPlayerInput>();
+        playerInput = GetComponent<PlayerInputManager>();
 
         TryToGetInputDevice();
     }
