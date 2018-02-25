@@ -33,13 +33,17 @@ public class PlayerInputManager : MonoBehaviour {
         // New device attached.
         InputManager.OnDeviceAttached += (device) => {
             Debug.LogFormat(this, "{0}: New device detected! Adding {1} to list.", name, device.SortOrder);
+
             devices.Add(device, false);
         };
 
-        // Device detached.
         InputManager.OnDeviceDetached += (device) => {
-            Debug.LogFormat(this, "{0}: Removing device {1} from list.", name, device.SortOrder);
+            Debug.LogFormat(this, "{0}: Device {1} detached! Removing from list.", name, device.SortOrder);
+
+            actions[device]();
+
             devices.Remove(device);
+            actions.Remove(device);
         };
     }
 
@@ -53,13 +57,7 @@ public class PlayerInputManager : MonoBehaviour {
         if (device == null) return null;
 
         devices[device] = true;
-        actions.Add(device, action);
-        InputManager.OnDeviceDetached += (d) => {
-            if (d == device) {
-                actions[d]();
-                actions.Remove(d);
-            }
-        };
+        actions[device] = action;
 
         return device;
     }
