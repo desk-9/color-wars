@@ -62,7 +62,6 @@ public class PlayerMovement : MonoBehaviour {
 
     void TryToGetInputDevice()
     {
-        // TODO dkonik: Set this to whatever the input manager is
         inputDevice = playerInput.GetInputDevice(InputDeviceDisconnectedCallback);
         if (inputDevice != null) {
             StartPlayerMovement();
