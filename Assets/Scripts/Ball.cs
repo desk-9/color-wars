@@ -5,6 +5,6 @@ using UnityEngine;
 public class Ball : MonoBehaviour {
 
     // A player is allowed to "possess" the ball
-    public GameObject currentOwner = null;
+    public Player owner = null;
     
 }
