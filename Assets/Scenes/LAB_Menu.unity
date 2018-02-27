@@ -402,6 +402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartButton: 20
   ResetButton: 8
+  pauseMenu: {fileID: 122689312}
 --- !u!1001 &334372545
 Prefab:
   m_ObjectHideFlags: 0
