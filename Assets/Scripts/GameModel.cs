@@ -26,8 +26,4 @@ public class GameModel : MonoBehaviour {
         }
         teams.Add(team);
     }
-
-    public void ResetScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
 }
