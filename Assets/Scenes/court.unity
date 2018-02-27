@@ -630,7 +630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartButton: 20
   ResetButton: 8
-  pauseMenu: {fileID: 0}
+  pauseMenu: {fileID: 852464404}
 --- !u!1 &852464402
 GameObject:
   m_ObjectHideFlags: 0
