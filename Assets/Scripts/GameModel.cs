@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameModel : MonoBehaviour {
 
     public static GameModel instance;
-	public List<TeamManager> teams = new List<TeamManager>();
-	public ScoreDisplayer scoreDisplayer;
+    public List<TeamManager> teams = new List<TeamManager>();
+    public ScoreDisplayer scoreDisplayer;
 
     void Awake() {
-        
         if (instance == null) {
             instance = this;
         }
@@ -22,9 +22,12 @@ public class GameModel : MonoBehaviour {
     public void RegisterTeam(TeamManager team) {
         if (teams.Contains(team)) {
             Debug.LogWarning("Trying to register team twice!");
-			return;
+            return;
         }
-		teams.Add(team);
+        teams.Add(team);
     }
 
+    public void ResetScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }
