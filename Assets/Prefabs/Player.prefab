@@ -142,6 +142,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colorFlashLength: 1
+  colorFlashFadeSpeed: 0.5
 --- !u!212 &212918527776535888
 SpriteRenderer:
   m_ObjectHideFlags: 1

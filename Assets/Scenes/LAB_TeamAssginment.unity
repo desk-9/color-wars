@@ -717,7 +717,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreDisplayer: {fileID: 1814390628}
-  numTeams: 2
+  teamColors:
+  - {r: 0.2022059, g: 0.20512168, b: 0.625, a: 1}
+  - {r: 0.75735295, g: 0, b: 0, a: 1}
 --- !u!114 &809411534
 MonoBehaviour:
   m_ObjectHideFlags: 0

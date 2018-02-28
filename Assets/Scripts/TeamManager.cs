@@ -34,5 +34,12 @@ public class TeamManager {
     {
         teamMembers.Add(newMember);
     }
+
+    public void FlashTeamColor()
+    {
+        foreach (var player in teamMembers) {
+            player.FlashTeamColor();
+        }
+    }
     
 }
