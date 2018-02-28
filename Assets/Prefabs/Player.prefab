@@ -24,9 +24,6 @@ GameObject:
   - component: {fileID: 58225540981259118}
   - component: {fileID: 50968593018913712}
   - component: {fileID: 114205997563975182}
-  - component: {fileID: 114323056877509952}
-  - component: {fileID: 114559164734033928}
-  - component: {fileID: 114122157282390524}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -133,29 +130,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 15
---- !u!114 &114323056877509952
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0433856ff7e34f86bed8b44261d01a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114559164734033928
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f918909d6810484c8e5f0dba615e1eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  team: {fileID: 0}
 --- !u!212 &212918527776535888
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -19,6 +19,7 @@ public class PlayerInputManager : MonoBehaviour {
 
     void Start() {
         // Assign currently attached devices in order.
+        Debug.Log(InputManager.Devices.Count);
         foreach (var device in InputManager.Devices) {
             if (devices.Count >= 4) {
                 Debug.LogFormat(this, "How are there more than 4 controllers?!");
@@ -26,7 +27,6 @@ public class PlayerInputManager : MonoBehaviour {
             }
 
             Debug.LogFormat("{0}: Adding existing device {1} to list!", name, device.SortOrder);
-
             devices.Add(device, false);
         }
 

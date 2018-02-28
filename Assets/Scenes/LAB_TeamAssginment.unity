@@ -684,6 +684,7 @@ GameObject:
   - component: {fileID: 809411532}
   - component: {fileID: 809411533}
   - component: {fileID: 809411534}
+  - component: {fileID: 809411535}
   m_Layer: 0
   m_Name: GameModel
   m_TagString: Untagged
@@ -731,6 +732,17 @@ MonoBehaviour:
   StartButton: 20
   ResetButton: 8
   pauseMenu: {fileID: 852464402}
+--- !u!114 &809411535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 809411531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0433856ff7e34f86bed8b44261d01a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &852464402
 GameObject:
   m_ObjectHideFlags: 0
