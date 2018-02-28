@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 public class TeamManager {
     public int teamNumber { get; set; }
+    public Color teamColor { get; set; }
 
 	int score = 0;
     List<Player> teamMembers = new List<Player>();
 
-    public TeamManager(int teamNumber)
+    public TeamManager(int teamNumber, Color teamColor)
     {
         this.teamNumber = teamNumber;
+        this.teamColor = teamColor;
     }
 
 	public void ResetScore() {

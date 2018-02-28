@@ -10,7 +10,7 @@ public class GameModel : MonoBehaviour {
 
     public static GameModel instance;
     public ScoreDisplayer scoreDisplayer;
-    public int numTeams;
+    public Color[] teamColors;
     public TeamManager[] teams { get; set; }
 
     int nextTeamAssignmentIndex = 0;
@@ -34,11 +34,11 @@ public class GameModel : MonoBehaviour {
 
     void InitializeTeams()
     {
-        teams = new TeamManager[numTeams];
+        teams = new TeamManager[teamColors.Length];
 
-        for (int i = 0; i < numTeams; ++i) {
+        for (int i = 0; i < teamColors.Length; ++i) {
             // Add 1 so we get Team 1 and Team 2
-            teams[i] = new TeamManager(i + 1);
+            teams[i] = new TeamManager(i + 1, teamColors[i]);
         }
     }
 }
