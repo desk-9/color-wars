@@ -2,7 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using IC = InControl;
+
 public class Player : MonoBehaviour {
+
+    // TODO: pick something
+    public IC.InputControlType dropBallButton = IC.InputControlType.Action2;
+    public IC.InputControlType shootBallButton = IC.InputControlType.Action2;
 
     public float colorFlashLength;
     public float colorFlashFadeTime;

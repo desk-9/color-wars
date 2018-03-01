@@ -5,7 +5,10 @@ using UtilityExtensions;
 
 public class Ball : MonoBehaviour {
 
-    // A player is allowed to "possess" the ball
+	
+    // A BallCarrier is allowed to "possess" or "carry" the ball
+    // The `owner` property stores a reference to the current owner.
+
     public BallCarrier owner = null;
 
     Vector2 start_location;
@@ -13,16 +16,20 @@ public class Ball : MonoBehaviour {
     void Start() {
         start_location = transform.position;
     }
-    
+
     public void OnCollisionEnter2D(Collision2D collision) {
-        var collided = collision.gameObject;
-        // The assumption here is that a gameObject will have a BallCarrier component
-        // iff the gameObject can own/carry the ball
-        var player = collided.GetComponent<BallCarrier>();
-        if (player != null) {
-            owner = player;
-            player.NotifyCarry(this.gameObject);
-        }
+	// Can't switch owners if the ball is already owned by someone
+	if (owner != null) {
+	    return;
+	}
+	var collided = collision.gameObject;
+	// The assumption here is that a gameObject will have a BallCarrier component
+	// iff the gameObject can own/carry the ball
+	var player = collided.GetComponent<BallCarrier>();
+	if (player != null) {
+	    owner = player;
+	    player.CarryBall(this);
+	}
     }
 
     public void ResetBall() {

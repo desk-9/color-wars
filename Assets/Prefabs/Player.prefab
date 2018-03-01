@@ -25,10 +25,10 @@ GameObject:
   - component: {fileID: 50968593018913712}
   - component: {fileID: 114205997563975182}
   - component: {fileID: 114215232534320030}
-  - component: {fileID: 114122157282390524}
   - component: {fileID: 114130524022212122}
   - component: {fileID: 58993705995626898}
   - component: {fileID: 114177724964163498}
+  - component: {fileID: 114476730397344850}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -127,17 +127,6 @@ PolygonCollider2D:
       - {x: 0.5, y: 0}
       - {x: -0.5, y: -0.5}
       - {x: -0.25, y: 0}
---- !u!114 &114122157282390524
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114130524022212122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -195,8 +184,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dropBallButton: 12
+  shootBallButton: 12
   colorFlashLength: 1
   colorFlashFadeTime: 1
+--- !u!114 &114476730397344850
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb27ebdc3e9b44151bdedd986b4176c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dropBallButton: 13
+  throwBallButton: 14
+  stunTime: 1
+  ballDistance: 1.75
+  rate: 4
 --- !u!212 &212918527776535888
 SpriteRenderer:
   m_ObjectHideFlags: 1

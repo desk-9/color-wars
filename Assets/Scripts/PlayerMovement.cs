@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour {
 
     Rigidbody2D rb2d;
     InputDevice inputDevice;
-    Coroutine playerMovementCoroutine;
+    Coroutine playerMovementCoroutine = null;
     PlayerInputManager playerInput;
 
     public void StartPlayerMovement()
@@ -32,8 +32,10 @@ public class PlayerMovement : MonoBehaviour {
 
     public void StopAllMovement()
     {
-        StopCoroutine(playerMovementCoroutine);
-        rb2d.velocity = Vector2.zero;
+	if (playerMovementCoroutine != null) {
+	    StopCoroutine(playerMovementCoroutine);
+	    rb2d.velocity = Vector2.zero;
+	}
     }
 
     // Handles players movement on the game board
