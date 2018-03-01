@@ -28,7 +28,8 @@ public class GameModel : MonoBehaviour {
 
     public TeamManager GetTeamAssignment(Player caller)
     {
-        var assignedTeam = teams[nextTeamAssignmentIndex++ % teams.Length];
+        var assignedTeam = teams[nextTeamAssignmentIndex];
+        nextTeamAssignmentIndex = (nextTeamAssignmentIndex + 1) % teams.Length;
         assignedTeam.AddTeamMember(caller);
         return assignedTeam;
     }
@@ -40,17 +41,6 @@ public class GameModel : MonoBehaviour {
         for (int i = 0; i < teamColors.Length; ++i) {
             // Add 1 so we get Team 1 and Team 2
             teams[i] = new TeamManager(i + 1, teamColors[i]);
-        }
-    }
-
-    void Update()
-    {
-        // This is temporary just to test functionality, should be removed before merged
-        var inputDevice = IC.InputManager.ActiveDevice;
-        if (inputDevice.RightBumper.WasPressed) {
-            foreach (var team in teams) {
-                team.FlashTeamColor();
-            }
         }
     }
 }

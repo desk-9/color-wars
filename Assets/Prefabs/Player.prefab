@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 50968593018913712}
   - component: {fileID: 114205997563975182}
   - component: {fileID: 114215232534320030}
+  - component: {fileID: 114122157282390524}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -64,7 +65,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &58225540981259118
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -110,7 +111,7 @@ PolygonCollider2D:
       - {x: -0.25, y: 0}
 --- !u!114 &114122157282390524
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1233221201083302}
@@ -143,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colorFlashLength: 1
-  colorFlashFadeSpeed: 0.5
+  colorFlashFadeTime: 1
 --- !u!212 &212918527776535888
 SpriteRenderer:
   m_ObjectHideFlags: 1

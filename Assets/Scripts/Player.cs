@@ -5,10 +5,10 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     public float colorFlashLength;
-    public float colorFlashFadeSpeed;
+    public float colorFlashFadeTime;
 
     TeamManager team;
-    SpriteRenderer rend;
+    SpriteRenderer renderer;
     Coroutine flashColorCoroutine;
 
     public void FlashTeamColor()
@@ -21,13 +21,15 @@ public class Player : MonoBehaviour {
 
     IEnumerator FlashColorCoroutine()
     {
-        Color originalColor = rend.color;
+        Color originalColor = renderer.color;
 
-        rend.color = team.teamColor;
+        renderer.color = team.teamColor;
         yield return new WaitForSeconds(colorFlashLength);
 
-        while(rend.color != originalColor) {
-            rend.color = Color.Lerp(rend.color, originalColor, colorFlashFadeSpeed * Time.deltaTime);
+        float elapsedTime = 0f;
+        while (elapsedTime < colorFlashFadeTime) {
+            elapsedTime += Time.deltaTime;
+            renderer.color = Color.Lerp(team.teamColor, originalColor, elapsedTime / colorFlashFadeTime);
             yield return null;
         }
         flashColorCoroutine = null;
@@ -35,7 +37,7 @@ public class Player : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        rend = GetComponent<SpriteRenderer>();
+        renderer = GetComponent<SpriteRenderer>();
         team = GameModel.instance.GetTeamAssignment(this);
         Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
 	}
