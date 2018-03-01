@@ -43,4 +43,7 @@ public class GameModel : MonoBehaviour {
             teams[i] = new TeamManager(i + 1, teamColors[i]);
         }
     }
+	public void Scored(TeamManager team) {
+		// One team just scored
+	}
 }

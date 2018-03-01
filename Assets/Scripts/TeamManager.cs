@@ -24,6 +24,7 @@ public class TeamManager {
 	public void IncrementScore() {
 		score += 1;
 		GameModel.instance.scoreDisplayer?.UpdateScores();
+		GameModel.instance.Scored(this);
 	}
     
 	public int GetScore() {
