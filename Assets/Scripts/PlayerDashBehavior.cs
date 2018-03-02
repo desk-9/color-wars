@@ -13,11 +13,11 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float               dashPower     = 0.1f;
     public float               dashDuration  = 0.0f;
 
-    PlayerMovement playerMovement  = null;
-    IC.InputDevice input           = null;
-    Rigidbody2D    rb              = null;
-    Coroutine      chargeCoroutine = null;
-    Coroutine      dashCoroutine   = null;
+    PlayerMovement playerMovement;
+    IC.InputDevice input;
+    Rigidbody2D    rb;
+    Coroutine      chargeCoroutine;
+    Coroutine      dashCoroutine;
     float          startChargeTime = 0.0f;
     float          dashSpeed       = 1.0f;
 
