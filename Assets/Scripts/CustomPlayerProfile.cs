@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using InControl;
 
-// This is a profile used by InControl that allows us to map buttons to other 
+// This is a profile used by InControl that allows us to map buttons to other
 // buttons. Namely, it allows us to map WASD and the arrow keys to the LeftStick,
 // so that in the code we only have to check on thing, rather than three.
 public class CustomPlayerProfile : UnityInputDeviceProfile
@@ -48,6 +48,11 @@ public class CustomPlayerProfile : UnityInputDeviceProfile
                 Target = InputControlType.LeftStickY,
                 Source = KeyCodeAxis( KeyCode.DownArrow, KeyCode.UpArrow )
             },
+            new InputControlMapping {
+                Handle = "Dash",
+                Target = InputControlType.Action2,
+                Source = KeyCodeButton( KeyCode.X )
+            }
         };
     }
 }
