@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using IC = InControl;
+using IC  = InControl;
+using ICT = InControl.InputControlType;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerDashBehavior : MonoBehaviour {
+    public ICT   dashButton    = ICT.Action2;
     public float maxChargeTime = 1.0f;
     public float chargeRate    = 1.0f;
     public float dashPower     = 0.1f;
@@ -35,15 +37,16 @@ public class PlayerDashBehavior : MonoBehaviour {
         // Do nothing if currently in dashing state.
         if (dashCoroutine != null) return;
 
-        if (chargeCoroutine == null && Input.GetKeyDown(KeyCode.X)) {
+        var control = input.GetControl(dashButton);
+
+        if (chargeCoroutine == null && control.WasPressed) {
             chargeCoroutine = StartCoroutine(Charge());
         }
 
         if (
-            chargeCoroutine != null &&
-            (
-                // Start dash if player releases charge button, or...
-                Input.GetKeyUp(KeyCode.X) ||
+            chargeCoroutine != null && (
+                // Start dash if player releases dash button, or...
+                control.WasReleased ||
                 // If charge time exceeds maximum allowed.
                 (Time.time - startChargeTime) >= maxChargeTime
             )
