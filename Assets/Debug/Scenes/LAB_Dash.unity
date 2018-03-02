@@ -356,26 +356,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 637206835}
---- !u!1 &778541299 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1233221201083302, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-    type: 2}
-  m_PrefabInternal: {fileID: 1192764184}
---- !u!114 &778541300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 778541299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxChargeTime: 1
-  chargeRate: 10
-  dashPower: 2
-  dashDuration: 0.25
 --- !u!1 &1049599293
 GameObject:
   m_ObjectHideFlags: 0
@@ -497,22 +477,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-        type: 2}
-      propertyPath: m_Constraints
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1233221201083302, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-        type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114949894169071670, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1203623751
@@ -1221,8 +1186,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dfd40f764daf4d159e7dbd6cdb543be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  teams: []
   scoreDisplayer: {fileID: 1049599295}
+  teamColors: []
 --- !u!4 &1787706430
 Transform:
   m_ObjectHideFlags: 0

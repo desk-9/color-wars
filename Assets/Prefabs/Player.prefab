@@ -26,6 +26,7 @@ GameObject:
   - component: {fileID: 114205997563975182}
   - component: {fileID: 114215232534320030}
   - component: {fileID: 114122157282390524}
+  - component: {fileID: 114130524022212122}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -64,7 +65,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &58225540981259118
 CircleCollider2D:
@@ -111,7 +112,7 @@ PolygonCollider2D:
       - {x: -0.25, y: 0}
 --- !u!114 &114122157282390524
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1233221201083302}
@@ -120,6 +121,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114130524022212122
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashButton: 12
+  maxChargeTime: 1
+  chargeRate: 10
+  dashPower: 2
+  dashDuration: 0.25
 --- !u!114 &114205997563975182
 MonoBehaviour:
   m_ObjectHideFlags: 1
