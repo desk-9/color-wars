@@ -23,14 +23,14 @@ public class PlayerMovement : MonoBehaviour {
         StartCoroutine(PausePlayerMovement(timePeriod));
     }
 
-    IEnumerator PausePlayerMovement(float timePeriod)
+    public IEnumerator PausePlayerMovement(float timePeriod)
     {
         StopAllMovement();
         yield return new WaitForSeconds(timePeriod);
         StartPlayerMovement();
     }
 
-    void StopAllMovement()
+    public void StopAllMovement()
     {
         StopCoroutine(playerMovementCoroutine);
     }
@@ -66,6 +66,10 @@ public class PlayerMovement : MonoBehaviour {
         if (inputDevice != null) {
             StartPlayerMovement();
         }
+    }
+
+    public InputDevice GetInputDevice() {
+        return inputDevice;
     }
 
     void InputDeviceDisconnectedCallback()
