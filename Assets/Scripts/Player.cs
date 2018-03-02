@@ -6,8 +6,8 @@ public class Player : MonoBehaviour {
 
     public float colorFlashLength;
     public float colorFlashFadeTime;
-
-    TeamManager team;
+	public TeamManager team {get; private set;}
+	
     SpriteRenderer renderer;
     Coroutine flashColorCoroutine;
 
