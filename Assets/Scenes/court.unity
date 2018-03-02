@@ -261,6 +261,11 @@ Prefab:
       propertyPath: m_Name
       value: Ball
       objectReference: {fileID: 0}
+    - target: {fileID: 50948837286388524, guid: ba0c60e64c5ae42138dd02f42c637dc5,
+        type: 2}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ba0c60e64c5ae42138dd02f42c637dc5, type: 2}
   m_IsPrefabParent: 0
