@@ -7,15 +7,18 @@ using IC = InControl;
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerDashBehavior : MonoBehaviour {
-    public float chargeRate   = 1.0f;
-    public float dashDuration = 0.5f;
+    public float maxChargeTime = 1.0f;
+    public float chargeRate    = 1.0f;
+    public float dashPower     = 0.1f;
+    public float dashDuration  = 0.0f;
 
     PlayerMovement playerMovement  = null;
     IC.InputDevice input           = null;
     Rigidbody2D    rb              = null;
     Coroutine      chargeCoroutine = null;
     Coroutine      dashCoroutine   = null;
-    float          dashSpeed       = 0.0f;
+    float          startChargeTime = 0.0f;
+    float          dashSpeed       = 1.0f;
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
@@ -33,29 +36,30 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (dashCoroutine != null) return;
 
         if (chargeCoroutine == null && Input.GetKeyDown(KeyCode.X)) {
-            StartCharging();
+            chargeCoroutine = StartCoroutine(Charge());
         }
 
-        if (chargeCoroutine != null && Input.GetKeyUp(KeyCode.X)) {
-            StopCharging();
+        if (
+            chargeCoroutine != null &&
+            (
+                // Start dash if player releases charge button, or...
+                Input.GetKeyUp(KeyCode.X) ||
+                // If charge time exceeds maximum allowed.
+                (Time.time - startChargeTime) >= maxChargeTime
+            )
+        ) {
             dashCoroutine = StartCoroutine(Dash());
         }
     }
 
-    void StartCharging() {
+    IEnumerator Charge() {
+        // Take control over player movement.
         playerMovement.StopAllMovement();
         rb.velocity = Vector2.zero;
+        dashSpeed   = 1.0f;
 
-        dashSpeed = playerMovement.movementSpeed;
-        chargeCoroutine = StartCoroutine(Charge());
-    }
+        startChargeTime = Time.time;
 
-    void StopCharging() {
-        StopCoroutine(chargeCoroutine);
-        chargeCoroutine = null;
-    }
-
-    IEnumerator Charge() {
         while (true) {
             dashSpeed += chargeRate * Time.deltaTime;
 
@@ -68,8 +72,15 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     IEnumerator Dash() {
+        // Stop charging the dash.
+        StopCoroutine(chargeCoroutine);
+        chargeCoroutine = null;
+
         var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         var startTime = Time.time;
+
+        // Apply scaled dash speed on top of base movement speed.
+        dashSpeed = playerMovement.movementSpeed + Mathf.Pow(dashSpeed, dashPower);
 
         while (Time.time - startTime < dashDuration) {
             rb.velocity = direction * dashSpeed;
@@ -77,8 +88,9 @@ public class PlayerDashBehavior : MonoBehaviour {
             yield return null;
         }
 
-        dashCoroutine = null;
+        // Return normal movement control to player.
         playerMovement.StartPlayerMovement();
+        dashCoroutine = null;
 
         yield return null;
     }

@@ -372,9 +372,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chargeRate: 1
-  dashSpeed: 30
-  scale: 10
+  maxChargeTime: 1
+  chargeRate: 10
+  dashPower: 2
+  dashDuration: 0.25
 --- !u!1 &1049599293
 GameObject:
   m_ObjectHideFlags: 0
@@ -504,6 +505,11 @@ Prefab:
     - target: {fileID: 1233221201083302, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114949894169071670, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
