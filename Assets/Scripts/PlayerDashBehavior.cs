@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using IC  = InControl;
-using ICT = InControl.InputControlType;
+using IC = InControl;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerDashBehavior : MonoBehaviour {
-    public ICT   dashButton    = ICT.Action2;
-    public float maxChargeTime = 1.0f;
-    public float chargeRate    = 1.0f;
-    public float dashPower     = 0.1f;
-    public float dashDuration  = 0.0f;
+    public IC.InputControlType dashButton    = IC.InputControlType.Action2;
+    public float               maxChargeTime = 1.0f;
+    public float               chargeRate    = 1.0f;
+    public float               dashPower     = 0.1f;
+    public float               dashDuration  = 0.0f;
 
     PlayerMovement playerMovement  = null;
     IC.InputDevice input           = null;
