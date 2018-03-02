@@ -7,16 +7,15 @@ using IC = InControl;
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerDashBehavior : MonoBehaviour {
-    public float chargeRate = 1.0f;
-    public float dashSpeed  = 30.0f;
-    public float scale      = 2.0f;
+    public float chargeRate   = 1.0f;
+    public float dashDuration = 0.5f;
 
     PlayerMovement playerMovement  = null;
     IC.InputDevice input           = null;
     Rigidbody2D    rb              = null;
     Coroutine      chargeCoroutine = null;
     Coroutine      dashCoroutine   = null;
-    float          chargeDistance  = 0.0f;
+    float          dashSpeed       = 0.0f;
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
@@ -44,25 +43,21 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     void StartCharging() {
-        Debug.LogFormat(this, "{0}: charging...", name);
-
         playerMovement.StopAllMovement();
         rb.velocity = Vector2.zero;
 
-        chargeDistance = 0.0f;
+        dashSpeed = playerMovement.movementSpeed;
         chargeCoroutine = StartCoroutine(Charge());
     }
 
     void StopCharging() {
-        Debug.LogFormat(this, "{0}: stop charging!", name);
-
         StopCoroutine(chargeCoroutine);
         chargeCoroutine = null;
     }
 
     IEnumerator Charge() {
         while (true) {
-            chargeDistance += chargeRate * Time.deltaTime;
+            dashSpeed += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
             var direction = new Vector2(input.LeftStickX, input.LeftStickY);
@@ -74,21 +69,13 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     IEnumerator Dash() {
         var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
-        var source    = (Vector2)transform.position;
-        var target    = source + direction * chargeDistance * scale;
         var startTime = Time.time;
 
-        Debug.LogFormat(this, "{0}: Dash with distance: {1}!", name, (target - source).magnitude);
-
-        while ((Vector2)transform.position != target) {
-            var step = (Time.time - startTime) * dashSpeed;
-
-            rb.MovePosition(Vector2.Lerp(source, target, step));
+        while (Time.time - startTime < dashDuration) {
+            rb.velocity = direction * dashSpeed;
 
             yield return null;
         }
-
-        Debug.LogFormat(this, "{0}: Exit dash!", name);
 
         dashCoroutine = null;
         playerMovement.StartPlayerMovement();
