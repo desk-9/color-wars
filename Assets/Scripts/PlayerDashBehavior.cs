@@ -42,7 +42,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     IEnumerator Charge() {
         // Take control over player movement.
         playerMovement.StopAllMovement();
-        rb.velocity = Vector2.zero;
 
         var dashSpeed       = 1.0f;
         var startChargeTime = Time.time;

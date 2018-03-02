@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour {
     public void StopAllMovement()
     {
         StopCoroutine(playerMovementCoroutine);
+        rb2d.velocity = Vector2.zero;
     }
 
     // Handles players movement on the game board
