@@ -14,7 +14,7 @@ public class GameModel : MonoBehaviour {
     public Color[] teamColors;
     public TeamManager[] teams { get; set; }
 
-    int nextTeamAssignmentIndex = 0;
+	IntCallback NextTeamAssignmentIndex;
 
     void Awake() {
         if (instance == null) {
@@ -28,8 +28,7 @@ public class GameModel : MonoBehaviour {
 
     public TeamManager GetTeamAssignment(Player caller)
     {
-        var assignedTeam = teams[nextTeamAssignmentIndex];
-        nextTeamAssignmentIndex = (nextTeamAssignmentIndex + 1) % teams.Length;
+        var assignedTeam = teams[NextTeamAssignmentIndex()];
         assignedTeam.AddTeamMember(caller);
         return assignedTeam;
     }
@@ -42,8 +41,12 @@ public class GameModel : MonoBehaviour {
             // Add 1 so we get Team 1 and Team 2
             teams[i] = new TeamManager(i + 1, teamColors[i]);
         }
+		NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
 	public void Scored(TeamManager team) {
 		// One team just scored
+		//
+		// TODO: handle things like resetting the ball and players here, maybe
+		// show UI elements
 	}
 }

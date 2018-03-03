@@ -8,7 +8,7 @@ public class Player : MonoBehaviour {
     public float colorFlashFadeTime;
 	public TeamManager team {get; private set;}
 	
-    SpriteRenderer renderer;
+    new SpriteRenderer renderer;
     Coroutine flashColorCoroutine;
 
     public void FlashTeamColor()
@@ -40,10 +40,5 @@ public class Player : MonoBehaviour {
         renderer = GetComponent<SpriteRenderer>();
         team = GameModel.instance.GetTeamAssignment(this);
         Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 }

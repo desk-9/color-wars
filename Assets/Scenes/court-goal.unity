@@ -302,7 +302,7 @@ EdgeCollider2D:
   m_Offset: {x: 0, y: 0}
   m_EdgeRadius: 0.2
   m_Points:
-  - {x: -0.4938966, y: 0.008137957}
+  - {x: -0.4948802, y: -0.0056318585}
   - {x: -0.49023646, y: 0.07891765}
   - {x: -0.47210658, y: 0.15503553}
   - {x: -0.43983305, y: 0.22651187}
@@ -317,8 +317,8 @@ EdgeCollider2D:
   - {x: 0.32041678, y: 0.37949386}
   - {x: 0.38230345, y: 0.31497}
   - {x: 0.4412595, y: 0.2270922}
-  - {x: 0.48799372, y: 0.09968969}
-  - {x: 0.49593106, y: 0.0040689637}
+  - {x: 0.4850397, y: 0.09968969}
+  - {x: 0.49494633, y: -0.0057779765}
 --- !u!1001 &361983967
 Prefab:
   m_ObjectHideFlags: 0
@@ -1885,31 +1885,7 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 61268346252380000, guid: 03201c32840fa452c9dca448868f2be7,
-        type: 2}
-      propertyPath: m_Size.y
-      value: 1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 61928920629602814, guid: 03201c32840fa452c9dca448868f2be7,
-        type: 2}
-      propertyPath: m_Size.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 212544746756017464, guid: 03201c32840fa452c9dca448868f2be7,
-        type: 2}
-      propertyPath: m_SortingOrder
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4618390942042148, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1450231971021814, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 61928920629602814, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &2042251370
