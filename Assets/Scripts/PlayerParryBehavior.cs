@@ -4,6 +4,7 @@ using UnityEngine;
 
 using IC = InControl;
 
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerParryBehavior : MonoBehaviour {
     public CircleCollider2D    parryField;
     public IC.InputControlType parryButton = IC.InputControlType.Action3;
@@ -12,13 +13,11 @@ public class PlayerParryBehavior : MonoBehaviour {
 
     PlayerMovement   playerMovement;
     IC.InputDevice   input;
-    Rigidbody2D      rb;
     Coroutine        parryCoroutine;
 
     void Awake() {
         playerMovement = GetComponent<PlayerMovement>();
         input          = playerMovement.GetInputDevice();
-        rb             = GetComponent<Rigidbody2D>();
     }
 
     void Update() {
@@ -33,8 +32,6 @@ public class PlayerParryBehavior : MonoBehaviour {
     }
 
     IEnumerator Parry() {
-        Debug.Log("Parry!");
-
         var colliders = new Collider2D[10];
         var filter    = new ContactFilter2D();
 
@@ -43,10 +40,8 @@ public class PlayerParryBehavior : MonoBehaviour {
         for (var i = 0; i < numInRange; ++i) {
             var coll = colliders[i];
 
-            if (coll == null) continue;
-
-            var obj  = coll.gameObject;
-            var rb   = obj.GetComponent<Rigidbody2D>();
+            var obj = coll?.gameObject;
+            var rb  = obj?.GetComponent<Rigidbody2D>();
 
             if (rb != null) {
                 var mag = rb.velocity.magnitude;
