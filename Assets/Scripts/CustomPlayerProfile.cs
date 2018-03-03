@@ -52,6 +52,11 @@ public class CustomPlayerProfile : UnityInputDeviceProfile
                 Handle = "Dash",
                 Target = InputControlType.Action2,
                 Source = KeyCodeButton( KeyCode.X )
+            },
+            new InputControlMapping {
+                Handle = "Parry",
+                Target = InputControlType.Action3,
+                Source = KeyCodeButton( KeyCode.Z )
             }
         };
     }
