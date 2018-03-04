@@ -169,6 +169,9 @@ MonoBehaviour:
   parryButton: 13
   cooldown: 0
   knockback: 10
+  whitelist:
+  - serializedVersion: 2
+    m_Bits: 1024
 --- !u!114 &114205997563975182
 MonoBehaviour:
   m_ObjectHideFlags: 1

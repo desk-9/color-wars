@@ -10,6 +10,7 @@ public class PlayerParryBehavior : MonoBehaviour {
     public IC.InputControlType parryButton = IC.InputControlType.Action3;
     public float               cooldown    = 1.0f;
     public float               knockback   = 1.0f;
+    public List<LayerMask>     whitelist   = new List<LayerMask>();
 
     PlayerMovement   playerMovement;
     IC.InputDevice   input;
@@ -31,17 +32,26 @@ public class PlayerParryBehavior : MonoBehaviour {
     }
 
     IEnumerator Parry() {
-        var numInRange = 10;
-        var colliders  = new Collider2D[numInRange];
-        var filter     = new ContactFilter2D();
+        var objectsInRange = new List<GameObject>();
 
-        numInRange = parryField.OverlapCollider(filter, colliders);
+        // Compile list of objects in range using whitelist.
+        foreach (var layer in whitelist) {
+            var numInRange = 10;
+            var colliders  = new Collider2D[numInRange];
+            var filter     = new ContactFilter2D();
 
-        for (var i = 0; i < numInRange; ++i) {
-            var coll = colliders[i];
+            filter.SetLayerMask(layer);
 
-            var obj = coll.gameObject;
-            var rb  = obj.GetComponent<Rigidbody2D>();
+            numInRange = parryField.OverlapCollider(filter, colliders);
+
+            for (var i = 0; i < numInRange; ++i) {
+                objectsInRange.Add(colliders[i].gameObject);
+            }
+        }
+
+        // Apply knockback for all objects in range.
+        foreach (var obj in objectsInRange) {
+            var rb = obj.GetComponent<Rigidbody2D>();
 
             if (rb != null) {
                 var mag = rb.velocity.magnitude;
