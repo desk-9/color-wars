@@ -7,7 +7,7 @@ using IC = InControl;
 public class BallCarrier : MonoBehaviour {
 
     // Controls
-    public IC.InputControlType dropBallButton = IC.InputControlType.Action3; // X
+    public IC.InputControlType dropBallButton = IC.InputControlType.Action1; // A
 
     // Tweakables
     public float stunTime = 1.0f;
@@ -30,14 +30,14 @@ public class BallCarrier : MonoBehaviour {
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     public virtual void CarryBall(Ball ballIn) {
-	Debug.Log("Carrying ball!");
+	Debug.Log("Carrying ball! Owner: " + gameObject.name);
         ball = ballIn;
 	playerMovement.StopAllMovement();
     }
 
     public virtual void DropBall() {
 	if (ball != null) {
-	    Debug.Log("Dropping ball!");
+	    Debug.Log("Dropping ball! Owner: " + gameObject.name);
 
 	    // Restart player motion
             playerMovement.StartPlayerMovement();
@@ -53,12 +53,13 @@ public class BallCarrier : MonoBehaviour {
     }
 
     public virtual void Update() {
+        UpdateBallPosition();
+        
 	if (input == null) {
             input = playerMovement.GetInputDevice();
             return;
         }
 
-	UpdateBallPosition();
 	if (input.GetControl(dropBallButton).WasPressed) {
 	    DropBall();
 	}

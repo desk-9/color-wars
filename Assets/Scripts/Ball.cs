@@ -20,6 +20,7 @@ public class Ball : MonoBehaviour {
     public void OnCollisionEnter2D(Collision2D collision) {
 	// Can't switch owners if the ball is already owned by someone
 	if (owner != null) {
+            Debug.Log("Ball already has owner -- cannot switch owners");
 	    return;
 	}
 	var collided = collision.gameObject;

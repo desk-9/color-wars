@@ -15,11 +15,13 @@ public class BallCarrierWithOrbit : BallCarrier {
     }
 
     public override void DropBall() {
-	var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
-	if (ballCollider != null) {
-	    ballCollider.enabled = true;
-	}
-	base.DropBall();
+        if (ball != null) {
+            var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
+            if (ballCollider != null) {
+                ballCollider.enabled = true;
+            }
+            base.DropBall();
+        }
     }
 
     public override void UpdateBallPosition () {
