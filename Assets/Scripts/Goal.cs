@@ -6,10 +6,10 @@ using UtilityExtensions;
 
 public class Goal : MonoBehaviour {
 
-	public TeamManager current_team;
-    public float goal_switch_interval = 10;
+	public TeamManager currentTeam;
+    public float goalSwitchInterval = 10;
 
-	IntCallback next_team_index;
+	IntCallback nextTeamIndex;
     new SpriteRenderer renderer;
 
     void Awake() {
@@ -17,31 +17,31 @@ public class Goal : MonoBehaviour {
     }
     
 	void Start () {
-		next_team_index = Utility.ModCycle(0, GameModel.instance.teams.Length);
+		nextTeamIndex = Utility.ModCycle(0, GameModel.instance.teams.Length);
         SwitchToNextTeam();
         StartCoroutine(TeamSwitching());
 	}
 
     IEnumerator TeamSwitching() {
         while (true) {
-            yield return new WaitForSeconds(goal_switch_interval);
+            yield return new WaitForSeconds(goalSwitchInterval);
             SwitchToNextTeam();
         }
     }
 
 	TeamManager GetNextTeam() {
-		return GameModel.instance.teams[next_team_index()];
+		return GameModel.instance.teams[nextTeamIndex()];
 	}
 
     void SwitchToNextTeam() {
-        current_team = GetNextTeam();
+        currentTeam = GetNextTeam();
         if (renderer != null) {
-            renderer.color = current_team.teamColor;
+            renderer.color = currentTeam.teamColor;
         }
     }
 
 	void ScoreGoal(Ball ball) {
-		current_team?.IncrementScore();
+		currentTeam?.IncrementScore();
 		// TODO: Non-tweakable placeholder delay on ball reset until it's
 		// decided what should happen respawn-wise on goal scoring
 		this.TimeDelayCall(ball.ResetBall, 0.35f);
