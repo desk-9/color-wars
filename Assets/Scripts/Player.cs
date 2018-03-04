@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using IC = InControl;
-
 public class Player : MonoBehaviour {
 
     public float colorFlashLength;
