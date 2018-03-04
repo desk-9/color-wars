@@ -7,17 +7,38 @@ using UtilityExtensions;
 public class Goal : MonoBehaviour {
 
 	public TeamManager current_team;
+    public float goal_switch_interval = 10;
 
 	IntCallback next_team_index;
+    new SpriteRenderer renderer;
 
+    void Awake() {
+        renderer = GetComponent<SpriteRenderer>();
+    }
+    
 	void Start () {
-		current_team = GameModel.instance.teams?.First();
-		next_team_index = Utility.ModCycle(1, GameModel.instance.teams.Length);
+		next_team_index = Utility.ModCycle(0, GameModel.instance.teams.Length);
+        SwitchToNextTeam();
+        StartCoroutine(TeamSwitching());
 	}
 
-	TeamManager NextTeam() {
+    IEnumerator TeamSwitching() {
+        while (true) {
+            yield return new WaitForSeconds(goal_switch_interval);
+            SwitchToNextTeam();
+        }
+    }
+
+	TeamManager GetNextTeam() {
 		return GameModel.instance.teams[next_team_index()];
 	}
+
+    void SwitchToNextTeam() {
+        current_team = GetNextTeam();
+        if (renderer != null) {
+            renderer.color = current_team.teamColor;
+        }
+    }
 
 	void ScoreGoal(Ball ball) {
 		current_team?.IncrementScore();
@@ -30,15 +51,6 @@ public class Goal : MonoBehaviour {
 		var ball = collider.gameObject.GetComponent<Ball>();
 		if (ball != null) {
 			ScoreGoal(ball);
-		}
-	}
-
-	void Update() {
-		// Test code for switching goal team until full timed team switching is implemented
-		var left_bumper = InControl.InputControlType.LeftBumper;
-		if (InControl.InputManager.ActiveDevice.GetControl(left_bumper).WasPressed) {
-			current_team = NextTeam();
-			Debug.LogFormat("Goal Team Switched To {0}", current_team.teamNumber);
 		}
 	}
 }
