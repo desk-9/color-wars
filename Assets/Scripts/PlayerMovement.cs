@@ -12,10 +12,14 @@ public class PlayerMovement : MonoBehaviour {
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
     PlayerInputManager playerInput;
+    public Callback StartMovementFunction = delegate {};
+    public Callback StopMovementFunction = delegate {};
+    
 
     public void StartPlayerMovement()
     {
         playerMovementCoroutine = StartCoroutine(Move());
+        StartMovementFunction();
     }
 
     public void ParalyzePlayer(float timePeriod)
@@ -35,6 +39,7 @@ public class PlayerMovement : MonoBehaviour {
 	if (playerMovementCoroutine != null) {
 	    StopCoroutine(playerMovementCoroutine);
 	    rb2d.velocity = Vector2.zero;
+            StopMovementFunction();
 	}
     }
 

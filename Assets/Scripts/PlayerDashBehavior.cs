@@ -23,6 +23,21 @@ public class PlayerDashBehavior : MonoBehaviour {
         playerMovement = GetComponent<PlayerMovement>();
         input          = playerMovement.GetInputDevice();
         rb             = GetComponent<Rigidbody2D>();
+
+        // playerMovement should never be null, bc of RequireComponent
+        playerMovement.StartMovementFunction += ResetStateMachine;
+        playerMovement.StopMovementFunction += ResetStateMachine;
+    }
+
+    public void ResetStateMachine() {
+        if (chargeCoroutine != null) {
+            StopCoroutine(chargeCoroutine);
+            chargeCoroutine = null;
+        }
+        if (dashCoroutine != null) {
+            StopCoroutine(dashCoroutine);
+            dashCoroutine = null;
+        }
     }
 
     void Update() {
@@ -31,6 +46,11 @@ public class PlayerDashBehavior : MonoBehaviour {
             return;
         }
 
+        var ballCarrier = GetComponent<BallCarrier>();
+        if (ballCarrier.IsCarryingBall) {
+            return;
+        }
+        
         // Do nothing if currently in dashing state.
         if (dashCoroutine != null) return;
 
