@@ -40,6 +40,12 @@ namespace UtilityExtensions {
 				CoroutineUtility.RunThenCallback(
 					CoroutineUtility.WaitForSeconds(seconds), function));
 		}
+
+        public static T FindComponent<T>(this Transform transform, string name) where T : Component {
+            var thing = transform.Find(name);
+            var component = thing?.gameObject.GetComponent<T>();
+            return component;
+        }
 	}
 }
 

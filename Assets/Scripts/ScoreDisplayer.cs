@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UtilityExtensions;
 
 public class ScoreDisplayer : MonoBehaviour {
 
-    public Text scoreDisplay;
-
+    List<Text> teams;
     void Start() {
+        teams = new List<Text>() {
+            transform.FindComponent<Text>("Team1Text"),
+            transform.FindComponent<Text>("Team2Text")
+        };
         StartCoroutine(InitScores());
     }
 
@@ -18,12 +22,11 @@ public class ScoreDisplayer : MonoBehaviour {
     }
 
     public void UpdateScores() {
-        string scoreText = "";
-        foreach (var team in GameModel.instance.teams) {
-            scoreText += "Team " + team.teamNumber.ToString() + ": " + team.GetScore().ToString() + "\n";
+        for (int i = 0; i < teams.Count && i < GameModel.instance.teams.Length; i++) {
+            var text = teams[i];
+            var team = GameModel.instance.teams[i];
+            text.text = string.Format("Team {0}: {1}", team.teamNumber, team.GetScore());
+            text.color = team.teamColor;
         }
-        scoreDisplay.text = scoreText;
     }
-    
-
 }
