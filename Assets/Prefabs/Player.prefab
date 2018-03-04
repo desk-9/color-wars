@@ -184,8 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropBallButton: 12
-  shootBallButton: 12
   colorFlashLength: 1
   colorFlashFadeTime: 1
 --- !u!114 &114476730397344850
@@ -199,8 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb27ebdc3e9b44151bdedd986b4176c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropBallButton: 13
-  throwBallButton: 14
+  dropBallButton: 11
   stunTime: 1
   ballDistance: 1.75
   rate: 4
