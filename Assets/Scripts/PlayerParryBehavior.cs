@@ -17,7 +17,6 @@ public class PlayerParryBehavior : MonoBehaviour {
 
     void Awake() {
         playerMovement = GetComponent<PlayerMovement>();
-        input          = playerMovement.GetInputDevice();
     }
 
     void Update() {
