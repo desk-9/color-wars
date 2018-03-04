@@ -23,10 +23,9 @@ public class Ball : MonoBehaviour {
             Debug.Log("Ball already has owner -- cannot switch owners");
 	    return;
 	}
-	var collided = collision.gameObject;
 	// The assumption here is that a gameObject will have a BallCarrier component
 	// iff the gameObject can own/carry the ball
-	var player = collided.GetComponent<BallCarrier>();
+	var player = collision.gameObject.GetComponent<BallCarrier>();
 	if (player != null) {
 	    owner = player;
 	    player.CarryBall(this);

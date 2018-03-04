@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BallCarrierWithOrbit : BallCarrier {
 
-    public float rate = 4.0f;
+    public float orbitSpeed = 4.0f;
 
     public override void CarryBall(Ball ballIn) {
 	base.CarryBall(ballIn);
@@ -29,7 +29,7 @@ public class BallCarrierWithOrbit : BallCarrier {
 	    var target = transform.position;
             // Based on the OrbitTarget demo, posted by Austin Yarger
             // See https://piazza.com/class/jbcr9wzhymw6hm?cid=214
-	    Vector3 newPosition = target + new Vector3(Mathf.Cos(Time.time * rate), Mathf.Sin (Time.time * rate), 0) * ballDistance;
+	    Vector3 newPosition = target + new Vector3(Mathf.Cos(Time.time * orbitSpeed), Mathf.Sin (Time.time * orbitSpeed), 0) * ballDistance;
 	    ball.transform.position = newPosition;
 	}
     }
