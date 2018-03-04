@@ -31,16 +31,17 @@ public class PlayerParryBehavior : MonoBehaviour {
     }
 
     IEnumerator Parry() {
-        var colliders = new Collider2D[10];
-        var filter    = new ContactFilter2D();
+        var numInRange = 10;
+        var colliders  = new Collider2D[numInRange];
+        var filter     = new ContactFilter2D();
 
-        int numInRange = parryField.OverlapCollider(filter, colliders);
+        numInRange = parryField.OverlapCollider(filter, colliders);
 
         for (var i = 0; i < numInRange; ++i) {
             var coll = colliders[i];
 
-            var obj = coll?.gameObject;
-            var rb  = obj?.GetComponent<Rigidbody2D>();
+            var obj = coll.gameObject;
+            var rb  = obj.GetComponent<Rigidbody2D>();
 
             if (rb != null) {
                 var mag = rb.velocity.magnitude;
