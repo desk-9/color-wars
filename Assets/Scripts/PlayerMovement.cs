@@ -7,14 +7,13 @@ using InControl;
 public class PlayerMovement : MonoBehaviour {
 
     public float movementSpeed;
+    public Callback StartMovementFunction = delegate {};
+    public Callback StopMovementFunction = delegate {};
 
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
     PlayerInputManager playerInput;
-    public Callback StartMovementFunction = delegate {};
-    public Callback StopMovementFunction = delegate {};
-    
 
     public void StartPlayerMovement()
     {
