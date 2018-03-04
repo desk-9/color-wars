@@ -6,14 +6,11 @@ using IC = InControl;
 
 public class BallCarrier : MonoBehaviour {
 
-    // Controls
     public IC.InputControlType dropBallButton = IC.InputControlType.Action1; // A
 
-    // Tweakables
     public float stunTime = 1.0f;
     public float ballDistance = 1.0f;
 
-    // Non-public fields
     protected Ball ball = null;
     PlayerMovement playerMovement;
     IC.InputDevice input;
