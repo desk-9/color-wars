@@ -8,7 +8,7 @@ using IC = InControl;
 public class MenuController : MonoBehaviour {
     public IC.InputControlType StartButton = IC.InputControlType.Start;
     public IC.InputControlType ResetButton = IC.InputControlType.DPadDown;
-    public GameObject pauseMenu = null;
+    public GameObject pauseMenu;
 
     SceneStateController scene_controller;
     
@@ -20,7 +20,7 @@ public class MenuController : MonoBehaviour {
         var device = IC.InputManager.ActiveDevice;
 
         if (device.GetControl(StartButton).WasPressed) {
-            scene_controller.TogglePause();
+            TogglePause();
         }
 
         if (device.GetControl(ResetButton).WasPressed && scene_controller.paused) {
@@ -34,12 +34,13 @@ public class MenuController : MonoBehaviour {
     }
 
     public void Pause() {
-        scene_controller.PauseTime();
+        Debug.Log("pausing");
         pauseMenu.SetActive(true);
+        scene_controller.PauseTime();
     }
 
     public void UnPause() {
-        scene_controller.UnPauseTime();
         pauseMenu.SetActive(false);
+        scene_controller.UnPauseTime();
     }
 }

@@ -10,7 +10,7 @@ public class SceneStateController : MonoBehaviour {
         return paused;
     }
 
-    public void TogglePause() {
+    public void TogglePauseTime() {
         paused = !paused;
         Time.timeScale = 1 - Time.timeScale;
     }
@@ -26,6 +26,7 @@ public class SceneStateController : MonoBehaviour {
     }
 
     public void ResetScene() {
+        UnPauseTime();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
