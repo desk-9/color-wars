@@ -4,7 +4,7 @@ using UnityEngine;
 using UtilityExtensions;
 using IC = InControl;
 
-public class ShootBall : MonoBehaviour {
+public class ShootBallMechanic : MonoBehaviour {
 
     public float shotSpeed;
     public float forcedShotTime;

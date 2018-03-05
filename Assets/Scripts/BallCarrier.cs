@@ -13,7 +13,7 @@ public class BallCarrier : MonoBehaviour {
     protected Ball ball = null;
     PlayerMovement playerMovement;
     IC.InputDevice input;
-    ShootBall shootBall;
+    ShootBallMechanic shootBall;
 
     public bool IsCarryingBall {
         get {return ball != null;}
@@ -22,7 +22,7 @@ public class BallCarrier : MonoBehaviour {
     void Start() {
 	playerMovement = GetComponent<PlayerMovement>();
         input = playerMovement.GetInputDevice();
-	shootBall = GetComponent<ShootBall>();
+	shootBall = GetComponent<ShootBallMechanic>();
     }
 
     // This function is called when the BallCarrier initially gains possession
