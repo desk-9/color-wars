@@ -54,6 +54,10 @@ public class PlayerMovement : MonoBehaviour {
     // Handles players movement on the game board
     IEnumerator Move ()
     {
+	if (inputDevice == null) {
+	    yield break;
+	}
+	
         yield return new WaitForFixedUpdate();
         while (true) {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);

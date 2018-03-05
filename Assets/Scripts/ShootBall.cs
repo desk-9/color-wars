@@ -23,10 +23,13 @@ public class ShootBall : MonoBehaviour {
 	while (elapsedTime < forcedShotTime) {
 	    playerMovement.RotatePlayer();
 
-	    if (inputDevice.GetControl(shootButton).WasPressed){
-		Shoot(ball, shotBallCallback);
-		yield break;
+	    if (inputDevice != null) {
+		if (inputDevice.GetControl(shootButton).WasPressed){
+		    Shoot(ball, shotBallCallback);
+		    yield break;
+		}
 	    }
+		
 	    elapsedTime += Time.deltaTime;
 	    yield return null;
 	}
