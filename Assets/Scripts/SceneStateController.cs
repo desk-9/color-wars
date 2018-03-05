@@ -11,8 +11,11 @@ public class SceneStateController : MonoBehaviour {
     }
 
     public void TogglePauseTime() {
-        paused = !paused;
-        Time.timeScale = 1 - Time.timeScale;
+        if (paused) {
+            UnPauseTime();
+        } else {
+            PauseTime();
+        }
     }
 
     public void PauseTime() {

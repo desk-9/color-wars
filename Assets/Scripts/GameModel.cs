@@ -17,7 +17,7 @@ public class GameModel : MonoBehaviour {
     public SceneStateController scene_controller {get; set;}
     public GameEndController end_controller {get; set;}
     
-	IntCallback NextTeamAssignmentIndex;
+    IntCallback NextTeamAssignmentIndex;
 
     void Awake() {
         if (instance == null) {
@@ -50,15 +50,15 @@ public class GameModel : MonoBehaviour {
             // Add 1 so we get Team 1 and Team 2
             teams[i] = new TeamManager(i + 1, teamColors[i]);
         }
-		NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
+        NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
-	public void Scored(TeamManager team) {
-		// One team just scored
-		//
-		// TODO: handle things like resetting the ball and players here, maybe
-		// show UI elements
+    public void Scored(TeamManager team) {
+        // One team just scored
+        //
+        // TODO: handle things like resetting the ball and players here, maybe
+        // show UI elements
         if (team.score >= scoreMax) {
             end_controller.GameOver(team);
         }
-	}
+    }
 }

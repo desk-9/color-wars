@@ -6,8 +6,8 @@ public class Player : MonoBehaviour {
 
     public float colorFlashLength;
     public float colorFlashFadeTime;
-	public TeamManager team {get; private set;}
-	
+    public TeamManager team {get; private set;}
+    
     new SpriteRenderer renderer;
     Coroutine flashColorCoroutine;
 
@@ -38,11 +38,11 @@ public class Player : MonoBehaviour {
         flashColorCoroutine = null;
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         renderer = GetComponent<SpriteRenderer>();
         team = GameModel.instance.GetTeamAssignment(this);
         Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
         StartCoroutine(FlashColorCoroutine(6f));
-	}
+    }
 }
