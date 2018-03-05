@@ -10,11 +10,10 @@ public class TeamManager {
 	public int score {get; private set;}
     List<Player> teamMembers = new List<Player>();
 
-    public TeamManager(int teamNumber, Color teamColor)
-        {
-            this.teamNumber = teamNumber;
-            this.teamColor = teamColor;
-        }
+    public TeamManager(int teamNumber, Color teamColor) {
+        this.teamNumber = teamNumber;
+        this.teamColor = teamColor;
+    }
 
 	public void ResetScore() {
 		score = 0;
@@ -27,16 +26,14 @@ public class TeamManager {
 		GameModel.instance.Scored(this);
 	}
     
-    public void AddTeamMember(Player newMember)
-        {
-            teamMembers.Add(newMember);
-        }
+    public void AddTeamMember(Player newMember) {
+        teamMembers.Add(newMember);
+    }
 
-    public void FlashTeamColor()
-        {
-            foreach (var player in teamMembers) {
-                player.FlashTeamColor();
-            }
+    public void FlashTeamColor() {
+        foreach (var player in teamMembers) {
+            player.FlashTeamColor();
         }
+    }
     
 }
