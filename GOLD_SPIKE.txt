@@ -1,0 +1,7 @@
+Our gold spike included the following core features (+ extra):
+* Player Movement:  players whose movement is restricted when in
+                    possession of the ball.
+* Court Scene:      a closed court in which the game can be played.
+* Functional Goal:  a goal which switches color to that of the team
+                    to whom a point will be given on scoring.
+* Basic UI:         a display of the score of each team.

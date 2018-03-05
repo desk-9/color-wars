@@ -46,3 +46,4 @@ thumbs.db
 # Include top-level meta files (CREDITS.txt, README.txt)
 !CREDITS.txt
 !README.txt
+!GOLD_SPIKE.txt
