@@ -13,17 +13,26 @@ public class GameModel : MonoBehaviour {
     public ScoreDisplayer scoreDisplayer;
     public Color[] teamColors;
     public TeamManager[] teams { get; set; }
-
+    public int scoreMax = 7;
+    public SceneStateController scene_controller {get; set;}
+    public GameEndController end_controller {get; set;}
+    
 	IntCallback NextTeamAssignmentIndex;
 
     void Awake() {
         if (instance == null) {
             instance = this;
-            InitializeTeams();
+            Initialization();
         }
         else {
             Destroy(gameObject);
         }
+    }
+
+    void Initialization() {
+        InitializeTeams();
+        scene_controller = GetComponent<SceneStateController>();
+        end_controller = GetComponent<GameEndController>();
     }
 
     public TeamManager GetTeamAssignment(Player caller)
@@ -44,9 +53,13 @@ public class GameModel : MonoBehaviour {
 		NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
 	public void Scored(TeamManager team) {
+        Debug.Log(team);
 		// One team just scored
 		//
 		// TODO: handle things like resetting the ball and players here, maybe
 		// show UI elements
+        if (team.score >= scoreMax) {
+            end_controller.GameOver(team);
+        }
 	}
 }

@@ -25,7 +25,7 @@ public class ScoreDisplayer : MonoBehaviour {
         for (int i = 0; i < teams.Count && i < GameModel.instance.teams.Length; i++) {
             var text = teams[i];
             var team = GameModel.instance.teams[i];
-            text.text = string.Format("Team {0}: {1}", team.teamNumber, team.GetScore());
+            text.text = string.Format("Team {0}: {1}", team.teamNumber, team.score);
             text.color = team.teamColor;
         }
     }

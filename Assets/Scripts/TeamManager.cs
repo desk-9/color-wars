@@ -7,7 +7,7 @@ public class TeamManager {
     public int teamNumber { get; set; }
     public Color teamColor { get; set; }
 
-	int score = 0;
+	public int score {get; private set;}
     List<Player> teamMembers = new List<Player>();
 
     public TeamManager(int teamNumber, Color teamColor)
@@ -27,10 +27,6 @@ public class TeamManager {
 		GameModel.instance.Scored(this);
 	}
     
-	public int GetScore() {
-		return score;
-	}
-
     public void AddTeamMember(Player newMember)
     {
         teamMembers.Add(newMember);
