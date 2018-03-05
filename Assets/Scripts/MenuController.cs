@@ -34,7 +34,6 @@ public class MenuController : MonoBehaviour {
     }
 
     public void Pause() {
-        Debug.Log("pausing");
         pauseMenu.SetActive(true);
         scene_controller.PauseTime();
     }

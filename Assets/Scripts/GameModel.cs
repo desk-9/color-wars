@@ -53,7 +53,6 @@ public class GameModel : MonoBehaviour {
 		NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
 	public void Scored(TeamManager team) {
-        Debug.Log(team);
 		// One team just scored
 		//
 		// TODO: handle things like resetting the ball and players here, maybe
