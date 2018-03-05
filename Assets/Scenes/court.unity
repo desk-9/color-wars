@@ -937,8 +937,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2b4cdb20e90b4d04beda66ea8185654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  win_display: {fileID: 900835214}
-  win_display_time: 5
+  winDisplay: {fileID: 900835214}
+  winDisplayTime: 5
 --- !u!114 &653058665
 MonoBehaviour:
   m_ObjectHideFlags: 0
