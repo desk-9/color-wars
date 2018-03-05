@@ -36,22 +36,22 @@ public class GameModel : MonoBehaviour {
     }
 
     public TeamManager GetTeamAssignment(Player caller)
-    {
-        var assignedTeam = teams[NextTeamAssignmentIndex()];
-        assignedTeam.AddTeamMember(caller);
-        return assignedTeam;
-    }
+        {
+            var assignedTeam = teams[NextTeamAssignmentIndex()];
+            assignedTeam.AddTeamMember(caller);
+            return assignedTeam;
+        }
 
     void InitializeTeams()
-    {
-        teams = new TeamManager[teamColors.Length];
+        {
+            teams = new TeamManager[teamColors.Length];
 
-        for (int i = 0; i < teamColors.Length; ++i) {
-            // Add 1 so we get Team 1 and Team 2
-            teams[i] = new TeamManager(i + 1, teamColors[i]);
+            for (int i = 0; i < teamColors.Length; ++i) {
+                // Add 1 so we get Team 1 and Team 2
+                teams[i] = new TeamManager(i + 1, teamColors[i]);
+            }
+            NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
         }
-        NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
-    }
     public void Scored(TeamManager team) {
         // One team just scored
         //

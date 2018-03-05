@@ -70,7 +70,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             dashSpeed += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
-	    playerMovement.RotatePlayer();
+            playerMovement.RotatePlayer();
 
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {

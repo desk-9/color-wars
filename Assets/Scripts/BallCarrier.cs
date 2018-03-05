@@ -20,57 +20,57 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void Start() {
-	playerMovement = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
         input = playerMovement.GetInputDevice();
-	shootBall = GetComponent<ShootBallMechanic>();
+        shootBall = GetComponent<ShootBallMechanic>();
     }
 
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     public virtual void CarryBall(Ball ballIn) {
-	Debug.Log("Carrying ball! Owner: " + gameObject.name);
+        Debug.Log("Carrying ball! Owner: " + gameObject.name);
         ball = ballIn;
-	playerMovement.StopAllMovement();
+        playerMovement.StopAllMovement();
 	
-	var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
-	if (ballCollider != null) {
-	    ballCollider.enabled = false;
-	}
+        var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
+        if (ballCollider != null) {
+            ballCollider.enabled = false;
+        }
 
-	PlaceBallAtNose();
-	shootBall.WatchForShoot(ballIn, DropBall);
+        PlaceBallAtNose();
+        shootBall.WatchForShoot(ballIn, DropBall);
     }
 
     public virtual void DropBall() {
-	if (ball != null) {
-	    Debug.Log("Dropping ball! Owner: " + gameObject.name);
+        if (ball != null) {
+            Debug.Log("Dropping ball! Owner: " + gameObject.name);
 
-	    var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
+            var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
             if (ballCollider != null) {
                 ballCollider.enabled = true;
             }
 
-	    // Restart player motion
+            // Restart player motion
             playerMovement.StartPlayerMovement();
 
-	    // Reset references
-	    ball.RemoveOwner();
-	    ball = null;
-	}
+            // Reset references
+            ball.RemoveOwner();
+            ball = null;
+        }
     }
 
     void PlaceBallAtNose() {
-	if (ball != null) {
-	    ball.transform.position = transform.position +
-		(transform.right * ballOffsetFromCenter);
-	}
+        if (ball != null) {
+            ball.transform.position = transform.position +
+                (transform.right * ballOffsetFromCenter);
+        }
 
     }
 
     public virtual void Update() {
-	PlaceBallAtNose();
+        PlaceBallAtNose();
         
-	if (input == null) {
+        if (input == null) {
             input = playerMovement.GetInputDevice();
             return;
         }

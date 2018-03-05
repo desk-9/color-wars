@@ -11,10 +11,10 @@ public class TeamManager {
     List<Player> teamMembers = new List<Player>();
 
     public TeamManager(int teamNumber, Color teamColor)
-    {
-        this.teamNumber = teamNumber;
-        this.teamColor = teamColor;
-    }
+        {
+            this.teamNumber = teamNumber;
+            this.teamColor = teamColor;
+        }
 
 	public void ResetScore() {
 		score = 0;
@@ -28,15 +28,15 @@ public class TeamManager {
 	}
     
     public void AddTeamMember(Player newMember)
-    {
-        teamMembers.Add(newMember);
-    }
+        {
+            teamMembers.Add(newMember);
+        }
 
     public void FlashTeamColor()
-    {
-        foreach (var player in teamMembers) {
-            player.FlashTeamColor();
+        {
+            foreach (var player in teamMembers) {
+                player.FlashTeamColor();
+            }
         }
-    }
     
 }

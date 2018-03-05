@@ -15,44 +15,44 @@ public class ShootBallMechanic : MonoBehaviour {
     Coroutine shootTimer;
 
     public void WatchForShoot(Ball ball, Callback shotBallCallback) {
-	StartCoroutine(CoroutineUtility.
-		       RunThenCallback(ShootTimer(), () => Shoot(ball, shotBallCallback)));
+        StartCoroutine(CoroutineUtility.
+                       RunThenCallback(ShootTimer(), () => Shoot(ball, shotBallCallback)));
     }
 
     IEnumerator ShootTimer() {
-	float elapsedTime = 0f;
-	while (elapsedTime < forcedShotTime) {
-	    playerMovement.RotatePlayer();
+        float elapsedTime = 0f;
+        while (elapsedTime < forcedShotTime) {
+            playerMovement.RotatePlayer();
 
-	    if (inputDevice != null) {
-		if (inputDevice.GetControl(shootButton).WasPressed){
-		    yield break;
-		}
-	    }
+            if (inputDevice != null) {
+                if (inputDevice.GetControl(shootButton).WasPressed){
+                    yield break;
+                }
+            }
 		
-	    elapsedTime += Time.deltaTime;
-	    yield return null;
-	}
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
     }
 
     void Shoot(Ball ball, Callback shotBallCallback) {
-	shootTimer = null;
-	shotBallCallback();
+        shootTimer = null;
+        shotBallCallback();
 
-	Debug.Log("Shooting ball");
+        Debug.Log("Shooting ball");
 	
-	var shotDirection = ball.transform.position - transform.position;
-	var ballRigidBody = ball.GetComponent<Rigidbody2D>();
-	ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
+        var shotDirection = ball.transform.position - transform.position;
+        var ballRigidBody = ball.GetComponent<Rigidbody2D>();
+        ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
     }
 
     void Update() {
-	if (inputDevice == null) {
-	    inputDevice = playerMovement.GetInputDevice();
-	}
+        if (inputDevice == null) {
+            inputDevice = playerMovement.GetInputDevice();
+        }
     }
 
     void Start() {
-	playerMovement = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
     }
 }
