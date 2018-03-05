@@ -15,17 +15,17 @@ public class ShootBallMechanic : MonoBehaviour {
     Coroutine shootTimer;
 
     public void WatchForShoot(Ball ball, Callback shotBallCallback) {
-	shootTimer = StartCoroutine(ShootTimer(ball, shotBallCallback));
+	StartCoroutine(CoroutineUtility.
+		       RunThenCallback(ShootTimer(), () => Shoot(ball, shotBallCallback)));
     }
 
-    IEnumerator ShootTimer(Ball ball, Callback shotBallCallback) {
+    IEnumerator ShootTimer() {
 	float elapsedTime = 0f;
 	while (elapsedTime < forcedShotTime) {
 	    playerMovement.RotatePlayer();
 
 	    if (inputDevice != null) {
 		if (inputDevice.GetControl(shootButton).WasPressed){
-		    Shoot(ball, shotBallCallback);
 		    yield break;
 		}
 	    }
@@ -33,7 +33,6 @@ public class ShootBallMechanic : MonoBehaviour {
 	    elapsedTime += Time.deltaTime;
 	    yield return null;
 	}
-	Shoot(ball, shotBallCallback);
     }
 
     void Shoot(Ball ball, Callback shotBallCallback) {
