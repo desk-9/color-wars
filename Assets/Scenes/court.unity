@@ -910,9 +910,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreDisplayer: {fileID: 1774596751}
   teamColors:
-  - {r: 0.2022059, g: 0.20512168, b: 0.625, a: 1}
+  - {r: 0.10845588, g: 0.11369164, b: 0.86764705, a: 1}
   - {r: 0.75735295, g: 0, b: 0, a: 1}
-  scoreMax: 1
+  scoreMax: 7
 --- !u!4 &653058663
 Transform:
   m_ObjectHideFlags: 0

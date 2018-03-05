@@ -19,12 +19,15 @@ public class Player : MonoBehaviour {
         }
     }
 
-    IEnumerator FlashColorCoroutine()
+    IEnumerator FlashColorCoroutine(float? flashLength = null)
     {
+        if (!flashLength.HasValue) {
+            flashLength = colorFlashLength;
+        }
         Color originalColor = renderer.color;
 
         renderer.color = team.teamColor;
-        yield return new WaitForSeconds(colorFlashLength);
+        yield return new WaitForSeconds(flashLength.Value);
 
         float elapsedTime = 0f;
         while (elapsedTime < colorFlashFadeTime) {
@@ -40,5 +43,6 @@ public class Player : MonoBehaviour {
         renderer = GetComponent<SpriteRenderer>();
         team = GameModel.instance.GetTeamAssignment(this);
         Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
+        StartCoroutine(FlashColorCoroutine(6f));
 	}
 }
