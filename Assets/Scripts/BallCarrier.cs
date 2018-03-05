@@ -6,14 +6,14 @@ using IC = InControl;
 
 public class BallCarrier : MonoBehaviour {
 
-    public IC.InputControlType dropBallButton = IC.InputControlType.Action1; // A
-
     public float stunTime = 1.0f;
     public float ballDistance = 1.0f;
+    public float ballOffsetFromCenter = .5f;
 
     protected Ball ball = null;
     PlayerMovement playerMovement;
     IC.InputDevice input;
+    ShootBall shootBall;
 
     public bool IsCarryingBall {
         get {return ball != null;}
@@ -22,6 +22,7 @@ public class BallCarrier : MonoBehaviour {
     void Start() {
 	playerMovement = GetComponent<PlayerMovement>();
         input = playerMovement.GetInputDevice();
+	shootBall = GetComponent<ShootBall>();
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -30,44 +31,48 @@ public class BallCarrier : MonoBehaviour {
 	Debug.Log("Carrying ball! Owner: " + gameObject.name);
         ball = ballIn;
 	playerMovement.StopAllMovement();
+	
+	var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
+	if (ballCollider != null) {
+	    ballCollider.enabled = false;
+	}
+
+	PlaceBallAtNose();
+	shootBall.WatchForShoot(ballIn, DropBall);
     }
 
     public virtual void DropBall() {
 	if (ball != null) {
 	    Debug.Log("Dropping ball! Owner: " + gameObject.name);
 
+	    var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
+            if (ballCollider != null) {
+                ballCollider.enabled = true;
+            }
+
 	    // Restart player motion
             playerMovement.StartPlayerMovement();
 
-            // Stop the ball
-            var ballRigidbody = ball.GetComponent<Rigidbody2D>();
-            ballRigidbody.velocity = Vector3.zero;
-
 	    // Reset references
-	    ball.owner = null;
+	    ball.RemoveOwner();
 	    ball = null;
 	}
     }
 
-    public virtual void Update() {
-        UpdateBallPosition();
-        
-	if (input == null) {
-            input = playerMovement.GetInputDevice();
-            return;
-        }
-
-	if (input.GetControl(dropBallButton).WasPressed) {
-	    DropBall();
+    void PlaceBallAtNose() {
+	if (ball != null) {
+	    ball.transform.position = transform.position +
+		(transform.right * ballOffsetFromCenter);
 	}
 
     }
 
-    public virtual void UpdateBallPosition() {
-        if (ball!= null) {
-            var targetPosition = transform.position;
-            var offsetVector = -transform.forward * ballDistance;
-            ball.transform.position = targetPosition + offsetVector;
+    public virtual void Update() {
+	PlaceBallAtNose();
+        
+	if (input == null) {
+            input = playerMovement.GetInputDevice();
+            return;
         }
     }
 

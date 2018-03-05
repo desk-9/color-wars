@@ -70,8 +70,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             dashSpeed += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
-            var direction = new Vector2(input.LeftStickX, input.LeftStickY);
-            if (direction != Vector2.zero) rb.rotation = Vector2.SignedAngle(Vector2.right, direction);
+	    playerMovement.RotatePlayer();
 
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {

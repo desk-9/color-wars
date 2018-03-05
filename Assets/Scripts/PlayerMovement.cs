@@ -42,6 +42,15 @@ public class PlayerMovement : MonoBehaviour {
 	}
     }
 
+    public void RotatePlayer() {
+	if (inputDevice != null) {   
+	    var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
+	    if (direction != Vector2.zero) {
+		rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
+	    }
+	}
+    }
+
     // Handles players movement on the game board
     IEnumerator Move ()
     {
