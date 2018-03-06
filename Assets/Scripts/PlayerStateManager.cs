@@ -1,40 +1,82 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityExtensions;
 
-enum States {StartupState, NormalMovement, Dash, ChargeDash, Posession, Knockback};
+public enum States
+{ StartupState,
+  NormalMovement,
+  Dash,
+  Posession,
+  ChargeShot,
+  Knockback,
+};
 
 public class PlayerStateManager : MonoBehaviour {
 
+    public delegate void SubscriberCallback(bool isEnteringState);
+
+    SortedDictionary<States, List<SubscriberCallback>> subscribers =
+	new SortedDictionary<States, List<SubscriberCallback>>();
     States currentState;
-    Coroutine currentStateCoroutine;
+    Callback stopCurrentState;
+    States defaultState = States.NormalMovement;
+    Callback startDefaultState;
+    Callback stopDefaultState;
     
     void Start() {
 	currentState = States.StartupState;
-    }
-
-    public void AttemptDashCharge(IEnumerator dashCharge){
-	if (IsInState(States.NormalMovement)) {
-	    SwitchToState(States.ChargeDash, dashCharge);
+	stopCurrentState = null; 
+	foreach (var state in (States[])System.Enum.GetValues(typeof(States))) {
+	    subscribers[state] = new List<SubscriberCallback>();
 	}
     }
 
-    public void AttemptDash(IEnumerator dash) {
-	if (IsInState(States.ChargeDash)){
-	    SwitchToState(States.Dash, dash);
+    public void SignUpForStateAlert(States onEntry, SubscriberCallback callback){
+	subscribers[onEntry].Add(callback);
+    }
+
+    public void CurrentStateHasFinished() {
+	SwitchToState(defaultState, startDefaultState, stopDefaultState);
+    }
+
+    public void AttemptNormalMovement(Callback start, Callback stop){
+	if (IsInState(States.StartupState)) {
+	    currentState = States.NormalMovement;
+	    startDefaultState = start;
+	    stopDefaultState = stopCurrentState = stop;
+	    start();
 	} else {
-	    Debug.LogError("A state other than ChargeDash attempted to dash");
+	    Debug.LogErrorFormat("Tried to start NormalMovementState while in {0}", currentState);
 	}
     }
 
-    public void ExitDash() {
-	SwitchToState(State state, IEnumerator newCoroutine)
+    public void AttemptDash(Callback start, Callback stop){
+	if (IsInState(States.NormalMovement)) {
+	    SwitchToState(States.Dash, start, stop);
+	}
     }
 
-    void SwitchToState(States state, IEnumerator newCoroutine){
+    public void AttemptPossession(Callback start, Callback stop) {
+	if (IsInState(States.NormalMovement, States.Dash)) {
+	    SwitchToState(States.Posession, start, stop);
+	}
+    }
+
+    void SwitchToState(States state, Callback start, Callback stop){
+	stopCurrentState();
+	AlertSubscribers(currentState, false);
+	
 	currentState = state;
-	StopCoroutine(currentStateCoroutine);
-	currentStateCoroutine = StartCoroutine(newCoroutine);
+	start();
+	stopCurrentState = stop;
+	AlertSubscribers(state, true);
+    }
+
+    void AlertSubscribers(States state, bool isEnteringState){
+	foreach (var subscriberCallback in subscribers[state]){
+	    subscriberCallback(isEnteringState);
+	}
     }
 
     bool IsInState(params States[] states){

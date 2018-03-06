@@ -30,6 +30,7 @@ GameObject:
   - component: {fileID: 114177724964163498}
   - component: {fileID: 114319027261209328}
   - component: {fileID: 114631768565738774}
+  - component: {fileID: 114920135743144974}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -215,6 +216,17 @@ MonoBehaviour:
   stunTime: 1
   ballDistance: 1
   ballOffsetFromCenter: 1
+--- !u!114 &114920135743144974
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b46c230ed06b43dbb065352c75f1577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212918527776535888
 SpriteRenderer:
   m_ObjectHideFlags: 1

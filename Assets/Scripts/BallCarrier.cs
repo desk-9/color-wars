@@ -1,61 +1,78 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityExtensions;
 
 using IC = InControl;
 
 public class BallCarrier : MonoBehaviour {
 
-    public float stunTime = 1.0f;
-    public float ballDistance = 1.0f;
     public float ballOffsetFromCenter = .5f;
+    public float coolDownTime = .1f;
 
-    protected Ball ball = null;
+    public Ball ball { private set; get;}
     PlayerMovement playerMovement;
     IC.InputDevice input;
-    ShootBallMechanic shootBall;
+    PlayerStateManager stateManager;
+    Coroutine carryBallCoroutine;
+    bool isCoolingDown = false;
 
-    public bool IsCarryingBall {
-        get {return ball != null;}
+    public bool IsCarryingBall() {
+	return ball != null;
     }
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
         input = playerMovement.GetInputDevice();
-        shootBall = GetComponent<ShootBallMechanic>();
+	stateManager = GetComponent<PlayerStateManager>();
     }
 
     // This function is called when the BallCarrier initially gains possession
     // of the ball
-    public virtual void CarryBall(Ball ballIn) {
+    void StartCarryingBall(Ball ball) {
+	carryBallCoroutine = StartCoroutine(CarryBall(ball));
+    }
+
+    IEnumerator CarryBall(Ball ball) {
         Debug.Log("Carrying ball! Owner: " + gameObject.name);
-        ball = ballIn;
-        playerMovement.StopAllMovement();
+	GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        this.ball = ball;
+	ball.SetOwner(this);
 	
         var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
         if (ballCollider != null) {
             ballCollider.enabled = false;
         }
 
-        PlaceBallAtNose();
-        shootBall.WatchForShoot(ballIn, DropBall);
+	while (true) {
+	    playerMovement.RotatePlayer();
+	    PlaceBallAtNose();
+	    yield return null;
+	}
     }
 
-    public virtual void DropBall() {
+    IEnumerator CoolDownTimer() {
+	isCoolingDown = true;
+	yield return new WaitForSeconds(coolDownTime);
+	isCoolingDown = false;
+    }
+
+    public void DropBall() {
         if (ball != null) {
             Debug.Log("Dropping ball! Owner: " + gameObject.name);
+
+	    StopCoroutine(carryBallCoroutine);
+	    carryBallCoroutine = null;
 
             var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
             if (ballCollider != null) {
                 ballCollider.enabled = true;
             }
 
-            // Restart player motion
-            playerMovement.StartPlayerMovement();
-
             // Reset references
             ball.RemoveOwner();
             ball = null;
+	    StartCoroutine(CoolDownTimer());
         }
     }
 
@@ -68,12 +85,20 @@ public class BallCarrier : MonoBehaviour {
     }
 
     public virtual void Update() {
-        PlaceBallAtNose();
-        
         if (input == null) {
             input = playerMovement.GetInputDevice();
             return;
         }
     }
+
+    public void OnCollisionEnter2D(Collision2D collision) {
+	var ball = collision.gameObject.GetComponent<Ball>();
+	if (ball == null || ball.HasOwner() || isCoolingDown){
+	    Debug.Log(isCoolingDown);
+	    return;
+	}
+	stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
+    }
+
 
 }

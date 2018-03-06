@@ -14,7 +14,11 @@ public class PlayerMovement : MonoBehaviour {
     PlayerInputManager playerInput;
     PlayerStateManager stateManager;
 
-    public void StopAllMovement() {
+    void StartPlayerMovement() {
+        playerMovementCoroutine = StartCoroutine(Move());       
+    }
+
+    void StopAllMovement() {
         if (playerMovementCoroutine != null) {
             StopCoroutine(playerMovementCoroutine);
             rb2d.velocity = Vector2.zero;
@@ -60,7 +64,7 @@ public class PlayerMovement : MonoBehaviour {
     void TryToGetInputDevice() {
         inputDevice = playerInput.GetInputDevice(InputDeviceDisconnectedCallback);
         if (inputDevice != null) {
-            StartPlayerMovement();
+	    stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
         }
     }
 

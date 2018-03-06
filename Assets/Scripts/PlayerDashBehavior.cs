@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using IC = InControl;
 
 [RequireComponent(typeof(PlayerMovement))]
@@ -16,6 +15,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     PlayerMovement playerMovement;
     IC.InputDevice input;
     Rigidbody2D    rb;
+    Coroutine      chargeCoroutine;
+    Coroutine      dashCoroutine;
     PlayerStateManager stateManager;
 
     void Start() {
@@ -30,12 +31,26 @@ public class PlayerDashBehavior : MonoBehaviour {
             input = playerMovement.GetInputDevice();
             return;
         }
-
-        if (input.GetControl(dashButton).WasPressed) {
-	    stateManager.AttemptDashCharge(Charge());
-            chargeCoroutine = StartCoroutine(Charge());
-        }
 	
+        if (input.GetControl(dashButton).WasPressed) {
+	    stateManager.AttemptDash(StartDash, StopDash);
+        }
+    }
+
+    void StartDash() {
+	chargeCoroutine = StartCoroutine(Charge());
+    }
+
+    void StopDash() {
+	if (chargeCoroutine != null) {
+	    StopCoroutine(chargeCoroutine);
+	    chargeCoroutine = null;
+	}
+	if (dashCoroutine != null) {
+	    StopCoroutine(dashCoroutine);
+	    dashCoroutine = null;
+	    rb.velocity = Vector2.zero;
+	}
     }
 
     IEnumerator Charge() {
@@ -50,7 +65,9 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {
-		stateManager.AttemptDash(Dash(dashSpeed));
+                dashCoroutine   = StartCoroutine(Dash(dashSpeed));
+                chargeCoroutine = null;
+                yield break;
             }
 
             yield return null;
@@ -69,5 +86,8 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             yield return null;
         }
+
+        dashCoroutine = null;
+	stateManager.CurrentStateHasFinished();
     }
 }

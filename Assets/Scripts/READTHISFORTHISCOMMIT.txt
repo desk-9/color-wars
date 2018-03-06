@@ -1,6 +1,0 @@
-The reason you decided not to go with just Stopping the coroutine on state
-change switch is that it assumes that all states can just be stopped where they
-are with no cleanup. This is not the case. For example, stopping normal player
-movement, you actually need to set the rigidbody's speed to zero. Furthermore,
-on the end of a dash, what do you do? AttemptToEnterNormalState? Then Dash knows
-about the states, etc. I think it would be best to register callback.
