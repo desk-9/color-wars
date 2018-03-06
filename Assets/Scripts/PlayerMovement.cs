@@ -7,47 +7,32 @@ using InControl;
 public class PlayerMovement : MonoBehaviour {
 
     public float movementSpeed;
-    public Callback StartMovementFunction = delegate {};
-    public Callback StopMovementFunction = delegate {};
 
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
     PlayerInputManager playerInput;
-
-    public void StartPlayerMovement() {
-        playerMovementCoroutine = StartCoroutine(Move());
-        StartMovementFunction();
-    }
-
-    public void ParalyzePlayer(float timePeriod) {
-        StartCoroutine(PausePlayerMovement(timePeriod));
-    }
-
-    public IEnumerator PausePlayerMovement(float timePeriod) {
-        StopAllMovement();
-        yield return new WaitForSeconds(timePeriod);
-        StartPlayerMovement();
-    }
+    PlayerStateManager stateManager;
 
     public void StopAllMovement() {
         if (playerMovementCoroutine != null) {
             StopCoroutine(playerMovementCoroutine);
             rb2d.velocity = Vector2.zero;
-            StopMovementFunction();
         }
     }
 
-    public void RotatePlayer() {
-        if (inputDevice != null) {   
-            var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
-            if (direction != Vector2.zero) {
-                rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
-            }
-        }
+    public void RotatePlayer () {
+	if (inputDevice == null) {
+	    return;
+	}
+	var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
+	if (direction != Vector2.zero) {
+	    // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
+            // and player snaps to up direction
+	    rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
+	}
     }
 
-    // Handles players movement on the game board
     IEnumerator Move () {
         if (inputDevice == null) {
             yield break;
@@ -58,11 +43,7 @@ public class PlayerMovement : MonoBehaviour {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
             rb2d.velocity = movementSpeed * direction;
 
-            // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
-            // and player snaps to up direction
-            if (direction != Vector2.zero) {
-                rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
-            }
+	    RotatePlayer();
             yield return new WaitForFixedUpdate();
         }
     }
@@ -71,6 +52,7 @@ public class PlayerMovement : MonoBehaviour {
     void Start () {
         rb2d = GetComponent<Rigidbody2D>();
         playerInput = GameModel.instance.GetComponent<PlayerInputManager>();
+	stateManager = GetComponent<PlayerStateManager>();
 
         TryToGetInputDevice();
     }

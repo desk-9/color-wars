@@ -16,28 +16,13 @@ public class PlayerDashBehavior : MonoBehaviour {
     PlayerMovement playerMovement;
     IC.InputDevice input;
     Rigidbody2D    rb;
-    Coroutine      chargeCoroutine;
-    Coroutine      dashCoroutine;
+    PlayerStateManager stateManager;
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
         input          = playerMovement.GetInputDevice();
         rb             = GetComponent<Rigidbody2D>();
-
-        // playerMovement should never be null, bc of RequireComponent
-        playerMovement.StartMovementFunction += ResetStateMachine;
-        playerMovement.StopMovementFunction += ResetStateMachine;
-    }
-
-    public void ResetStateMachine() {
-        if (chargeCoroutine != null) {
-            StopCoroutine(chargeCoroutine);
-            chargeCoroutine = null;
-        }
-        if (dashCoroutine != null) {
-            StopCoroutine(dashCoroutine);
-            dashCoroutine = null;
-        }
+	stateManager = GetComponent<PlayerStateManager>();
     }
 
     void Update() {
@@ -46,23 +31,14 @@ public class PlayerDashBehavior : MonoBehaviour {
             return;
         }
 
-        var ballCarrier = GetComponent<BallCarrier>();
-        if (ballCarrier.IsCarryingBall) {
-            return;
-        }
-        
-        // Do nothing if currently in dashing state.
-        if (dashCoroutine != null) return;
-
-        if (chargeCoroutine == null && input.GetControl(dashButton).WasPressed) {
+        if (input.GetControl(dashButton).WasPressed) {
+	    stateManager.AttemptDashCharge(Charge());
             chargeCoroutine = StartCoroutine(Charge());
         }
+	
     }
 
     IEnumerator Charge() {
-        // Take control over player movement.
-        playerMovement.StopAllMovement();
-
         var dashSpeed       = 1.0f;
         var startChargeTime = Time.time;
 
@@ -74,9 +50,7 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {
-                dashCoroutine   = StartCoroutine(Dash(dashSpeed));
-                chargeCoroutine = null;
-                yield break;
+		stateManager.AttemptDash(Dash(dashSpeed));
             }
 
             yield return null;
@@ -95,11 +69,5 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             yield return null;
         }
-
-        // Return normal movement control to player.
-        playerMovement.StartPlayerMovement();
-        dashCoroutine = null;
-
-        yield break;
     }
 }
