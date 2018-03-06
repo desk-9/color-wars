@@ -49,7 +49,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 	if (dashCoroutine != null) {
 	    StopCoroutine(dashCoroutine);
 	    dashCoroutine = null;
-	    rb.velocity = Vector2.zero;
 	}
     }
 

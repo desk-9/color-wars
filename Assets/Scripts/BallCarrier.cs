@@ -94,7 +94,6 @@ public class BallCarrier : MonoBehaviour {
     public void OnCollisionEnter2D(Collision2D collision) {
 	var ball = collision.gameObject.GetComponent<Ball>();
 	if (ball == null || ball.HasOwner() || isCoolingDown){
-	    Debug.Log(isCoolingDown);
 	    return;
 	}
 	stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
