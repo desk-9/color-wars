@@ -33,22 +33,18 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
 	
         if (input.GetControl(dashButton).WasPressed) {
-	    stateManager.AttemptDash(StartDash, StopDash);
+	    stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
     }
 
-    void StartDash() {
+    void StartChargeDash() {
 	chargeCoroutine = StartCoroutine(Charge());
     }
 
-    void StopDash() {
+    void StopChargeDash() {
 	if (chargeCoroutine != null) {
 	    StopCoroutine(chargeCoroutine);
 	    chargeCoroutine = null;
-	}
-	if (dashCoroutine != null) {
-	    StopCoroutine(dashCoroutine);
-	    dashCoroutine = null;
 	}
     }
 
@@ -64,13 +60,25 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {
-                dashCoroutine   = StartCoroutine(Dash(dashSpeed));
+		stateManager.AttemptDash(() => StartDash(dashSpeed), StopDash);
+		// This technically probably wont get run
                 chargeCoroutine = null;
                 yield break;
             }
 
             yield return null;
         }
+    }
+
+    void StartDash(float dashSpeed) {
+	dashCoroutine   = StartCoroutine(Dash(dashSpeed));
+    }
+
+    void StopDash() {
+	if (dashCoroutine != null) {
+	    StopCoroutine(dashCoroutine);
+	    dashCoroutine = null;
+	}
     }
 
     IEnumerator Dash(float dashSpeed) {

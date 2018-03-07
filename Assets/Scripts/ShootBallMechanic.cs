@@ -60,6 +60,6 @@ public class ShootBallMechanic : MonoBehaviour {
         playerMovement = GetComponent<PlayerMovement>();
 	ballCarrier = GetComponent<BallCarrier>();
 	stateManager = 	GetComponent<PlayerStateManager>();
-	stateManager.SignUpForStateAlert(States.Posession, PossessionAlertCallback);
+	stateManager.SignUpForStateAlert(State.Posession, PossessionAlertCallback);
     }
 }

@@ -3,9 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
 
-public enum States
+// To add a state, do the following:
+// 1) Add a state to the enum
+// 2) Add an Attempt[YourState] method
+// 3) Be sure to add any valid exit transitions to the other AttemptState methods
+//    i.e. if it is valid to transition from your new state to ChargeDash, add that in
+//    AttemptChargeDash
+
+public enum State
 { StartupState,
   NormalMovement,
+  ChargeDash,
   Dash,
   Posession,
   ChargeShot,
@@ -16,23 +24,23 @@ public class PlayerStateManager : MonoBehaviour {
 
     public delegate void SubscriberCallback(bool isEnteringState);
 
-    SortedDictionary<States, List<SubscriberCallback>> subscribers =
-	new SortedDictionary<States, List<SubscriberCallback>>();
-    States currentState;
+    SortedDictionary<State, List<SubscriberCallback>> subscribers =
+	new SortedDictionary<State, List<SubscriberCallback>>();
+    State currentState;
     Callback stopCurrentState;
-    States defaultState = States.NormalMovement;
+    State defaultState = State.NormalMovement;
     Callback startDefaultState;
     Callback stopDefaultState;
     
     void Start() {
-	currentState = States.StartupState;
+	currentState = State.StartupState;
 	stopCurrentState = null; 
-	foreach (var state in (States[])System.Enum.GetValues(typeof(States))) {
+	foreach (var state in (State[])System.Enum.GetValues(typeof(State))) {
 	    subscribers[state] = new List<SubscriberCallback>();
 	}
     }
 
-    public void SignUpForStateAlert(States onEntry, SubscriberCallback callback){
+    public void SignUpForStateAlert(State onEntry, SubscriberCallback callback){
 	subscribers[onEntry].Add(callback);
     }
 
@@ -41,8 +49,8 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     public void AttemptNormalMovement(Callback start, Callback stop){
-	if (IsInState(States.StartupState)) {
-	    currentState = States.NormalMovement;
+	if (IsInState(State.StartupState)) {
+	    currentState = State.NormalMovement;
 	    startDefaultState = start;
 	    stopDefaultState = stopCurrentState = stop;
 	    start();
@@ -51,19 +59,25 @@ public class PlayerStateManager : MonoBehaviour {
 	}
     }
 
-    public void AttemptDash(Callback start, Callback stop){
-	if (IsInState(States.NormalMovement)) {
-	    SwitchToState(States.Dash, start, stop);
+    public void AttemptDashCharge(Callback start, Callback stop){
+	if (IsInState(State.NormalMovement)) {
+	    SwitchToState(State.ChargeDash, start, stop);
 	}
     }
 
     public void AttemptPossession(Callback start, Callback stop) {
-	if (IsInState(States.NormalMovement, States.Dash)) {
-	    SwitchToState(States.Posession, start, stop);
+	if (IsInState(State.NormalMovement, State.Dash, State.ChargeDash)) {
+	    SwitchToState(State.Posession, start, stop);
 	}
     }
 
-    void SwitchToState(States state, Callback start, Callback stop){
+    public void AttemptDash(Callback start, Callback stop) {
+	if (IsInState(State.ChargeDash)) {
+	    SwitchToState(State.Dash, start, stop);
+	}
+    }
+
+    void SwitchToState(State state, Callback start, Callback stop){
 	stopCurrentState();
 	AlertSubscribers(currentState, false);
 	
@@ -73,13 +87,13 @@ public class PlayerStateManager : MonoBehaviour {
 	AlertSubscribers(state, true);
     }
 
-    void AlertSubscribers(States state, bool isEnteringState){
+    void AlertSubscribers(State state, bool isEnteringState){
 	foreach (var subscriberCallback in subscribers[state]){
 	    subscriberCallback(isEnteringState);
 	}
     }
 
-    bool IsInState(params States[] states){
+    bool IsInState(params State[] states){
 	foreach(var state in states){
 	    if (currentState == state) {
 		return true;
