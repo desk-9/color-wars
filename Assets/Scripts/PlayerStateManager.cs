@@ -40,10 +40,13 @@ public class PlayerStateManager : MonoBehaviour {
 	}
     }
 
+    // Schedules a callback whenever information with respect to a state changes
     public void SignUpForStateAlert(State onEntry, SubscriberCallback callback){
 	subscribers[onEntry].Add(callback);
     }
 
+    // This method should be called if a state exits without being forced, such as
+    // the end of a dash, or after giving away possession of ball.
     public void CurrentStateHasFinished() {
 	SwitchToState(defaultState, startDefaultState, stopDefaultState);
     }
