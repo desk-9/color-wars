@@ -27,16 +27,16 @@ public class ShootBallMechanic : MonoBehaviour {
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-	Shoot();
+        Shoot();
     }
 
     void Shoot() {
-	var ball = ballCarrier.ball;
-	ballCarrier.DropBall();
+        var ball = ballCarrier.ball;
+        ballCarrier.DropBall();
         var shotDirection = ball.transform.position - transform.position;
         var ballRigidBody = ball.GetComponent<Rigidbody2D>();
         ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
-	stateManager.CurrentStateHasFinished();
+        stateManager.CurrentStateHasFinished();
     }
 
     void Update() {
@@ -46,20 +46,20 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void PossessionAlertCallback(bool receivedPossession){
-	if (receivedPossession){
-	    shootTimer = StartCoroutine(ShootTimer());
-	} else {
-	    if (shootTimer != null) {
-		StopCoroutine(shootTimer);
-		shootTimer = null;
-	    }
-	}
+        if (receivedPossession){
+            shootTimer = StartCoroutine(ShootTimer());
+        } else {
+            if (shootTimer != null) {
+                StopCoroutine(shootTimer);
+                shootTimer = null;
+            }
+        }
     }
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
-	ballCarrier = GetComponent<BallCarrier>();
-	stateManager = 	GetComponent<PlayerStateManager>();
-	stateManager.SignUpForStateAlert(State.Posession, PossessionAlertCallback);
+        ballCarrier = GetComponent<BallCarrier>();
+        stateManager =  GetComponent<PlayerStateManager>();
+        stateManager.SignUpForStateAlert(State.Posession, PossessionAlertCallback);
     }
 }

@@ -23,7 +23,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         playerMovement = GetComponent<PlayerMovement>();
         input          = playerMovement.GetInputDevice();
         rb             = GetComponent<Rigidbody2D>();
-	stateManager = GetComponent<PlayerStateManager>();
+        stateManager = GetComponent<PlayerStateManager>();
     }
 
     void Update() {
@@ -31,21 +31,21 @@ public class PlayerDashBehavior : MonoBehaviour {
             input = playerMovement.GetInputDevice();
             return;
         }
-	
+        
         if (input.GetControl(dashButton).WasPressed) {
-	    stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
+            stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
     }
 
     void StartChargeDash() {
-	chargeCoroutine = StartCoroutine(Charge());
+        chargeCoroutine = StartCoroutine(Charge());
     }
 
     void StopChargeDash() {
-	if (chargeCoroutine != null) {
-	    StopCoroutine(chargeCoroutine);
-	    chargeCoroutine = null;
-	}
+        if (chargeCoroutine != null) {
+            StopCoroutine(chargeCoroutine);
+            chargeCoroutine = null;
+        }
     }
 
     IEnumerator Charge() {
@@ -60,8 +60,8 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {
-		stateManager.AttemptDash(() => StartDash(dashSpeed), StopDash);
-		// This technically probably wont get run
+                stateManager.AttemptDash(() => StartDash(dashSpeed), StopDash);
+                // This technically probably wont get run
                 chargeCoroutine = null;
                 yield break;
             }
@@ -71,14 +71,14 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     void StartDash(float dashSpeed) {
-	dashCoroutine   = StartCoroutine(Dash(dashSpeed));
+        dashCoroutine   = StartCoroutine(Dash(dashSpeed));
     }
 
     void StopDash() {
-	if (dashCoroutine != null) {
-	    StopCoroutine(dashCoroutine);
-	    dashCoroutine = null;
-	}
+        if (dashCoroutine != null) {
+            StopCoroutine(dashCoroutine);
+            dashCoroutine = null;
+        }
     }
 
     IEnumerator Dash(float dashSpeed) {
@@ -95,6 +95,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
 
         dashCoroutine = null;
-	stateManager.CurrentStateHasFinished();
+        stateManager.CurrentStateHasFinished();
     }
 }

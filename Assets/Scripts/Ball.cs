@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
 
-public class Ball : MonoBehaviour {	
-    // A BallCarrier is allowed to "possess" or "carry" the ball
-    // The `owner` property stores a reference to the current owner.
-
+public class Ball : MonoBehaviour {
+    
     Vector2 start_location;
     BallCarrier owner = null;
 
@@ -15,11 +13,11 @@ public class Ball : MonoBehaviour {
     }
 
     public void SetOwner(BallCarrier ballCarrier){
-	owner = ballCarrier;
+        owner = ballCarrier;
     }
 
     public bool HasOwner() {
-	return owner != null;
+        return owner != null;
     }
 
     void Start() {

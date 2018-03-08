@@ -18,51 +18,51 @@ public class BallCarrier : MonoBehaviour {
     bool isCoolingDown = false;
 
     public bool IsCarryingBall() {
-	return ball != null;
+        return ball != null;
     }
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
         input = playerMovement.GetInputDevice();
-	stateManager = GetComponent<PlayerStateManager>();
+        stateManager = GetComponent<PlayerStateManager>();
     }
 
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     void StartCarryingBall(Ball ball) {
-	carryBallCoroutine = StartCoroutine(CarryBall(ball));
+        carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 
     IEnumerator CarryBall(Ball ball) {
         Debug.Log("Carrying ball! Owner: " + gameObject.name);
-	GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         this.ball = ball;
-	ball.SetOwner(this);
-	
+        ball.SetOwner(this);
+        
         var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
         if (ballCollider != null) {
             ballCollider.enabled = false;
         }
 
-	while (true) {
-	    playerMovement.RotatePlayer();
-	    PlaceBallAtNose();
-	    yield return null;
-	}
+        while (true) {
+            playerMovement.RotatePlayer();
+            PlaceBallAtNose();
+            yield return null;
+        }
     }
 
     IEnumerator CoolDownTimer() {
-	isCoolingDown = true;
-	yield return new WaitForSeconds(coolDownTime);
-	isCoolingDown = false;
+        isCoolingDown = true;
+        yield return new WaitForSeconds(coolDownTime);
+        isCoolingDown = false;
     }
 
     public void DropBall() {
         if (ball != null) {
             Debug.Log("Dropping ball! Owner: " + gameObject.name);
 
-	    StopCoroutine(carryBallCoroutine);
-	    carryBallCoroutine = null;
+            StopCoroutine(carryBallCoroutine);
+            carryBallCoroutine = null;
 
             var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
             if (ballCollider != null) {
@@ -72,7 +72,7 @@ public class BallCarrier : MonoBehaviour {
             // Reset references
             ball.RemoveOwner();
             ball = null;
-	    StartCoroutine(CoolDownTimer());
+            StartCoroutine(CoolDownTimer());
         }
     }
 
@@ -92,11 +92,11 @@ public class BallCarrier : MonoBehaviour {
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
-	var ball = collision.gameObject.GetComponent<Ball>();
-	if (ball == null || ball.HasOwner() || isCoolingDown){
-	    return;
-	}
-	stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
+        var ball = collision.gameObject.GetComponent<Ball>();
+        if (ball == null || ball.HasOwner() || isCoolingDown){
+            return;
+        }
+        stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
     }
 
 
