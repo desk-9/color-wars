@@ -4,27 +4,30 @@ using UnityEngine;
 using IC = InControl;
 using UtilityExtensions;
 
-[RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
-    public IC.InputControlType dashButton    = IC.InputControlType.Action2;
+    public IC.InputControlType dashButton = IC.InputControlType.Action2;
+    public GameObject          chargeEffect;
+    public GameObject          dashEffect;
     public float               maxChargeTime = 1.0f;
     public float               chargeRate    = 1.0f;
     public float               dashPower     = 0.1f;
     public float               dashDuration  = 0.0f;
 
-    PlayerMovement playerMovement;
-    IC.InputDevice input;
-    Rigidbody2D    rb;
-    Coroutine      chargeCoroutine;
-    Coroutine      dashCoroutine;
     PlayerStateManager stateManager;
+    PlayerMovement     playerMovement;
+    IC.InputDevice     input;
+    Rigidbody2D        rb;
+    Coroutine          chargeCoroutine;
+    Coroutine          dashCoroutine;
+    GameObject         effect;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         input          = playerMovement.GetInputDevice();
         rb             = this.EnsureComponent<Rigidbody2D>();
-        stateManager = this.EnsureComponent<PlayerStateManager>();
+        stateManager   = this.EnsureComponent<PlayerStateManager>();
     }
 
     void Update() {
@@ -32,7 +35,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             input = playerMovement.GetInputDevice();
             return;
         }
-        
+
         if (input.GetControl(dashButton).WasPressed) {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
@@ -40,12 +43,25 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     void StartChargeDash() {
         chargeCoroutine = StartCoroutine(Charge());
+
+        // Lock Player at current position when charging.
+        rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
+        // Start charging effect.
+        effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
     }
 
     void StopChargeDash() {
         if (chargeCoroutine != null) {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
+
+            // Release player from position lock.
+            rb.constraints = RigidbodyConstraints2D.None;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+            // Stop charging effect.
+            Destroy(effect);
         }
     }
 
@@ -62,8 +78,6 @@ public class PlayerDashBehavior : MonoBehaviour {
             // Start dash and terminate Charge coroutine.
             if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {
                 stateManager.AttemptDash(() => StartDash(dashSpeed), StopDash);
-                // This technically probably wont get run
-                chargeCoroutine = null;
                 yield break;
             }
 
@@ -72,7 +86,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     void StartDash(float dashSpeed) {
-        dashCoroutine   = StartCoroutine(Dash(dashSpeed));
+        dashCoroutine = StartCoroutine(Dash(dashSpeed));
     }
 
     void StopDash() {

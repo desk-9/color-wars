@@ -141,6 +141,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dashButton: 12
+  chargeEffect: {fileID: 1691723634291742, guid: 9d4eb0d1094684e6f8612a9e011f290c,
+    type: 2}
+  dashEffect: {fileID: 0}
   maxChargeTime: 1
   chargeRate: 10
   dashPower: 2
@@ -213,9 +216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stunTime: 1
-  ballDistance: 1
   ballOffsetFromCenter: 1
+  coolDownTime: 0.1
 --- !u!114 &114920135743144974
 MonoBehaviour:
   m_ObjectHideFlags: 1
