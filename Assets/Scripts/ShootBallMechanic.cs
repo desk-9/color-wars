@@ -34,7 +34,7 @@ public class ShootBallMechanic : MonoBehaviour {
         var ball = ballCarrier.ball;
         ballCarrier.DropBall();
         var shotDirection = ball.transform.position - transform.position;
-        var ballRigidBody = ball.GetComponent<Rigidbody2D>();
+        var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
         ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         stateManager.CurrentStateHasFinished();
     }
@@ -57,9 +57,9 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void Start() {
-        playerMovement = GetComponent<PlayerMovement>();
-        ballCarrier = GetComponent<BallCarrier>();
-        stateManager =  GetComponent<PlayerStateManager>();
+        playerMovement = this.EnsureComponent<PlayerMovement>();
+        ballCarrier = this.EnsureComponent<BallCarrier>();
+        stateManager =  this.EnsureComponent<PlayerStateManager>();
         stateManager.SignUpForStateAlert(State.Posession, PossessionAlertCallback);
     }
 }

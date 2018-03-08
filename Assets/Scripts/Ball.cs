@@ -6,15 +6,7 @@ using UtilityExtensions;
 public class Ball : MonoBehaviour {
     
     Vector2 start_location;
-    BallCarrier owner = null;
-
-    public void RemoveOwner() {
-        owner = null;
-    }
-
-    public void SetOwner(BallCarrier ballCarrier){
-        owner = ballCarrier;
-    }
+    public BallCarrier owner { get; set; }
 
     public bool HasOwner() {
         return owner != null;

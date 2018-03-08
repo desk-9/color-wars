@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using InControl;
+using UtilityExtensions;
 
 
 public class PlayerMovement : MonoBehaviour {
@@ -26,37 +27,37 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public void RotatePlayer () {
-        if (inputDevice == null) {
-            return;
-        }
-        var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
-        if (direction != Vector2.zero) {
-            // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
+	if (inputDevice == null) {
+	    return;
+	}
+	var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
+	if (direction != Vector2.zero) {
+	    // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
             // and player snaps to up direction
-            rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
-        }
+	    rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
+	}
     }
 
     IEnumerator Move () {
         if (inputDevice == null) {
             yield break;
         }
-        
+	
         yield return new WaitForFixedUpdate();
         while (true) {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
             rb2d.velocity = movementSpeed * direction;
 
-            RotatePlayer();
+	    RotatePlayer();
             yield return new WaitForFixedUpdate();
         }
     }
 
     // Use this for initialization
     void Start () {
-        rb2d = GetComponent<Rigidbody2D>();
-        playerInput = GameModel.instance.GetComponent<PlayerInputManager>();
-        stateManager = GetComponent<PlayerStateManager>();
+        rb2d = this.EnsureComponent<Rigidbody2D>();
+        playerInput = GameModel.instance.EnsureComponent<PlayerInputManager>();
+        stateManager = this.EnsureComponent<PlayerStateManager>();
 
         TryToGetInputDevice();
     }
@@ -64,7 +65,7 @@ public class PlayerMovement : MonoBehaviour {
     void TryToGetInputDevice() {
         inputDevice = playerInput.GetInputDevice(InputDeviceDisconnectedCallback);
         if (inputDevice != null) {
-            stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
+	    stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using IC = InControl;
+using UtilityExtensions;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -20,10 +21,10 @@ public class PlayerDashBehavior : MonoBehaviour {
     PlayerStateManager stateManager;
 
     void Start() {
-        playerMovement = GetComponent<PlayerMovement>();
+        playerMovement = this.EnsureComponent<PlayerMovement>();
         input          = playerMovement.GetInputDevice();
-        rb             = GetComponent<Rigidbody2D>();
-        stateManager = GetComponent<PlayerStateManager>();
+        rb             = this.EnsureComponent<Rigidbody2D>();
+        stateManager = this.EnsureComponent<PlayerStateManager>();
     }
 
     void Update() {
