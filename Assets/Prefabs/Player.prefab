@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashButton: 12
+  dashButton: 16
   chargeEffect: {fileID: 1691723634291742, guid: 9d4eb0d1094684e6f8612a9e011f290c,
     type: 2}
   dashEffect: {fileID: 0}

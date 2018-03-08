@@ -46,7 +46,7 @@ public class CustomPlayerProfile : UnityInputDeviceProfile {
             },
             new InputControlMapping {
                 Handle = "Dash",
-                Target = InputControlType.Action2,
+                Target = InputControlType.RightTrigger,
                 Source = KeyCodeButton( KeyCode.X )
             },
             new InputControlMapping {
