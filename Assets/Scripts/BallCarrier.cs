@@ -37,7 +37,7 @@ public class BallCarrier : MonoBehaviour {
         Debug.Log("Carrying ball! Owner: " + gameObject.name);
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         this.ball = ball;
-	ball.owner = this;
+        ball.owner = this;
         
         var ballCollider = ball.gameObject.GetComponent<CircleCollider2D>();
         if (ballCollider != null) {
@@ -70,7 +70,7 @@ public class BallCarrier : MonoBehaviour {
             }
 
             // Reset references
-	    ball.owner = null;
+            ball.owner = null;
             ball = null;
             StartCoroutine(CoolDownTimer());
         }

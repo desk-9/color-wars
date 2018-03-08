@@ -32,7 +32,7 @@ public class PlayerStateManager : MonoBehaviour {
     Callback startDefaultState;
     Callback stopDefaultState;
     
-    void Start() {
+    void Awake() {
         currentState = State.StartupState;
         stopCurrentState = null; 
         foreach (var state in (State[])System.Enum.GetValues(typeof(State))) {
