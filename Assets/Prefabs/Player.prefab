@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotSpeed: 30
-  forcedShotTime: 1
+  forcedShotTime: 5
   shootButton: 11
 --- !u!114 &114631768565738774
 MonoBehaviour:
