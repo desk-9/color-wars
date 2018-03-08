@@ -87,12 +87,18 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     void StartDash(float dashSpeed) {
         dashCoroutine = StartCoroutine(Dash(dashSpeed));
+
+        // Start dash effect.
+        effect = Instantiate(dashEffect, transform.position, transform.rotation, transform);
     }
 
     void StopDash() {
         if (dashCoroutine != null) {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
+
+            // Stop dash effect.
+            Destroy(effect);
         }
     }
 
