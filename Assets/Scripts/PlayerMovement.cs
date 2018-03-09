@@ -26,6 +26,14 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
+    public void FreezePlayer() {
+        rb2d.isKinematic = true;
+    }
+
+    public void UnFreezePlayer() {
+        rb2d.isKinematic = false;
+    }
+
     public void RotatePlayer () {
         if (inputDevice == null) {
             return;

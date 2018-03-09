@@ -45,7 +45,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         chargeCoroutine = StartCoroutine(Charge());
 
         // Lock Player at current position when charging.
-        rb.constraints = RigidbodyConstraints2D.FreezePosition;
+        playerMovement.FreezePlayer();
 
         // Start charging effect.
         effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
@@ -57,9 +57,8 @@ public class PlayerDashBehavior : MonoBehaviour {
             chargeCoroutine = null;
 
             // Release player from position lock.
-            rb.constraints = RigidbodyConstraints2D.None;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-
+            playerMovement.UnFreezePlayer();
+            
             // Stop charging effect.
             Destroy(effect);
         }

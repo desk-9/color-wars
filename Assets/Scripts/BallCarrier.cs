@@ -23,8 +23,19 @@ public class BallCarrier : MonoBehaviour {
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
-        input = playerMovement.GetInputDevice();
+        input = playerMovement?.GetInputDevice();
         stateManager = GetComponent<PlayerStateManager>();
+        if (playerMovement != null && stateManager != null) {
+            stateManager.SignUpForStateAlert(
+                State.Posession,
+                (bool starting) => {
+                    if (starting) {
+                        playerMovement.FreezePlayer();
+                    } else {
+                        playerMovement.UnFreezePlayer();
+                    }
+                });
+        }
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -45,7 +56,7 @@ public class BallCarrier : MonoBehaviour {
         }
 
         while (true) {
-            playerMovement.RotatePlayer();
+            playerMovement?.RotatePlayer();
             PlaceBallAtNose();
             yield return null;
         }
@@ -86,7 +97,7 @@ public class BallCarrier : MonoBehaviour {
 
     public virtual void Update() {
         if (input == null) {
-            input = playerMovement.GetInputDevice();
+            input = playerMovement?.GetInputDevice();
             return;
         }
     }
@@ -96,7 +107,11 @@ public class BallCarrier : MonoBehaviour {
         if (ball == null || ball.HasOwner() || isCoolingDown) {
             return;
         }
-        stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
+        if (stateManager != null) {
+            stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
+        } else {
+            StartCoroutine(CoroutineUtility.RunThenCallback(CarryBall(ball), DropBall));
+        }
     }
 
 
