@@ -41,10 +41,13 @@ public class Goal : MonoBehaviour {
     }
 
 	void ScoreGoal(Ball ball) {
-		currentTeam?.IncrementScore();
-		// TODO: Non-tweakable placeholder delay on ball reset until it's
-		// decided what should happen respawn-wise on goal scoring
-		this.TimeDelayCall(ball.ResetBall, 0.35f);
+        if (!ball.scored) {
+            ball.scored = true;
+            currentTeam?.IncrementScore();
+            // TODO: Non-tweakable placeholder delay on ball reset until it's
+            // decided what should happen respawn-wise on goal scoring
+            this.TimeDelayCall(ball.ResetBall, 0.35f);
+        }
 	}
 
 	void OnTriggerEnter2D(Collider2D collider) {

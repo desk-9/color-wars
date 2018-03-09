@@ -7,9 +7,10 @@ public class Ball : MonoBehaviour {
     
     Vector2 start_location;
     public BallCarrier owner { get; set; }
+    public bool scored {get; set;}
 
     public bool HasOwner() {
-        return owner != null;
+        return owner != null || scored;
     }
 
     void Start() {
@@ -18,6 +19,7 @@ public class Ball : MonoBehaviour {
 
     public void ResetBall() {
         transform.position = start_location;
+        scored = false;
         this.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 }
