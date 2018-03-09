@@ -47,8 +47,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         // Lock Player at current position when charging.
         playerMovement.FreezePlayer();
 
-        // Start charging effect.
-        effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
     }
 
     void StopChargeDash() {
@@ -58,9 +56,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             // Release player from position lock.
             playerMovement.UnFreezePlayer();
-            
-            // Stop charging effect.
-            Destroy(effect);
         }
     }
 
@@ -86,18 +81,12 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     void StartDash(float dashSpeed) {
         dashCoroutine = StartCoroutine(Dash(dashSpeed));
-
-        // Start dash effect.
-        effect = Instantiate(dashEffect, transform.position, transform.rotation, transform);
     }
 
     void StopDash() {
         if (dashCoroutine != null) {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
-
-            // Stop dash effect.
-            Destroy(effect);
         }
     }
 
