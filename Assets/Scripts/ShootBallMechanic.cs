@@ -45,21 +45,19 @@ public class ShootBallMechanic : MonoBehaviour {
         }
     }
 
-    void PossessionAlertCallback(bool receivedPossession){
-        if (receivedPossession){
-            shootTimer = StartCoroutine(ShootTimer());
-        } else {
-            if (shootTimer != null) {
-                StopCoroutine(shootTimer);
-                shootTimer = null;
-            }
-        }
-    }
-
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         ballCarrier = this.EnsureComponent<BallCarrier>();
         stateManager =  this.EnsureComponent<PlayerStateManager>();
-        stateManager.SignUpForStateAlert(State.Posession, PossessionAlertCallback);
+        stateManager.CallOnStateEnter(
+            State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
+        stateManager.CallOnStateExit(
+            State.Posession,
+            () => {
+                if (shootTimer != null) {
+                    StopCoroutine(shootTimer);
+                    shootTimer = null;
+                }
+            });
     }
 }

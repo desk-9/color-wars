@@ -20,12 +20,15 @@ public enum State
   Knockback,
 };
 
+public delegate void ToggleCallback(bool isEnteringState);
+
 public class PlayerStateManager : MonoBehaviour {
-
-    public delegate void SubscriberCallback(bool isEnteringState);
-
-    SortedDictionary<State, List<SubscriberCallback>> subscribers =
-        new SortedDictionary<State, List<SubscriberCallback>>();
+    SortedDictionary<State, List<ToggleCallback>> on_change_subscribers =
+        new SortedDictionary<State, List<ToggleCallback>>();
+    SortedDictionary<State, List<Callback>> on_start_subscribers =
+        new SortedDictionary<State, List<Callback>>();
+    SortedDictionary<State, List<Callback>> on_end_subscribers =
+        new SortedDictionary<State, List<Callback>>();
     State currentState;
     Callback stopCurrentState;
     State defaultState = State.NormalMovement;
@@ -34,15 +37,26 @@ public class PlayerStateManager : MonoBehaviour {
     
     void Awake() {
         currentState = State.StartupState;
-        stopCurrentState = null; 
-        foreach (var state in (State[])System.Enum.GetValues(typeof(State))) {
-            subscribers[state] = new List<SubscriberCallback>();
+        stopCurrentState = null;
+        foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
+            on_change_subscribers[state] = new List<ToggleCallback>();
+            on_start_subscribers[state] = new List<Callback>();
+            on_end_subscribers[state] = new List<Callback>();
         }
     }
 
-    // Schedules a callback whenever information with respect to a state changes
-    public void SignUpForStateAlert(State onEntry, SubscriberCallback callback){
-        subscribers[onEntry].Add(callback);
+    // Schedules a callback whenever information with respect to a certain state
+    // changes
+    public void CallOnStateEnterExit(State state, ToggleCallback callback){
+        on_change_subscribers[state].Add(callback);
+    }
+
+    public void CallOnStateEnter(State state, Callback callback) {
+        on_start_subscribers[state].Add(callback);
+    }
+    
+    public void CallOnStateExit(State state, Callback callback) {
+        on_end_subscribers[state].Add(callback);
     }
 
     // This method should be called if a state exits without being forced, such as
@@ -90,9 +104,18 @@ public class PlayerStateManager : MonoBehaviour {
         AlertSubscribers(state, true);
     }
 
-    void AlertSubscribers(State state, bool isEnteringState){
-        foreach (var subscriberCallback in subscribers[state]){
-            subscriberCallback(isEnteringState);
+    void AlertSubscribers(State state, bool isEnteringState) {
+        foreach (var callback in on_change_subscribers[state]) {
+            callback(isEnteringState);
+        }
+        if (isEnteringState) {
+            foreach (var callback in on_start_subscribers[state]) {
+                callback();
+            }
+        } else {
+            foreach (var callback in on_end_subscribers[state]) {
+                callback();
+            }
         }
     }
 
