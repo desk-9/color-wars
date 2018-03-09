@@ -99,7 +99,7 @@ public class BallCarrier : MonoBehaviour {
 
     public void OnCollisionEnter2D(Collision2D collision) {
         var ball = collision.gameObject.GetComponent<Ball>();
-        if (ball == null || ball.HasOwner() || isCoolingDown) {
+        if (ball == null || !ball.IsOwnable() || isCoolingDown) {
             return;
         }
         if (stateManager != null) {

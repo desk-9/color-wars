@@ -9,8 +9,8 @@ public class Ball : MonoBehaviour {
     public BallCarrier owner { get; set; }
     public bool scored {get; set;}
 
-    public bool HasOwner() {
-        return owner != null || scored;
+    public bool IsOwnable() {
+        return owner == null && !scored;
     }
 
     void Start() {
