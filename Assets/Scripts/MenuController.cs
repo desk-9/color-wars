@@ -17,14 +17,16 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update () {
-        var device = IC.InputManager.ActiveDevice;
+        foreach (var device in IC.InputManager.Devices) {
+            if (device.GetControl(StartButton).WasPressed) {
+                TogglePause();
+                break;
+            }
 
-        if (device.GetControl(StartButton).WasPressed) {
-            TogglePause();
-        }
-
-        if (device.GetControl(ResetButton).WasPressed && scene_controller.paused) {
-            scene_controller.ResetScene();
+            if (device.GetControl(ResetButton).WasPressed && scene_controller.paused) {
+                scene_controller.ResetScene();
+                break;
+            }
         }
     }
 
