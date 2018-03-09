@@ -143,8 +143,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dashButton: 16
-  chargeEffect: {fileID: 0}
-  dashEffect: {fileID: 0}
   maxChargeTime: 1
   chargeRate: 10
   dashPower: 2
@@ -233,8 +231,8 @@ MonoBehaviour:
   effectPrefab: {fileID: 1691723634291742, guid: 9d4eb0d1094684e6f8612a9e011f290c,
     type: 2}
   triggerState: 2
-  destroyEffect: 1
-  parentEffect: 1
+  destroyEffectOnExit: 1
+  parentEffectToPlayer: 1
 --- !u!114 &114772672773334790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -249,8 +247,8 @@ MonoBehaviour:
   effectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
     type: 2}
   triggerState: 3
-  destroyEffect: 0
-  parentEffect: 1
+  destroyEffectOnExit: 0
+  parentEffectToPlayer: 1
 --- !u!114 &114920135743144974
 MonoBehaviour:
   m_ObjectHideFlags: 1
