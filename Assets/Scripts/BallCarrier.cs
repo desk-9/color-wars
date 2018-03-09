@@ -35,7 +35,7 @@ public class BallCarrier : MonoBehaviour {
 
     // This function is called when the BallCarrier initially gains possession
     // of the ball
-    void StartCarryingBall(Ball ball) {
+    public void StartCarryingBall(Ball ball) {
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 
@@ -96,7 +96,7 @@ public class BallCarrier : MonoBehaviour {
             return;
         }
     }
-
+    
     public void OnCollisionEnter2D(Collision2D collision) {
         var ball = collision.gameObject.GetComponent<Ball>();
         if (ball == null || !ball.IsOwnable() || isCoolingDown) {

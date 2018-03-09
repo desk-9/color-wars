@@ -33,6 +33,7 @@ GameObject:
   - component: {fileID: 114920135743144974}
   - component: {fileID: 114694489525978138}
   - component: {fileID: 114772672773334790}
+  - component: {fileID: 114077016654891072}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -131,6 +132,18 @@ PolygonCollider2D:
       - {x: 0.5, y: 0}
       - {x: -0.5, y: -0.5}
       - {x: -0.25, y: 0}
+--- !u!114 &114077016654891072
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee145c3d6ce24227b2ff79541d56f07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockbackTime: 0.5
 --- !u!114 &114130524022212122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -147,6 +160,7 @@ MonoBehaviour:
   chargeRate: 10
   dashPower: 2
   dashDuration: 0.25
+  knockbackSpeedFraction: 0.8
 --- !u!114 &114177724964163498
 MonoBehaviour:
   m_ObjectHideFlags: 1

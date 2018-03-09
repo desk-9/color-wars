@@ -100,6 +100,12 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
+    public void AttemptKnockback(Callback start, Callback stop) {
+        if (IsInState(State.NormalMovement, State.Posession)) {
+            SwitchToState(State.Knockback, start, stop);
+        }
+    }
+
     void SwitchToState(State state, Callback start, Callback stop){
         stopCurrentState();
         AlertSubscribers(currentState, false, state);
@@ -131,7 +137,7 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
-    bool IsInState(params State[] states){
+    public bool IsInState(params State[] states){
         foreach(var state in states){
             if (currentState == state) {
                 return true;
