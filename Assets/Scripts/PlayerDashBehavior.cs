@@ -12,7 +12,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float               chargeRate    = 1.0f;
     public float               dashPower     = 0.1f;
     public float               dashDuration  = 0.0f;
-    public float knockbackSpeedFraction = 1f;
 
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
@@ -109,13 +108,11 @@ public class PlayerDashBehavior : MonoBehaviour {
     void Steal(BallCarrier otherCarrier, PlayerStateManager otherStateManager) {
         Debug.Log("stealing");
         var ball = otherCarrier.ball;
-        var direction = rb.velocity.normalized;
-        var knockbackSpeed = knockbackSpeedFraction * dashSpeed;
-        var otherKnockback = otherStateManager.GetComponent<PlayerKnockback>();
-        if (otherKnockback != null) {
-            otherStateManager.AttemptKnockback(
-                () => otherKnockback.StartKnockback(direction, knockbackSpeed),
-                otherKnockback.StopKnockbacking);
+        var otherStun = otherStateManager.GetComponent<PlayerStun>();
+        if (otherStun != null) {
+            otherStateManager.AttemptStun(
+                () => otherStun.StartStun(),
+                otherStun.StopStunned);
         }
         stateManager.CurrentStateHasFinished();
         var carrier = this.EnsureComponent<BallCarrier>();

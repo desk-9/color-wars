@@ -33,7 +33,7 @@ GameObject:
   - component: {fileID: 114920135743144974}
   - component: {fileID: 114694489525978138}
   - component: {fileID: 114772672773334790}
-  - component: {fileID: 114077016654891072}
+  - component: {fileID: 114261427851223390}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -132,18 +132,6 @@ PolygonCollider2D:
       - {x: 0.5, y: 0}
       - {x: -0.5, y: -0.5}
       - {x: -0.25, y: 0}
---- !u!114 &114077016654891072
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ee145c3d6ce24227b2ff79541d56f07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  knockbackTime: 0.5
 --- !u!114 &114130524022212122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -160,7 +148,7 @@ MonoBehaviour:
   chargeRate: 10
   dashPower: 2
   dashDuration: 0.25
-  knockbackSpeedFraction: 0.8
+  knockbackSpeedFraction: 0.5
 --- !u!114 &114177724964163498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -204,6 +192,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorFlashLength: 1
   colorFlashFadeTime: 1
+--- !u!114 &114261427851223390
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e2c5e274b6fb4d5cb730d55a0aceb4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stunTime: 0.7
 --- !u!114 &114319027261209328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotSpeed: 30
-  forcedShotTime: 5
+  forcedShotTime: 1000
   shootButton: 11
 --- !u!114 &114631768565738774
 MonoBehaviour:

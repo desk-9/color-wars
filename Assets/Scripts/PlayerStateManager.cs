@@ -17,7 +17,7 @@ public enum State
   Dash,
   Posession,
   ChargeShot,
-  Knockback,
+  Stun,
 };
 
 public delegate void ToggleCallback(bool isEnteringState);
@@ -100,9 +100,9 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
-    public void AttemptKnockback(Callback start, Callback stop) {
+    public void AttemptStun(Callback start, Callback stop) {
         if (IsInState(State.NormalMovement, State.Posession)) {
-            SwitchToState(State.Knockback, start, stop);
+            SwitchToState(State.Stun, start, stop);
         }
     }
 
