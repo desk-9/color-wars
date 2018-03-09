@@ -8,8 +8,6 @@ using UtilityExtensions;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
-    public GameObject          chargeEffect;
-    public GameObject          dashEffect;
     public float               maxChargeTime = 1.0f;
     public float               chargeRate    = 1.0f;
     public float               dashPower     = 0.1f;
@@ -21,7 +19,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     Rigidbody2D        rb;
     Coroutine          chargeCoroutine;
     Coroutine          dashCoroutine;
-    GameObject         effect;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
