@@ -40,7 +40,7 @@ public class Player : MonoBehaviour {
     void Start () {
         renderer = GetComponent<SpriteRenderer>();
         team = GameModel.instance.GetTeamAssignment(this);
+        renderer.color = team.teamColor;
         Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
-        StartCoroutine(FlashColorCoroutine(6f));
     }
 }
