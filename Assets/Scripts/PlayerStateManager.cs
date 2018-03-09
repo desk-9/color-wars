@@ -21,14 +21,16 @@ public enum State
 };
 
 public delegate void ToggleCallback(bool isEnteringState);
+public delegate void TransitionCallback(State start, State end);
 
 public class PlayerStateManager : MonoBehaviour {
-    SortedDictionary<State, List<ToggleCallback>> on_change_subscribers =
+    SortedDictionary<State, List<ToggleCallback>> on_specific_change_subscribers =
         new SortedDictionary<State, List<ToggleCallback>>();
     SortedDictionary<State, List<Callback>> on_start_subscribers =
         new SortedDictionary<State, List<Callback>>();
     SortedDictionary<State, List<Callback>> on_end_subscribers =
         new SortedDictionary<State, List<Callback>>();
+    List<TransitionCallback> on_any_change_subscribers = new List<TransitionCallback>();
     State currentState;
     Callback stopCurrentState;
     State defaultState = State.NormalMovement;
@@ -39,7 +41,7 @@ public class PlayerStateManager : MonoBehaviour {
         currentState = State.StartupState;
         stopCurrentState = null;
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
-            on_change_subscribers[state] = new List<ToggleCallback>();
+            on_specific_change_subscribers[state] = new List<ToggleCallback>();
             on_start_subscribers[state] = new List<Callback>();
             on_end_subscribers[state] = new List<Callback>();
         }
@@ -47,8 +49,12 @@ public class PlayerStateManager : MonoBehaviour {
 
     // Schedules a callback whenever information with respect to a certain state
     // changes
-    public void CallOnStateEnterExit(State state, ToggleCallback callback){
-        on_change_subscribers[state].Add(callback);
+    public void CallOnSpecficStateChange(State state, ToggleCallback callback){
+        on_specific_change_subscribers[state].Add(callback);
+    }
+
+    public void CallOnAnyStateChange(TransitionCallback callback) {
+        on_any_change_subscribers.Add(callback);
     }
 
     public void CallOnStateEnter(State state, Callback callback) {
@@ -96,7 +102,7 @@ public class PlayerStateManager : MonoBehaviour {
 
     void SwitchToState(State state, Callback start, Callback stop){
         stopCurrentState();
-        AlertSubscribers(currentState, false);
+        AlertSubscribers(currentState, false, state);
         
         currentState = state;
         start();
@@ -104,8 +110,8 @@ public class PlayerStateManager : MonoBehaviour {
         AlertSubscribers(state, true);
     }
 
-    void AlertSubscribers(State state, bool isEnteringState) {
-        foreach (var callback in on_change_subscribers[state]) {
+    void AlertSubscribers(State state, bool isEnteringState, State? nextState = null) {
+        foreach (var callback in on_specific_change_subscribers[state]) {
             callback(isEnteringState);
         }
         if (isEnteringState) {
@@ -115,6 +121,12 @@ public class PlayerStateManager : MonoBehaviour {
         } else {
             foreach (var callback in on_end_subscribers[state]) {
                 callback();
+            }
+
+            if (nextState != null) {
+                foreach (var callback in on_any_change_subscribers) {
+                    callback(state, nextState.Value);
+                }
             }
         }
     }
