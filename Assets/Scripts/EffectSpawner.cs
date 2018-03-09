@@ -5,6 +5,7 @@ public class EffectSpawner : MonoBehaviour {
     public GameObject effectPrefab;
     GameObject currentEffect;
     public State triggerState;
+    public bool destroyEffect = true;
     public bool parentEffect = true;
     PlayerStateManager stateManager;
 
@@ -22,7 +23,7 @@ public class EffectSpawner : MonoBehaviour {
                 currentEffect = Instantiate(effectPrefab, transform.position,
                                             Quaternion.identity);
             }
-        } else {
+        } else if (!effectStarting && destroyEffect) {
             Destroy(currentEffect);
         }
     }
