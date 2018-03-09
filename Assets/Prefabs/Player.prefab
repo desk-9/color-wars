@@ -148,7 +148,6 @@ MonoBehaviour:
   chargeRate: 10
   dashPower: 2
   dashDuration: 0.25
-  knockbackSpeedFraction: 0.5
 --- !u!114 &114177724964163498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -216,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotSpeed: 30
-  forcedShotTime: 1000
+  forcedShotTime: 5
   shootButton: 11
 --- !u!114 &114631768565738774
 MonoBehaviour:
