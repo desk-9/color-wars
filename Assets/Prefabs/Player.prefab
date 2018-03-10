@@ -214,9 +214,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 964e4864ae7674458906684fac594544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shotSpeed: 30
-  forcedShotTime: 5
-  shootButton: 11
+  shootButton: 15
+  forcedShotTime: 3
+  baseShotSpeed: 10
+  chargeRate: 15
+  chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
+    type: 2}
 --- !u!114 &114631768565738774
 MonoBehaviour:
   m_ObjectHideFlags: 1
