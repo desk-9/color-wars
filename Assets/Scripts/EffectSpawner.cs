@@ -3,10 +3,11 @@ using UtilityExtensions;
 
 public class EffectSpawner : MonoBehaviour {
     public GameObject effectPrefab;
-    GameObject currentEffect;
     public State triggerState;
     public bool destroyEffectOnExit = true;
     public bool parentEffectToPlayer = true;
+
+    GameObject currentEffect;
     PlayerStateManager stateManager;
 
     void Start() {
@@ -24,7 +25,9 @@ public class EffectSpawner : MonoBehaviour {
                                             Quaternion.identity);
             }
         } else if (!effectStarting && destroyEffectOnExit) {
-            Destroy(currentEffect);
+            if (currentEffect != null) {
+                Destroy(currentEffect);
+            }
         }
     }
 }
