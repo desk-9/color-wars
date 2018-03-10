@@ -41,8 +41,8 @@ public class Goal : MonoBehaviour {
     }
 
 	void ScoreGoal(Ball ball) {
-        if (!ball.ownable) {
-            ball.ownable = true;
+        if (ball.IsOwnable()) {
+            ball.ownable = false;
             currentTeam?.IncrementScore();
             // TODO: Non-tweakable placeholder delay on ball reset until it's
             // decided what should happen respawn-wise on goal scoring

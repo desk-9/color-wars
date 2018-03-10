@@ -7,10 +7,10 @@ public class Ball : MonoBehaviour {
     
     Vector2 start_location;
     public BallCarrier owner { get; set; }
-    public bool ownable {get; set;}
+    public bool ownable {get; set;} = true;
 
     public bool IsOwnable() {
-        return owner == null && !ownable;
+        return owner == null && ownable;
     }
 
     void Start() {
@@ -19,7 +19,7 @@ public class Ball : MonoBehaviour {
 
     public void ResetBall() {
         transform.position = start_location;
-        ownable = false;
+        ownable = true;
         this.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 }
