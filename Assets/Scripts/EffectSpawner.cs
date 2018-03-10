@@ -12,22 +12,23 @@ public class EffectSpawner : MonoBehaviour {
 
     void Start() {
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        stateManager.SignUpForStateAlert(triggerState, EffectToggle);
+        stateManager.CallOnStateEnter(triggerState, StateStart);
+        stateManager.CallOnStateExit(triggerState, StateEnd);
     }
 
-    void EffectToggle(bool effectStarting) {
-        if (effectStarting) {
-            if (parentEffectToPlayer) {
-                currentEffect = Instantiate(effectPrefab, transform.position,
-                                            Quaternion.identity, transform);
-            } else {
-                currentEffect = Instantiate(effectPrefab, transform.position,
-                                            Quaternion.identity);
-            }
-        } else if (!effectStarting && destroyEffectOnExit) {
-            if (currentEffect != null) {
-                Destroy(currentEffect);
-            }
+    void StateStart() {
+        if (parentEffectToPlayer) {
+            currentEffect = Instantiate(
+                effectPrefab, transform.position, Quaternion.identity, transform);
+        } else {
+            currentEffect = Instantiate(
+                effectPrefab, transform.position, Quaternion.identity);
+        }
+    }
+    
+    void StateEnd() {
+        if (destroyEffectOnExit && currentEffect != null) {
+            Destroy(currentEffect);
         }
     }
 }

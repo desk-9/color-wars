@@ -26,15 +26,10 @@ public class BallCarrier : MonoBehaviour {
         input = playerMovement?.GetInputDevice();
         stateManager = GetComponent<PlayerStateManager>();
         if (playerMovement != null && stateManager != null) {
-            stateManager.SignUpForStateAlert(
-                State.Posession,
-                (bool starting) => {
-                    if (starting) {
-                        playerMovement.FreezePlayer();
-                    } else {
-                        playerMovement.UnFreezePlayer();
-                    }
-                });
+            stateManager.CallOnStateEnter(
+                State.Posession, playerMovement.FreezePlayer);
+            stateManager.CallOnStateEnter(
+                State.Posession, playerMovement.UnFreezePlayer);
         }
     }
 
