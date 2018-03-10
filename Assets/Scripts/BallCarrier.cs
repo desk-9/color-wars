@@ -28,7 +28,7 @@ public class BallCarrier : MonoBehaviour {
         if (playerMovement != null && stateManager != null) {
             stateManager.CallOnStateEnter(
                 State.Posession, playerMovement.FreezePlayer);
-            stateManager.CallOnStateEnter(
+            stateManager.CallOnStateExit(
                 State.Posession, playerMovement.UnFreezePlayer);
         }
     }
