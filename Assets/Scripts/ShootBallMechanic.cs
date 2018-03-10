@@ -9,8 +9,8 @@ public class ShootBallMechanic : MonoBehaviour {
     public IC.InputControlType shootButton = IC.InputControlType.Action1;
     public float forcedShotTime;
     public float baseShotSpeed = 1.0f;
-    public float chargeRate    = 1.0f;
-    public GameObject          chargeEffect;
+    public float chargeRate = 1.0f;
+    public GameObject chargeEffect;
 
     PlayerMovement     playerMovement;
     PlayerStateManager stateManager;
