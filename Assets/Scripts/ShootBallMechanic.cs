@@ -59,6 +59,7 @@ public class ShootBallMechanic : MonoBehaviour {
 
             yield return null;
         }
+        shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
         Shoot();
     }
 
@@ -97,5 +98,11 @@ public class ShootBallMechanic : MonoBehaviour {
             State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
         stateManager.CallOnStateExit(
             State.Posession, () => StopChargeShot());
+
+        if (chargeEffect != null) {
+            if (chargeEffect.GetComponent<ParticleSystem>().main.duration != forcedShotTime) {
+                Debug.LogWarning("Forced shot time != particlesystem duration! This will look bad!");
+            }
+        }
     }
 }
