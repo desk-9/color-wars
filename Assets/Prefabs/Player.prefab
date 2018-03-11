@@ -218,6 +218,7 @@ MonoBehaviour:
   forcedShotTime: 3
   baseShotSpeed: 10
   chargeRate: 15
+  shotPower: 1.2
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
 --- !u!114 &114631768565738774

@@ -10,6 +10,8 @@ public class ShootBallMechanic : MonoBehaviour {
     public float forcedShotTime;
     public float baseShotSpeed = 1.0f;
     public float chargeRate = 1.0f;
+    public float shotPower = 1.1f;
+
     public GameObject chargeEffect;
 
     PlayerMovement     playerMovement;
@@ -17,55 +19,56 @@ public class ShootBallMechanic : MonoBehaviour {
     Rigidbody2D        rb;
     IC.InputDevice     inputDevice;
     Coroutine          shootTimer;
-    Coroutine          chargeShot;
     BallCarrier        ballCarrier;
     GameObject         effect;
-    bool canShoot = false;
 
     float shotSpeed = 1.0f;
     float elapsedTime = 0.0f;
 
     IEnumerator ShootTimer() {
-        Debug.Log("ShootTimer!");
+
+        Debug.Log("Starting shoot timer!");
         elapsedTime = 0.0f;
+        shotSpeed = baseShotSpeed;
+        
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
+
             if (inputDevice.GetControl(shootButton).WasPressed) {
-                StartChargeShot();
+                shootTimer = StartCoroutine(ChargeShot(elapsedTime));
+                effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
+                yield break;
             }
+
             yield return null;
         }
-
+        Debug.Log("Should shoot!");
         shootTimer = null;
         Shoot();
         yield break;
     }
 
-
-    void StartChargeShot() {
-        Debug.Log("StartChargeShot!");
-        chargeShot = StartCoroutine(ChargeShot());
-        effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
-    }
-    IEnumerator ChargeShot() {
-        Debug.Log("ChargeShot!");
+    IEnumerator ChargeShot(float elapsedTime) {
         while (elapsedTime < forcedShotTime) {
+            elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
+            
             if (inputDevice.GetControl(shootButton).WasReleased) {
                 Debug.Log("Trigger released => Shoot!");
-                chargeShot = null;
+                shootTimer = null;
+                shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
                 Shoot();
                 yield break;
             }
+
             yield return null;
         }
+        shootTimer = null;
+        Shoot();
+        yield break;
     }
 
     void Shoot() {
-        if (!canShoot) {
-            Debug.LogWarning("Can't shoot!");
-            return;
-        }
         var ball = ballCarrier.ball;
         Debug.Assert(ball != null);
         var shotDirection = ball.transform.position - transform.position;
@@ -76,21 +79,12 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void StopChargeShot() {
-        Debug.Log("StopChargeShot!");
-        // Release player from position lock.
-        rb.constraints = RigidbodyConstraints2D.None;
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        
         if (shootTimer != null) {
             StopCoroutine(shootTimer);
             shootTimer = null;
         }
         if (effect != null) {
             Destroy(effect);
-        }
-        if (chargeShot != null) {
-            StopCoroutine(chargeShot);
-            chargeShot = null;
         }
     }
 
@@ -108,13 +102,5 @@ public class ShootBallMechanic : MonoBehaviour {
         stateManager =  this.EnsureComponent<PlayerStateManager>();
         stateManager.CallOnStateEnter(
             State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
-        stateManager.CallOnStateExit(
-            State.Posession,
-            () => {
-                if (shootTimer != null) {
-                    StopCoroutine(shootTimer);
-                    shootTimer = null;
-                }
-            });
     }
 }
