@@ -42,10 +42,7 @@ public class ShootBallMechanic : MonoBehaviour {
 
             yield return null;
         }
-        Debug.Log("Should shoot!");
-        shootTimer = null;
         Shoot();
-        yield break;
     }
 
     IEnumerator ChargeShot(float elapsedTime) {
@@ -55,7 +52,6 @@ public class ShootBallMechanic : MonoBehaviour {
             
             if (inputDevice.GetControl(shootButton).WasReleased) {
                 Debug.Log("Trigger released => Shoot!");
-                shootTimer = null;
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
                 Shoot();
                 yield break;
@@ -63,19 +59,17 @@ public class ShootBallMechanic : MonoBehaviour {
 
             yield return null;
         }
-        shootTimer = null;
         Shoot();
-        yield break;
     }
 
     void Shoot() {
+        shootTimer = null;
         var ball = ballCarrier.ball;
         Debug.Assert(ball != null);
         var shotDirection = ball.transform.position - transform.position;
         var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
         ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         stateManager.CurrentStateHasFinished();
-        StopChargeShot();
     }
 
     void StopChargeShot() {
@@ -102,5 +96,7 @@ public class ShootBallMechanic : MonoBehaviour {
         stateManager =  this.EnsureComponent<PlayerStateManager>();
         stateManager.CallOnStateEnter(
             State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
+        stateManager.CallOnStateExit(
+            State.Posession, () => StopChargeShot());
     }
 }
