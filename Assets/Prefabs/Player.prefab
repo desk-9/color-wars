@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootButton: 15
-  forcedShotTime: 1
+  forcedShotTime: 2
   baseShotSpeed: 10
   chargeRate: 15
   shotPower: 1.2

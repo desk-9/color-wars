@@ -30,7 +30,7 @@ public class ShootBallMechanic : MonoBehaviour {
         Debug.Log("Starting shoot timer!");
         elapsedTime = 0.0f;
         shotSpeed = baseShotSpeed;
-        
+
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
 
@@ -45,11 +45,11 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ChargeShot(float elapsedTime) {
-        effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
+        effect = Instantiate(chargeEffect, transform.position, transform.rotation, transform);
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
-            
+
             if (inputDevice.GetControl(shootButton).WasReleased) {
                 Debug.Log("Trigger released => Shoot!");
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
