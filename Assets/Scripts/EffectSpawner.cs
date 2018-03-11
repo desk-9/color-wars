@@ -6,6 +6,7 @@ public class EffectSpawner : MonoBehaviour {
     public State triggerState;
     public bool destroyEffectOnExit = true;
     public bool parentEffectToPlayer = true;
+    public float destroyWait = 0.0f;
 
     GameObject currentEffect;
     PlayerStateManager stateManager;
@@ -28,7 +29,7 @@ public class EffectSpawner : MonoBehaviour {
 
     void StateEnd() {
         if (destroyEffectOnExit && currentEffect != null) {
-            Destroy(currentEffect);
+            Destroy(currentEffect, destroyWait);
         }
     }
 }
