@@ -11,9 +11,9 @@ public class CircularTimer : MonoBehaviour {
         set {fillImage.fillAmount = value;}
     }
 
-    public bool shouldStart = false;
     Image fillImage;
-    Callback timeoutCallback;
+    Callback endTimerCallback;
+    Coroutine timer;
 
     public virtual void Start () {
         fillImage = this.EnsureComponent<Image>();
@@ -21,17 +21,24 @@ public class CircularTimer : MonoBehaviour {
     }
 
     public virtual void Update() {
-        if (shouldStart) {
-            StartTimer(3, () => Debug.Log("TIMER DONE!!!!!!!!!!!!"));
-        }
         transform.rotation = Quaternion.identity;
     }
 
-    public void StartTimer(float secondsUntilTimeout, Callback timeoutCallback) {
+    public void StartTimer(float secondsUntilTimeout, Callback endTimerCallback) {
+        Debug.Log("Starting circular timer");
         fillImage.enabled = true;
-        StartCoroutine(Timer(secondsUntilTimeout));
+        timer = StartCoroutine(Timer(secondsUntilTimeout));
         FillAmount = 0;
-        this.timeoutCallback = timeoutCallback;
+        this.endTimerCallback = endTimerCallback;
+    }
+
+    public void StopTimer() {
+        if (timer != null) {
+            StopCoroutine(timer);
+            timer = null;
+        }
+        endTimerCallback();
+        fillImage.enabled = false;
     }
 
     IEnumerator Timer(float secondsUntilTimeout) {
@@ -41,9 +48,7 @@ public class CircularTimer : MonoBehaviour {
             FillAmount = elapsedTime/secondsUntilTimeout;
             yield return null;
         }
-        timeoutCallback();
-        fillImage.enabled = false;
-        shouldStart = false;
+        StopTimer();
     }
 
 }

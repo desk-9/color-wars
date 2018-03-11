@@ -11,6 +11,7 @@ public class ShootBallMechanic : MonoBehaviour {
     public float baseShotSpeed = 1.0f;
     public float chargeRate = 1.0f;
     public float shotPower = 1.1f;
+    public CircularTimer circularTimer;
 
     public GameObject chargeEffect;
 
@@ -26,6 +27,7 @@ public class ShootBallMechanic : MonoBehaviour {
     float elapsedTime = 0.0f;
 
     IEnumerator ShootTimer() {
+        circularTimer?.StartTimer(forcedShotTime, delegate{});
 
         Debug.Log("Starting shoot timer!");
         elapsedTime = 0.0f;
@@ -74,6 +76,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void StopChargeShot() {
+        circularTimer?.StopTimer();
         if (shootTimer != null) {
             StopCoroutine(shootTimer);
             shootTimer = null;
@@ -103,6 +106,11 @@ public class ShootBallMechanic : MonoBehaviour {
             if (chargeEffect.GetComponent<ParticleSystem>().main.duration != forcedShotTime) {
                 Debug.LogWarning("Forced shot time != particlesystem duration! This will look bad!");
             }
+        }
+
+        circularTimer = transform.Find("CircularTimerChildObject/CircularTimerGameObject").GetComponent<CircularTimer>();
+        if (circularTimer == null) {
+            Debug.LogWarning("Could not find circular timer component! Check ShootBallMechanic");
         }
     }
 }
