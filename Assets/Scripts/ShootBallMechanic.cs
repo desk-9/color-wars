@@ -36,7 +36,6 @@ public class ShootBallMechanic : MonoBehaviour {
 
             if (inputDevice.GetControl(shootButton).WasPressed) {
                 shootTimer = StartCoroutine(ChargeShot(elapsedTime));
-                effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
                 yield break;
             }
 
@@ -46,6 +45,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ChargeShot(float elapsedTime) {
+        effect = Instantiate(chargeEffect, transform.position, Quaternion.identity, transform);
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
