@@ -19,13 +19,13 @@ public class EffectSpawner : MonoBehaviour {
     void StateStart() {
         if (parentEffectToPlayer) {
             currentEffect = Instantiate(
-                effectPrefab, transform.position, Quaternion.identity, transform);
+                effectPrefab, transform.position, transform.rotation, transform);
         } else {
             currentEffect = Instantiate(
                 effectPrefab, transform.position, Quaternion.identity);
         }
     }
-    
+
     void StateEnd() {
         if (destroyEffectOnExit && currentEffect != null) {
             Destroy(currentEffect);
