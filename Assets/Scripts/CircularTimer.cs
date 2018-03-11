@@ -17,13 +17,14 @@ public class CircularTimer : MonoBehaviour {
 
     public virtual void Start () {
         fillImage = this.EnsureComponent<Image>();
-        // fillImage.enabled = false;
+        fillImage.enabled = false;
     }
 
     public virtual void Update() {
         if (shouldStart) {
             StartTimer(3, () => Debug.Log("TIMER DONE!!!!!!!!!!!!"));
         }
+        transform.rotation = Quaternion.identity;
     }
 
     public void StartTimer(float secondsUntilTimeout, Callback timeoutCallback) {
@@ -41,7 +42,8 @@ public class CircularTimer : MonoBehaviour {
             yield return null;
         }
         timeoutCallback();
-        // fillImage.enabled = false;
+        fillImage.enabled = false;
+        shouldStart = false;
     }
 
 }
