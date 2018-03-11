@@ -45,14 +45,19 @@ public class CustomPlayerProfile : UnityInputDeviceProfile {
                 Source = KeyCodeAxis( KeyCode.DownArrow, KeyCode.UpArrow )
             },
             new InputControlMapping {
-                Handle = "Dash",
+                Handle = "Shoot",
                 Target = InputControlType.RightTrigger,
-                Source = KeyCodeButton( KeyCode.X )
+                Source = KeyCodeButton( KeyCode.Z )
+            },
+            new InputControlMapping {
+                Handle = "Dash",
+                Target = InputControlType.LeftTrigger,
+                Source = KeyCodeButton( KeyCode.LeftShift )
             },
             new InputControlMapping {
                 Handle = "Parry",
                 Target = InputControlType.Action3,
-                Source = KeyCodeButton( KeyCode.Z )
+                Source = KeyCodeButton( KeyCode.X )
             }
         };
     }
