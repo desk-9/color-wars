@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
 using IC = InControl;
+using UtilityExtensions;
 
 
 public class GameModel : MonoBehaviour {
@@ -16,7 +17,10 @@ public class GameModel : MonoBehaviour {
     public int scoreMax = 7;
     public SceneStateController scene_controller {get; set;}
     public GameEndController end_controller {get; set;}
-    
+    public float matchLength = 5f;
+
+    float matchLengthSeconds;
+
     IntCallback NextTeamAssignmentIndex;
 
     void Awake() {
@@ -33,7 +37,26 @@ public class GameModel : MonoBehaviour {
         InitializeTeams();
         scene_controller = GetComponent<SceneStateController>();
         end_controller = GetComponent<GameEndController>();
+        matchLengthSeconds = 60 * matchLength;
+        this.TimeDelayCall(EndGame, matchLengthSeconds);
     }
+
+    void Start() {
+        scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
+    }
+
+    void EndGame() {
+        Debug.Log("game over");
+        var winner = teams.Aggregate(
+            (best, next) => {
+                if (best == null || best.score == next.score) {
+                    return null;
+                }
+                return next.score > best.score ? next : best;
+            });
+        end_controller.GameOver(winner);
+    }
+
 
     public TeamManager GetTeamAssignment(Player caller) {
         var assignedTeam = teams[NextTeamAssignmentIndex()];
@@ -50,14 +73,12 @@ public class GameModel : MonoBehaviour {
         }
         NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
-    
+
     public void Scored(TeamManager team) {
         // One team just scored
         //
         // TODO: handle things like resetting the ball and players here, maybe
         // show UI elements
-        if (team.score >= scoreMax) {
-            end_controller.GameOver(team);
-        }
+
     }
 }

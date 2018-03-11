@@ -13,6 +13,11 @@ public class WinDisplay : MonoBehaviour {
     }
 
     public void SetWinner(TeamManager winner) {
+        if (winner == null) {
+            winnerText.text = "Tie!";
+            winnerText.color = Color.black;
+            return;
+        }
         winnerText.text = string.Format("Team {0} won with {1} points",
                                         winner.teamNumber, winner.score);
         winnerText.color = winner.teamColor;
