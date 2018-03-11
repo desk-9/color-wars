@@ -85,7 +85,6 @@ public class ShootBallMechanic : MonoBehaviour {
     void Update() {
         if (inputDevice == null) {
             inputDevice = playerMovement.GetInputDevice();
-            return;
         }
     }
 
