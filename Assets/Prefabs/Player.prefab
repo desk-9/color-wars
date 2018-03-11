@@ -253,6 +253,7 @@ MonoBehaviour:
   triggerState: 2
   destroyEffectOnExit: 1
   parentEffectToPlayer: 1
+  destroyWait: 5
 --- !u!114 &114772672773334790
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -267,8 +268,9 @@ MonoBehaviour:
   effectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
     type: 2}
   triggerState: 3
-  destroyEffectOnExit: 0
+  destroyEffectOnExit: 1
   parentEffectToPlayer: 1
+  destroyWait: 5
 --- !u!114 &114920135743144974
 MonoBehaviour:
   m_ObjectHideFlags: 1
