@@ -103,7 +103,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 2
+  m_Radius: 3
 --- !u!60 &60192982943300094
 PolygonCollider2D:
   m_ObjectHideFlags: 1
@@ -161,8 +161,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parryField: {fileID: 58993705995626898}
   parryButton: 13
-  parryEffect: {fileID: 0}
-  cooldown: 0
+  parryEffect: {fileID: 1070135155758220, guid: 20447285b2fbe44fd960f9f911b9786a,
+    type: 2}
+  cooldown: 0.5
   knockback: 10
   whitelist:
   - serializedVersion: 2
