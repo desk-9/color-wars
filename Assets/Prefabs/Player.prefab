@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parryField: {fileID: 58993705995626898}
-  parryButton: 13
+  parryButton: 11
   parryEffect: {fileID: 1070135155758220, guid: 20447285b2fbe44fd960f9f911b9786a,
     type: 2}
   cooldown: 0.5
