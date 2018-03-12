@@ -169,7 +169,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: d965f696e328544858ff2dc8e0bbf4df, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -284,11 +284,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa589d0baa6d2499e9e8f8f5c0aaf36e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalSwitchInterval: 5
+  goalSwitchInterval: 10
   goalSwitchNotificationLength: 3
-  goalSwitchWarningAudio: {fileID: 8300000, guid: 2cfac9b6c576741e8b142f851152cc43,
+  goalSwitchWarningAudio: {fileID: 8300000, guid: d965f696e328544858ff2dc8e0bbf4df,
     type: 3}
-  goalSwitchAudio: {fileID: 8300000, guid: d965f696e328544858ff2dc8e0bbf4df, type: 3}
+  goalSwitchAudio: {fileID: 8300000, guid: 1a2845395037843a1bebc8a58526cdb6, type: 3}
 --- !u!114 &114939641552273602
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -5,3 +5,4 @@ Based on the OrbitTarget demo, posted by Austin Yarger
 Sounds:
 Goal Switch Notification: https://freesound.org/people/pan14/sounds/263133/
 GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
+Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
