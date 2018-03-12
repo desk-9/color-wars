@@ -75,19 +75,19 @@ public class ReadyUpManager : MonoBehaviour {
         
         
         controlsText.text = "";
-        startGameCountdownText.text = "About to start game...\n3";
+        startGameCountdownText.text = "Starting game...\n3";
         Debug.Log("Waiting 1");
         yield return new WaitForSeconds(1);
         
-        startGameCountdownText.text = "About to start game...\n2";
+        startGameCountdownText.text = "Starting game...\n2";
         Debug.Log("Waiting 2");
         yield return new WaitForSeconds(1);
         
-        startGameCountdownText.text = "About to start game...\n1";
+        startGameCountdownText.text = "Starting game...\n1";
         Debug.Log("Waiting 3");
         yield return new WaitForSeconds(1);
         
-        startGameCountdownText.text = "About to start game...\nGO!";
+        startGameCountdownText.text = "Starting game...\nGO!";
         yield return new WaitForSeconds(1);
         menuController.enabled = true;
         Debug.Log("Loading main scene!!");
