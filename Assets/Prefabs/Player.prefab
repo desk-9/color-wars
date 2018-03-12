@@ -144,10 +144,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dashButton: 16
+  stealKnockbackPercentage: 0.8
   maxChargeTime: 1
+  dashDuration: 0.25
   chargeRate: 10
   dashPower: 2
-  dashDuration: 0.25
 --- !u!114 &114177724964163498
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -236,7 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ballOffsetFromCenter: 1
   coolDownTime: 0.1
   ballTurnSpeed: 50
 --- !u!114 &114694489525978138
@@ -255,7 +255,7 @@ MonoBehaviour:
   triggerState: 2
   destroyEffectOnExit: 1
   parentEffectToPlayer: 1
-  destroyWait: 5
+  destroyWait: 0
 --- !u!114 &114772672773334790
 MonoBehaviour:
   m_ObjectHideFlags: 1
