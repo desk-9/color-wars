@@ -39,8 +39,10 @@ public class ShootBallMechanic : MonoBehaviour {
             State.Posession, () => StopChargeShot());
 
         if (chargeEffect != null) {
-            if (chargeEffect.GetComponent<ParticleSystem>().main.duration != forcedShotTime) {
-                Debug.LogWarning("Forced shot time != particlesystem duration! This will look bad!");
+            var ps = chargeEffect.GetComponent<ParticleSystem>();
+            var main = ps.main;
+            if (main.duration != forcedShotTime) {
+                main.duration = forcedShotTime;
             }
         }
         circularTimer = Instantiate(
