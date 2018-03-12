@@ -161,6 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parryField: {fileID: 58993705995626898}
   parryButton: 13
+  parryEffect: {fileID: 0}
   cooldown: 0
   knockback: 10
   whitelist:

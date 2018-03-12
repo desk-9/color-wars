@@ -8,6 +8,7 @@ using IC = InControl;
 public class PlayerParryBehavior : MonoBehaviour {
     public CircleCollider2D    parryField;
     public IC.InputControlType parryButton = IC.InputControlType.Action3;
+    public GameObject          parryEffect;
     public float               cooldown    = 1.0f;
     public float               knockback   = 1.0f;
     public List<LayerMask>     whitelist   = new List<LayerMask>();
@@ -15,6 +16,7 @@ public class PlayerParryBehavior : MonoBehaviour {
     PlayerMovement   playerMovement;
     IC.InputDevice   input;
     Coroutine        parryCoroutine;
+    GameObject       effect;
 
     void Awake() {
         playerMovement = GetComponent<PlayerMovement>();
@@ -32,6 +34,8 @@ public class PlayerParryBehavior : MonoBehaviour {
     }
 
     IEnumerator Parry() {
+        effect = Instantiate(parryEffect, transform.position, Quaternion.identity);
+
         var objectsInRange = new List<GameObject>();
 
         // Compile list of objects in range using whitelist.
@@ -63,7 +67,9 @@ public class PlayerParryBehavior : MonoBehaviour {
 
         yield return new WaitForSeconds(cooldown);
 
+        Destroy(effect, cooldown + 1.0f);
         parryCoroutine = null;
+        effect = null;
 
         yield break;
     }
