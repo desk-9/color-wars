@@ -913,7 +913,7 @@ MonoBehaviour:
   - {r: 0.10845588, g: 0.11369164, b: 0.86764705, a: 1}
   - {r: 0.75735295, g: 0, b: 0, a: 1}
   scoreMax: 5
-  matchLength: 0.2
+  matchLength: 3
 --- !u!4 &653058663
 Transform:
   m_ObjectHideFlags: 0
