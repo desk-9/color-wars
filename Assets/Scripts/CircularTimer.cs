@@ -16,7 +16,7 @@ public class CircularTimer : MonoBehaviour {
     Coroutine timer;
 
     public virtual void Start () {
-        fillImage = this.EnsureComponent<Image>();
+        fillImage = transform.FindComponent<Image>("CircularTimerImage");
         fillImage.enabled = false;
     }
 

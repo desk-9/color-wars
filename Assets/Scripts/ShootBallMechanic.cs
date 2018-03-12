@@ -11,7 +11,8 @@ public class ShootBallMechanic : MonoBehaviour {
     public float baseShotSpeed = 1.0f;
     public float chargeRate = 1.0f;
     public float shotPower = 1.1f;
-    public CircularTimer circularTimer;
+    public GameObject circularTimerPrefab;
+    CircularTimer circularTimer;
 
     public GameObject chargeEffect;
 
@@ -25,6 +26,27 @@ public class ShootBallMechanic : MonoBehaviour {
 
     float shotSpeed = 1.0f;
     float elapsedTime = 0.0f;
+
+    void Start() {
+        Debug.Log("shooting");
+        playerMovement = this.EnsureComponent<PlayerMovement>();
+        ballCarrier  = this.EnsureComponent<BallCarrier>();
+        rb           =  this.EnsureComponent<Rigidbody2D>();
+        stateManager =  this.EnsureComponent<PlayerStateManager>();
+        stateManager.CallOnStateEnter(
+            State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
+        stateManager.CallOnStateExit(
+            State.Posession, () => StopChargeShot());
+
+        if (chargeEffect != null) {
+            if (chargeEffect.GetComponent<ParticleSystem>().main.duration != forcedShotTime) {
+                Debug.LogWarning("Forced shot time != particlesystem duration! This will look bad!");
+            }
+        }
+        circularTimer = Instantiate(
+            circularTimerPrefab, transform.position,
+            Quaternion.identity, transform).GetComponent<CircularTimer>();
+    }
 
     IEnumerator ShootTimer() {
         circularTimer?.StartTimer(forcedShotTime, delegate{});
@@ -92,25 +114,5 @@ public class ShootBallMechanic : MonoBehaviour {
         }
     }
 
-    void Start() {
-        playerMovement = this.EnsureComponent<PlayerMovement>();
-        ballCarrier  = this.EnsureComponent<BallCarrier>();
-        rb           =  this.EnsureComponent<Rigidbody2D>();
-        stateManager =  this.EnsureComponent<PlayerStateManager>();
-        stateManager.CallOnStateEnter(
-            State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
-        stateManager.CallOnStateExit(
-            State.Posession, () => StopChargeShot());
 
-        if (chargeEffect != null) {
-            if (chargeEffect.GetComponent<ParticleSystem>().main.duration != forcedShotTime) {
-                Debug.LogWarning("Forced shot time != particlesystem duration! This will look bad!");
-            }
-        }
-
-        circularTimer = transform.Find("CircularTimerChildObject/CircularTimerGameObject").GetComponent<CircularTimer>();
-        if (circularTimer == null) {
-            Debug.LogWarning("Could not find circular timer component! Check ShootBallMechanic");
-        }
-    }
 }
