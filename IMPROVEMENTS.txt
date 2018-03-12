@@ -1,0 +1,7 @@
+* Added visual indicators and effects for various controls and states.
+* Added stealing mechanic and shot charging (more control to the player).
+* Added an in-game introduction to controls and gameplay.
+* Added visual and audio indication for goal switch timing.
+* Removed player anonymity due negative player feedback.
+* Remapped controls to be more intuitive.
+* Applied a neon theme.
