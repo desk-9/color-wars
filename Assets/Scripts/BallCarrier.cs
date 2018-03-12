@@ -7,11 +7,11 @@ using IC = InControl;
 
 public class BallCarrier : MonoBehaviour {
 
-    public float ballOffsetFromCenter = .5f;
     public float coolDownTime = .1f;
     public Ball ball { private set; get;}
     public float ballTurnSpeed = 10f;
 
+    float ballOffsetFromCenter = .5f;
     PlayerMovement playerMovement;
     IC.InputDevice input;
     PlayerStateManager stateManager;

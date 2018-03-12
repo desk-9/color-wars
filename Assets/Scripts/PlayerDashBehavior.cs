@@ -120,19 +120,24 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     }
 
-    void TrySteal(GameObject playerObject) {
+    void TrySteal(GameObject stealable) {
         if (!stateManager.IsInState(State.Dash)) {
             return;
         }
-        var otherCarrier = playerObject.GetComponent<BallCarrier>();
-        var otherStateManager = playerObject.GetComponent<PlayerStateManager>();
+        var ball = stealable.GetComponent<Ball>();
+        if (ball != null && ball.owner != null) {
+            stealable = ball.owner.gameObject;
+        }
+
+        var otherCarrier = stealable.GetComponent<BallCarrier>();
+        var otherStateManager = stealable.GetComponent<PlayerStateManager>();
         if (otherCarrier != null && otherStateManager != null && otherCarrier.ball != null) {
             Steal(otherCarrier, otherStateManager);
         }
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
-        var playerObject = collision.gameObject;
-        TrySteal(playerObject);
+        var stealable = collision.gameObject;
+        TrySteal(stealable);
     }
 }
