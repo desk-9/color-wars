@@ -70,19 +70,34 @@ public class Goal : MonoBehaviour {
     }
 
     void ScoreGoal(Ball ball) {
+        if (!ball.IsOwnable()) {
+            var stateManager = ball.owner?.GetComponent<PlayerStateManager>();
+            if (stateManager != null) {
+                stateManager.CurrentStateHasFinished();
+            }
+        }
+
         if (ball.IsOwnable()) {
             ball.ownable = false;
             currentTeam?.IncrementScore();
             // TODO: Non-tweakable placeholder delay on ball reset until it's
             // decided what should happen respawn-wise on goal scoring
-            this.TimeDelayCall(ball.ResetBall, 0.35f);
+            this.TimeDelayCall(ball.ResetBall, 0.2f);
         }
     }
 
-    void OnTriggerEnter2D(Collider2D collider) {
+    void BallCheck(Collider2D collider) {
         var ball = collider.gameObject.GetComponent<Ball>();
         if (ball != null) {
             ScoreGoal(ball);
         }
+    }
+
+    void OnTriggerEnter2D(Collider2D collider) {
+        BallCheck(collider);
+    }
+
+    void OnTriggerStay2D(Collider2D collider) {
+        BallCheck(collider);
     }
 }
