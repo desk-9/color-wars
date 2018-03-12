@@ -106,7 +106,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     void Steal(BallCarrier otherCarrier, PlayerStateManager otherStateManager) {
-        Debug.Log("stealing");
         var ball = otherCarrier.ball;
         var otherStun = otherStateManager.GetComponent<PlayerStun>();
         if (otherStun != null) {
@@ -133,7 +132,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
-        Debug.Log("collided");
         var playerObject = collision.gameObject;
         TrySteal(playerObject);
     }

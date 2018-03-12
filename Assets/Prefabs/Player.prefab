@@ -236,6 +236,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ballOffsetFromCenter: 1
   coolDownTime: 0.1
+  ballTurnSpeed: 50
 --- !u!114 &114694489525978138
 MonoBehaviour:
   m_ObjectHideFlags: 1
