@@ -1,3 +1,7 @@
 Asset: Assets/Scripts/BallCarrierWithOrbit.cs
 Based on the OrbitTarget demo, posted by Austin Yarger
 (See https://piazza.com/class/jbcr9wzhymw6hm?cid=214)
+
+Sounds:
+Goal Switch Notification: https://freesound.org/people/pan14/sounds/263133/
+GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
