@@ -45,7 +45,6 @@ public class BallCarrier : MonoBehaviour {
         var ballRadius = ball.GetComponent<CircleCollider2D>()?.bounds.extents.x;
         var renderer = GetComponent<SpriteRenderer>();
         if (renderer != null && ballRadius != null) {
-            Debug.Log(renderer.sprite.bounds.extents.x + ballRadius.Value);
             ballOffsetFromCenter = renderer.sprite.bounds.extents.x + ballRadius.Value;
         }
     }
@@ -95,7 +94,6 @@ public class BallCarrier : MonoBehaviour {
             Vector2 newPosition = CircularLerp(
                 ball.transform.position, NosePosition(ball), transform.position,
                 ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
-            Debug.Log(newPosition);
             rigidbody.MovePosition(newPosition);
         }
     }
