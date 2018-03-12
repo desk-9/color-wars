@@ -8,10 +8,11 @@ using UtilityExtensions;
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
-    public float               maxChargeTime = 1.0f;
-    public float               chargeRate    = 1.0f;
-    public float               dashPower     = 0.1f;
-    public float               dashDuration  = 0.0f;
+    public float stealKnockbackPercentage = 0.8f;
+    public float maxChargeTime = 1.0f;
+    public float dashDuration = 0.0f;
+    public float chargeRate = 1.0f;
+    public float dashPower = 0.1f;
 
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
@@ -110,7 +111,16 @@ public class PlayerDashBehavior : MonoBehaviour {
         var otherStun = otherStateManager.GetComponent<PlayerStun>();
         if (otherStun != null) {
             otherStateManager.AttemptStun(
-                () => otherStun.StartStun(),
+                () => {
+                    otherStun.StartStun();
+                    var otherBody = otherCarrier.GetComponent<Rigidbody2D>();
+                    if (otherBody != null) {
+                        var magnitude = (rb.velocity.magnitude / Time.fixedDeltaTime)
+                            * otherBody.mass;
+                        var force = rb.velocity.normalized * magnitude;
+                        otherBody.AddForce(force * stealKnockbackPercentage);
+                    }
+                },
                 otherStun.StopStunned);
         }
         stateManager.CurrentStateHasFinished();
