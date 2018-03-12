@@ -16,7 +16,7 @@ public class Goal : MonoBehaviour {
     IntCallback nextTeamIndex;
     new SpriteRenderer renderer;
     Text goalSwitchText;
-    AudioSource audio;
+    AudioSource audioSource;
 
     void Awake() {
         renderer = GetComponent<SpriteRenderer>();
@@ -25,14 +25,14 @@ public class Goal : MonoBehaviour {
     void Start () {
         nextTeamIndex = Utility.ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
-        audio = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
         SwitchToNextTeam();
         StartCoroutine(TeamSwitching());
     }
 
     void PlayAudioClip(AudioClip play) {
-        audio.clip = play;
-        audio.Play();
+        audioSource.clip = play;
+        audioSource.Play();
     }
 
     void SetNotificationText(string to) {
