@@ -30,10 +30,12 @@ public class ScoreDisplayer : MonoBehaviour {
 
     IEnumerator UpdateMatchTime(float matchLength) {
         yield return new WaitForFixedUpdate();
-        float endTime = Time.time + matchLength;
+        float startTime = Time.time;
+        float endTime = startTime + matchLength;
+        var start = DateTime.Now;
         var end = DateTime.Now.AddSeconds(matchLength);
         while (Time.time < endTime) {
-            var now = DateTime.Now;
+            var now = start.AddSeconds(Time.time - startTime);
             var difference = end - now;
             var time_string = difference.ToString(@"mm\:ss");
             matchTimeText.text = string.Format("Time: {0}", time_string);
