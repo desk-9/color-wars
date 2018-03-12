@@ -84,8 +84,8 @@ public class BallCarrier : MonoBehaviour {
 
     Vector2 NosePosition(Ball ball) {
         var newPosition = transform.position +
-            (transform.right * ballOffsetFromCenter);
-        return 1.03f * newPosition;
+            (1.03f * transform.right * ballOffsetFromCenter);
+        return newPosition;
     }
 
     void PlaceBallAtNose() {
