@@ -13,6 +13,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float dashDuration = 0.0f;
     public float chargeRate = 1.0f;
     public float dashPower = 0.1f;
+    public bool onlyStunBallCarriers = false;
 
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
@@ -149,6 +150,10 @@ public class PlayerDashBehavior : MonoBehaviour {
         var otherStateManager = stealee.GetComponent<PlayerStateManager>();
 
         if (otherCarrier != null && otherStateManager != null) {
+            if (onlyStunBallCarriers && otherCarrier.ball == null) {
+                return;
+            }
+
             var otherTeamManager = stealee.EnsureComponent<Player>().team;
             if (otherTeamManager.teamColor != player.team.teamColor) {
                 Stun(otherCarrier, otherStateManager);
