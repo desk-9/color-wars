@@ -16,6 +16,7 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
+    Player player;
     IC.InputDevice     input;
     Rigidbody2D        rb;
     Coroutine          chargeCoroutine;
@@ -27,6 +28,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         input          = playerMovement.GetInputDevice();
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
+        player = this.EnsureComponent<Player>();
     }
 
     void Update() {
@@ -141,7 +143,12 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         var otherCarrier = stealable.GetComponent<BallCarrier>();
         var otherStateManager = stealable.GetComponent<PlayerStateManager>();
-        if (otherCarrier != null && otherStateManager != null && otherCarrier.ball != null) {
+        var otherTeamManager = stealable.EnsureComponent<Player>().team;
+
+        if (otherCarrier != null
+            && otherStateManager != null
+            && otherCarrier.ball != null
+            && otherTeamManager.teamColor != player.team.teamColor) {
             Steal(otherCarrier, otherStateManager);
         }
     }
