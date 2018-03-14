@@ -1006,10 +1006,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreDisplayer: {fileID: 1774596751}
   teamColors:
-  - {r: 0, g: 0.88235295, b: 1, a: 1}
-  - {r: 0.92475796, g: 0.33088237, b: 1, a: 1}
+  - color: {r: 0.9254902, g: 0.32941177, b: 1, a: 1}
+    name: Pink
+  - color: {r: 0.09411765, g: 0.7921569, b: 0.9019608, a: 1}
+    name: Blue
   scoreMax: 5
-  matchLength: 3
+  matchLength: 0.1
 --- !u!4 &653058663
 Transform:
   m_ObjectHideFlags: 0
