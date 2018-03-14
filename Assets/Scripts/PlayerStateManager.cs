@@ -24,26 +24,28 @@ public delegate void ToggleCallback(bool isEnteringState);
 public delegate void TransitionCallback(State start, State end);
 
 public class PlayerStateManager : MonoBehaviour {
-    SortedDictionary<State, List<ToggleCallback>> on_specific_change_subscribers =
-        new SortedDictionary<State, List<ToggleCallback>>();
-    SortedDictionary<State, List<Callback>> on_start_subscribers =
-        new SortedDictionary<State, List<Callback>>();
-    SortedDictionary<State, List<Callback>> on_end_subscribers =
-        new SortedDictionary<State, List<Callback>>();
-    List<TransitionCallback> on_any_change_subscribers = new List<TransitionCallback>();
+
+
+    SortedDictionary<State, ToggleCallback> on_specific_change_subscribers =
+        new SortedDictionary<State, ToggleCallback>();
+    SortedDictionary<State, Callback> on_start_subscribers =
+        new SortedDictionary<State, Callback>();
+    SortedDictionary<State, Callback> on_end_subscribers =
+        new SortedDictionary<State, Callback>();
+    TransitionCallback on_any_change_subscribers = delegate{};
     State currentState;
     Callback stopCurrentState;
     State defaultState = State.NormalMovement;
     Callback startDefaultState;
     Callback stopDefaultState;
-    
+
     void Awake() {
         currentState = State.StartupState;
         stopCurrentState = null;
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
-            on_specific_change_subscribers[state] = new List<ToggleCallback>();
-            on_start_subscribers[state] = new List<Callback>();
-            on_end_subscribers[state] = new List<Callback>();
+            on_specific_change_subscribers[state] = delegate{};
+            on_start_subscribers[state] = delegate{};
+            on_end_subscribers[state] = delegate{};
         }
     }
 
@@ -53,20 +55,20 @@ public class PlayerStateManager : MonoBehaviour {
 
     // Schedules a callback whenever information with respect to a certain state
     // changes
-    public void CallOnSpecficStateChange(State state, ToggleCallback callback){
-        on_specific_change_subscribers[state].Add(callback);
+    public void CallOnSpecficStateChange(State state, ToggleCallback callback) {
+        on_specific_change_subscribers[state] += callback;
     }
 
     public void CallOnAnyStateChange(TransitionCallback callback) {
-        on_any_change_subscribers.Add(callback);
+        on_any_change_subscribers += callback;
     }
 
     public void CallOnStateEnter(State state, Callback callback) {
-        on_start_subscribers[state].Add(callback);
+        on_start_subscribers[state] += callback;
     }
-    
+
     public void CallOnStateExit(State state, Callback callback) {
-        on_end_subscribers[state].Add(callback);
+        on_end_subscribers[state] += callback;
     }
 
     // This method should be called if a state exits without being forced, such as
@@ -86,7 +88,7 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
-    public void AttemptDashCharge(Callback start, Callback stop){
+    public void AttemptDashCharge(Callback start, Callback stop) {
         if (IsInState(State.NormalMovement)) {
             SwitchToState(State.ChargeDash, start, stop);
         }
@@ -110,10 +112,10 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
-    void SwitchToState(State state, Callback start, Callback stop){
+    void SwitchToState(State state, Callback start, Callback stop) {
         stopCurrentState();
         AlertSubscribers(currentState, false, state);
-        
+
         currentState = state;
         start();
         stopCurrentState = stop;
@@ -121,33 +123,25 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     void AlertSubscribers(State state, bool isEnteringState, State? nextState = null) {
-        foreach (var callback in on_specific_change_subscribers[state]) {
-            callback(isEnteringState);
-        }
+        on_specific_change_subscribers[state](isEnteringState);
         if (isEnteringState) {
-            foreach (var callback in on_start_subscribers[state]) {
-                callback();
-            }
+            on_start_subscribers[state]();
         } else {
-            foreach (var callback in on_end_subscribers[state]) {
-                callback();
-            }
+            on_end_subscribers[state]();
 
             if (nextState != null) {
-                foreach (var callback in on_any_change_subscribers) {
-                    callback(state, nextState.Value);
-                }
+                on_any_change_subscribers(state, nextState.Value);
             }
         }
     }
 
     public bool IsInState(params State[] states){
-        foreach(var state in states){
+        foreach (var state in states){
             if (currentState == state) {
                 return true;
             }
         }
         return false;
     }
-    
+
 }
