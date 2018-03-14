@@ -10,13 +10,11 @@ public class Goal : MonoBehaviour {
     public TeamManager currentTeam;
     public float goalSwitchInterval = 10;
     public int goalSwitchNotificationLength = 3;
-    public AudioClip goalSwitchWarningAudio;
-    public AudioClip goalSwitchAudio;
+
 
     IntCallback nextTeamIndex;
     new SpriteRenderer renderer;
     Text goalSwitchText;
-    AudioSource audioSource;
 
     void Awake() {
         renderer = GetComponent<SpriteRenderer>();
@@ -25,14 +23,8 @@ public class Goal : MonoBehaviour {
     void Start () {
         nextTeamIndex = Utility.ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
-        audioSource = GetComponent<AudioSource>();
         SwitchToNextTeam();
         StartCoroutine(TeamSwitching());
-    }
-
-    void PlayAudioClip(AudioClip play) {
-        audioSource.clip = play;
-        audioSource.Play();
     }
 
     void SetNotificationText(string to) {
@@ -40,7 +32,7 @@ public class Goal : MonoBehaviour {
             goalSwitchText.enabled = true;
         }
         goalSwitchText.text = to;
-        PlayAudioClip(goalSwitchWarningAudio);
+        AudioManager.Play("GoalSwitchWarning", 0.75f);
     }
 
     IEnumerator TeamSwitching() {
@@ -61,7 +53,7 @@ public class Goal : MonoBehaviour {
 
     void SwitchToNextTeam(bool playSound = false) {
         if (playSound) {
-            PlayAudioClip(goalSwitchAudio);
+            AudioManager.Play("GoalSwitch");
         }
         currentTeam = GetNextTeam();
         if (renderer != null) {
