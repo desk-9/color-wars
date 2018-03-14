@@ -20,7 +20,7 @@ public class ReadyUpManager : MonoBehaviour {
         private set { numPlayersReady = value; }
     }
 
-    
+
     List<PlayerTutorial> players;
     List<PlayerTutorial> readyPlayers;
     string mainScene = "court";
@@ -72,31 +72,21 @@ public class ReadyUpManager : MonoBehaviour {
     }
 
     IEnumerator StartGameText() {
-        
-        
         controlsText.text = "";
-        startGameCountdownText.text = "Starting game...\n3";
-        Debug.Log("Waiting 1");
-        yield return new WaitForSeconds(1);
-        
-        startGameCountdownText.text = "Starting game...\n2";
-        Debug.Log("Waiting 2");
-        yield return new WaitForSeconds(1);
-        
-        startGameCountdownText.text = "Starting game...\n1";
-        Debug.Log("Waiting 3");
-        yield return new WaitForSeconds(1);
-        
+        for (int i = 1; i <= 3; i++) {
+            startGameCountdownText.text = string.Format("Starting game...\n{0}", 4 - i);
+            Debug.LogFormat("Waiting {0}", i);
+            yield return new WaitForSeconds(1);
+        }
+
         startGameCountdownText.text = "Starting game...\nGO!";
         yield return new WaitForSeconds(1);
-        menuController.enabled = true;
         Debug.Log("Loading main scene!!");
         SceneManager.LoadScene(mainScene, LoadSceneMode.Single);
     }
 
     void UpdateText() {
-        readyUpText.text = "Ready: " + numPlayersReady.ToString()
-            + "/" + numPlayers.ToString();
+        readyUpText.text = string.Format("Ready: {0}/{1}", numPlayersReady, numPlayers);
     }
 
 }
