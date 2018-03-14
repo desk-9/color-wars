@@ -18,6 +18,7 @@ public class GameModel : MonoBehaviour {
     public SceneStateController scene_controller {get; set;}
     public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
+    public NotificationCenter nc;
 
     float matchLengthSeconds;
 
@@ -39,6 +40,7 @@ public class GameModel : MonoBehaviour {
         end_controller = GetComponent<GameEndController>();
         matchLengthSeconds = 60 * matchLength;
         this.TimeDelayCall(EndGame, matchLengthSeconds);
+        nc = new NotificationCenter();
     }
 
     void Start() {

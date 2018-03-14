@@ -47,6 +47,10 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
+    void Start() {
+        GameModel.instance.nc.HookUpPlayer(this);
+    }
+
     // Schedules a callback whenever information with respect to a certain state
     // changes
     public void CallOnSpecficStateChange(State state, ToggleCallback callback){
