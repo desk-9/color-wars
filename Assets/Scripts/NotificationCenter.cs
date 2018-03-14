@@ -54,10 +54,16 @@ public class NotificationCenter {
         new SortedDictionary<string, EventCallback>();
 
     public void CallOnStringEventWithSender(string identifier, EventCallback callback) {
+        if (!string_events.ContainsKey(identifier)) {
+            string_events[identifier] = delegate{};
+        }
         string_events[identifier] += callback;
     }
 
     public void CallOnStringEvent(string identifier, Callback callback) {
+        if (!string_events.ContainsKey(identifier)) {
+            string_events[identifier] = delegate{};
+        }
         string_events[identifier] += (object o) => callback();
     }
 
