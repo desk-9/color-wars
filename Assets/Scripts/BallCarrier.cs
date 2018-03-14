@@ -13,7 +13,6 @@ public class BallCarrier : MonoBehaviour {
 
     float ballOffsetFromCenter = .5f;
     PlayerMovement playerMovement;
-    IC.InputDevice input;
     PlayerStateManager stateManager;
     Coroutine carryBallCoroutine;
     bool isCoolingDown = false;
@@ -24,7 +23,6 @@ public class BallCarrier : MonoBehaviour {
 
     void Start() {
         playerMovement = GetComponent<PlayerMovement>();
-        input = playerMovement?.GetInputDevice();
         stateManager = GetComponent<PlayerStateManager>();
         if (playerMovement != null && stateManager != null) {
             stateManager.CallOnStateEnter(
@@ -113,13 +111,6 @@ public class BallCarrier : MonoBehaviour {
         var centeredResult = rotation * centerToStartDirection;
         centeredResult *= radius;
         return (Vector2) centeredResult + center;
-    }
-
-    public virtual void Update() {
-        if (input == null) {
-            input = playerMovement?.GetInputDevice();
-            return;
-        }
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
