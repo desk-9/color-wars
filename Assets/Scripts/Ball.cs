@@ -4,7 +4,7 @@ using UnityEngine;
 using UtilityExtensions;
 
 public class Ball : MonoBehaviour {
-    
+
     Vector2 start_location;
     public BallCarrier owner { get; set; }
     public bool ownable {get; set;} = true;

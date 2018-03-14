@@ -18,8 +18,8 @@ public class WinDisplay : MonoBehaviour {
             winnerText.color = Color.black;
             return;
         }
-        winnerText.text = string.Format("Team {0} won with {1} points",
-                                        winner.teamNumber, winner.score);
+        winnerText.text = string.Format("{0} Team won with {1} points",
+                                        winner.teamColor.name, winner.score);
         winnerText.color = winner.teamColor;
     }
 

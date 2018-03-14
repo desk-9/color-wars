@@ -12,7 +12,7 @@ public class GameModel : MonoBehaviour {
 
     public static GameModel instance;
     public ScoreDisplayer scoreDisplayer;
-    public Color[] teamColors;
+    public CustomColor[] teamColors;
     public TeamManager[] teams { get; set; }
     public int scoreMax = 7;
     public SceneStateController scene_controller {get; set;}

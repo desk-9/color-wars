@@ -11,7 +11,7 @@ public class MenuController : MonoBehaviour {
     public GameObject pauseMenu;
 
     SceneStateController scene_controller;
-    
+
     void Start() {
         scene_controller = GameModel.instance.scene_controller;
     }
