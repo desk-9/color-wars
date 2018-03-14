@@ -7,25 +7,17 @@ public class PlayerStun : MonoBehaviour {
     public float stunTime = 5f;
 
     Coroutine stunned;
-    Rigidbody2D rb2d;
 
-    void Start() {
-        rb2d = this.EnsureComponent<Rigidbody2D>();
-    }
-
-    public void StartStun(Vector2 knockback, float? length = null) {
-        stunned = StartCoroutine(Stun(knockback, length));
-    }
-
-    IEnumerator Stun(Vector2 knockback, float? length = null) {
-        var magnitude = knockback.magnitude / Time.fixedDeltaTime * rb2d.mass;
-        var force = knockback.normalized * magnitude;
-        if (length == null) {
-            length = stunTime;
+    public void StartStun(Vector2? knockbackVelocity = null, float? length = null) {
+        if (knockbackVelocity != null) {
+            var rigidbody = GetComponent<Rigidbody2D>();
+            rigidbody?.AddForce(knockbackVelocity.Value * rigidbody.mass,
+                                ForceMode2D.Impulse);
         }
+        stunned = StartCoroutine(Stun(length));
+    }
 
-        rb2d.AddForce(force);
-
+    IEnumerator Stun(float? length = null) {
         var endTime = Time.time + length;
         while (Time.time < endTime) {
             yield return null;

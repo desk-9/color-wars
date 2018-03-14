@@ -121,10 +121,8 @@ public class PlayerDashBehavior : MonoBehaviour {
         var otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
         if (otherStun != null && otherStateManager != null) {
             otherStateManager.AttemptStun(
-                                          () => {
-                                              otherStun.StartStun(rb.velocity * stealKnockbackPercentage);
-                                          },
-                                          otherStun.StopStunned);
+                () => otherStun.StartStun(rb.velocity * stealKnockbackPercentage),
+                otherStun.StopStunned);
         }
         stateManager.CurrentStateHasFinished();
     }
