@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class CustomColor {
+public class NamedColor {
     public Color color;
     public string name;
 
-    CustomColor(Color color, string name) {
+    NamedColor(Color color, string name) {
         this.color = color;
         this.name = name;
     }
 
-    public static implicit operator Color(CustomColor custom) {
+    public static implicit operator Color(NamedColor custom) {
         return custom.color;
     }
 }
