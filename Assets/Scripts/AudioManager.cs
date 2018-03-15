@@ -4,8 +4,8 @@ using UnityEngine;
 
 public struct SoundName {
     string name;
-    public SoundName(string name_) {
-        name = name_;
+    public SoundName(string name) {
+        this.name = name;
     }
 
     public static implicit operator SoundName(string s) {
