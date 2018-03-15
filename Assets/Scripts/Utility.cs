@@ -8,7 +8,7 @@ public delegate int IntCallback();
 
 namespace UtilityExtensions {
     // This namespace is for any general utility extensions to existing classes
-        
+
     public static class UtilityExtensionsContainer {
 
         public static T EnsureComponent<T>(this GameObject game_object) where T : Component {
@@ -59,6 +59,26 @@ public class Utility {
             value = (value + 1) % modulus;
             return result;
         };
+    }
+}
+
+public class ModCycle {
+    public int value = 0;
+    public int modulus;
+
+    public ModCycle(int start, int modulus) {
+        value = start;
+        this.modulus = modulus;
+    }
+
+    public int PeekNext() {
+        return value;
+    }
+
+    public int Next() {
+        var result = value;
+        value = (value + 1) % modulus;
+        return result;
     }
 }
 

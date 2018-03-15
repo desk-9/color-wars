@@ -13,7 +13,7 @@ public class Goal : MonoBehaviour {
     public float goalSwitchWarningVolume = 0.02f;
 
 
-    IntCallback nextTeamIndex;
+    ModCycle nextTeamIndex;
     new SpriteRenderer renderer;
     Text goalSwitchText;
 
@@ -22,7 +22,7 @@ public class Goal : MonoBehaviour {
     }
 
     void Start () {
-        nextTeamIndex = Utility.ModCycle(0, GameModel.instance.teams.Length);
+        nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
         SwitchToNextTeam();
         StartCoroutine(TeamSwitching());
@@ -39,6 +39,7 @@ public class Goal : MonoBehaviour {
     IEnumerator TeamSwitching() {
         while (true) {
             yield return new WaitForSeconds(goalSwitchInterval - goalSwitchNotificationLength);
+            goalSwitchText.color = PeekNextTeam().teamColor;
             for (int i = goalSwitchNotificationLength; i > 0; --i) {
                 SetNotificationText(i.ToString());
                 yield return new WaitForSeconds(1);
@@ -48,8 +49,12 @@ public class Goal : MonoBehaviour {
         }
     }
 
+    TeamManager PeekNextTeam() {
+        return GameModel.instance.teams[nextTeamIndex.PeekNext()];
+    }
+
     TeamManager GetNextTeam() {
-        return GameModel.instance.teams[nextTeamIndex()];
+        return GameModel.instance.teams[nextTeamIndex.Next()];
     }
 
     void SwitchToNextTeam(bool playSound = false) {
