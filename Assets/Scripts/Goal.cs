@@ -10,6 +10,7 @@ public class Goal : MonoBehaviour {
     public TeamManager currentTeam;
     public float goalSwitchInterval = 10;
     public int goalSwitchNotificationLength = 3;
+    public float goalSwitchWarningVolume = 0.02f;
 
 
     IntCallback nextTeamIndex;
@@ -32,7 +33,7 @@ public class Goal : MonoBehaviour {
             goalSwitchText.enabled = true;
         }
         goalSwitchText.text = to;
-        AudioManager.Play("GoalSwitchWarning", 0.75f);
+        AudioManager.instance.GoalSwitchWarning.Play(goalSwitchWarningVolume);
     }
 
     IEnumerator TeamSwitching() {
@@ -53,7 +54,7 @@ public class Goal : MonoBehaviour {
 
     void SwitchToNextTeam(bool playSound = false) {
         if (playSound) {
-            AudioManager.Play("GoalSwitch");
+            AudioManager.instance.GoalSwitch.Play();
         }
         currentTeam = GetNextTeam();
         if (renderer != null) {
