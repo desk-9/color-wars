@@ -23,6 +23,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     Coroutine          chargeCoroutine;
     Coroutine          dashCoroutine;
     float dashSpeed;
+    BallCarrier carrier;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
@@ -30,6 +31,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
+        carrier = this.EnsureComponent<BallCarrier>();
     }
 
     void Update() {
@@ -109,13 +111,9 @@ public class PlayerDashBehavior : MonoBehaviour {
         stateManager.CurrentStateHasFinished();
     }
 
-    void TrySteal(Player otherPlayer) {
+    Ball TrySteal(Player otherPlayer) {
         var otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
-        if (otherCarrier != null && otherCarrier.ball != null) {
-            var carrier = this.EnsureComponent<BallCarrier>();
-            stateManager.AttemptPossession(() => carrier.StartCarryingBall(otherCarrier.ball),
-                                           otherCarrier.DropBall);
-        }
+        return otherCarrier == null ? null : otherCarrier.ball;
     }
 
     void Stun(Player otherPlayer) {
@@ -140,8 +138,12 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         if (otherPlayer != null &&
             otherPlayer.team.teamColor != player.team.teamColor) {
-            TrySteal(otherPlayer);
+            var ball = TrySteal(otherPlayer);
             Stun(otherPlayer);
+            if (ball != null) {
+                stateManager.AttemptPossession(() => carrier.StartCarryingBall(ball),
+                                               carrier.DropBall);
+            }
         }
     }
 
