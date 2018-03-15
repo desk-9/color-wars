@@ -50,7 +50,7 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     void Start() {
-        GameModel.instance.nc.HookUpPlayer(this);
+        GameModel.instance.nc.RegisterPlayer(this);
     }
 
     // Schedules a callback whenever information with respect to a certain state

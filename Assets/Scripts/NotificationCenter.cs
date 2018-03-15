@@ -37,7 +37,7 @@ public class NotificationCenter {
         }
     }
 
-    public void HookUpPlayer(PlayerStateManager player) {
+    public void RegisterPlayer(PlayerStateManager player) {
         var playerComponent = player.GetComponent<Player>();
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
             player.CallOnStateEnter(
