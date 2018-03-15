@@ -48,7 +48,6 @@ public class BallCarrier : MonoBehaviour {
     }
 
     IEnumerator CarryBall(Ball ball) {
-        Debug.Log("Carrying ball! Owner: " + gameObject.name);
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         this.ball = ball;
         ball.owner = this;
@@ -68,7 +67,6 @@ public class BallCarrier : MonoBehaviour {
 
     public void DropBall() {
         if (ball != null) {
-            Debug.Log("Dropping ball! Owner: " + gameObject.name);
 
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;

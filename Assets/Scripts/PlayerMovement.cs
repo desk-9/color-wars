@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour {
     PlayerStateManager stateManager;
 
     void StartPlayerMovement() {
-        playerMovementCoroutine = StartCoroutine(Move());       
+        playerMovementCoroutine = StartCoroutine(Move());
     }
 
     void StopAllMovement() {
@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour {
         if (inputDevice == null) {
             yield break;
         }
-        
+
         yield return new WaitForFixedUpdate();
         while (true) {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);

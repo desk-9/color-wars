@@ -25,7 +25,6 @@ public class CircularTimer : MonoBehaviour {
     }
 
     public void StartTimer(float secondsUntilTimeout, Callback endTimerCallback) {
-        Debug.Log("Starting circular timer");
         fillImage.enabled = true;
         timer = StartCoroutine(Timer(secondsUntilTimeout));
         FillAmount = 0;

@@ -17,7 +17,7 @@ public class PlayerTutorial : MonoBehaviour {
         input = playerMovement.GetInputDevice();
         registered = false;
     }
-	
+
     // Update is called once per frame
     void Update () {
         if (input == null) {

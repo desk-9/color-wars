@@ -16,23 +16,20 @@ public class ShootBallMechanic : MonoBehaviour {
 
     public GameObject chargeEffect;
 
-    PlayerMovement     playerMovement;
+    PlayerMovement playerMovement;
     PlayerStateManager stateManager;
-    Rigidbody2D        rb;
-    IC.InputDevice     inputDevice;
-    Coroutine          shootTimer;
-    BallCarrier        ballCarrier;
-    GameObject         effect;
+    IC.InputDevice inputDevice;
+    Coroutine shootTimer;
+    BallCarrier ballCarrier;
+    GameObject effect;
 
     float shotSpeed = 1.0f;
     float elapsedTime = 0.0f;
 
     void Start() {
-        Debug.Log("shooting");
         playerMovement = this.EnsureComponent<PlayerMovement>();
-        ballCarrier  = this.EnsureComponent<BallCarrier>();
-        rb           =  this.EnsureComponent<Rigidbody2D>();
-        stateManager =  this.EnsureComponent<PlayerStateManager>();
+        ballCarrier = this.EnsureComponent<BallCarrier>();
+        stateManager = this.EnsureComponent<PlayerStateManager>();
         stateManager.CallOnStateEnter(
             State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
         stateManager.CallOnStateExit(
@@ -53,7 +50,7 @@ public class ShootBallMechanic : MonoBehaviour {
     IEnumerator ShootTimer() {
         circularTimer?.StartTimer(forcedShotTime, delegate{});
 
-        Debug.Log("Starting shoot timer!");
+
         elapsedTime = 0.0f;
         shotSpeed = baseShotSpeed;
 
@@ -77,7 +74,7 @@ public class ShootBallMechanic : MonoBehaviour {
             shotSpeed += chargeRate * Time.deltaTime;
 
             if (inputDevice.GetControl(shootButton).WasReleased) {
-                Debug.Log("Trigger released => Shoot!");
+
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
                 Shoot();
                 yield break;
