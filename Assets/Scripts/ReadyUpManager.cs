@@ -73,9 +73,9 @@ public class ReadyUpManager : MonoBehaviour {
 
     IEnumerator StartGameText() {
         controlsText.text = "";
-        for (int i = 1; i <= 3; i++) {
-            startGameCountdownText.text = string.Format("Starting game...\n{0}", 4 - i);
-            Debug.LogFormat("Waiting {0}", i);
+        for (int i = 3; i > 0; i--) {
+            startGameCountdownText.text = string.Format("Starting game...\n{0}", i);
+            Debug.LogFormat("Waiting {0}", 4 - i);
             yield return new WaitForSeconds(1);
         }
 
