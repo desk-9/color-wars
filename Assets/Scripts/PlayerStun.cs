@@ -10,7 +10,7 @@ public class PlayerStun : MonoBehaviour {
     Rigidbody2D rb2d;
 
     void Start() {
-        rb2d = GetComponent<Rigidbody2D>();
+        rb2d = this.EnsureComponent<Rigidbody2D>();
     }
 
     public void StartStun(Vector2 knockback, float? length = null) {
@@ -18,11 +18,13 @@ public class PlayerStun : MonoBehaviour {
     }
 
     IEnumerator Stun(Vector2 knockback, float? length = null) {
+        var magnitude = knockback.magnitude / Time.fixedDeltaTime * rb2d.mass;
+        var force = knockback.normalized * magnitude;
         if (length == null) {
             length = stunTime;
         }
 
-        rb2d.AddForce(knockback);
+        rb2d.AddForce(force);
 
         var endTime = Time.time + length;
         while (Time.time < endTime) {

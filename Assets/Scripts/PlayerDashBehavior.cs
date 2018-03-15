@@ -109,60 +109,57 @@ public class PlayerDashBehavior : MonoBehaviour {
         stateManager.CurrentStateHasFinished();
     }
 
-    void Stun(BallCarrier otherCarrier, PlayerStateManager otherStateManager) {
-        var ball = otherCarrier.ball;
-        var otherStun = otherStateManager.GetComponent<PlayerStun>();
-        if (otherStun != null) {
-            otherStateManager.AttemptStun(
-                () => {
-                    var otherBody = otherCarrier.EnsureComponent<Rigidbody2D>();
-                    var magnitude = (rb.velocity.magnitude / Time.fixedDeltaTime)
-                    * otherBody.mass;
-                    var force = rb.velocity.normalized * magnitude;
-                    otherStun.StartStun(force * stealKnockbackPercentage);
-                },
-                otherStun.StopStunned);
-        }
-        stateManager.CurrentStateHasFinished();
-        if (ball != null) {
+    void TrySteal(Player otherPlayer) {
+        var otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
+        if (otherCarrier != null && otherCarrier.ball != null) {
             var carrier = this.EnsureComponent<BallCarrier>();
-            stateManager.AttemptPossession(() => carrier.StartCarryingBall(ball),
-                                           carrier.DropBall);
+            stateManager.AttemptPossession(() => carrier.StartCarryingBall(otherCarrier.ball),
+                                           otherCarrier.DropBall);
         }
     }
 
-    void TryStun(GameObject stealee) {
+    void Stun(Player otherPlayer) {
+        var otherStun = otherPlayer.GetComponent<PlayerStun>();
+        var otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
+        if (otherStun != null && otherStateManager != null) {
+            otherStateManager.AttemptStun(
+                                          () => {
+                                              otherStun.StartStun(rb.velocity * stealKnockbackPercentage);
+                                          },
+                                          otherStun.StopStunned);
+        }
+        stateManager.CurrentStateHasFinished();
+    }
+
+    void StunAndSteal(GameObject otherGameObject) {
         if (!stateManager.IsInState(State.Dash)) {
             return;
         }
 
-        var ball = stealee.GetComponent<Ball>();
-        if (ball != null) {
-            if (ball.owner == null) {
-                // Regular collision with ball
-                return;
-            } else{
-                stealee = ball.owner.gameObject;
-            }
-        }
+        var otherPlayer = GetAssociatedPlayer(otherGameObject);
 
-        var otherCarrier = stealee.GetComponent<BallCarrier>();
-        var otherStateManager = stealee.GetComponent<PlayerStateManager>();
-
-        if (otherCarrier != null && otherStateManager != null) {
-            if (onlyStunBallCarriers && otherCarrier.ball == null) {
-                return;
-            }
-
-            var otherTeamManager = stealee.EnsureComponent<Player>().team;
-            if (otherTeamManager.teamColor != player.team.teamColor) {
-                Stun(otherCarrier, otherStateManager);
-            }
+        if (otherPlayer != null &&
+            otherPlayer.team.teamColor != player.team.teamColor) {
+            TrySteal(otherPlayer);
+            Stun(otherPlayer);
         }
     }
 
+    Player GetAssociatedPlayer(GameObject gameObject) {
+        var ball = gameObject.GetComponent<Ball>();
+        if (ball != null) {
+            return (ball.owner == null) ? null : ball.owner.GetComponent<Player>();
+        }
+
+        if (onlyStunBallCarriers) {
+            return null;
+        } else {
+            return gameObject.GetComponent<Player>();
+        }
+
+    }
+
     public void OnCollisionEnter2D(Collision2D collision) {
-        var stealee = collision.gameObject;
-        TryStun(stealee);
+        StunAndSteal(collision.gameObject);
     }
 }
