@@ -113,7 +113,7 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     Ball TrySteal(Player otherPlayer) {
         var otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
-        return otherCarrier == null ? null : otherCarrier.ball;
+        return otherCarrier?.ball;
     }
 
     void Stun(Player otherPlayer) {
