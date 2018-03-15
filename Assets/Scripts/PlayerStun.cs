@@ -18,7 +18,10 @@ public class PlayerStun : MonoBehaviour {
     }
 
     IEnumerator Stun(float? length = null) {
-        var endTime = Time.time + length;
+        if (length == null) {
+            length = stunTime;
+        }
+        var endTime = Time.time + length.Value;
         while (Time.time < endTime) {
             yield return null;
         }

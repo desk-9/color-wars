@@ -124,7 +124,6 @@ public class PlayerDashBehavior : MonoBehaviour {
                 () => otherStun.StartStun(rb.velocity * stealKnockbackPercentage),
                 otherStun.StopStunned);
         }
-        stateManager.CurrentStateHasFinished();
     }
 
     void StunAndSteal(GameObject otherGameObject) {
@@ -133,7 +132,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
 
         var otherPlayer = GetAssociatedPlayer(otherGameObject);
-
         if (otherPlayer != null &&
             otherPlayer.team.teamColor != player.team.teamColor) {
             var ball = TrySteal(otherPlayer);
