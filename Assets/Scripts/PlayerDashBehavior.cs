@@ -13,7 +13,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float dashDuration = 0.0f;
     public float chargeRate = 1.0f;
     public float dashPower = 0.1f;
-    public bool onlyStunBallCarriers = false;
+    public bool onlyStunBallCarriers = true;
 
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
