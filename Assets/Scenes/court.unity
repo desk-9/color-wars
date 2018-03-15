@@ -1011,7 +1011,7 @@ MonoBehaviour:
   - color: {r: 0.09411765, g: 0.7921569, b: 0.9019608, a: 1}
     name: Blue
   scoreMax: 5
-  matchLength: 0.1
+  matchLength: 3
 --- !u!4 &653058663
 Transform:
   m_ObjectHideFlags: 0
