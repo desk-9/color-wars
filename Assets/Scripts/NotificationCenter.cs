@@ -20,20 +20,20 @@ public enum Message {
 public class NotificationCenter {
 
     // PlayerState addons
-    SortedDictionary<State, PlayerCallback> on_any_player_start_subscribers =
+    SortedDictionary<State, PlayerCallback> onAnyPlayerStartSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    SortedDictionary<State, PlayerCallback> on_any_player_end_subscribers =
+    SortedDictionary<State, PlayerCallback> onAnyPlayerEndSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    PlayerTransitionCallback on_any_change_subscribers = delegate{};
+    PlayerTransitionCallback onAnyCangeSubscribers = delegate{};
 
     public NotificationCenter() {
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
-            on_any_player_start_subscribers[state] = delegate{};
-            on_any_player_end_subscribers[state] = delegate{};
+            onAnyPlayerStartSubscribers[state] = delegate{};
+            onAnyPlayerEndSubscribers[state] = delegate{};
         }
 
         foreach (var event_type in (Message[]) System.Enum.GetValues(typeof(Message))) {
-            on_message[event_type] = delegate{};
+            onMessage[event_type] = delegate{};
         }
     }
 
@@ -41,24 +41,24 @@ public class NotificationCenter {
         var playerComponent = player.GetComponent<Player>();
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
             player.CallOnStateEnter(
-                state, () => on_any_player_start_subscribers[state](playerComponent));
+                state, () => onAnyPlayerStartSubscribers[state](playerComponent));
             player.CallOnStateExit(
-                state, () => on_any_player_end_subscribers[state](playerComponent));
+                state, () => onAnyPlayerEndSubscribers[state](playerComponent));
             player.CallOnAnyStateChange(
-                (State start, State end) => on_any_change_subscribers(playerComponent, start, end));
+                (State start, State end) => onAnyCangeSubscribers(playerComponent, start, end));
         }
     }
 
     public void CallOnStateStart(State state, PlayerCallback callback) {
-        on_any_player_start_subscribers[state] += callback;
+        onAnyPlayerStartSubscribers[state] += callback;
     }
 
     public void CallOnStateEnd(State state, PlayerCallback callback) {
-        on_any_player_end_subscribers[state] += callback;
+        onAnyPlayerEndSubscribers[state] += callback;
     }
 
     public void CallOnStateTransition(PlayerTransitionCallback callback) {
-        on_any_change_subscribers += callback;
+        onAnyCangeSubscribers += callback;
     }
 
     // Enum-based callback system
@@ -66,19 +66,19 @@ public class NotificationCenter {
     // Useful for publishing "system-wide" events that are meant to stick around
     // for a while/be maintainable. You must add a new event name to the Message
     // enum, then ensure something is calling NotifyMessage appropriately.
-    SortedDictionary<Message, EventCallback> on_message =
+    SortedDictionary<Message, EventCallback> onMessage =
         new SortedDictionary<Message, EventCallback>();
 
     public void CallOnMessageWithSender(Message event_type, EventCallback callback) {
-        on_message[event_type] += callback;
+        onMessage[event_type] += callback;
     }
 
     public void CallOnMessage(Message event_type, Callback callback) {
-        on_message[event_type] += (object o) => callback();
+        onMessage[event_type] += (object o) => callback();
     }
 
     public void NotifyMessage(Message event_type, object sender) {
-        on_message[event_type](sender);
+        onMessage[event_type](sender);
     }
 
     // String-based event system
@@ -90,26 +90,26 @@ public class NotificationCenter {
     // where you're really pretty sure only one pair of producer/consumer needs
     // this an a whole new enum value would be over the top. Think carefully
     // before using this system.
-    SortedDictionary<string, EventCallback> string_events =
+    SortedDictionary<string, EventCallback> stringEvents =
         new SortedDictionary<string, EventCallback>();
 
     public void CallOnStringEventWithSender(string identifier, EventCallback callback) {
-        if (!string_events.ContainsKey(identifier)) {
-            string_events[identifier] = delegate{};
+        if (!stringEvents.ContainsKey(identifier)) {
+            stringEvents[identifier] = delegate{};
         }
-        string_events[identifier] += callback;
+        stringEvents[identifier] += callback;
     }
 
     public void CallOnStringEvent(string identifier, Callback callback) {
-        if (!string_events.ContainsKey(identifier)) {
-            string_events[identifier] = delegate{};
+        if (!stringEvents.ContainsKey(identifier)) {
+            stringEvents[identifier] = delegate{};
         }
-        string_events[identifier] += (object o) => callback();
+        stringEvents[identifier] += (object o) => callback();
     }
 
     public void NotifyStringEvent(string identifier, object sender) {
-        if (string_events.ContainsKey(identifier)) {
-            string_events[identifier](sender);
+        if (stringEvents.ContainsKey(identifier)) {
+            stringEvents[identifier](sender);
         }
     }
 }

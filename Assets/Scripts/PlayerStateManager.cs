@@ -26,13 +26,13 @@ public delegate void TransitionCallback(State start, State end);
 public class PlayerStateManager : MonoBehaviour {
 
 
-    SortedDictionary<State, ToggleCallback> on_toggle_state =
+    SortedDictionary<State, ToggleCallback> onToggleState =
         new SortedDictionary<State, ToggleCallback>();
-    SortedDictionary<State, Callback> on_start_state =
+    SortedDictionary<State, Callback> onStartState =
         new SortedDictionary<State, Callback>();
-    SortedDictionary<State, Callback> on_end_state =
+    SortedDictionary<State, Callback> onEndState =
         new SortedDictionary<State, Callback>();
-    TransitionCallback on_any_change = delegate{};
+    TransitionCallback onAnyChange = delegate{};
     State currentState;
     Callback stopCurrentState;
     State defaultState = State.NormalMovement;
@@ -43,9 +43,9 @@ public class PlayerStateManager : MonoBehaviour {
         currentState = State.StartupState;
         stopCurrentState = null;
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
-            on_toggle_state[state] = delegate{};
-            on_start_state[state] = delegate{};
-            on_end_state[state] = delegate{};
+            onToggleState[state] = delegate{};
+            onStartState[state] = delegate{};
+            onEndState[state] = delegate{};
         }
     }
 
@@ -56,19 +56,19 @@ public class PlayerStateManager : MonoBehaviour {
     // Schedules a callback whenever information with respect to a certain state
     // changes
     public void CallOnSpecficStateChange(State state, ToggleCallback callback) {
-        on_toggle_state[state] += callback;
+        onToggleState[state] += callback;
     }
 
     public void CallOnAnyStateChange(TransitionCallback callback) {
-        on_any_change += callback;
+        onAnyChange += callback;
     }
 
     public void CallOnStateEnter(State state, Callback callback) {
-        on_start_state[state] += callback;
+        onStartState[state] += callback;
     }
 
     public void CallOnStateExit(State state, Callback callback) {
-        on_end_state[state] += callback;
+        onEndState[state] += callback;
     }
 
     // This method should be called if a state exits without being forced, such as
@@ -123,14 +123,14 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     void AlertSubscribers(State state, bool isEnteringState, State? nextState = null) {
-        on_toggle_state[state](isEnteringState);
+        onToggleState[state](isEnteringState);
         if (isEnteringState) {
-            on_start_state[state]();
+            onStartState[state]();
         } else {
-            on_end_state[state]();
+            onEndState[state]();
 
             if (nextState != null) {
-                on_any_change(state, nextState.Value);
+                onAnyChange(state, nextState.Value);
             }
         }
     }
