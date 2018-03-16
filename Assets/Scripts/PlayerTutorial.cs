@@ -21,6 +21,13 @@ public class PlayerTutorial : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (input == null) {
+            // Case: controller WAS plugged in, but has been removed.
+            // => deregister player
+            if (registered == true) {
+                ReadyUpManager.instance.DeregisterPlayer(this);
+                registered = false;
+            }
+            // Still check for new device, even if we just deregistered the player
             input = playerMovement.GetInputDevice();
             return;
         }

@@ -61,6 +61,17 @@ public class ReadyUpManager : MonoBehaviour {
         UpdateText();
     }
 
+    public void DeregisterPlayer(PlayerTutorial player) {
+        if (!readyPlayers.Contains(player)) {return;}
+        Debug.Log("Deregistering player!");
+        readyPlayers.Remove(player);
+        UpdateText();
+
+        if ((numPlayersReady == numPlayers) && (numPlayers > 0)) {
+            StartCoroutine(StartGameText());
+        }
+    }
+
     public void RegisterReadyPlayer(PlayerTutorial player) {
         if (readyPlayers.Contains(player)) {return;}
         readyPlayers.Add(player);
