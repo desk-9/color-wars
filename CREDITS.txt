@@ -8,3 +8,7 @@ GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
 Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
 Asset: circulartimer sprite and idea
 Source: http://answers.unity.com/answers/856224/view.html
+
+Code:
+Assets/Scripts/PlayerInputManager.cs function GetLeftStickInput
+Source: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html

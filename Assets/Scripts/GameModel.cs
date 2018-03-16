@@ -15,13 +15,16 @@ public class GameModel : MonoBehaviour {
     public NamedColor[] teamColors;
     public TeamManager[] teams { get; set; }
     public int scoreMax = 7;
-    public SceneStateController scene_controller {get; set;}
-    public GameEndController end_controller {get; set;}
+    // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
     public NotificationCenter nc;
+    public bool gameOver {get; private set;} = false;
+    public TeamManager winner {get; private set;} = null;
+    public GameObject meta;
+
+    public Callback OnGameOver = delegate{};
 
     float matchLengthSeconds;
-
     IntCallback NextTeamAssignmentIndex;
 
     void Awake() {
@@ -36,27 +39,27 @@ public class GameModel : MonoBehaviour {
 
     void Initialization() {
         InitializeTeams();
-        scene_controller = GetComponent<SceneStateController>();
-        end_controller = GetComponent<GameEndController>();
+        meta = SceneStateController.instance.gameObject;
+        // end_controller = GetComponent<GameEndController>();
         matchLengthSeconds = 60 * matchLength;
         this.TimeDelayCall(EndGame, matchLengthSeconds);
         nc = new NotificationCenter();
     }
 
     void Start() {
-        scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
+        scoreDisplayer?.StartMatchLengthUpdate(matchLengthSeconds);
     }
 
     void EndGame() {
         Debug.Log("game over");
-        var winner = teams.Aggregate(
-            (best, next) => {
-                if (best == null || best.score == next.score) {
+        winner = teams.Aggregate(
+            (bestSoFar, next) => {
+                if (bestSoFar == null || bestSoFar.score == next.score) {
                     return null;
                 }
-                return next.score > best.score ? next : best;
+                return next.score > bestSoFar.score ? next : bestSoFar;
             });
-        end_controller.GameOver(winner);
+        OnGameOver();
     }
 
 
@@ -83,4 +86,6 @@ public class GameModel : MonoBehaviour {
         // show UI elements
 
     }
+
+    
 }

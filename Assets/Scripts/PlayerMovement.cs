@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rb2d = this.EnsureComponent<Rigidbody2D>();
-        playerInput = GameModel.instance.EnsureComponent<PlayerInputManager>();
+        playerInput = GameModel.instance.meta.EnsureComponent<PlayerInputManager>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
 
         TryToGetInputDevice();

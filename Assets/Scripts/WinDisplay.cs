@@ -5,14 +5,22 @@ using UnityEngine.UI;
 using UtilityExtensions;
 
 public class WinDisplay : MonoBehaviour {
+    public int SecondsBeforeReset = 10;
     Text winnerText;
     Text restartTime;
+
     void Awake () {
         winnerText = transform.FindComponent<Text>("WinnerText");
         restartTime = transform.FindComponent<Text>("RestartText");
     }
 
-    public void SetWinner(TeamManager winner) {
+    void Start() {
+        GameModel.instance.OnGameOver += () => this.gameObject.SetActive(true);
+        GameModel.instance.OnGameOver += GameOverFunction;
+    }
+
+    public void GameOverFunction() {
+        var winner = GameModel.instance.winner;
         if (winner == null) {
             winnerText.text = "Tie!";
             winnerText.color = Color.black;
@@ -21,9 +29,16 @@ public class WinDisplay : MonoBehaviour {
         winnerText.text = string.Format("{0} Team won with {1} points",
                                         winner.teamColor.name, winner.score);
         winnerText.color = winner.teamColor;
+        
+        StartCoroutine(ResetCountdown());
     }
 
-    public void SetRestartTime(float time) {
-        restartTime.text = string.Format("Restarting in {0:n0}...", time);
+    IEnumerator ResetCountdown() {
+        for (int i = SecondsBeforeReset; i > 0; --i) {
+            restartTime.text = "Resetting in " + i.ToString() + "...";
+            yield return new WaitForSeconds(1);
+        }
+        SceneStateController.instance.Load(Scene.Court);
     }
+
 }

@@ -1,47 +1,54 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UtilityExtensions;
 
 using IC = InControl;
 
 public class MenuController : MonoBehaviour {
     public IC.InputControlType StartButton = IC.InputControlType.Start;
     public IC.InputControlType ResetButton = IC.InputControlType.DPadDown;
-    public GameObject pauseMenu;
+    public IC.InputControlType MainMenuButton = IC.InputControlType.DPadUp;
 
-    SceneStateController scene_controller;
+    public GameObject pauseMenu;
+    public WinDisplay winDisplay;
+
+    GameObject activeDisplay = null;
+    PlayerInputManager playerInput;
 
     void Start() {
-        scene_controller = GameModel.instance.scene_controller;
+        SceneStateController.instance.OnEnter[Scene.Court] += ResetDisplays;
+        SceneStateController.instance.OnEnter[Scene.Tutorial] += ResetDisplays;
+        playerInput = GameModel.instance.EnsureComponent<PlayerInputManager>();
+    }
+
+    public void ResetDisplays() {
+        pauseMenu.active = false;
+        // winDisplay.SetEnabled(false);
+        activeDisplay = null;
     }
 
     void Update () {
-        foreach (var device in IC.InputManager.Devices) {
-            if (device.GetControl(StartButton).WasPressed) {
-                TogglePause();
-                break;
-            }
 
-            if (device.GetControl(ResetButton).WasPressed && scene_controller.paused) {
-                scene_controller.ResetScene();
-                break;
-            }
+        if (SceneStateController.instance.paused
+            && playerInput.Any((device)
+                               => device.GetControl(ResetButton).WasPressed)) {
+            SceneStateController.instance.Load(Scene.Court);
+            return;
+        }
+        
+        if (playerInput.Any((device)
+                            => device.GetControl(StartButton).WasPressed)) {
+            TogglePause();
+            return;
         }
     }
 
+    
     public void TogglePause() {
-        if (scene_controller.paused) UnPause();
-        else                           Pause();
+        Utility.Toggle(pauseMenu);
+        // activeDisplay = pauseMenu;
+        SceneStateController.instance.TogglePauseTime();
     }
 
-    public void Pause() {
-        pauseMenu.SetActive(true);
-        scene_controller.PauseTime();
-    }
-
-    public void UnPause() {
-        pauseMenu.SetActive(false);
-        scene_controller.UnPauseTime();
-    }
 }

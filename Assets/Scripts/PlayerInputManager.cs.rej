@@ -1,0 +1,26 @@
+diff a/Assets/Scripts/PlayerInputManager.cs b/Assets/Scripts/PlayerInputManager.cs	(rejected hunks)
+@@ -25,19 +35,19 @@ public class PlayerInputManager : MonoBehaviour {
+                 break;
+             }
+ 
+-            Debug.LogFormat("{0}: Adding existing device {1} to list!", name, device.SortOrder);
+-            devices.Add(device, false);
++            Debug.LogFormat("{0}: Adding existing device {1} to list! {2}", name, device.SortOrder, this.gameObject.name);
++            devices.Add(device, new UserProfile());
+         }
+ 
+         // New device attached.
+         InputManager.OnDeviceAttached += (device) => {
+-            Debug.LogFormat(this, "{0}: New device detected! Adding {1} to list.", name, device.SortOrder);
++            Debug.LogFormat(this, "{0}: New device detected! Adding {1} to list. {2}", name, device.SortOrder, this.gameObject.name);
+ 
+-            devices.Add(device, false);
++            devices.Add(device, new UserProfile());
+         };
+ 
+         InputManager.OnDeviceDetached += (device) => {
+-            Debug.LogFormat(this, "{0}: Device {1} detached! Removing from list.", name, device.SortOrder);
++            Debug.LogFormat(this, "{0}: Device {1} detached! Removing from list. {2}", name, device.SortOrder, this.gameObject.name);
+ 
+             actions[device]();
+ 

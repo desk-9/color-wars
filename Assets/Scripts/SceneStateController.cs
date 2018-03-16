@@ -3,11 +3,69 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneStateController : MonoBehaviour {
-    public bool paused {get; private set;} = false;
+public enum Scene {
+    Court,
+    MainMenu,
+    Tutorial,
+};
 
-    public bool IsPaused() {
-        return paused;
+public class SceneStateController : MonoBehaviour {
+
+    Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
+        {Scene.Court, "court"},
+        {Scene.MainMenu, "main-menu"},
+        {Scene.Tutorial, "ready-up"},
+    };
+    public Scene currentScene {get; private set;}
+    
+    public Dictionary<Scene, Callback> OnExit = new Dictionary<Scene, Callback>();
+    public Dictionary<Scene, Callback> OnEnter = new Dictionary<Scene, Callback>();
+
+    public bool paused {get; private set;} = false;
+        
+    public static SceneStateController instance;
+    void Awake() {
+        if (instance == null) {
+            instance = this;
+            Initialize();
+        }
+        else {
+            Destroy(gameObject);
+        }
+    }
+
+    void Initialize() {
+        DontDestroyOnLoad(this.gameObject);
+        foreach (Scene scene in System.Enum.GetValues(typeof(Scene))) {
+            OnEnter[scene] = delegate{};
+            OnExit[scene] = delegate{};
+        }
+    }
+
+    public void Load(Scene newScene) {
+        OnExit[currentScene]();
+        currentScene = newScene;
+        SceneManager.LoadScene(scenes[currentScene]);
+        AdjustTime(newScene);
+        OnEnter[currentScene]();
+
+        UnPauseTime();
+    }
+
+    public void AdjustTime(Scene newScene) {
+        switch (newScene) {
+        case Scene.Court:
+            UnPauseTime();
+            break;
+        case Scene.MainMenu:
+            PauseTime();
+            break;
+        case Scene.Tutorial:
+            UnPauseTime();
+            break;
+        default:
+            break;
+        }
     }
 
     public void TogglePauseTime() {
@@ -28,8 +86,5 @@ public class SceneStateController : MonoBehaviour {
         paused = false;
     }
 
-    public void ResetScene() {
-        UnPauseTime();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    
 }

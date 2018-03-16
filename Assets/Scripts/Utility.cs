@@ -70,6 +70,15 @@ public class Utility {
         h = shiftedH - (shiftedH > 1 ? 1 : 0);
         return Color.HSVToRGB(h, s, v);
     }
+
+    public static void Toggle(GameObject gameObj) {
+        gameObj.SetActive(!gameObj.activeInHierarchy);
+    }
+
+    public static void Toggle(MonoBehaviour component) {
+        component.enabled = !component.enabled;
+    }
+    
 }
 
 public class ModCycle {
@@ -90,6 +99,7 @@ public class ModCycle {
         nextValue = (nextValue + 1) % modulus;
         return result;
     }
+
 }
 
 
@@ -132,4 +142,5 @@ public class CoroutineUtility : MonoBehaviour {
     public static IEnumerator WaitForSeconds(float seconds) {
         yield return new WaitForSeconds(seconds);
     }
+    
 }
