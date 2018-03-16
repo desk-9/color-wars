@@ -40,7 +40,6 @@ public class GameModel : MonoBehaviour {
     void Initialization() {
         InitializeTeams();
         meta = SceneStateController.instance.gameObject;
-        // end_controller = GetComponent<GameEndController>();
         matchLengthSeconds = 60 * matchLength;
         this.TimeDelayCall(EndGame, matchLengthSeconds);
         nc = new NotificationCenter();
