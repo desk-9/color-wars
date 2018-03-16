@@ -135,7 +135,9 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (otherPlayer != null &&
             otherPlayer.team.teamColor != player.team.teamColor) {
             var ball = TrySteal(otherPlayer);
-            Stun(otherPlayer);
+            if (!onlyStunBallCarriers || ball != null) {
+                Stun(otherPlayer);
+            }
             if (ball != null) {
                 stateManager.AttemptPossession(() => carrier.StartCarryingBall(ball),
                                                carrier.DropBall);
@@ -148,13 +150,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (ball != null) {
             return (ball.owner == null) ? null : ball.owner.GetComponent<Player>();
         }
-
-        if (onlyStunBallCarriers) {
-            return null;
-        } else {
-            return gameObject.GetComponent<Player>();
-        }
-
+        return gameObject.GetComponent<Player>();
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
