@@ -63,21 +63,21 @@ public class Utility {
 }
 
 public class ModCycle {
-    public int value = 0;
+    public int nextValue = 0;
     public int modulus;
 
     public ModCycle(int start, int modulus) {
-        value = start;
+        nextValue = start;
         this.modulus = modulus;
     }
 
     public int PeekNext() {
-        return value;
+        return nextValue;
     }
 
     public int Next() {
-        var result = value;
-        value = (value + 1) % modulus;
+        var result = nextValue;
+        nextValue = (nextValue + 1) % modulus;
         return result;
     }
 }
