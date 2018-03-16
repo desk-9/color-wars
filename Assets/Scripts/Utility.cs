@@ -60,6 +60,16 @@ public class Utility {
             return result;
         };
     }
+
+    public static Color ColorComplement(Color baseColor) {
+        float h;
+        float s;
+        float v;
+        Color.RGBToHSV(baseColor, out h, out s, out v);
+        float shiftedH = h + 0.5f;
+        h = shiftedH - (shiftedH > 1 ? 1 : 0);
+        return Color.HSVToRGB(h, s, v);
+    }
 }
 
 public class ModCycle {
