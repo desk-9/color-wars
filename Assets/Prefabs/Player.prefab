@@ -146,26 +146,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashButton: 16
+  useNewBehavior: 1
+  dashButton: 11
   stealKnockbackPercentage: 0.8
   maxChargeTime: 1
   dashDuration: 0.25
   chargeRate: 10
   dashPower: 2
   onlyStunBallCarriers: 1
+  onlyStealOnBallHit: 1
+  dashEffectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
+    type: 2}
+  newMaxChargeTime: 1
+  newChargeRate: 1
+  dashSpeed: 50
+  cooldown: 0.5
 --- !u!114 &114177724964163498
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ea8b44fbc2bad4e4eb3b12d688479c1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parryField: {fileID: 58993705995626898}
-  parryButton: 11
+  parryButton: 0
   parryEffect: {fileID: 1070135155758220, guid: 20447285b2fbe44fd960f9f911b9786a,
     type: 2}
   cooldown: 0.5
@@ -184,7 +192,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bbe1fa63243a2c4cbd0e785d0c0fca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 15
+  movementSpeed: 30
+  freezeRotation: 0
 --- !u!114 &114215232534320030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -196,6 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inline: {fileID: 1479626530978528, guid: 9a716aa6edb4c4baebc7142dd5cd06cf, type: 2}
 --- !u!114 &114261427851223390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -219,14 +229,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 964e4864ae7674458906684fac594544, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootButton: 15
+  shootButton: 11
   forcedShotTime: 5
-  baseShotSpeed: 10
+  baseShotSpeed: 12
   chargeRate: 15
   shotPower: 1.2
   circularTimerPrefab: {fileID: 1022924467689572, guid: 3fa79a1d2b91d48e39e53e08c9f861fe,
     type: 2}
   circleTimerScale: {x: 0.6, y: 0.6}
+  seperatePassAndShoot: 0
+  chargedBallPercent: 0
+  chargedBallMassFactor: 100
+  chargedBallStuns: 0
+  scoreGoalButton: 12
+  juggleButton: 18
+  rotationLerpTime: 0.2
+  passLeadMultiplier: 1
+  juggleSpeed: 12
+  separateScoreGoalButton: 1
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
 --- !u!114 &114319664088283476
@@ -254,6 +274,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coolDownTime: 0.1
   ballTurnSpeed: 50
+  chargedBallStuns: 0
 --- !u!114 &114694489525978138
 MonoBehaviour:
   m_ObjectHideFlags: 1

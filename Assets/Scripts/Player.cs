@@ -4,7 +4,7 @@ using UnityEngine;
 using UtilityExtensions;
 
 public class Player : MonoBehaviour {
-
+    public GameObject inline;
     public TeamManager team {get; private set;}
 
     new SpriteRenderer renderer;
@@ -32,6 +32,7 @@ public class Player : MonoBehaviour {
         rb2d.rotation = initalRotation;
         renderer.enabled = true;
         collider.enabled = true;
+        rb2d.velocity = Vector2.zero;
     }
 
     public void BeginPlayerMovement() {
@@ -46,6 +47,9 @@ public class Player : MonoBehaviour {
         collider = this.EnsureComponent<Collider2D>();
         explosion = GetComponent<ParticleSystem>();
         team = GameModel.instance.GetTeamAssignment(this);
+        if (team.teamMembers.IndexOf(this) % 2 == 0) {
+            Instantiate(inline, this.transform);
+        }
         renderer.color = team.teamColor;
         initialPosition = transform.position;
         initalRotation = rb2d.rotation;

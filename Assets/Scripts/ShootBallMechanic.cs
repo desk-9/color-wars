@@ -14,6 +14,19 @@ public class ShootBallMechanic : MonoBehaviour {
     public GameObject circularTimerPrefab;
     public Vector2 circleTimerScale;
     CircularTimer circularTimer;
+    public bool seperatePassAndShoot = false;
+    public float chargedBallPercent = 0.4f;
+    public float chargedBallMassFactor = 1;
+    public bool chargedBallStuns = false;
+
+    // The below params are only relevant when [seperatePassAndShoot] is true
+    public IC.InputControlType scoreGoalButton = IC.InputControlType.Action2;
+    public IC.InputControlType juggleButton = IC.InputControlType.RightBumper;
+    public float rotationLerpTime = .2f;
+    // How much to lead your teammate by when you pass.
+    public float passLeadMultiplier = 1f;
+    public float juggleSpeed = 12f;
+    public bool separateScoreGoalButton = true;
 
     public GameObject chargeEffect;
 
@@ -22,16 +35,21 @@ public class ShootBallMechanic : MonoBehaviour {
     Coroutine shootTimer;
     BallCarrier ballCarrier;
     GameObject effect;
+    TeamManager team;
+    Player player;
 
     float shotSpeed = 1.0f;
     float elapsedTime = 0.0f;
+
+    float maxShotSpeed;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         ballCarrier = this.EnsureComponent<BallCarrier>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
+        player = this.EnsureComponent<Player>();
         stateManager.CallOnStateEnter(
-            State.Posession, () => shootTimer = StartCoroutine(ShootTimer()));
+                                      State.Posession, StartTimer);
         stateManager.CallOnStateExit(
             State.Posession, () => StopChargeShot());
 
@@ -46,9 +64,38 @@ public class ShootBallMechanic : MonoBehaviour {
             circularTimerPrefab, transform.position,
             Quaternion.identity, transform).GetComponent<CircularTimer>();
         circularTimer.transform.localScale = circleTimerScale;
+
+        ballCarrier.chargedBallStuns = chargedBallStuns;
+        var ball = GameObject.FindObjectOfType<Ball>();
+        if (ball != null) {
+            ball.chargedMassFactor = chargedBallMassFactor;
+        }
+        maxShotSpeed = baseShotSpeed + Mathf.Pow((1 + forcedShotTime * chargeRate), shotPower);
     }
 
-    IEnumerator ShootTimer() {
+    Vector2 GetPositionInFrontOfTeammate(Rigidbody2D rb2d) {
+        return (Vector2)rb2d.transform.position + rb2d.velocity * passLeadMultiplier;
+    }
+
+    void StartTimer() {
+        if (seperatePassAndShoot) {
+            shootTimer = StartCoroutine(ShootTimerSeperatePassShoot());
+        } else {
+            shootTimer = StartCoroutine(ShootTimer());
+        }
+    }
+
+    GameObject GetTeammate() {
+        var team = player.team;
+        foreach (var teammate in team.teamMembers) {
+            if (teammate != player) {
+                return teammate.gameObject;
+            }
+        }
+        return null;
+    }
+
+    IEnumerator ShootTimerSeperatePassShoot() {
         circularTimer?.StartTimer(forcedShotTime, delegate{});
 
 
@@ -58,27 +105,73 @@ public class ShootBallMechanic : MonoBehaviour {
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             var inputDevice = playerMovement.GetInputDevice();
-            if (inputDevice != null && inputDevice.GetControl(shootButton).WasPressed) {
-                shootTimer = StartCoroutine(ChargeShot(elapsedTime));
-                yield break;
+            if (separateScoreGoalButton) {
+                if (inputDevice.GetControl(scoreGoalButton).WasPressed) {
+                    var goal = GameObject.FindObjectOfType<Goal>();
+                    shootTimer = StartCoroutine(ChargeShot(scoreGoalButton,
+                                                           goal.gameObject));
+                    yield break;
+                }
+                if (inputDevice.GetControl(shootButton).WasPressed) {
+                    shootTimer = StartCoroutine(ChargeShot(shootButton,
+                                                           GetTeammate()));
+                    yield break;
+                }
+                if (inputDevice.GetControl(juggleButton).WasPressed) {
+                    shotSpeed = juggleSpeed;
+                    Shoot();
+                    yield break;
+                }
+            } else {
+                if (inputDevice.GetControl(shootButton).WasPressed) {
+                    shootTimer = StartCoroutine(ChargeShot(shootButton));
+                    yield break;
+                }
+                if (inputDevice.GetControl(scoreGoalButton).WasPressed) {
+                    shootTimer = StartCoroutine(ChargeShot(scoreGoalButton,
+                                                           GetTeammate()));
+                    yield break;
+                }
             }
-
             yield return null;
         }
         Shoot();
     }
 
-    IEnumerator ChargeShot(float elapsedTime) {
+    IEnumerator ShootTimer() {
+        circularTimer?.StartTimer(forcedShotTime, delegate{});
+
+        elapsedTime = 0.0f;
+        shotSpeed = baseShotSpeed;
+        while (elapsedTime < forcedShotTime) {
+            elapsedTime += Time.deltaTime;
+            var inputDevice = playerMovement.GetInputDevice();
+            if (inputDevice.GetControl(shootButton).WasPressed) {
+                shootTimer = StartCoroutine(ChargeShot(shootButton));
+                yield break;
+            }
+            yield return null;
+        }
+        Shoot();
+    }
+
+    IEnumerator ChargeShot(IC.InputControlType button,
+                           GameObject target = null) {
         effect = Instantiate(chargeEffect, transform.position, transform.rotation, transform);
+
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
             var inputDevice = playerMovement.GetInputDevice();
-            if (inputDevice.GetControl(shootButton).WasReleased) {
-
+            if (inputDevice.GetControl(button).WasReleased) {
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
-                Shoot();
-                yield break;
+                if (target == null) {
+                    Shoot();
+                    yield break;
+                } else {
+                    shootTimer = StartCoroutine(RotateTowardsTarget(target));
+                    yield break;
+                }
             }
 
             yield return null;
@@ -87,12 +180,38 @@ public class ShootBallMechanic : MonoBehaviour {
         Shoot();
     }
 
+    IEnumerator RotateTowardsTarget(GameObject target) {
+        playerMovement.freezeRotation = true;
+        Vector2 targetVector = Vector2.zero;
+        if (target.GetComponent<Goal>() != null) {
+            targetVector = (target.transform.position - transform.position).normalized;
+        } else {
+            var teammateRB2D = target.GetComponent<Rigidbody2D>();
+            targetVector = (GetPositionInFrontOfTeammate(teammateRB2D) -
+                            (Vector2)transform.position).normalized;
+        }
+        var rotationElapsedTime = 0f;
+        var rb2d = this.EnsureComponent<Rigidbody2D>();
+        while (rotationElapsedTime < rotationLerpTime) {
+            var lerpedVector = Vector2.Lerp(transform.right, targetVector,
+                                            rotationElapsedTime / rotationLerpTime);
+            rb2d.rotation = Vector2.SignedAngle(Vector2.right, lerpedVector);
+            rotationElapsedTime += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+        Shoot();
+    }
+
     void Shoot() {
         shootTimer = null;
+        playerMovement.freezeRotation = false;
         var ball = ballCarrier.ball;
         Debug.Assert(ball != null);
         var shotDirection = ball.transform.position - transform.position;
         var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
+        if (shotSpeed / maxShotSpeed >= chargedBallPercent) {
+            ball.charged = true;
+        }
         ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         stateManager.CurrentStateHasFinished();
     }
@@ -106,6 +225,7 @@ public class ShootBallMechanic : MonoBehaviour {
         if (effect != null) {
             Destroy(effect);
         }
+        playerMovement.freezeRotation = false;
     }
 
 }

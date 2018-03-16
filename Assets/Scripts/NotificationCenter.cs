@@ -11,6 +11,7 @@ public delegate void PlayerCallback(Player player);
 public delegate void PlayerTransitionCallback(Player player, State start, State end);
 // Replacement for EventHandler without the EventArgs
 public delegate void EventCallback(object sender);
+public delegate void GameObjectCallback(GameObject thing);
 
 
 public enum Message {

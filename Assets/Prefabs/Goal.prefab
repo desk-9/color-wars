@@ -206,6 +206,10 @@ MonoBehaviour:
   goalSwitchInterval: 10
   goalSwitchNotificationLength: 3
   goalSwitchWarningVolume: 0.02
+  timedSwitching: 0
+  playerPassSwitching: 1
+  respondToSwitchColliders: 0
+  resetTimerOnSwitchToSameTeam: 0
 --- !u!114 &114939641552273602
 MonoBehaviour:
   m_ObjectHideFlags: 1

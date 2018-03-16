@@ -8,7 +8,7 @@ public class TeamManager {
     public NamedColor teamColor { get; set; }
 
     public int score {get; private set;}
-    List<Player> teamMembers = new List<Player>();
+    public List<Player> teamMembers = new List<Player>();
 
     public TeamManager(int teamNumber, NamedColor teamColor) {
         this.teamNumber = teamNumber;

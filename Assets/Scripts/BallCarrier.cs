@@ -10,6 +10,7 @@ public class BallCarrier : MonoBehaviour {
     public float coolDownTime = .1f;
     public Ball ball { private set; get;}
     public float ballTurnSpeed = 10f;
+    public bool chargedBallStuns = false;
 
     float ballOffsetFromCenter = .5f;
     PlayerMovement playerMovement;
@@ -36,6 +37,7 @@ public class BallCarrier : MonoBehaviour {
     // of the ball
     public void StartCarryingBall(Ball ball) {
         CalculateOffset(ball);
+        ball.charged = false;
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 
@@ -117,7 +119,16 @@ public class BallCarrier : MonoBehaviour {
             return;
         }
         if (stateManager != null) {
-            stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
+            var last_team = ball.lastOwner?.GetComponent<Player>().team;
+            var this_team = GetComponent<Player>().team;
+            if (chargedBallStuns && ball.charged && last_team != this_team) {
+                var stun = GetComponent<PlayerStun>();
+                var direction = transform.position - ball.transform.position;
+                var knockback = ball.GetComponent<Rigidbody2D>().velocity.magnitude * direction;
+                stateManager.AttemptStun(() => stun.StartStun(knockback), stun.StopStunned);
+            } else {
+                stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
+            }
         } else {
             StartCoroutine(CoroutineUtility.RunThenCallback(CarryBall(ball), DropBall));
         }

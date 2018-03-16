@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using InputDevice = InControl.InputDevice;
 using InputManager = InControl.InputManager;
@@ -23,14 +24,14 @@ public class PlayerInputManager : MonoBehaviour {
     public static int maxPlayers { get { return 4; } }
     public delegate bool DevicePredicate(InputDevice inputDevice);
 
-    
+
     Dictionary<InputDevice, User> users = new Dictionary<InputDevice, User>();
 
     // Keep track of input devices and their assignments.
-    Dictionary<InputDevice, bool> devices = new Dictionary<InputDevice, bool>();
+    public Dictionary<InputDevice, bool> devices = new Dictionary<InputDevice, bool>();
 
     // Registered actions to invoke on detach for each device.
-    Dictionary<InputDevice, Action> actions = new Dictionary<InputDevice, Action>();
+    public Dictionary<InputDevice, Action> actions = new Dictionary<InputDevice, Action>();
 
     public static PlayerInputManager instance;
     void Awake() {
@@ -59,7 +60,7 @@ public class PlayerInputManager : MonoBehaviour {
             Debug.LogFormat(this, "{0}: New device detected! Adding {1} to list.", name, device.SortOrder);
 
             devices.Add(device, false);
-            users.Add(device, new User(device));
+            // users.Add(device, new User(device));
         };
 
         InputManager.OnDeviceDetached += (device) => {
@@ -69,8 +70,16 @@ public class PlayerInputManager : MonoBehaviour {
 
             devices.Remove(device);
             actions.Remove(device);
-            users.Remove(device);
+            // users.Remove(device);
         };
+        SceneManager.sceneLoaded += OnLevelLoaded;
+    }
+
+    void OnLevelLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode) {
+        Debug.Log("on level loaded");
+        foreach (var k in devices.Keys.ToList()) {
+            devices[k] = false;
+        }
     }
 
     // Returns the next available input device; null if none is available.
@@ -79,7 +88,6 @@ public class PlayerInputManager : MonoBehaviour {
         var e = devices.FirstOrDefault(ee => ee.Value == false);
 
         var device = e.Key;
-
         if (device == null) return null;
 
         devices[device] = true;
@@ -110,5 +118,5 @@ public class PlayerInputManager : MonoBehaviour {
         }
         return stickInput;
     }
-    
+
 }

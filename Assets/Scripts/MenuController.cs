@@ -19,13 +19,13 @@ public class MenuController : MonoBehaviour {
             GameModel.instance.OnGameOver += winDisplay.GameOverFunction;
         }
     }
-    
+
     void Update () {
 
         if (SceneStateController.instance.paused
             && PlayerInputManager.instance.Any((device)
                                => device.GetControl(ResetButton).WasPressed)) {
-            SceneStateController.instance.Load(Scene.Court);
+            SceneStateController.instance.ReloadScene();
             return;
         }
 
@@ -44,7 +44,7 @@ public class MenuController : MonoBehaviour {
         }
     }
 
-    
+
     public void TogglePause() {
         SceneStateController.instance.TogglePauseTime();
         pauseMenu.SetActive(SceneStateController.instance.paused);

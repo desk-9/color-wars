@@ -17,7 +17,7 @@ public class SceneStateController : MonoBehaviour {
         {Scene.Tutorial, "court"},
     };
     public Scene currentScene {get; private set;}
-    
+
     public Dictionary<Scene, Callback> OnExit = new Dictionary<Scene, Callback>();
     public Dictionary<Scene, Callback> OnEnter = new Dictionary<Scene, Callback>();
 
@@ -35,7 +35,7 @@ public class SceneStateController : MonoBehaviour {
     }
 
     void InitializeCallbacks() {
-        DontDestroyOnLoad(this.gameObject);
+        // DontDestroyOnLoad(this.gameObject);
         foreach (Scene scene in System.Enum.GetValues(typeof(Scene))) {
             OnEnter[scene] = delegate{};
             OnExit[scene] = delegate{};
@@ -50,6 +50,10 @@ public class SceneStateController : MonoBehaviour {
         OnEnter[currentScene]();
 
         UnPauseTime();
+    }
+
+    public void ReloadScene() {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void AdjustTime(Scene newScene) {
@@ -86,5 +90,5 @@ public class SceneStateController : MonoBehaviour {
         paused = false;
     }
 
-    
+
 }

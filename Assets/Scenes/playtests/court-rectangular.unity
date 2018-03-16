@@ -1452,22 +1452,17 @@ Prefab:
     - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
         type: 2}
       propertyPath: blowbackRadius
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
         type: 2}
       propertyPath: blowbackStunTime
-      value: 0.05
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
         type: 2}
       propertyPath: blowbackSpeed
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
-        type: 2}
-      propertyPath: pushAwayOtherPlayers
-      value: 1
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 2}

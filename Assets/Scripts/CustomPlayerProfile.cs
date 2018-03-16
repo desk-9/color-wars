@@ -46,17 +46,17 @@ public class CustomPlayerProfile : UnityInputDeviceProfile {
             },
             new InputControlMapping {
                 Handle = "Shoot",
-                Target = InputControlType.LeftTrigger,
+                Target = InputControlType.Action1,
                 Source = KeyCodeButton( KeyCode.Z )
             },
             new InputControlMapping {
                 Handle = "Dash",
-                Target = InputControlType.RightTrigger,
-                Source = KeyCodeButton( KeyCode.LeftShift )
+                Target = InputControlType.Action1,
+                Source = KeyCodeButton( KeyCode.Z )
             },
             new InputControlMapping {
                 Handle = "Parry",
-                Target = InputControlType.Action1,
+                Target = InputControlType.None,
                 Source = KeyCodeButton( KeyCode.X )
             }
         };

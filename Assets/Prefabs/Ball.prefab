@@ -185,6 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   implosionPrefab: {fileID: 1070085223310474, guid: 0b18c9d735f894333af57d63750d6af3,
     type: 2}
+  chargedMassFactor: 1
 --- !u!212 &212185075850510432
 SpriteRenderer:
   m_ObjectHideFlags: 1

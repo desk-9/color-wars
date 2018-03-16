@@ -8,6 +8,7 @@ using UtilityExtensions;
 public class PlayerMovement : MonoBehaviour {
 
     public float movementSpeed;
+    public bool freezeRotation = false;
 
     Rigidbody2D rb2d;
     InputDevice inputDevice;
@@ -34,7 +35,7 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     public void RotatePlayer () {
-        if (inputDevice == null) {
+        if (inputDevice == null || freezeRotation) {
             return;
         }
         var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
@@ -49,6 +50,7 @@ public class PlayerMovement : MonoBehaviour {
         if (inputDevice == null) {
             yield break;
         }
+        Debug.Log("input device is not null in move");
 
         yield return new WaitForFixedUpdate();
         while (true) {
@@ -72,6 +74,7 @@ public class PlayerMovement : MonoBehaviour {
         inputDevice = PlayerInputManager.instance.GetInputDevice(
             InputDeviceDisconnectedCallback);
         if (inputDevice != null) {
+            Debug.LogFormat("Acquired device {0}", GetComponent<Player>().team.teamNumber);
             stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
         }
     }
@@ -90,6 +93,14 @@ public class PlayerMovement : MonoBehaviour {
     void Update() {
         if (inputDevice == null) {
             TryToGetInputDevice();
+        }
+    }
+
+    void OnDestroy() {
+        if (inputDevice != null) {
+            Debug.Log("destroyed");
+            PlayerInputManager.instance.devices[inputDevice] = false;
+            PlayerInputManager.instance.actions[inputDevice] = delegate{};
         }
     }
 }

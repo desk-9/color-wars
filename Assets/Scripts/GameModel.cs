@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
-using IC = InControl;
 using UtilityExtensions;
 
 
@@ -23,6 +22,12 @@ public class GameModel : MonoBehaviour {
     public GameObject meta;
     public float pauseAfterGoalScore = 3f;
     public float pauseAfterReset = 2f;
+    public bool staticGoals = false;
+
+    public bool pushAwayOtherPlayers = false;
+    public float blowbackRadius = 3f;
+    public float blowbackSpeed = 10f;
+    public float blowbackStunTime = 0.1f;
 
     public Callback OnGameOver = delegate{};
 
@@ -38,8 +43,7 @@ public class GameModel : MonoBehaviour {
         if (instance == null) {
             instance = this;
             Initialization();
-        }
-        else {
+        } else {
             Destroy(gameObject);
         }
     }
@@ -47,19 +51,32 @@ public class GameModel : MonoBehaviour {
     void Initialization() {
         gameOver = false;
         InitializeTeams();
-        meta = SceneStateController.instance.gameObject;
-        if (meta == null) {
-            Debug.LogWarning("Meta object is null!!!!");
-        }
         matchLengthSeconds = 60 * matchLength;
         this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         nc = new NotificationCenter();
     }
 
     void Start() {
+        SceneStateController.instance.UnPauseTime();
+        Debug.Log(Time.timeScale);
         scoreDisplayer?.StartMatchLengthUpdate(matchLengthSeconds);
         ball = GameObject.FindObjectOfType<Ball>();
         goal = GameObject.FindObjectOfType<Goal>();
+        scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
+        if (pushAwayOtherPlayers) {
+            nc.CallOnStateStart(
+                State.Posession,
+                (Player player) => Utility.BlowbackFromPlayer(
+                    player.gameObject, blowbackRadius, blowbackSpeed, true,
+                    blowbackStunTime));
+        }
+        meta = SceneStateController.instance.gameObject;
+        if (meta == null) {
+            Debug.LogWarning("Meta object is null!!!!");
+        }
+        foreach (var i in PlayerInputManager.instance.devices) {
+            Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
+        }
     }
 
     IEnumerator EndGameCountdown() {
@@ -93,15 +110,24 @@ public class GameModel : MonoBehaviour {
 
     void InitializeTeams() {
         teams = new TeamManager[teamColors.Length];
+        var goals = FindObjectsOfType<NewGoal>();
+
+        if (staticGoals) {
+            Debug.Assert(goals.Length == teams.Length);
+        }
 
         for (int i = 0; i < teamColors.Length; ++i) {
             // Add 1 so we get Team 1 and Team 2
             teams[i] = new TeamManager(i + 1, teamColors[i]);
+            if (staticGoals) {
+                goals[i].SetTeam(teams[i]);
+            }
         }
         NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
 
     public void GoalScoredForTeam(TeamManager scored) {
+        Debug.Log(ball);
         ball.HandleGoalScore(scored.teamColor);
         goal?.StopTeamSwitching();
         foreach (var team in teams) {
@@ -124,9 +150,18 @@ public class GameModel : MonoBehaviour {
     }
 
     void StartGameAfterBallAnimation() {
-        goal?.StartTeamSwitching();
+        goal?.RestartTeamSwitching();
         foreach (var team in teams) {
             team.BeginMovement();
+        }
+
+
+    }
+    public void GoalScoredOnTeam(TeamManager scoredOn) {
+        foreach (var team in teams) {
+            if ((Color)team.teamColor != scoredOn.teamColor) {
+                team.IncrementScore();
+            }
         }
     }
 }

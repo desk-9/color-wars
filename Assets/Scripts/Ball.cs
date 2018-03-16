@@ -5,14 +5,41 @@ using UtilityExtensions;
 
 public class Ball : MonoBehaviour {
 
-    public BallCarrier owner { get; set; }
     public bool ownable {get; set;} = true;
     public GameObject implosionPrefab;
 
-    Vector2 start_location;
-    Rigidbody2D rb2d;
     new SpriteRenderer renderer;
     CircleCollider2D circleCollider;
+
+    Vector2 start_location;
+    BallCarrier owner_;
+    public BallCarrier owner {
+        get { return owner_; }
+        set {
+            lastOwner = owner_;
+            owner_ = value;
+        }
+    }
+    public BallCarrier lastOwner { get; private set; }
+    public float chargedMassFactor = 1;
+
+    new Rigidbody2D rigidbody;
+
+    bool charged_ = false;
+    float base_mass;
+    public bool charged {
+        get {
+            return charged_;
+        }
+        set {
+            charged_ = value;
+            if (charged_) {
+                rigidbody.mass = base_mass * chargedMassFactor;
+            } else {
+                rigidbody.mass = base_mass;
+            }
+        }
+    }
 
     public bool IsOwnable() {
         return owner == null && ownable;
@@ -20,9 +47,10 @@ public class Ball : MonoBehaviour {
 
     void Start() {
         start_location = transform.position;
-        rb2d = this.EnsureComponent<Rigidbody2D>();
         renderer = this.EnsureComponent<SpriteRenderer>();
         circleCollider = this.EnsureComponent<CircleCollider2D>();
+        rigidbody = this.EnsureComponent<Rigidbody2D>();
+        base_mass = rigidbody.mass;
     }
 
     public void HandleGoalScore(Color color) {
@@ -42,10 +70,13 @@ public class Ball : MonoBehaviour {
         renderer.enabled = true;
         transform.position = start_location;
         ownable = true;
-        rb2d.velocity = Vector2.zero;
+        rigidbody.velocity = Vector2.zero;
         if (lengthOfEffect != null) {
             StartCoroutine(ImplosionEffect(lengthOfEffect.Value));
         }
+        charged = false;
+        owner = null;
+        lastOwner = null;
     }
 
     IEnumerator ImplosionEffect(float duration) {
@@ -62,6 +93,12 @@ public class Ball : MonoBehaviour {
             transform.localScale = Vector3.Lerp(Vector3.zero, startingScale, elapsedTime/duration);
             elapsedTime += Time.deltaTime;
             yield return null;
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall")) {
+            charged = false;
         }
     }
 }
