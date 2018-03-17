@@ -148,6 +148,8 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D other) {
-        HandleCollision(other.gameObject);
+        if (stateManager.IsInState(State.Dash)) {
+            HandleCollision(other.gameObject);
+        }
     }
 }

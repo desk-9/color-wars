@@ -21,13 +21,11 @@ GameObject:
   - component: {fileID: 4866693309565106}
   - component: {fileID: 212918527776535888}
   - component: {fileID: 60192982943300094}
-  - component: {fileID: 58225540981259118}
   - component: {fileID: 50968593018913712}
   - component: {fileID: 114205997563975182}
   - component: {fileID: 114215232534320030}
+  - component: {fileID: 61713479168382808}
   - component: {fileID: 114130524022212122}
-  - component: {fileID: 58993705995626898}
-  - component: {fileID: 114177724964163498}
   - component: {fileID: 114319027261209328}
   - component: {fileID: 114631768565738774}
   - component: {fileID: 114920135743144974}
@@ -78,36 +76,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!58 &58225540981259118
-CircleCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: 573ea0f788bbe3844bb61fda4c693af3, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
---- !u!58 &58993705995626898
-CircleCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 3
 --- !u!60 &60192982943300094
 PolygonCollider2D:
   m_ObjectHideFlags: 1
@@ -118,6 +86,34 @@ PolygonCollider2D:
   m_Density: 1
   m_Material: {fileID: 6200000, guid: 573ea0f788bbe3844bb61fda4c693af3, type: 2}
   m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1.0005571}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.5, y: 0.5}
+      - {x: 0.5, y: 0}
+      - {x: -0.5, y: -0.5}
+      - {x: -0.25, y: 0}
+--- !u!61 &61060380354097216
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -137,12 +133,16 @@ PolygonCollider2D:
       - {x: -0.34666568, y: -0.37928975}
       - {x: -0.20106363, y: 0.009787083}
 --- !u!61 &61060380354097216
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2}
+  m_EdgeRadius: 0
+--- !u!61 &61713479168382808
 BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
@@ -159,7 +159,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 1, y: 4}
   m_EdgeRadius: 0
 --- !u!114 &114130524022212122
 MonoBehaviour:
@@ -170,10 +170,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   useNewBehavior: 1
   dashButton: 11
+  dashGrabField: {fileID: 61713479168382808}
   stealKnockbackPercentage: 0.8
   maxChargeTime: 1
   dashDuration: 0.25
@@ -187,26 +188,6 @@ MonoBehaviour:
   newChargeRate: 1
   dashSpeed: 50
   cooldown: 0.5
---- !u!114 &114177724964163498
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea8b44fbc2bad4e4eb3b12d688479c1a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parryField: {fileID: 58993705995626898}
-  parryButton: 0
-  parryEffect: {fileID: 1070135155758220, guid: 20447285b2fbe44fd960f9f911b9786a,
-    type: 2}
-  cooldown: 0.5
-  knockback: 10
-  whitelist:
-  - serializedVersion: 2
-    m_Bits: 1024
 --- !u!114 &114205997563975182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -216,8 +197,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7bbe1fa63243a2c4cbd0e785d0c0fca9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   movementSpeed: 30
   rotationSpeed: 1080
   freezeRotation: 0
@@ -231,8 +212,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   inline: {fileID: 1479626530978528, guid: 9a716aa6edb4c4baebc7142dd5cd06cf, type: 2}
 --- !u!114 &114261427851223390
 MonoBehaviour:
@@ -243,8 +224,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e2c5e274b6fb4d5cb730d55a0aceb4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   stunTime: 0.7
 --- !u!114 &114319027261209328
 MonoBehaviour:
@@ -255,8 +236,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 964e4864ae7674458906684fac594544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   shootButton: 11
   forcedShotTime: 5
   baseShotSpeed: 25
@@ -288,8 +269,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 209e8991cf01b419ebe9573ca024c9ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   flashInterval: 0.1
 --- !u!114 &114631768565738774
 MonoBehaviour:
@@ -300,8 +281,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   coolDownTime: 0.1
   ballTurnSpeed: 50
   chargedBallStuns: 0
@@ -315,8 +296,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4e43ea7dfcf541a7b0afdd2de3ab3be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   effectPrefab: {fileID: 1691723634291742, guid: 9d4eb0d1094684e6f8612a9e011f290c,
     type: 2}
   triggerState: 2
@@ -332,8 +313,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4e43ea7dfcf541a7b0afdd2de3ab3be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   effectPrefab: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
     type: 2}
   triggerState: 3
@@ -349,8 +330,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b46c230ed06b43dbb065352c75f1577, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!198 &198183353431152102
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -14,6 +14,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     // ==================== //
 
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
+    public BoxCollider2D dashGrabField;
     public float stealKnockbackPercentage = 0.8f;
     public float maxChargeTime = 1.0f;
     public float dashDuration = 0.25f;
@@ -35,8 +36,10 @@ public class PlayerDashBehavior : MonoBehaviour {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
-        player = this.EnsureComponent<Player>();
-        carrier = this.EnsureComponent<BallCarrier>();
+        player         = this.EnsureComponent<Player>();
+        carrier        = this.EnsureComponent<BallCarrier>();
+
+        dashGrabField.enabled = false;
     }
 
     void Update() {
@@ -117,12 +120,15 @@ public class PlayerDashBehavior : MonoBehaviour {
         // Apply scaled dash speed on top of base movement speed.
         speed = playerMovement.movementSpeed + Mathf.Pow(speed, dashPower);
 
+        dashGrabField.enabled = true;
+
         while (Time.time - startTime < dashDuration) {
             rb.velocity = direction * speed;
 
             yield return null;
         }
 
+        dashGrabField.enabled = false;
         dashCoroutine = null;
         stateManager.CurrentStateHasFinished();
     }
@@ -171,6 +177,10 @@ public class PlayerDashBehavior : MonoBehaviour {
             return (ball.owner == null) ? null : ball.owner.GetComponent<Player>();
         }
         return gameObject.GetComponent<Player>();
+    }
+
+    public void OnTrigger2D(Collider2D collider) {
+        StunAndSteal(collider.gameObject);
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
