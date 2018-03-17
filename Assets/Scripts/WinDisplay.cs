@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UtilityExtensions;
 
 public class WinDisplay : MonoBehaviour {
+    public string mainMenuInstructions = "Press dpad-up to return to main menu";
     public int SecondsBeforeReset = 10;
     Text winnerText;
     Text restartTime;
@@ -30,7 +31,7 @@ public class WinDisplay : MonoBehaviour {
 
     IEnumerator ResetCountdown() {
         for (int i = SecondsBeforeReset; i > 0; --i) {
-            restartTime.text = "Resetting in " + i.ToString() + "...";
+            restartTime.text = "Resetting in " + i.ToString() + "...\n" + mainMenuInstructions;
             yield return new WaitForSeconds(1);
         }
         SceneStateController.instance.Load(Scene.Court);

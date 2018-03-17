@@ -28,8 +28,10 @@ public class MenuController : MonoBehaviour {
             SceneStateController.instance.Load(Scene.Court);
             return;
         }
-        
-        if (PlayerInputManager.instance.Any((device)
+
+        // note: don't allow pausing if game is over.
+        if (!GameModel.instance.gameOver
+            && PlayerInputManager.instance.Any((device)
                             => device.GetControl(StartButton).WasPressed)) {
             TogglePause();
             return;
