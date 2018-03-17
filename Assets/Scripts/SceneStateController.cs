@@ -14,7 +14,7 @@ public class SceneStateController : MonoBehaviour {
     Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
         {Scene.Court, "court_InterSceneManager"},
         {Scene.MainMenu, "main-menu"},
-        {Scene.Tutorial, "ready-up"},
+        {Scene.Tutorial, "courst_InterSceneManager"},
     };
     public Scene currentScene {get; private set;}
     
