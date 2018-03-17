@@ -61,6 +61,7 @@ public class GameModel : MonoBehaviour {
                 }
                 return next.score > bestSoFar.score ? next : bestSoFar;
             });
+        Debug.Log("Calling OnGameOver");
         OnGameOver();
     }
 

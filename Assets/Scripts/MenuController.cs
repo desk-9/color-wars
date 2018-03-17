@@ -12,6 +12,13 @@ public class MenuController : MonoBehaviour {
 
     public GameObject pauseMenu;
     public WinDisplay winDisplay;
+
+    void Start() {
+        if (winDisplay != null) {
+            GameModel.instance.OnGameOver += () => winDisplay.gameObject.SetActive(true);
+            GameModel.instance.OnGameOver += winDisplay.GameOverFunction;
+        }
+    }
     
     void Update () {
 

@@ -1013,7 +1013,7 @@ MonoBehaviour:
   - color: {r: 0.09411765, g: 0.7921569, b: 0.9019608, a: 1}
     name: Blue
   scoreMax: 5
-  matchLength: 3
+  matchLength: 0.5
   meta: {fileID: 0}
 --- !u!4 &653058663
 Transform:

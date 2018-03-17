@@ -14,12 +14,8 @@ public class WinDisplay : MonoBehaviour {
         restartTime = transform.FindComponent<Text>("RestartText");
     }
 
-    void Start() {
-        GameModel.instance.OnGameOver += () => this.gameObject.SetActive(true);
-        GameModel.instance.OnGameOver += GameOverFunction;
-    }
-
     public void GameOverFunction() {
+        Debug.Log("GameOverFunction!");
         var winner = GameModel.instance.winner;
         if (winner == null) {
             winnerText.text = "Tie!";
@@ -29,7 +25,6 @@ public class WinDisplay : MonoBehaviour {
         winnerText.text = string.Format("{0} Team won with {1} points",
                                         winner.teamColor.name, winner.score);
         winnerText.color = winner.teamColor;
-        
         StartCoroutine(ResetCountdown());
     }
 
