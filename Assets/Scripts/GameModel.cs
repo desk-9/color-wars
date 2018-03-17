@@ -40,6 +40,9 @@ public class GameModel : MonoBehaviour {
     void Initialization() {
         InitializeTeams();
         meta = SceneStateController.instance.gameObject;
+        if (meta == null) {
+            Debug.LogWarning("Meta object is null!!!!");
+        }
         matchLengthSeconds = 60 * matchLength;
         this.TimeDelayCall(EndGame, matchLengthSeconds);
         nc = new NotificationCenter();

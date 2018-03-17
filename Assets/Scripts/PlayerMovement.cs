@@ -12,7 +12,6 @@ public class PlayerMovement : MonoBehaviour {
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
-    PlayerInputManager playerInput;
     PlayerStateManager stateManager;
 
     void StartPlayerMovement() {
@@ -64,14 +63,14 @@ public class PlayerMovement : MonoBehaviour {
     // Use this for initialization
     void Start () {
         rb2d = this.EnsureComponent<Rigidbody2D>();
-        playerInput = GameModel.instance.meta.EnsureComponent<PlayerInputManager>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
 
         TryToGetInputDevice();
     }
 
     void TryToGetInputDevice() {
-        inputDevice = playerInput.GetInputDevice(InputDeviceDisconnectedCallback);
+        inputDevice = PlayerInputManager.instance.GetInputDevice(
+            InputDeviceDisconnectedCallback);
         if (inputDevice != null) {
             stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
         }

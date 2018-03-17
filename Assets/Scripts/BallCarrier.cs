@@ -55,7 +55,7 @@ public class BallCarrier : MonoBehaviour {
         while (true) {
             playerMovement?.RotatePlayer();
             PlaceBallAtNose();
-            yield return null;
+            yield return new WaitForFixedUpdate();
         }
     }
 

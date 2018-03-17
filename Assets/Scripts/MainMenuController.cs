@@ -12,16 +12,13 @@ public class MainMenuController : MonoBehaviour {
     public IC.InputControlType SelectButton = IC.InputControlType.Action1; // A
     public Color selectedColor;
     public Color deselectedColor;
-    public GameObject meta;
 
     public List<Text> MenuOptions = new List<Text>();
     int selectionIndex = 0;
     PlayerInputManager playerInputManager;
 
     void Start() {
-        if (meta != null) {
-            playerInputManager = meta.EnsureComponent<PlayerInputManager>();
-        }
+        playerInputManager = PlayerInputManager.instance;
     }
 	
     // Update is called once per frame

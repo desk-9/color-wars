@@ -634,6 +634,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1622040235}
   - component: {fileID: 1622040234}
+  - component: {fileID: 1622040236}
   m_Layer: 0
   m_Name: InControl
   m_TagString: Untagged
@@ -656,7 +657,7 @@ MonoBehaviour:
   invertYAxis: 0
   enableXInput: 0
   useFixedUpdate: 0
-  dontDestroyOnLoad: 1
+  dontDestroyOnLoad: 0
   customProfiles: []
 --- !u!4 &1622040235
 Transform:
@@ -671,6 +672,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1622040236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1622040233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0433856ff7e34f86bed8b44261d01a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deadzone: 0.25
 --- !u!1001 &1630280733
 Prefab:
   m_ObjectHideFlags: 0
@@ -710,7 +723,8 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114957044975578562, guid: d0a7057ebfe26409199e46593e19d260, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: d0a7057ebfe26409199e46593e19d260, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1924368750

@@ -32,6 +32,15 @@ public class PlayerInputManager : MonoBehaviour {
     // Registered actions to invoke on detach for each device.
     Dictionary<InputDevice, Action> actions = new Dictionary<InputDevice, Action>();
 
+    public static PlayerInputManager instance;
+    void Awake() {
+        if (instance == null) {
+            instance = this;
+        }
+        else {
+            Destroy(gameObject);
+        }
+    }
 
     void Start() {
         // Assign currently attached devices in order.

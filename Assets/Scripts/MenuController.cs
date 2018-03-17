@@ -12,43 +12,33 @@ public class MenuController : MonoBehaviour {
 
     public GameObject pauseMenu;
     public WinDisplay winDisplay;
-
-    GameObject activeDisplay = null;
-    PlayerInputManager playerInput;
-
-    void Start() {
-        SceneStateController.instance.OnEnter[Scene.Court] += ResetDisplays;
-        SceneStateController.instance.OnEnter[Scene.Tutorial] += ResetDisplays;
-        playerInput = GameModel.instance.EnsureComponent<PlayerInputManager>();
-    }
-
-    public void ResetDisplays() {
-        pauseMenu.active = false;
-        // winDisplay.SetEnabled(false);
-        activeDisplay = null;
-    }
-
+    
     void Update () {
 
         if (SceneStateController.instance.paused
-            && playerInput.Any((device)
+            && PlayerInputManager.instance.Any((device)
                                => device.GetControl(ResetButton).WasPressed)) {
             SceneStateController.instance.Load(Scene.Court);
             return;
         }
         
-        if (playerInput.Any((device)
+        if (PlayerInputManager.instance.Any((device)
                             => device.GetControl(StartButton).WasPressed)) {
             TogglePause();
+            return;
+        }
+
+        if (PlayerInputManager.instance.Any((device)
+                            => device.GetControl(MainMenuButton).WasPressed)) {
+            SceneStateController.instance.Load(Scene.MainMenu);
             return;
         }
     }
 
     
     public void TogglePause() {
-        Utility.Toggle(pauseMenu);
-        // activeDisplay = pauseMenu;
         SceneStateController.instance.TogglePauseTime();
+        pauseMenu.SetActive(SceneStateController.instance.paused);
     }
 
 }

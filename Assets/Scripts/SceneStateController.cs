@@ -12,7 +12,7 @@ public enum Scene {
 public class SceneStateController : MonoBehaviour {
 
     Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
-        {Scene.Court, "court"},
+        {Scene.Court, "court_InterSceneManager"},
         {Scene.MainMenu, "main-menu"},
         {Scene.Tutorial, "ready-up"},
     };
@@ -22,19 +22,19 @@ public class SceneStateController : MonoBehaviour {
     public Dictionary<Scene, Callback> OnEnter = new Dictionary<Scene, Callback>();
 
     public bool paused {get; private set;} = false;
-        
+
     public static SceneStateController instance;
     void Awake() {
         if (instance == null) {
             instance = this;
-            Initialize();
+            InitializeCallbacks();
         }
         else {
             Destroy(gameObject);
         }
     }
 
-    void Initialize() {
+    void InitializeCallbacks() {
         DontDestroyOnLoad(this.gameObject);
         foreach (Scene scene in System.Enum.GetValues(typeof(Scene))) {
             OnEnter[scene] = delegate{};
