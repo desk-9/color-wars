@@ -81,7 +81,7 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     public void AttemptNormalMovement(Callback start, Callback stop){
-        if (IsInState(State.StartupState)) {
+        if (IsInState(State.StartupState, State.NormalMovement)) {
             currentState = State.NormalMovement;
             startDefaultState = start;
             stopDefaultState = stop;
