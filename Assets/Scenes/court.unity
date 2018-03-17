@@ -608,6 +608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 491648685}
   - component: {fileID: 491648684}
+  - component: {fileID: 491648686}
   m_Layer: 0
   m_Name: InControl
   m_TagString: Untagged
@@ -645,6 +646,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &491648686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 491648683}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0433856ff7e34f86bed8b44261d01a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deadzone: 0.25
 --- !u!1 &497832505
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,9 +971,6 @@ GameObject:
   - component: {fileID: 653058663}
   - component: {fileID: 653058662}
   - component: {fileID: 653058661}
-  - component: {fileID: 653058660}
-  - component: {fileID: 653058664}
-  - component: {fileID: 653058665}
   - component: {fileID: 653058666}
   m_Layer: 0
   m_Name: GameModel
@@ -969,18 +979,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &653058660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 653058659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0433856ff7e34f86bed8b44261d01a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deadzone: 0.25
 --- !u!114 &653058661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -996,7 +994,7 @@ MonoBehaviour:
   ResetButton: 8
   MainMenuButton: 7
   pauseMenu: {fileID: 2082202133}
-  winDisplay: {fileID: 0}
+  winDisplay: {fileID: 900835214}
 --- !u!114 &653058662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1030,28 +1028,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &653058664
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 653058659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2b4cdb20e90b4d04beda66ea8185654, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &653058665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 653058659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43d7fa4e35d9d43b3afc22bb073168f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &653058666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1130,7 +1106,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Press down on the d-pad to reset the scene.
+  m_Text: 'Press d-pad up to return to main menu
+
+    Press d-pad down to reset the scene'
 --- !u!222 &687356463
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1373,6 +1351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b233d598eefd4671ad3888853bf0730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenuInstructions: Press dpad-up to return to main menu
   SecondsBeforeReset: 10
 --- !u!1 &989458720
 GameObject:
@@ -2575,7 +2554,8 @@ Prefab:
       propertyPath: m_RootOrder
       value: 12
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114957044975578562, guid: d0a7057ebfe26409199e46593e19d260, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: d0a7057ebfe26409199e46593e19d260, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &2082202133
