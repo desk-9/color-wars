@@ -18,6 +18,7 @@ public enum State
   Posession,
   ChargeShot,
   Stun,
+  InvisibleAfterGoal
 };
 
 public delegate void ToggleCallback(bool isEnteringState);
@@ -41,7 +42,9 @@ public class PlayerStateManager : MonoBehaviour {
 
     void Awake() {
         currentState = State.StartupState;
-        stopCurrentState = null;
+        stopCurrentState = delegate{};
+        startDefaultState = delegate{};
+        stopDefaultState = delegate{};
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
             onToggleState[state] = delegate{};
             onStartState[state] = delegate{};
@@ -81,7 +84,8 @@ public class PlayerStateManager : MonoBehaviour {
         if (IsInState(State.StartupState)) {
             currentState = State.NormalMovement;
             startDefaultState = start;
-            stopDefaultState = stopCurrentState = stop;
+            stopDefaultState = stop;
+            stopCurrentState = stop;
             start();
         } else {
             Debug.LogErrorFormat("Tried to start NormalMovementState while in {0}", currentState);
@@ -110,6 +114,10 @@ public class PlayerStateManager : MonoBehaviour {
         if (IsInState(State.NormalMovement, State.Posession)) {
             SwitchToState(State.Stun, start, stop);
         }
+    }
+
+    public void AttemptInvisibleAfterGoal(Callback start, Callback stop) {
+        SwitchToState(State.InvisibleAfterGoal, start, stop);
     }
 
     void SwitchToState(State state, Callback start, Callback stop) {

@@ -21,6 +21,7 @@ public class GameModel : MonoBehaviour {
     public bool gameOver {get; private set;} = false;
     public TeamManager winner {get; private set;} = null;
     public GameObject meta;
+    public float pauseAfterGoalScore = 3f;
 
     public Callback OnGameOver = delegate{};
 
@@ -84,13 +85,21 @@ public class GameModel : MonoBehaviour {
         NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
 
-    public void Scored(TeamManager team) {
-        // One team just scored
-        //
-        // TODO: handle things like resetting the ball and players here, maybe
-        // show UI elements
-
+    public void GoalScoredForTeam(TeamManager scored) {
+        foreach (var team in teams) {
+            if ((Color)team.teamColor == scored.teamColor) {
+                team.IncrementScore();
+            } else {
+                team.MakeInvisibleAfterGoal();
+            }
+        }
+        UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
     }
 
-    
+    void ResetGameAfterGoal() {
+        foreach (var team in teams) {
+            team.ResetTeam();
+        }
+        GameObject.FindObjectOfType<Ball>().ResetBall();
+    }
 }

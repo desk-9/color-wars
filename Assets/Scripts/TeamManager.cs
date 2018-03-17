@@ -23,17 +23,21 @@ public class TeamManager {
     public void IncrementScore() {
         score += 1;
         GameModel.instance.scoreDisplayer?.UpdateScores();
-        GameModel.instance.Scored(this);
     }
 
     public void AddTeamMember(Player newMember) {
         teamMembers.Add(newMember);
     }
 
-    public void FlashTeamColor() {
-        foreach (var player in teamMembers) {
-            player.FlashTeamColor();
+    public void MakeInvisibleAfterGoal() {
+        foreach (var teamMember in teamMembers) {
+            teamMember.MakeInvisibleAfterGoal();
         }
     }
 
+    public void ResetTeam() {
+        foreach (var teamMember in teamMembers) {
+            teamMember.ResetPlayer();
+        }
+    }
 }
