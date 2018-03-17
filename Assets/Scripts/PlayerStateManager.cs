@@ -81,7 +81,7 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     public void AttemptNormalMovement(Callback start, Callback stop){
-        if (IsInState(State.StartupState, State.NormalMovement)) {
+        if (IsInState(State.StartupState)) {
             currentState = State.NormalMovement;
             startDefaultState = start;
             stopDefaultState = stop;
@@ -118,6 +118,10 @@ public class PlayerStateManager : MonoBehaviour {
 
     public void AttemptFrozenAfterGoal(Callback start, Callback stop) {
         SwitchToState(State.FrozenAfterGoal, start, stop);
+    }
+    
+    public void AttemptStartState(Callback start, Callback stop) {
+        SwitchToState(State.StartupState, start, stop);
     }
 
     void SwitchToState(State state, Callback start, Callback stop) {

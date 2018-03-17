@@ -83,6 +83,7 @@ public class PlayerMovement : MonoBehaviour {
     void InputDeviceDisconnectedCallback() {
         Debug.LogFormat(this, "{0}: Input Device Disconnected", name);
         StopAllMovement();
+        stateManager.AttemptStartState(delegate{}, delegate{});
         inputDevice = null;
     }
 
