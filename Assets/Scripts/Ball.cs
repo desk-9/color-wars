@@ -5,10 +5,11 @@ using UtilityExtensions;
 
 public class Ball : MonoBehaviour {
 
-    Vector2 start_location;
     public BallCarrier owner { get; set; }
     public bool ownable {get; set;} = true;
+    public ParticleSystem explosion;
 
+    Vector2 start_location;
     Rigidbody2D rb2d;
 
     public bool IsOwnable() {
