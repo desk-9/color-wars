@@ -1106,9 +1106,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Press d-pad down to reset the scene.
+  m_Text: 'Press d-pad up to return to main menu
 
-    Press d-pad up to return to main menu'
+    Press d-pad down to reset the scene'
 --- !u!222 &687356463
 CanvasRenderer:
   m_ObjectHideFlags: 0
