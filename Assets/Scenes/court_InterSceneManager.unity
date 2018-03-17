@@ -1013,7 +1013,7 @@ MonoBehaviour:
   - color: {r: 0.09411765, g: 0.7921569, b: 0.9019608, a: 1}
     name: Blue
   scoreMax: 5
-  matchLength: 0.5
+  matchLength: 3
   meta: {fileID: 0}
 --- !u!4 &653058663
 Transform:
@@ -1351,6 +1351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b233d598eefd4671ad3888853bf0730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMenuInstructions: Press dpad-up to return to main menu
   SecondsBeforeReset: 10
 --- !u!1 &989458720
 GameObject:
