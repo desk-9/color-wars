@@ -27,6 +27,7 @@ public class GameModel : MonoBehaviour {
 
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
+    Ball ball;
 
     void Awake() {
         if (instance == null) {
@@ -52,6 +53,7 @@ public class GameModel : MonoBehaviour {
 
     void Start() {
         scoreDisplayer?.StartMatchLengthUpdate(matchLengthSeconds);
+        ball = GameObject.FindObjectOfType<Ball>();
     }
 
     void EndGame() {
@@ -86,6 +88,7 @@ public class GameModel : MonoBehaviour {
     }
 
     public void GoalScoredForTeam(TeamManager scored) {
+        ball.Explode();
         foreach (var team in teams) {
             if ((Color)team.teamColor == scored.teamColor) {
                 team.IncrementScore();
@@ -100,6 +103,6 @@ public class GameModel : MonoBehaviour {
         foreach (var team in teams) {
             team.ResetTeam();
         }
-        GameObject.FindObjectOfType<Ball>().ResetBall();
+        ball.ResetBall();
     }
 }

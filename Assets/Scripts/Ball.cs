@@ -21,6 +21,10 @@ public class Ball : MonoBehaviour {
         rb2d = this.EnsureComponent<Rigidbody2D>();
     }
 
+    public void Explode() {
+        // TODO: Implement this
+    }
+
     public void ResetBall() {
         transform.position = start_location;
         ownable = true;
