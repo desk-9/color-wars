@@ -12,6 +12,7 @@ public class ShootBallMechanic : MonoBehaviour {
     public float chargeRate = 1.0f;
     public float shotPower = 1.1f;
     public GameObject circularTimerPrefab;
+    public Vector2 circleTimerScale;
     CircularTimer circularTimer;
 
     public GameObject chargeEffect;
@@ -44,6 +45,7 @@ public class ShootBallMechanic : MonoBehaviour {
         circularTimer = Instantiate(
             circularTimerPrefab, transform.position,
             Quaternion.identity, transform).GetComponent<CircularTimer>();
+        circularTimer.transform.localScale = circleTimerScale;
     }
 
     IEnumerator ShootTimer() {

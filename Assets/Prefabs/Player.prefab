@@ -226,6 +226,7 @@ MonoBehaviour:
   shotPower: 1.2
   circularTimerPrefab: {fileID: 1022924467689572, guid: 3fa79a1d2b91d48e39e53e08c9f861fe,
     type: 2}
+  circleTimerScale: {x: 0.6, y: 0.6}
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
 --- !u!114 &114319664088283476
