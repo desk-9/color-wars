@@ -6,6 +6,9 @@ Sounds:
 Goal Switch Notification: https://freesound.org/people/pan14/sounds/263133/
 GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
 Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
+Endgame Countdown: http://www.orangefreesounds.com/countdown-timer/
+
+
 Asset: circulartimer sprite and idea
 Source: http://answers.unity.com/answers/856224/view.html
 
