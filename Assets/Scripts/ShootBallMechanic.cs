@@ -18,7 +18,6 @@ public class ShootBallMechanic : MonoBehaviour {
 
     PlayerMovement playerMovement;
     PlayerStateManager stateManager;
-    IC.InputDevice inputDevice;
     Coroutine shootTimer;
     BallCarrier ballCarrier;
     GameObject effect;
@@ -56,8 +55,8 @@ public class ShootBallMechanic : MonoBehaviour {
 
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
-
-            if (inputDevice.GetControl(shootButton).WasPressed) {
+            var inputDevice = playerMovement.GetInputDevice();
+            if (inputDevice != null && inputDevice.GetControl(shootButton).WasPressed) {
                 shootTimer = StartCoroutine(ChargeShot(elapsedTime));
                 yield break;
             }
@@ -72,7 +71,7 @@ public class ShootBallMechanic : MonoBehaviour {
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
-
+            var inputDevice = playerMovement.GetInputDevice();
             if (inputDevice.GetControl(shootButton).WasReleased) {
 
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
@@ -106,12 +105,5 @@ public class ShootBallMechanic : MonoBehaviour {
             Destroy(effect);
         }
     }
-
-    void Update() {
-        if (inputDevice == null) {
-            inputDevice = playerMovement.GetInputDevice();
-        }
-    }
-
 
 }

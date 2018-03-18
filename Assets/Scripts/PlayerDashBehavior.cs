@@ -18,7 +18,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
     Player player;
-    IC.InputDevice     input;
     Rigidbody2D        rb;
     Coroutine          chargeCoroutine;
     Coroutine          dashCoroutine;
@@ -27,7 +26,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
-        input          = playerMovement.GetInputDevice();
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
@@ -35,12 +33,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     void Update() {
-        if (input == null) {
-            input = playerMovement.GetInputDevice();
-            return;
-        }
-
-        if (input.GetControl(dashButton).WasPressed) {
+        var input = playerMovement.GetInputDevice();
+        if (input != null && input.GetControl(dashButton).WasPressed) {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
     }
@@ -73,8 +67,10 @@ public class PlayerDashBehavior : MonoBehaviour {
             // Continue updating direction to indicate charge direction.
             playerMovement.RotatePlayer();
 
+            var input = playerMovement.GetInputDevice();
             // Start dash and terminate Charge coroutine.
-            if (input.GetControl(dashButton).WasReleased || (Time.time - startChargeTime) >= maxChargeTime) {
+            if (input != null && (input.GetControl(dashButton).WasReleased
+                                  || (Time.time - startChargeTime) >= maxChargeTime)) {
                 stateManager.AttemptDash(() => StartDash(dashSpeed), StopDash);
                 yield break;
             }

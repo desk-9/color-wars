@@ -14,7 +14,6 @@ public class PlayerParryBehavior : MonoBehaviour {
     public List<LayerMask>     whitelist   = new List<LayerMask>();
 
     PlayerMovement   playerMovement;
-    IC.InputDevice   input;
     Coroutine        parryCoroutine;
     GameObject       effect;
 
@@ -23,12 +22,8 @@ public class PlayerParryBehavior : MonoBehaviour {
     }
 
     void Update() {
-        if (input == null) {
-            input = playerMovement.GetInputDevice();
-            return;
-        }
-
-        if (parryCoroutine == null && input.GetControl(parryButton).WasPressed) {
+        var input = playerMovement.GetInputDevice();
+        if (input != null && parryCoroutine == null && input.GetControl(parryButton).WasPressed) {
             parryCoroutine = StartCoroutine(Parry());
         }
     }
