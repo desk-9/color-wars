@@ -23,7 +23,6 @@ public class GameModel : MonoBehaviour {
     public GameObject meta;
     public float pauseAfterGoalScore = 3f;
     public float pauseAfterReset = 2f;
-    public int endGameCountdown = 10;
 
     public Callback OnGameOver = delegate{};
 
@@ -53,7 +52,7 @@ public class GameModel : MonoBehaviour {
             Debug.LogWarning("Meta object is null!!!!");
         }
         matchLengthSeconds = 60 * matchLength;
-        this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - endGameCountdown);
+        this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         nc = new NotificationCenter();
     }
 
