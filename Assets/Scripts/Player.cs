@@ -18,7 +18,7 @@ public class Player : MonoBehaviour {
     public void MakeInvisibleAfterGoal() {
         renderer.enabled = false;
         collider.enabled = false;
-        stateManager.AttemptInvisibleAfterGoal(() => {}, () => {});
+        stateManager.AttemptFrozenAfterGoal(delegate{}, delegate{});
 
         var explosionMain = explosion.main;
         explosionMain.startLifetime = GameModel.instance.pauseAfterGoalScore;
@@ -26,11 +26,15 @@ public class Player : MonoBehaviour {
         explosion.Play();
     }
 
-    public void ResetPlayer() {
+    public void ResetPlayerPosition() {
+        stateManager.AttemptFrozenAfterGoal(delegate{}, delegate{});
         transform.position = initialPosition;
         rb2d.rotation = initalRotation;
         renderer.enabled = true;
         collider.enabled = true;
+    }
+
+    public void BeginPlayerMovement() {
         stateManager.CurrentStateHasFinished();
     }
 

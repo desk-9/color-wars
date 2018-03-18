@@ -22,6 +22,7 @@ public class GameModel : MonoBehaviour {
     public TeamManager winner {get; private set;} = null;
     public GameObject meta;
     public float pauseAfterGoalScore = 3f;
+    public float pauseAfterReset = 2f;
 
     public Callback OnGameOver = delegate{};
 
@@ -103,6 +104,13 @@ public class GameModel : MonoBehaviour {
         foreach (var team in teams) {
             team.ResetTeam();
         }
-        ball.ResetBall();
+        ball.ResetBall(pauseAfterReset);
+        UtilityExtensionsContainer.TimeDelayCall(this, StartGameAfterBallAnimation, pauseAfterReset);
+    }
+
+    void StartGameAfterBallAnimation() {
+        foreach (var team in teams) {
+            team.BeginMovement();
+        }
     }
 }

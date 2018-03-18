@@ -18,7 +18,7 @@ public enum State
   Posession,
   ChargeShot,
   Stun,
-  InvisibleAfterGoal
+  FrozenAfterGoal
 };
 
 public delegate void ToggleCallback(bool isEnteringState);
@@ -116,8 +116,8 @@ public class PlayerStateManager : MonoBehaviour {
         }
     }
 
-    public void AttemptInvisibleAfterGoal(Callback start, Callback stop) {
-        SwitchToState(State.InvisibleAfterGoal, start, stop);
+    public void AttemptFrozenAfterGoal(Callback start, Callback stop) {
+        SwitchToState(State.FrozenAfterGoal, start, stop);
     }
 
     void SwitchToState(State state, Callback start, Callback stop) {

@@ -37,7 +37,13 @@ public class TeamManager {
 
     public void ResetTeam() {
         foreach (var teamMember in teamMembers) {
-            teamMember.ResetPlayer();
+            teamMember.ResetPlayerPosition();
+        }
+    }
+
+    public void BeginMovement() {
+        foreach (var teamMember in teamMembers) {
+            teamMember.BeginPlayerMovement();
         }
     }
 }
