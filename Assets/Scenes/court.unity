@@ -340,25 +340,15 @@ Prefab:
       propertyPath: m_Name
       value: 'Ball '
       objectReference: {fileID: 0}
-    - target: {fileID: 212185075850510432, guid: ba0c60e64c5ae42138dd02f42c637dc5,
+    - target: {fileID: 96677806272017778, guid: ba0c60e64c5ae42138dd02f42c637dc5,
         type: 2}
-      propertyPath: m_Color.r
-      value: 0.88235295
+      propertyPath: m_Parameters.widthMultiplier
+      value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 212185075850510432, guid: ba0c60e64c5ae42138dd02f42c637dc5,
+    - target: {fileID: 96677806272017778, guid: ba0c60e64c5ae42138dd02f42c637dc5,
         type: 2}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 212185075850510432, guid: ba0c60e64c5ae42138dd02f42c637dc5,
-        type: 2}
-      propertyPath: m_Color.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 212185075850510432, guid: ba0c60e64c5ae42138dd02f42c637dc5,
-        type: 2}
-      propertyPath: m_SortingOrder
-      value: 7
+      propertyPath: m_Time
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ba0c60e64c5ae42138dd02f42c637dc5, type: 2}
