@@ -25,6 +25,7 @@ public class Goal : MonoBehaviour {
     void Start () {
         nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
+        GameModel.instance.OnGameOver += StopTeamSwitching;
         SwitchToNextTeam();
         StartTeamSwitching();
     }
