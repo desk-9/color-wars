@@ -13,11 +13,17 @@ public class Player : MonoBehaviour {
     float initalRotation;
     Rigidbody2D rb2d;
     new Collider2D collider;
+    ParticleSystem explosion;
 
     public void MakeInvisibleAfterGoal() {
         renderer.enabled = false;
         collider.enabled = false;
         stateManager.AttemptInvisibleAfterGoal(() => {}, () => {});
+
+        var explosionMain = explosion.main;
+        explosionMain.startLifetime = GameModel.instance.pauseAfterGoalScore;
+        explosionMain.startColor = team.teamColor.color;
+        explosion.Play();
     }
 
     public void ResetPlayer() {
@@ -34,6 +40,7 @@ public class Player : MonoBehaviour {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         collider = this.EnsureComponent<Collider2D>();
+        explosion = GetComponent<ParticleSystem>();
         team = GameModel.instance.GetTeamAssignment(this);
         renderer.color = team.teamColor;
         initialPosition = transform.position;

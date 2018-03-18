@@ -76,7 +76,6 @@ public class Goal : MonoBehaviour {
         }
 
         if (ball.IsOwnable()) {
-            ball.ownable = false;
             GameModel.instance.GoalScoredForTeam(currentTeam);
         }
     }

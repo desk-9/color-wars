@@ -88,7 +88,7 @@ public class GameModel : MonoBehaviour {
     }
 
     public void GoalScoredForTeam(TeamManager scored) {
-        ball.Explode();
+        ball.HandleGoalScore(scored.teamColor);
         foreach (var team in teams) {
             if ((Color)team.teamColor == scored.teamColor) {
                 team.IncrementScore();
