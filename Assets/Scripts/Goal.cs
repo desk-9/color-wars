@@ -16,6 +16,7 @@ public class Goal : MonoBehaviour {
     ModCycle nextTeamIndex;
     new SpriteRenderer renderer;
     Text goalSwitchText;
+    Coroutine teamSwitching;
 
     void Awake() {
         renderer = GetComponent<SpriteRenderer>();
@@ -25,15 +26,17 @@ public class Goal : MonoBehaviour {
         nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
         SwitchToNextTeam();
-        StartCoroutine(TeamSwitching());
+        StartTeamSwitching();
     }
 
-    void SetNotificationText(string to) {
+    void SetNotificationText(string to, bool playSound = true) {
         if (!goalSwitchText.enabled) {
             goalSwitchText.enabled = true;
         }
         goalSwitchText.text = to;
-        AudioManager.instance.GoalSwitchWarning.Play(goalSwitchWarningVolume);
+        if (playSound) {
+            AudioManager.instance.GoalSwitchWarning.Play(goalSwitchWarningVolume);
+        }
     }
 
     IEnumerator TeamSwitching() {
@@ -49,6 +52,20 @@ public class Goal : MonoBehaviour {
         }
     }
 
+    public void StopTeamSwitching() {
+        if (teamSwitching != null) {
+            StopCoroutine(teamSwitching);
+            teamSwitching = null;
+            SetNotificationText("", false);
+        }
+    }
+
+    public void StartTeamSwitching() {
+        if (teamSwitching == null) {
+            teamSwitching = StartCoroutine(TeamSwitching());
+        }
+    }
+
     TeamManager PeekNextTeam() {
         return GameModel.instance.teams[nextTeamIndex.PeekNext()];
     }
@@ -57,7 +74,7 @@ public class Goal : MonoBehaviour {
         return GameModel.instance.teams[nextTeamIndex.Next()];
     }
 
-    void SwitchToNextTeam(bool playSound = false) {
+    public void SwitchToNextTeam(bool playSound = false) {
         if (playSound) {
             AudioManager.instance.GoalSwitch.Play();
         }
