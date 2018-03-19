@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198506339894622706}
   - component: {fileID: 199216439220642128}
   m_Layer: 0
-  m_Name: ChargeEffect
+  m_Name: ChargeEffectPink
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1048,8 +1048,8 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0, g: 1, b: 0, a: 0}
-        key1: {r: 0, g: 1, b: 0, a: 0.5019608}
+        key0: {r: 0.92475796, g: 0.33088237, b: 1, a: 0}
+        key1: {r: 0.92475796, g: 0.33088237, b: 1, a: 0.5019608}
         key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
