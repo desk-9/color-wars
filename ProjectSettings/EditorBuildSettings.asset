@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/court-tutorial.unity
     guid: ff58a204b79314ce6a9acbe49697485d
+  - enabled: 0
+    path: Assets/__DELETED_GUID_Trash/0e1f792f3fd3b45718815f80ec498928
+    guid: 0e1f792f3fd3b45718815f80ec498928
   - enabled: 1
     path: Assets/Scenes/court.unity
-    guid: 0e1f792f3fd3b45718815f80ec498928
+    guid: decd3653f3ae848699a70c51196c1c64
