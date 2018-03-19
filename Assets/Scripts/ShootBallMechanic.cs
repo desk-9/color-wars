@@ -213,21 +213,21 @@ public class ShootBallMechanic : MonoBehaviour {
         Shoot();
     }
 
-    bool IsInAimAssistArea(GameObject thing) {
-        var angle = Vector3.Angle(transform.right, thing.transform.position - transform.position);
-        return Mathf.Abs(angle) < aimAssistAngle ? true : false;
+    Vector3 GetShotDirection(Vector3 defaultAngle) {
+        var goalAngle = Mathf.Abs(Vector3.Angle(transform.right, goal.transform.position - transform.position));
+        var teamMateAngle = Mathf.Abs(Vector3.Angle(transform.right, teamMate.transform.position - transform.position));
+        if (Mathf.Min(goalAngle, teamMateAngle) < aimAssistAngle) {
+            var aimTowards = goalAngle < teamMateAngle ? goal.transform : teamMate.transform;
+            return aimTowards.position - transform.position;
+        } else {
+            return defaultAngle;
+        }
     }
 
     void Shoot() {
         var ball = ballCarrier.ball;
         var shotDirection = ball.transform.position - transform.position;
-
-        if (IsInAimAssistArea(goal.gameObject)) {
-            shotDirection = goal.transform.position - transform.position;
-        }
-        if (IsInAimAssistArea(teamMate.gameObject)) {
-            shotDirection = teamMate.transform.position - transform.position;
-        }
+        shotDirection = GetShotDirection(shotDirection);
 
         shootTimer = null;
         playerMovement.freezeRotation = false;
