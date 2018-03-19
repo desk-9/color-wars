@@ -17,3 +17,8 @@ Ball Trail: https://gamedev.stackexchange.com/questions/137955/how-to-make-a-2d-
 Code:
 Assets/Scripts/PlayerInputManager.cs function GetLeftStickInput
 Source: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
+
+Font: EMRYS' CUSTOM REGULAR
+Source: https://fontlibrary.org/en/font/ffff
+License: https://creativecommons.org/licenses/by-sa/3.0/
+(Changes were not made)
