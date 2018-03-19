@@ -87,7 +87,7 @@ public class GameModel : MonoBehaviour {
 
     IEnumerator EndGameCountdown() {
         foreach (var count in countdownSoundNames) {
-            AudioManager.Play(count);
+            AudioManager.Play("countdown/" + count);
             yield return new WaitForSeconds(1f);
         }
         EndGame();

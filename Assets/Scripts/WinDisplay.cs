@@ -10,28 +10,30 @@ public class WinDisplay : MonoBehaviour {
     Text winnerText;
     Text restartTime;
 
-    void Awake () {
+    void Start () {
         winnerText = transform.FindComponent<Text>("WinnerText");
         restartTime = transform.FindComponent<Text>("RestartText");
     }
 
     public void GameOverFunction() {
+        winnerText = transform.FindComponent<Text>("WinnerText");
+        restartTime = transform.FindComponent<Text>("RestartText");
         Debug.Log("GameOverFunction!");
         var winner = GameModel.instance.winner;
         if (winner == null) {
             winnerText.text = "Tie!";
             winnerText.color = Color.black;
-            return;
+        } else {
+            winnerText.text = string.Format("{0} Team won with {1} points",
+                                            winner.teamColor.name, winner.score);
+            winnerText.color = winner.teamColor;
         }
-        winnerText.text = string.Format("{0} Team won with {1} points",
-                                        winner.teamColor.name, winner.score);
-        winnerText.color = winner.teamColor;
         StartCoroutine(ResetCountdown());
     }
 
     IEnumerator ResetCountdown() {
         for (int i = SecondsBeforeReset; i > 0; --i) {
-            restartTime.text = "Resetting in " + i.ToString() + "...\n" + mainMenuInstructions;
+            restartTime.text = "resetting in " + i.ToString() + "...\n" + mainMenuInstructions;
             yield return new WaitForSeconds(1);
         }
         SceneStateController.instance.Load(Scene.Court);
