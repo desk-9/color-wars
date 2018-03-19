@@ -142,9 +142,14 @@ public class Utility {
                                           float blowback_strength,
                                           bool blowback_is_velocity = false,
                                           float? stunTime = null) {
+        var ignoreList = player.GetComponent<Player>().team.teamMembers;
+        var ignoreSet = new HashSet<GameObject>();
+        foreach (Player ignore in ignoreList) {
+            ignoreSet.Add(ignore.gameObject);
+        }
         BlowbackPlayers(player.transform.position, radius,
                         blowback_strength, blowback_is_velocity,
-                        new HashSet<GameObject>() {player},
+                        ignoreSet,
                         stunTime);
     }
 
