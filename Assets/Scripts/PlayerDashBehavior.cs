@@ -114,7 +114,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     IEnumerator Dash(float speed) {
         var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         var startTime = Time.time;
-
         // Apply scaled dash speed on top of base movement speed.
         speed = playerMovement.movementSpeed + Mathf.Pow(speed, dashPower);
 
@@ -159,6 +158,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             }
 
             if (shouldSteal) {
+                Utility.TutEvent("Steal", this);
                 stateManager.AttemptPossession(
                     () => carrier.StartCarryingBall(ball), carrier.DropBall);
             }
@@ -193,7 +193,10 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     IEnumerator NewDash(float chargeAmount) {
         var dashDuration = Mathf.Min(chargeAmount, 0.5f);
-
+        Utility.TutEvent("Dash", this);
+        if (dashDuration > 0.25f) {
+            Utility.TutEvent("DashCharge", this);
+        }
         // Set duration of particle system for each dash trail.
         var dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
         foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {

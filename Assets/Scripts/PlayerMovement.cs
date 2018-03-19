@@ -50,11 +50,20 @@ public class PlayerMovement : MonoBehaviour {
         if (inputDevice == null) {
             yield break;
         }
-
+        float startTime = Time.time;
         yield return new WaitForFixedUpdate();
         while (true) {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
             rb2d.velocity = movementSpeed * direction;
+            // TODO: TUTORIAL
+            if (direction.magnitude > 0.1f) {
+                if (Time.time - startTime > 0.75f) {
+                    Debug.Log("Notifying!");
+                    GameModel.instance.nc.NotifyStringEvent("MoveTutorial", this.gameObject);
+                }
+            } else {
+                startTime = Time.time;
+            }
 
             RotatePlayer();
             yield return new WaitForFixedUpdate();

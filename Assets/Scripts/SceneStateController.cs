@@ -12,9 +12,9 @@ public enum Scene {
 public class SceneStateController : MonoBehaviour {
 
     Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
-        {Scene.Court, "court"},
+        {Scene.Court, "court-tutorial"},
         {Scene.MainMenu, "main-menu"},
-        {Scene.Tutorial, "court"},
+        {Scene.Tutorial, "court-tutorial"},
     };
     public Scene currentScene {get; private set;}
 
@@ -45,6 +45,7 @@ public class SceneStateController : MonoBehaviour {
     public void Load(Scene newScene) {
         OnExit[currentScene]();
         currentScene = newScene;
+        PlayerTutorial.runTutorial = newScene == Scene.Tutorial;
         SceneManager.LoadScene(scenes[currentScene]);
         AdjustTime(newScene);
         OnEnter[currentScene]();

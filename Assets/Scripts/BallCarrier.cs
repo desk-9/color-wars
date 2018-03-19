@@ -40,6 +40,7 @@ public class BallCarrier : MonoBehaviour {
     public void StartCarryingBall(Ball ball) {
         CalculateOffset(ball);
         ball.charged = false;
+        Utility.TutEvent("BallPickup", this);
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 

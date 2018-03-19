@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
+using IC = InControl;
 
 public class Player : MonoBehaviour {
     public GameObject inline;
@@ -51,5 +52,13 @@ public class Player : MonoBehaviour {
         initialPosition = transform.position;
         initalRotation = rb2d.rotation;
         Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
+    }
+
+    void Update() {
+        var device = GetComponent<PlayerMovement>()?.GetInputDevice();
+        if (device != null && device.GetControl(IC.InputControlType.Action1).WasPressed) {
+            Debug.LogWarning("A pressed");
+            Utility.TutEvent("Done", this);
+        }
     }
 }

@@ -38,7 +38,9 @@ public class ScoreDisplayer : MonoBehaviour {
             var now = start.AddSeconds(Time.time - startTime);
             var difference = end - now;
             var time_string = difference.ToString(@"mm\:ss");
-            matchTimeText.text = string.Format("Time: {0}", time_string);
+            if (!PlayerTutorial.runTutorial) {
+                matchTimeText.text = string.Format("Time: {0}", time_string);
+            }
             yield return new WaitForFixedUpdate();
         }
     }

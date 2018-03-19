@@ -46,7 +46,40 @@ namespace UtilityExtensions {
             var component = thing?.gameObject.GetComponent<T>();
             return component;
         }
+
+        public static T FindComponent<T>(this GameObject go, string name) where T : Component {
+            var thing = go.transform.Find(name);
+            var component = thing?.gameObject.GetComponent<T>();
+            return component;
+        }
+
+        public static T FindComponent<T>(this Component comp, string name) where T : Component {
+            var thing = comp.transform.Find(name);
+            var component = thing?.gameObject.GetComponent<T>();
+            return component;
+        }
+
+        public static void Add<T1, T2>(this IList<Tuple<T1, T2>> list, T1 item1, T2 item2) {
+            list.Add(Tuple.Create(item1, item2));
+        }
+
+        public static void Add<T1, T2, T3>(this IList<Tuple<T1, T2, T3>> list, T1 item1, T2 item2, T3 item3) {
+            list.Add(Tuple.Create(item1, item2, item3));
+        }
+
+         public static void Add(this IList<TutorialStageInfo> list,
+                                string a, string b, string c) {
+             list.Add(new TutorialStageInfo(a, b, c));
+        }
+
+        public static void Add(this IList<TutorialStageInfo> list,
+                               string a, string b, string c, TutorialRequirement requirement) {
+            list.Add(new TutorialStageInfo(a, b, c, requirement));
+        }
+
     }
+
+
 }
 
 
@@ -153,7 +186,10 @@ public class Utility {
                         stunTime);
     }
 
-
+    public static void TutEvent(string baseName, MonoBehaviour thing) {
+        Debug.LogFormat("Notify: {0} -- {1}Tutorial", thing.gameObject.name, baseName);
+        GameModel.instance.nc.NotifyStringEvent(baseName + "Tutorial", thing.gameObject);
+    }
 }
 
 public class ModCycle {

@@ -41,6 +41,7 @@ public class GameModel : MonoBehaviour {
     Goal goal;
 
     void Awake() {
+        Debug.Log(PlayerTutorial.runTutorial);
         if (instance == null) {
             instance = this;
             Initialization();
@@ -53,7 +54,9 @@ public class GameModel : MonoBehaviour {
         gameOver = false;
         InitializeTeams();
         matchLengthSeconds = 60 * matchLength;
-        this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
+        if (!PlayerTutorial.runTutorial) {
+            this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
+        }
         nc = new NotificationCenter();
     }
 

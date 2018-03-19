@@ -81,6 +81,7 @@ public class Goal : MonoBehaviour {
         var gameThing = (GameObject) thing;
         var ball = gameThing.GetComponent<Ball>();
         if (ball != null) {
+            Utility.TutEvent("Backboard", this);
             var ballTeam = ball.lastOwner?.GetComponent<Player>()?.team;
             SwitchToTeam(ballTeam);
         }
@@ -148,6 +149,9 @@ public class Goal : MonoBehaviour {
         }
 
         if (ball.IsOwnable()) {
+            if (ball.lastOwner?.GetComponent<Player>()?.team == currentTeam) {
+                Utility.TutEvent("Score", this);
+            }
             GameModel.instance.GoalScoredForTeam(currentTeam);
         }
     }

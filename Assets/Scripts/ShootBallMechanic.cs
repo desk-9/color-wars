@@ -158,6 +158,7 @@ public class ShootBallMechanic : MonoBehaviour {
             }
             yield return null;
         }
+        Utility.TutEvent("BallPickupTimeout", this);
         Shoot();
     }
 
@@ -227,6 +228,9 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void Shoot() {
+        Utility.TutEvent("Shoot", this);
+        shootTimer = null;
+        playerMovement.freezeRotation = false;
         var ball = ballCarrier.ball;
         var shotDirection = ball.transform.position - transform.position;
         GameObject target;
@@ -240,6 +244,9 @@ public class ShootBallMechanic : MonoBehaviour {
         shootTimer = null;
         playerMovement.freezeRotation = false;
         var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
+        if (shotSpeed / maxShotSpeed >= 0.45f) {
+            Utility.TutEvent("ShootCharge", this);
+        }
         if (shotSpeed / maxShotSpeed >= chargedBallPercent) {
             ball.charged = true;
         }
