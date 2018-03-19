@@ -27,6 +27,7 @@ public class ShootBallMechanic : MonoBehaviour {
     public float passLeadMultiplier = 1f;
     public float juggleSpeed = 12f;
     public bool separateScoreGoalButton = true;
+    public float aimAssistAngle = 7.5f;
 
     public GameObject chargeEffect;
 
@@ -37,6 +38,9 @@ public class ShootBallMechanic : MonoBehaviour {
     GameObject effect;
     TeamManager team;
     Player player;
+    Goal goal;
+    Player teamMate;
+
 
     float shotSpeed = 1.0f;
     float elapsedTime = 0.0f;
@@ -48,6 +52,7 @@ public class ShootBallMechanic : MonoBehaviour {
         ballCarrier = this.EnsureComponent<BallCarrier>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
+        goal = GameObject.FindObjectOfType<Goal>();
         stateManager.CallOnStateEnter(
                                       State.Posession, StartTimer);
         stateManager.CallOnStateExit(
@@ -180,6 +185,12 @@ public class ShootBallMechanic : MonoBehaviour {
         Shoot();
     }
 
+    void Update() {
+        if (teamMate == null) {
+            teamMate = GetTeammate().EnsureComponent<Player>();
+        }
+    }
+
     IEnumerator RotateTowardsTarget(GameObject target) {
         playerMovement.freezeRotation = true;
         Vector2 targetVector = Vector2.zero;
@@ -202,12 +213,24 @@ public class ShootBallMechanic : MonoBehaviour {
         Shoot();
     }
 
+    bool IsInAimAssistArea(GameObject thing) {
+        var angle = Vector3.Angle(transform.right, thing.transform.position - transform.position);
+        return Mathf.Abs(angle) < aimAssistAngle ? true : false;
+    }
+
     void Shoot() {
+        var ball = ballCarrier.ball;
+        var shotDirection = ball.transform.position - transform.position;
+
+        if (IsInAimAssistArea(goal.gameObject)) {
+            shotDirection = goal.transform.position - transform.position;
+        }
+        if (IsInAimAssistArea(teamMate.gameObject)) {
+            shotDirection = teamMate.transform.position - transform.position;
+        }
+
         shootTimer = null;
         playerMovement.freezeRotation = false;
-        var ball = ballCarrier.ball;
-        Debug.Assert(ball != null);
-        var shotDirection = ball.transform.position - transform.position;
         var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
         if (shotSpeed / maxShotSpeed >= chargedBallPercent) {
             ball.charged = true;
