@@ -48,7 +48,8 @@ public class BallCarrier : MonoBehaviour {
         var ballRadius = ball.GetComponent<CircleCollider2D>()?.bounds.extents.x;
         var renderer = GetComponent<SpriteRenderer>();
         if (renderer != null && ballRadius != null) {
-            ballOffsetFromCenter = renderer.sprite.bounds.extents.x + ballRadius.Value;
+            var spriteExtents = renderer.sprite.bounds.extents.x * transform.localScale.x;
+            ballOffsetFromCenter = spriteExtents + ballRadius.Value;
         }
     }
 

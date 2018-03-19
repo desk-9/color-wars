@@ -67,8 +67,7 @@ public class ShootBallMechanic : MonoBehaviour {
             }
         }
         circularTimer = Instantiate(
-            circularTimerPrefab, transform.position,
-            Quaternion.identity, transform).GetComponent<CircularTimer>();
+            circularTimerPrefab, transform).GetComponent<CircularTimer>();
         circularTimer.transform.localScale = circleTimerScale;
 
         ballCarrier.chargedBallStuns = chargedBallStuns;

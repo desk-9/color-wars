@@ -33,7 +33,7 @@ public struct TutorialStageInfo {
 
 public class PlayerTutorial : MonoBehaviour {
     public static PlayerTutorial instance;
-    public static bool runTutorial = true;
+    public static bool runTutorial = false;
 
     GameObject tutorialCanvas;
     Text tutorialText;

@@ -152,7 +152,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1, y: 1.0005571}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -262,7 +262,7 @@ MonoBehaviour:
   shotPower: 1.2
   circularTimerPrefab: {fileID: 1022924467689572, guid: 3fa79a1d2b91d48e39e53e08c9f861fe,
     type: 2}
-  circleTimerScale: {x: 0, y: 0}
+  circleTimerScale: {x: 0.6, y: 0.6}
   seperatePassAndShoot: 0
   chargedBallPercent: 0
   chargedBallMassFactor: 100

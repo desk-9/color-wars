@@ -12,9 +12,9 @@ public enum Scene {
 public class SceneStateController : MonoBehaviour {
 
     Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
-        {Scene.Court, "court-tutorial"},
+        {Scene.Court, "court"},
         {Scene.MainMenu, "main-menu"},
-        {Scene.Tutorial, "court-tutorial"},
+        {Scene.Tutorial, "court"},
     };
     public Scene currentScene {get; private set;}
 

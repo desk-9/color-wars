@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114006280797977270}
   - component: {fileID: 114211205889215070}
   - component: {fileID: 114416457825299406}
+  - component: {fileID: 114459257248822156}
   m_Layer: 0
   m_Name: GameModel
   m_TagString: Untagged
@@ -60,7 +61,7 @@ MonoBehaviour:
   - color: {r: 0.09411765, g: 0.7921569, b: 0.9019608, a: 1}
     name: Blue
   scoreMax: 5
-  matchLength: 3
+  matchLength: 4
   meta: {fileID: 0}
   pauseAfterGoalScore: 3
   pauseAfterReset: 2
@@ -96,5 +97,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6262e1030101943db80a460ab6617b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114459257248822156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08f7fb940a3a942dd8739912240d2198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
