@@ -54,7 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4523354620997332}
   m_Layer: 0
-  m_Name: DashEffect
+  m_Name: DashEffectPink
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1063,24 +1063,24 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0, g: 1, b: 0, a: 1}
-        key1: {r: 1, g: 1, b: 0, a: 0.5}
-        key2: {r: 1, g: 0, b: 0, a: 0}
-        key3: {r: 0, g: 0, b: 0, a: 0}
-        key4: {r: 0, g: 0, b: 0, a: 0}
-        key5: {r: 0, g: 0, b: 0, a: 0}
+        key0: {r: 0.449344, g: 0.26735827, b: 0.53979194, a: 1}
+        key1: {r: 1, g: 0.33088237, b: 0.8447645, a: 0.77254903}
+        key2: {r: 0.96727717, g: 0.709, b: 1, a: 0}
+        key3: {r: 0.9425495, g: 0.8420113, b: 1, a: 0}
+        key4: {r: 0.8556363, g: 0.603, b: 1, a: 0}
+        key5: {r: 0.8556363, g: 0.603, b: 1, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 0
-        ctime1: 32768
-        ctime2: 49151
-        ctime3: 0
-        ctime4: 0
-        ctime5: 0
+        ctime0: 14842
+        ctime1: 40285
+        ctime2: 58018
+        ctime3: 42983
+        ctime4: 53006
+        ctime5: 53006
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 32768
+        atime1: 59945
         atime2: 65535
         atime3: 65535
         atime4: 0
@@ -4424,24 +4424,24 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0, g: 1, b: 0, a: 1}
-        key1: {r: 1, g: 1, b: 0, a: 0.5}
-        key2: {r: 1, g: 0, b: 0, a: 0}
-        key3: {r: 0, g: 0, b: 0, a: 0}
-        key4: {r: 0, g: 0, b: 0, a: 0}
+        key0: {r: 0.449344, g: 0.26735827, b: 0.53979194, a: 1}
+        key1: {r: 1, g: 0.33088237, b: 0.8447645, a: 0.77254903}
+        key2: {r: 1, g: 0.791, b: 0.936464, a: 0}
+        key3: {r: 0.96727717, g: 0.709, b: 1, a: 0}
+        key4: {r: 0.88235295, g: 1, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 0
-        ctime1: 32768
-        ctime2: 49151
-        ctime3: 0
-        ctime4: 0
+        ctime0: 14842
+        ctime1: 40285
+        ctime2: 58018
+        ctime3: 58018
+        ctime4: 48766
         ctime5: 0
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 32768
+        atime1: 59945
         atime2: 65535
         atime3: 65535
         atime4: 0
