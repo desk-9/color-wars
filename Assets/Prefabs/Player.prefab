@@ -181,7 +181,7 @@ MonoBehaviour:
   dashPower: 2
   onlyStunBallCarriers: 1
   onlyStealOnBallHit: 1
-  dashEffectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
+  dashEffectPrefab: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
     type: 2}
   newMaxChargeTime: 1
   newChargeRate: 1
@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4e43ea7dfcf541a7b0afdd2de3ab3be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
+  effectPrefab: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
     type: 2}
   triggerState: 3
   destroyEffectOnExit: 1

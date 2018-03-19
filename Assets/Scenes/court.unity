@@ -2968,6 +2968,18 @@ Prefab:
       value: 
       objectReference: {fileID: 1691723634291742, guid: 6159c26c7c3ab40cfb9ebb7971ecbdb5,
         type: 2}
+    - target: {fileID: 114772672773334790, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: effectPrefab
+      value: 
+      objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
+        type: 2}
+    - target: {fileID: 114130524022212122, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: dashEffectPrefab
+      value: 
+      objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
@@ -3139,6 +3151,18 @@ Prefab:
       propertyPath: effectPrefab
       value: 
       objectReference: {fileID: 1691723634291742, guid: 6159c26c7c3ab40cfb9ebb7971ecbdb5,
+        type: 2}
+    - target: {fileID: 114130524022212122, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: dashEffectPrefab
+      value: 
+      objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
+        type: 2}
+    - target: {fileID: 114772672773334790, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: effectPrefab
+      value: 
+      objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
         type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
