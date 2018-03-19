@@ -247,6 +247,8 @@ MonoBehaviour:
   passLeadMultiplier: 1
   juggleSpeed: 12
   separateScoreGoalButton: 1
+  aimAssistAngle: 30
+  adaptiveAimAssist: 100
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
 --- !u!114 &114319664088283476

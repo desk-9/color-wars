@@ -28,6 +28,7 @@ public class ShootBallMechanic : MonoBehaviour {
     public float juggleSpeed = 12f;
     public bool separateScoreGoalButton = true;
     public float aimAssistAngle = 7.5f;
+    public float adaptiveAimAssist = 200f;
 
     public GameObject chargeEffect;
 
@@ -213,13 +214,14 @@ public class ShootBallMechanic : MonoBehaviour {
         Shoot();
     }
 
-    Vector3 GetShotDirection(Vector3 defaultAngle) {
+    Vector3 GetShotDirection(Vector3 defaultAngle, out GameObject target) {
         var goalAngle = Mathf.Abs(Vector3.Angle(transform.right, goal.transform.position - transform.position));
         var teamMateAngle = Mathf.Abs(Vector3.Angle(transform.right, teamMate.transform.position - transform.position));
         if (Mathf.Min(goalAngle, teamMateAngle) < aimAssistAngle) {
-            var aimTowards = goalAngle < teamMateAngle ? goal.transform : teamMate.transform;
-            return aimTowards.position - transform.position;
+            target = goalAngle < teamMateAngle ? goal.gameObject : teamMate.gameObject;
+            return target.transform.position - transform.position;
         } else {
+            target = null;
             return defaultAngle;
         }
     }
@@ -227,7 +229,13 @@ public class ShootBallMechanic : MonoBehaviour {
     void Shoot() {
         var ball = ballCarrier.ball;
         var shotDirection = ball.transform.position - transform.position;
-        shotDirection = GetShotDirection(shotDirection);
+        GameObject target;
+        shotDirection = GetShotDirection(shotDirection, out target);
+
+        if (target != null && adaptiveAimAssist > 0f) {
+            ball.target = target;
+            ball.adjustmentCoefficient = adaptiveAimAssist;
+        }
 
         shootTimer = null;
         playerMovement.freezeRotation = false;

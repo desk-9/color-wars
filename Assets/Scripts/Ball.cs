@@ -7,9 +7,19 @@ public class Ball : MonoBehaviour {
 
     public bool ownable {get; set;} = true;
     public GameObject implosionPrefab;
+    public float adjustmentCoefficient;
+
+    public GameObject target {
+        get { return target_;}
+        set
+        {
+            target_ = value;
+        }
+    }
 
     new SpriteRenderer renderer;
     CircleCollider2D circleCollider;
+    GameObject target_;
 
     Vector2 start_location;
     BallCarrier owner_;
@@ -17,6 +27,9 @@ public class Ball : MonoBehaviour {
         get { return owner_; }
         set {
             lastOwner = owner_;
+            if (value != null) {
+                target_ = null;
+            }
             owner_ = value;
         }
     }
@@ -41,6 +54,20 @@ public class Ball : MonoBehaviour {
         }
     }
 
+    void Update() {
+        if (target_ != null) {
+            var targetVec = target_.transform.position - transform.position;
+
+            if (Mathf.Abs(Vector2.SignedAngle(rigidbody.velocity, targetVec)) > 90f) {
+                target_ = null;
+                return;
+            }
+
+            var adjustmentVector = (Vector2)targetVec.normalized - rigidbody.velocity.normalized;
+            rigidbody.AddForce(adjustmentVector * adjustmentCoefficient, ForceMode2D.Impulse);
+        }
+    }
+
     public bool IsOwnable() {
         return owner == null && ownable;
     }
@@ -54,14 +81,6 @@ public class Ball : MonoBehaviour {
     }
 
     public void HandleGoalScore(Color color) {
-        // var explosionMain = explosion.main;
-        // explosionMain.duration = GameModel.instance.pauseAfterGoalScore;
-        // explosionMain.startColor = color;
-        // explosion.Play();
-
-        // rb2d.velocity = Vector2.zero;
-        // renderer.enabled = false;
-        // circleCollider.enabled = false;
         var trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.enabled = false;
         ownable = false;
@@ -81,6 +100,7 @@ public class Ball : MonoBehaviour {
             StartCoroutine(ImplosionEffect(lengthOfEffect.Value));
         }
         charged = false;
+        target_ = null;
         owner = null;
         lastOwner = null;
     }
@@ -105,6 +125,7 @@ public class Ball : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall")) {
             charged = false;
+            target_ = null;
         }
     }
 }
