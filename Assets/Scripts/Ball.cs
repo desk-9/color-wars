@@ -62,13 +62,19 @@ public class Ball : MonoBehaviour {
         // rb2d.velocity = Vector2.zero;
         // renderer.enabled = false;
         // circleCollider.enabled = false;
+        var trailRenderer = GetComponent<TrailRenderer>();
+        trailRenderer.enabled = false;
         ownable = false;
     }
 
     public void ResetBall(float? lengthOfEffect = null) {
         circleCollider.enabled = true;
         renderer.enabled = true;
+
         transform.position = start_location;
+
+        var trailRenderer = GetComponent<TrailRenderer>();
+        trailRenderer.enabled = true;
         ownable = true;
         rigidbody.velocity = Vector2.zero;
         if (lengthOfEffect != null) {
