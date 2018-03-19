@@ -17,6 +17,7 @@ public class BallCarrier : MonoBehaviour {
     PlayerStateManager stateManager;
     Coroutine carryBallCoroutine;
     bool isCoolingDown = false;
+    BoxCollider2D ballGrabber;
 
     public bool IsCarryingBall() {
         return ball != null;
@@ -31,6 +32,7 @@ public class BallCarrier : MonoBehaviour {
             stateManager.CallOnStateExit(
                 State.Posession, playerMovement.UnFreezePlayer);
         }
+        ballGrabber = GetComponent<BoxCollider2D>();
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -113,8 +115,8 @@ public class BallCarrier : MonoBehaviour {
         return (Vector2) centeredResult + center;
     }
 
-    public void OnCollisionEnter2D(Collision2D collision) {
-        var ball = collision.gameObject.GetComponent<Ball>();
+    void HandleCollision(GameObject thing) {
+        var ball = thing.GetComponent<Ball>();
         if (ball == null || !ball.IsOwnable() || isCoolingDown) {
             return;
         }
@@ -134,5 +136,11 @@ public class BallCarrier : MonoBehaviour {
         }
     }
 
+    public void OnCollisionEnter2D(Collision2D collision) {
+        HandleCollision(collision.gameObject);
+    }
 
+    void OnTriggerEnter2D(Collider2D other) {
+        HandleCollision(other.gameObject);
+    }
 }

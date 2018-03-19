@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 114319664088283476}
   - component: {fileID: 198183353431152102}
   - component: {fileID: 199164662744462886}
+  - component: {fileID: 61060380354097216}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -135,6 +136,31 @@ PolygonCollider2D:
       - {x: 0.5, y: 0}
       - {x: -0.5, y: -0.5}
       - {x: -0.25, y: 0}
+--- !u!61 &61060380354097216
+BoxCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2}
+  m_EdgeRadius: 0
 --- !u!114 &114130524022212122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -236,7 +262,7 @@ MonoBehaviour:
   shotPower: 1.2
   circularTimerPrefab: {fileID: 1022924467689572, guid: 3fa79a1d2b91d48e39e53e08c9f861fe,
     type: 2}
-  circleTimerScale: {x: 0.6, y: 0.6}
+  circleTimerScale: {x: 0, y: 0}
   seperatePassAndShoot: 0
   chargedBallPercent: 0
   chargedBallMassFactor: 100
@@ -247,7 +273,7 @@ MonoBehaviour:
   passLeadMultiplier: 1
   juggleSpeed: 12
   separateScoreGoalButton: 1
-  aimAssistAngle: 10
+  aimAssistAngle: 7.5
   adaptiveAimAssist: 0
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
