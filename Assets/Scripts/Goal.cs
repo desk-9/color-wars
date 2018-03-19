@@ -40,6 +40,8 @@ public class Goal : MonoBehaviour {
     }
 
     public void ResetNeutral() {
+        SwitchToNextTeam(false);
+        currentTeam = null;
         BlockBalls();
         renderer.color = originalColor;
     }
@@ -173,7 +175,9 @@ public class Goal : MonoBehaviour {
             if (ball.lastOwner?.GetComponent<Player>()?.team == currentTeam) {
                 Utility.TutEvent("Score", this);
             }
-            GameModel.instance.GoalScoredForTeam(currentTeam);
+            if (currentTeam != null) {
+                GameModel.instance.GoalScoredForTeam(currentTeam);
+            }
         }
     }
 

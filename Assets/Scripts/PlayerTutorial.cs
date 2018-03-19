@@ -51,10 +51,11 @@ public class PlayerTutorial : MonoBehaviour {
         {"BallPickupTimeout", "Pick up the ball and don't shoot", null, TutorialRequirement.AnyPlayer},
         {"TimeoutShort", "You can't hold the ball forever", null, TutorialRequirement.ShortTimeout},
         {"Steal", "Dash at the ball an enemy player holds to steal", null, TutorialRequirement.AnyPlayer},
+        {"resetgoal", "", null},
         {"Backboard", "Bounce the ball off the top edge", null, TutorialRequirement.AnyPlayer},
         {"TimeoutShort", "That sets the goal to your color", null, TutorialRequirement.ShortTimeout},
         {"Score", "Score into the goal when it's the same color as you", null, TutorialRequirement.Called},
-        {"TimeoutShort", "You should now know how to play Kofi!", null, TutorialRequirement.ShortTimeout},
+        {"TimeoutShort", "You should now know how to play Kefi!", null, TutorialRequirement.ShortTimeout},
         {"Done", "Finished! Press A to play", "AButton"},
     };
 
@@ -186,6 +187,10 @@ public class PlayerTutorial : MonoBehaviour {
         yield return null;
         foreach (var tutorialStage in tutorialInfo) {
             ResetStage();
+            if (tutorialStage.eventString == "resetgoal") {
+                GameModel.instance.goal?.ResetNeutral();
+                continue;
+            }
             if (tutorialStage.requirement == TutorialRequirement.AllPlayers) {
                 tutorialReadyText.text = string.Format("0/{0}", GetPlayers().Count());
             } else {

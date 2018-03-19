@@ -38,7 +38,7 @@ public class GameModel : MonoBehaviour {
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
     Ball ball;
-    Goal goal;
+    public Goal goal;
 
     void Awake() {
         Debug.Log(PlayerTutorial.runTutorial);
