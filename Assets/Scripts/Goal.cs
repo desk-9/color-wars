@@ -21,15 +21,35 @@ public class Goal : MonoBehaviour {
     Text goalSwitchText;
     Coroutine teamSwitching;
 
+    Color originalColor;
+
+    GameObject GetPlayerBlocker() {
+        return transform.Find("PlayerBlocker").gameObject;
+    }
+
+    void BlockBalls() {
+        GetPlayerBlocker().layer = LayerMask.NameToLayer("Default");
+    }
+
+    void OnlyBlockPlayers() {
+        GetPlayerBlocker().layer = LayerMask.NameToLayer("PlayerBlocker");
+    }
+
     void Awake() {
         renderer = GetComponent<SpriteRenderer>();
     }
 
+    public void ResetNeutral() {
+        BlockBalls();
+        renderer.color = originalColor;
+    }
+
     void Start () {
+        originalColor = renderer.color;
         nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
         GameModel.instance.OnGameOver += StopTeamSwitching;
-        SwitchToNextTeam();
+        ResetNeutral();
         RestartTeamSwitching();
         if (playerPassSwitching) {
             RegisterPassSwitching();
@@ -133,6 +153,7 @@ public class Goal : MonoBehaviour {
         if (playSound) {
             AudioManager.instance.GoalSwitch.Play();
         }
+        OnlyBlockPlayers();
         currentTeam = GetNextTeam();
         if (renderer != null) {
             renderer.color = currentTeam.teamColor;

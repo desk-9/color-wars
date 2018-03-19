@@ -152,7 +152,9 @@ public class GameModel : MonoBehaviour {
         }
         ball.ResetBall(pauseAfterReset);
         UtilityExtensionsContainer.TimeDelayCall(this, StartGameAfterBallAnimation, pauseAfterReset);
+
         goal?.SwitchToNextTeam(false);
+        goal?.ResetNeutral();
     }
 
     void StartGameAfterBallAnimation() {
