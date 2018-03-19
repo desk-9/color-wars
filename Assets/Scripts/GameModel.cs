@@ -28,6 +28,7 @@ public class GameModel : MonoBehaviour {
     public float blowbackRadius = 3f;
     public float blowbackSpeed = 10f;
     public float blowbackStunTime = 0.1f;
+    public GameObject blowbackPrefab;
 
     public Callback OnGameOver = delegate{};
 
@@ -56,6 +57,12 @@ public class GameModel : MonoBehaviour {
         nc = new NotificationCenter();
     }
 
+    void BlowBack(Player player) {
+        Utility.BlowbackFromPlayer(player.gameObject, blowbackRadius, blowbackSpeed, true,
+                                   blowbackStunTime);
+        GameObject.Instantiate(blowbackPrefab, player.transform.position, player.transform.rotation);
+    }
+
     void Start() {
         SceneStateController.instance.UnPauseTime();
         Debug.Log(Time.timeScale);
@@ -64,11 +71,7 @@ public class GameModel : MonoBehaviour {
         goal = GameObject.FindObjectOfType<Goal>();
         scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
         if (pushAwayOtherPlayers) {
-            nc.CallOnStateStart(
-                State.Posession,
-                (Player player) => Utility.BlowbackFromPlayer(
-                    player.gameObject, blowbackRadius, blowbackSpeed, true,
-                    blowbackStunTime));
+            nc.CallOnStateStart(State.Posession, BlowBack);
         }
         meta = SceneStateController.instance.gameObject;
         if (meta == null) {

@@ -62,6 +62,15 @@ MonoBehaviour:
   scoreMax: 5
   matchLength: 3
   meta: {fileID: 0}
+  pauseAfterGoalScore: 3
+  pauseAfterReset: 2
+  staticGoals: 0
+  pushAwayOtherPlayers: 0
+  blowbackRadius: 3
+  blowbackSpeed: 10
+  blowbackStunTime: 0.1
+  blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
+    type: 2}
 --- !u!114 &114211205889215070
 MonoBehaviour:
   m_ObjectHideFlags: 1

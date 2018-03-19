@@ -50,7 +50,6 @@ public class PlayerMovement : MonoBehaviour {
         if (inputDevice == null) {
             yield break;
         }
-        Debug.Log("input device is not null in move");
 
         yield return new WaitForFixedUpdate();
         while (true) {
