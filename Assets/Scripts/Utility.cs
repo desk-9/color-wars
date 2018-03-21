@@ -190,6 +190,19 @@ public class Utility {
         Debug.LogFormat("Notify: {0} -- {1}Tutorial", thing.gameObject.name, baseName);
         GameModel.instance.nc.NotifyStringEvent(baseName + "Tutorial", thing.gameObject);
     }
+
+    public static void Print(params object[] args) {
+        string formatString = "";
+        for (int i = 0; i < args.Length; i++) {
+            formatString += string.Format("{{{0}}} ", i);
+        }
+        Debug.LogFormat(formatString, args);
+    }
+
+    public static void ChangeTimeScale(float factor) {
+        Time.timeScale *= factor;
+        Time.fixedDeltaTime *= factor;
+    }
 }
 
 public class ModCycle {

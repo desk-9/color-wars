@@ -219,7 +219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 30
+  rotationSpeed: 1080
   freezeRotation: 0
+  instantRotation: 1
 --- !u!114 &114215232534320030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -303,6 +305,7 @@ MonoBehaviour:
   coolDownTime: 0.1
   ballTurnSpeed: 50
   chargedBallStuns: 0
+  slowMoOnCarry: 1
 --- !u!114 &114694489525978138
 MonoBehaviour:
   m_ObjectHideFlags: 1

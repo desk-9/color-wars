@@ -29,11 +29,12 @@ public class GameModel : MonoBehaviour {
     public float blowbackSpeed = 10f;
     public float blowbackStunTime = 0.1f;
     public GameObject blowbackPrefab;
+    public float slowMoFactor = 0.4f;
 
     public Callback OnGameOver = delegate{};
 
     string[] countdownSoundNames = new string[]
-        {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
+    {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
 
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
@@ -171,6 +172,28 @@ public class GameModel : MonoBehaviour {
             if ((Color)team.teamColor != scoredOn.teamColor) {
                 team.IncrementScore();
             }
+        }
+    }
+
+    List<Player> GetPlayers() {
+        var result = new List<Player>();
+        foreach (var team in teams) {
+            result.AddRange(team.teamMembers);
+        }
+        return result;
+    }
+
+    public void SlowMo() {
+        Utility.ChangeTimeScale(slowMoFactor);
+        foreach (var player in GetPlayers()) {
+            player.GetComponent<PlayerMovement>().instantRotation = false;
+        }
+    }
+
+    public void ResetSlowMo() {
+        Utility.ChangeTimeScale(1);
+        foreach (var player in GetPlayers()) {
+            player.GetComponent<PlayerMovement>().instantRotation = true;
         }
     }
 }

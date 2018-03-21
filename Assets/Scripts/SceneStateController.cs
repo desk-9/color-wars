@@ -91,5 +91,4 @@ public class SceneStateController : MonoBehaviour {
         paused = false;
     }
 
-
 }

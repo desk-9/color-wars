@@ -11,6 +11,7 @@ public class BallCarrier : MonoBehaviour {
     public Ball ball { private set; get;}
     public float ballTurnSpeed = 10f;
     public bool chargedBallStuns = false;
+    public bool slowMoOnCarry = false;
 
     float ballOffsetFromCenter = .5f;
     PlayerMovement playerMovement;
@@ -39,6 +40,9 @@ public class BallCarrier : MonoBehaviour {
     // of the ball
     public void StartCarryingBall(Ball ball) {
         CalculateOffset(ball);
+        if (slowMoOnCarry) {
+            GameModel.instance.SlowMo();
+        }
         ball.charged = false;
         Utility.TutEvent("BallPickup", this);
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
@@ -73,7 +77,11 @@ public class BallCarrier : MonoBehaviour {
 
     public void DropBall() {
         if (ball != null) {
-
+            if (slowMoOnCarry) {
+                GameModel.instance.ResetSlowMo();
+            }
+            Time.timeScale = 1f;
+            Time.fixedDeltaTime = 0.02f;
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
 

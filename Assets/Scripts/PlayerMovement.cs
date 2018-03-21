@@ -8,7 +8,9 @@ using UtilityExtensions;
 public class PlayerMovement : MonoBehaviour {
 
     public float movementSpeed;
+    public float rotationSpeed = 1080;
     public bool freezeRotation = false;
+    public bool instantRotation = true;
 
     Rigidbody2D rb2d;
     InputDevice inputDevice;
@@ -42,7 +44,20 @@ public class PlayerMovement : MonoBehaviour {
         if (direction != Vector2.zero) {
             // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
             // and player snaps to up direction
-            rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
+            if (instantRotation) {
+                rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
+            } else {
+                var maxAngleChange = Vector2.SignedAngle(transform.right, direction);
+                var sign = Mathf.Sign(maxAngleChange);
+                var speedChange = rotationSpeed * Time.deltaTime;
+                var actualChange = sign * Mathf.Min(Mathf.Abs(maxAngleChange), speedChange);
+                Utility.Print(speedChange, actualChange);
+                var finalRotation = rb2d.rotation + actualChange;
+                if (finalRotation <= 0) {
+                    finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
+                }
+                rb2d.rotation = Mathf.Repeat(finalRotation, 360);
+            }
         }
     }
 
