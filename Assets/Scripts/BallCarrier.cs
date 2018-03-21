@@ -53,7 +53,7 @@ public class BallCarrier : MonoBehaviour {
         var renderer = GetComponent<SpriteRenderer>();
         if (renderer != null && ballRadius != null) {
             var spriteExtents = renderer.sprite.bounds.extents.x * transform.localScale.x;
-            ballOffsetFromCenter = spriteExtents + ballRadius.Value;
+            ballOffsetFromCenter = 1.07f * (spriteExtents + ballRadius.Value);
         }
     }
 
@@ -89,8 +89,7 @@ public class BallCarrier : MonoBehaviour {
     }
 
     Vector2 NosePosition(Ball ball) {
-        var newPosition = transform.position +
-            (1.03f * transform.right * ballOffsetFromCenter);
+        var newPosition = transform.position + transform.right * ballOffsetFromCenter;
         return newPosition;
     }
 
