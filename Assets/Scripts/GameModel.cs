@@ -13,7 +13,6 @@ public class GameModel : MonoBehaviour {
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
     public TeamManager[] teams { get; set; }
-    public int scoreMax = 7;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
     public NotificationCenter nc;
@@ -30,6 +29,15 @@ public class GameModel : MonoBehaviour {
     public float blowbackStunTime = 0.1f;
     public GameObject blowbackPrefab;
     public float slowMoFactor = 0.4f;
+
+    public int winningScore = 5;
+    public int requiredWinMargin = 2;
+
+    public enum WinCondition {
+        Time, FirstToX, TennisRules
+    }
+
+    public WinCondition winCondition = WinCondition.TennisRules;
 
     public Callback OnGameOver = delegate{};
 
@@ -55,7 +63,7 @@ public class GameModel : MonoBehaviour {
         gameOver = false;
         InitializeTeams();
         matchLengthSeconds = 60 * matchLength;
-        if (!PlayerTutorial.runTutorial) {
+        if (!PlayerTutorial.runTutorial && winCondition == WinCondition.Time) {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
         nc = new NotificationCenter();
@@ -70,10 +78,11 @@ public class GameModel : MonoBehaviour {
     void Start() {
         SceneStateController.instance.UnPauseTime();
         Debug.Log(Time.timeScale);
-        scoreDisplayer?.StartMatchLengthUpdate(matchLengthSeconds);
         ball = GameObject.FindObjectOfType<Ball>();
         goal = GameObject.FindObjectOfType<Goal>();
-        scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
+        if (winCondition == WinCondition.Time) {
+            scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
+        }
         if (pushAwayOtherPlayers) {
             nc.CallOnStateStart(State.Posession, BlowBack);
         }
@@ -94,15 +103,19 @@ public class GameModel : MonoBehaviour {
         EndGame();
     }
 
-    void EndGame() {
-        Debug.Log("game over");
-        winner = teams.Aggregate(
+    TeamManager TopTeam() {
+        return teams.Aggregate(
             (bestSoFar, next) => {
                 if (bestSoFar == null || bestSoFar.score == next.score) {
                     return null;
                 }
                 return next.score > bestSoFar.score ? next : bestSoFar;
             });
+    }
+
+    void EndGame() {
+        Debug.Log("game over");
+        winner = TopTeam();
         Debug.Log("Calling OnGameOver");
         gameOver = true;
         OnGameOver();
@@ -134,6 +147,29 @@ public class GameModel : MonoBehaviour {
         NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
     }
 
+    void ScoreChanged() {
+        if (winCondition == WinCondition.FirstToX || winCondition == WinCondition.TennisRules) {
+            CheckForWinner();
+        }
+    }
+
+    void CheckForWinner() {
+        var topTeam = TopTeam();
+        if (topTeam != null && topTeam.score >= winningScore) {
+            if (winCondition == WinCondition.TennisRules) {
+                var secondBestScore =
+                    (from team in teams
+                     where team != topTeam
+                     select team.score).Max();
+                if (Mathf.Abs(secondBestScore - topTeam.score) >= requiredWinMargin) {
+                    EndGame();
+                }
+            } else if (winCondition == WinCondition.FirstToX) {
+                EndGame();
+            }
+        }
+    }
+
     public void GoalScoredForTeam(TeamManager scored) {
         Debug.Log(ball);
         ball.HandleGoalScore(scored.teamColor);
@@ -141,6 +177,7 @@ public class GameModel : MonoBehaviour {
         foreach (var team in teams) {
             if ((Color)team.teamColor == scored.teamColor) {
                 team.IncrementScore();
+                ScoreChanged();
             } else {
                 team.MakeInvisibleAfterGoal();
             }
@@ -171,6 +208,7 @@ public class GameModel : MonoBehaviour {
         foreach (var team in teams) {
             if ((Color)team.teamColor != scoredOn.teamColor) {
                 team.IncrementScore();
+                ScoreChanged();
             }
         }
     }

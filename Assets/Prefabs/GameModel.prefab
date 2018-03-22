@@ -60,7 +60,6 @@ MonoBehaviour:
     name: Pink
   - color: {r: 0.09411765, g: 0.7921569, b: 0.9019608, a: 1}
     name: Blue
-  scoreMax: 5
   matchLength: 4
   meta: {fileID: 0}
   pauseAfterGoalScore: 3
@@ -72,6 +71,10 @@ MonoBehaviour:
   blowbackStunTime: 0.1
   blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
     type: 2}
+  winningScore: 5
+  requiredWinMargin: 2
+  winCondition: 2
+  goal: {fileID: 0}
 --- !u!114 &114211205889215070
 MonoBehaviour:
   m_ObjectHideFlags: 1
