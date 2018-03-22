@@ -8,6 +8,9 @@ GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
 Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
 Endgame Countdown: http://www.orangefreesounds.com/countdown-timer/
 
+Music:
+Comeback of the Green Rabbit: http://ocremix.org/remix/OCR03319
+Dance Nation: http://ocremix.org/remix/OCR01835
 
 Asset: circulartimer sprite and idea
 Source: http://answers.unity.com/answers/856224/view.html

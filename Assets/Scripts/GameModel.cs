@@ -29,6 +29,8 @@ public class GameModel : MonoBehaviour {
     public float blowbackStunTime = 0.1f;
     public GameObject blowbackPrefab;
     public float slowMoFactor = 0.4f;
+    public float PitchShiftTime = 0.2f;
+    public float SlowedPitch = 0.9f;
 
     public int winningScore = 5;
     public int requiredWinMargin = 2;
@@ -221,11 +223,30 @@ public class GameModel : MonoBehaviour {
         return result;
     }
 
+    IEnumerator PitchShifter(float target, float time) {
+        var backgroundMusic = GameObject.Find("BGM")?.GetComponent<AudioSource>();
+
+        if (backgroundMusic == null) yield break;
+
+        var start = backgroundMusic.pitch;
+        var t     = 0.0f;
+
+        while (backgroundMusic.pitch != target && t <= time) {
+            t += Time.deltaTime;
+            backgroundMusic.pitch = Mathf.Lerp(start, target, t / time);
+            yield return null;
+        }
+
+        backgroundMusic.pitch = target;
+    }
+
     public void SlowMo() {
         Utility.ChangeTimeScale(slowMoFactor);
         foreach (var player in GetPlayers()) {
             player.GetComponent<PlayerMovement>().instantRotation = false;
         }
+
+        StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
     }
 
     public void ResetSlowMo() {
@@ -233,5 +254,8 @@ public class GameModel : MonoBehaviour {
         foreach (var player in GetPlayers()) {
             player.GetComponent<PlayerMovement>().instantRotation = true;
         }
+
+        // Pitch-shift BGM back to normal.
+        StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
     }
 }
