@@ -77,9 +77,7 @@ public class BallCarrier : MonoBehaviour {
 
     public void DropBall() {
         if (ball != null) {
-            if (slowMoOnCarry) {
-                GameModel.instance.ResetSlowMo();
-            }
+            GameModel.instance.ResetSlowMo();
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
 

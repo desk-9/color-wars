@@ -200,8 +200,8 @@ public class Utility {
     }
 
     public static void ChangeTimeScale(float factor) {
-        Time.timeScale *= factor;
-        Time.fixedDeltaTime *= factor;
+        Time.timeScale = 1 * factor;
+        Time.fixedDeltaTime = 0.02f * factor;
     }
 }
 
