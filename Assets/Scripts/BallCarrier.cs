@@ -20,6 +20,8 @@ public class BallCarrier : MonoBehaviour {
     bool isCoolingDown = false;
     BoxCollider2D ballGrabber;
 
+    const float ballOffsetMultiplier = 1.07f;
+
     public bool IsCarryingBall() {
         return ball != null;
     }
@@ -53,7 +55,7 @@ public class BallCarrier : MonoBehaviour {
         var renderer = GetComponent<SpriteRenderer>();
         if (renderer != null && ballRadius != null) {
             var spriteExtents = renderer.sprite.bounds.extents.x * transform.localScale.x;
-            ballOffsetFromCenter = 1.07f * (spriteExtents + ballRadius.Value);
+            ballOffsetFromCenter = ballOffsetMultiplier * (spriteExtents + ballRadius.Value);
         }
     }
 
