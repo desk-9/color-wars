@@ -11,7 +11,7 @@ public class BallCarrier : MonoBehaviour {
     public Ball ball { private set; get;}
     public float ballTurnSpeed = 10f;
     public bool chargedBallStuns = false;
-    public bool slowMoOnCarry = false;
+    public bool slowMoOnCarry = true;
 
     float ballOffsetFromCenter = .5f;
     PlayerMovement playerMovement;
@@ -80,8 +80,6 @@ public class BallCarrier : MonoBehaviour {
             if (slowMoOnCarry) {
                 GameModel.instance.ResetSlowMo();
             }
-            Time.timeScale = 1f;
-            Time.fixedDeltaTime = 0.02f;
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
 

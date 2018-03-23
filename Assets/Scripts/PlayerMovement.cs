@@ -10,8 +10,8 @@ public class PlayerMovement : MonoBehaviour {
     public float movementSpeed;
     public float rotationSpeed = 1080;
     public bool freezeRotation = false;
-    public bool instantRotation = true;
 
+    public bool instantRotation {get; set;} = true;
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
@@ -51,7 +51,6 @@ public class PlayerMovement : MonoBehaviour {
                 var sign = Mathf.Sign(maxAngleChange);
                 var speedChange = rotationSpeed * Time.deltaTime;
                 var actualChange = sign * Mathf.Min(Mathf.Abs(maxAngleChange), speedChange);
-                Utility.Print(speedChange, actualChange);
                 var finalRotation = rb2d.rotation + actualChange;
                 if (finalRotation <= 0) {
                     finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
