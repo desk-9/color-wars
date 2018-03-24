@@ -18,6 +18,7 @@ public class BallCarrier : MonoBehaviour {
     PlayerStateManager stateManager;
     Coroutine carryBallCoroutine;
     bool isCoolingDown = false;
+    LaserGuide laserGuide;
 
     const float ballOffsetMultiplier = 1.07f;
 
@@ -34,6 +35,7 @@ public class BallCarrier : MonoBehaviour {
             stateManager.CallOnStateExit(
                 State.Posession, playerMovement.UnFreezePlayer);
         }
+        laserGuide = this.EnsureComponent<LaserGuide>();
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -45,6 +47,7 @@ public class BallCarrier : MonoBehaviour {
         }
         ball.charged = false;
         Utility.TutEvent("BallPickup", this);
+        laserGuide.DrawLaser();
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 
@@ -84,6 +87,7 @@ public class BallCarrier : MonoBehaviour {
             // Reset references
             ball.owner = null;
             ball = null;
+            laserGuide.StopDrawingLaser();
             StartCoroutine(CoolDownTimer());
         }
     }

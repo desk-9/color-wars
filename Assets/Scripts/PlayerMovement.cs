@@ -72,7 +72,6 @@ public class PlayerMovement : MonoBehaviour {
             // TODO: TUTORIAL
             if (direction.magnitude > 0.1f) {
                 if (Time.time - startTime > 0.75f) {
-                    Debug.Log("Notifying!");
                     GameModel.instance.nc.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
             } else {
