@@ -229,7 +229,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             ps.Stop();
         }
 
-        dashGrabField.enabled = true;
+        dashGrabField.enabled = false;
         Destroy(dashEffect, 1.0f);
         stateManager.CurrentStateHasFinished();
     }
