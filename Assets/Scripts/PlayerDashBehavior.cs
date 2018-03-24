@@ -7,8 +7,6 @@ using UtilityExtensions;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
-    public bool useNewBehavior = true;
-
     // ==================== //
     // === OLD BEHAVIOR === //
     // ==================== //
@@ -45,9 +43,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     void Update() {
         var input = playerMovement.GetInputDevice();
 
-        if (useNewBehavior) {
-            if (Time.time - lastDashTime < cooldown) return;
-        }
+        if (Time.time - lastDashTime < cooldown) return;
+
         if (input != null && input.GetControl(dashButton).WasPressed) {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
@@ -84,13 +81,14 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             var input = playerMovement.GetInputDevice();
             // Start dash and terminate Charge coroutine.
-            if (input != null && (
+            if (
+                input != null && (
                     input.GetControl(dashButton).WasReleased
                     || (Time.time - startChargeTime) >=
-                    (useNewBehavior ? newMaxChargeTime : maxChargeTime))) {
-                if (useNewBehavior) stateManager.AttemptDash(() => StartNewDash(chargeAmount), StopDash);
-                else                stateManager.AttemptDash(() => StartDash(dashSpeed)      , StopDash);
-
+                    newMaxChargeTime
+                )
+            ) {
+                stateManager.AttemptDash(() => StartNewDash(chargeAmount), StopDash);
                 yield break;
             }
 
@@ -219,6 +217,8 @@ public class PlayerDashBehavior : MonoBehaviour {
         var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         var startTime = Time.time;
 
+        dashGrabField.enabled = true;
+
         while (Time.time - startTime <= dashDuration) {
             rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
 
@@ -229,6 +229,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             ps.Stop();
         }
 
+        dashGrabField.enabled = true;
         Destroy(dashEffect, 1.0f);
         stateManager.CurrentStateHasFinished();
     }
