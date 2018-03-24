@@ -65,12 +65,15 @@ MonoBehaviour:
   pauseAfterGoalScore: 3
   pauseAfterReset: 2
   staticGoals: 0
-  pushAwayOtherPlayers: 0
-  blowbackRadius: 3
-  blowbackSpeed: 10
-  blowbackStunTime: 0.1
+  pushAwayOtherPlayers: 1
+  blowbackRadius: 6
+  blowbackSpeed: 30
+  blowbackStunTime: 0.05
   blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
     type: 2}
+  slowMoFactor: 0.4
+  PitchShiftTime: 0.3
+  SlowedPitch: 0.5
   winningScore: 5
   requiredWinMargin: 2
   winCondition: 2
