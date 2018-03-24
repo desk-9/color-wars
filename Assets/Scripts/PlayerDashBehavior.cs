@@ -36,7 +36,17 @@ public class PlayerDashBehavior : MonoBehaviour {
         stateManager   = this.EnsureComponent<PlayerStateManager>();
         player         = this.EnsureComponent<Player>();
         carrier        = this.EnsureComponent<BallCarrier>();
-
+        this.FrameDelayCall(() => {
+                var name = player.team.teamColor.name;
+                var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
+                if (name == "Pink") {
+                    dashEffectPrefab = pinkDashEffectPrefab;
+                    chargeEffectSpawner.effectPrefab = pinkChargeEffectPrefab;
+                } else if (name == "Blue") {
+                    dashEffectPrefab = blueDashEffectPrefab;
+                    chargeEffectSpawner.effectPrefab = blueChargeEffectPrefab;
+                }
+            }, 2);
         dashGrabField.enabled = false;
     }
 
@@ -191,6 +201,10 @@ public class PlayerDashBehavior : MonoBehaviour {
     // === NEW BEHAVIOR === //
     // ==================== //
 
+    public GameObject blueDashEffectPrefab;
+    public GameObject pinkDashEffectPrefab;
+    public GameObject blueChargeEffectPrefab;
+    public GameObject pinkChargeEffectPrefab;
     public GameObject dashEffectPrefab;
     public float newMaxChargeTime = 1.0f;
     public float newChargeRate    = 1.0f;

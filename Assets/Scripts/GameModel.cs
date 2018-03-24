@@ -125,8 +125,7 @@ public class GameModel : MonoBehaviour {
 
 
     public TeamManager GetTeamAssignment(Player caller) {
-        // var assignedTeam = teams[NextTeamAssignmentIndex()];
-        var assignedTeam = teams[int.Parse(caller.name.Substring(6)) % 2];
+        var assignedTeam = teams[NextTeamAssignmentIndex()];
         assignedTeam.AddTeamMember(caller);
         return assignedTeam;
     }

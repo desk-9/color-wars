@@ -77,9 +77,16 @@ namespace UtilityExtensions {
             list.Add(new TutorialStageInfo(a, b, c, requirement));
         }
 
+        public static EffectSpawner FindEffect(this Component component, EffectType type) {
+            var effects = component.GetComponents<EffectSpawner>();
+            foreach (var effect in effects) {
+                if (effect.effectType == type) {
+                    return effect;
+                }
+            }
+            return null;
+        }
     }
-
-
 }
 
 

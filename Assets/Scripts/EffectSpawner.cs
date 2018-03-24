@@ -1,12 +1,17 @@
 using UnityEngine;
 using UtilityExtensions;
 
+public enum EffectType {
+    DashCharge, Unset
+}
+
 public class EffectSpawner : MonoBehaviour {
     public GameObject effectPrefab;
     public State triggerState;
     public bool destroyEffectOnExit = true;
     public bool parentEffectToPlayer = true;
     public float destroyWait = 0.0f;
+    public EffectType effectType = EffectType.Unset;
 
     GameObject currentEffect;
     PlayerStateManager stateManager;

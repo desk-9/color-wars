@@ -562,12 +562,6 @@ Prefab:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114130524022212122, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-        type: 2}
-      propertyPath: dashEffectPrefab
-      value: 
-      objectReference: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
-        type: 2}
     - target: {fileID: 114772672773334790, guid: 1e5ce0bbe8321cf459586a2d8d215280,
         type: 2}
       propertyPath: effectPrefab
@@ -580,6 +574,16 @@ Prefab:
       value: 0.99944323
       objectReference: {fileID: 0}
     - target: {fileID: 61060380354097216, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61713479168382808, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.99944323
+      objectReference: {fileID: 0}
+    - target: {fileID: 61713479168382808, guid: 1e5ce0bbe8321cf459586a2d8d215280,
         type: 2}
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 1
@@ -3259,12 +3263,6 @@ Prefab:
       value: 
       objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
         type: 2}
-    - target: {fileID: 114130524022212122, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-        type: 2}
-      propertyPath: dashEffectPrefab
-      value: 
-      objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
-        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
@@ -3344,12 +3342,6 @@ Prefab:
       value: 
       objectReference: {fileID: 21300000, guid: 4518eb10161864846b8eb7ac354400e9,
         type: 3}
-    - target: {fileID: 114130524022212122, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-        type: 2}
-      propertyPath: dashEffectPrefab
-      value: 
-      objectReference: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
-        type: 2}
     - target: {fileID: 114772672773334790, guid: 1e5ce0bbe8321cf459586a2d8d215280,
         type: 2}
       propertyPath: effectPrefab
@@ -3442,12 +3434,6 @@ Prefab:
       value: 
       objectReference: {fileID: 1691723634291742, guid: 6159c26c7c3ab40cfb9ebb7971ecbdb5,
         type: 2}
-    - target: {fileID: 114130524022212122, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-        type: 2}
-      propertyPath: dashEffectPrefab
-      value: 
-      objectReference: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
-        type: 2}
     - target: {fileID: 114772672773334790, guid: 1e5ce0bbe8321cf459586a2d8d215280,
         type: 2}
       propertyPath: effectPrefab
@@ -3498,6 +3484,16 @@ Prefab:
         type: 2}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[0].y
       value: 0.38907728
+      objectReference: {fileID: 0}
+    - target: {fileID: 61713479168382808, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 0.99944323
+      objectReference: {fileID: 0}
+    - target: {fileID: 61713479168382808, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
