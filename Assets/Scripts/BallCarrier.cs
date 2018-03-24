@@ -18,7 +18,6 @@ public class BallCarrier : MonoBehaviour {
     PlayerStateManager stateManager;
     Coroutine carryBallCoroutine;
     bool isCoolingDown = false;
-    BoxCollider2D ballGrabber;
 
     const float ballOffsetMultiplier = 1.07f;
 
@@ -35,7 +34,6 @@ public class BallCarrier : MonoBehaviour {
             stateManager.CallOnStateExit(
                 State.Posession, playerMovement.UnFreezePlayer);
         }
-        ballGrabber = GetComponent<BoxCollider2D>();
     }
 
     // This function is called when the BallCarrier initially gains possession
