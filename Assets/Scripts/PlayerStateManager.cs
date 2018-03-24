@@ -119,12 +119,13 @@ public class PlayerStateManager : MonoBehaviour {
     public void AttemptFrozenAfterGoal(Callback start, Callback stop) {
         SwitchToState(State.FrozenAfterGoal, start, stop);
     }
-    
+
     public void AttemptStartState(Callback start, Callback stop) {
         SwitchToState(State.StartupState, start, stop);
     }
 
     void SwitchToState(State state, Callback start, Callback stop) {
+        Utility.Print("Switching from", currentState, "to", state);
         stopCurrentState();
         AlertSubscribers(currentState, false, state);
 

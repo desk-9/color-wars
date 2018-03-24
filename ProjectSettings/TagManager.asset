@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - TutorialReadyText
+  - PinkStartPoint
+  - BlueStartPoint
+  - SelectPink
+  - SelectBlue
+  - SeperatedTeams
   layers:
   - Default
   - TransparentFX

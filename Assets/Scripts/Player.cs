@@ -7,6 +7,7 @@ using IC = InControl;
 public class Player : MonoBehaviour {
     public GameObject inline;
     public TeamManager team {get; private set;}
+    public int playerNumber;
 
     new SpriteRenderer renderer;
     PlayerStateManager stateManager;
@@ -40,18 +41,40 @@ public class Player : MonoBehaviour {
         stateManager.CurrentStateHasFinished();
     }
 
+    public void TrySetTeam(TeamManager team) {
+        if (this.team == null) {
+            SetTeam(team);
+        }
+    }
+
+    public void SetTeam(TeamManager team) {
+        if (this.team != null) {
+            this.team.RemoveTeamMember(this);
+        }
+        this.team = team;
+        renderer.color = team.teamColor;
+        team.AddTeamMember(this);
+        GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
+    }
+
     // Use this for initialization
     void Start () {
         renderer = this.EnsureComponent<SpriteRenderer>();
         rb2d = this.EnsureComponent<Rigidbody2D>();
-        stateManager = this.EnsureComponent<PlayerStateManager>();
+        stateManager = GetComponent<PlayerStateManager>();
         collider = this.EnsureComponent<Collider2D>();
         explosion = GetComponent<ParticleSystem>();
-        team = GameModel.instance.GetTeamAssignment(this);
-        renderer.color = team.teamColor;
+        if ((GameModel.playerTeamsAlreadySelected || GameModel.cheatForcePlayerAssignment)
+              && playerNumber > 0) {
+            // Dummies have a player number of -1, and shouldn't get a team
+            team = GameModel.instance.GetTeamAssignment(this);
+            GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
+            renderer.color = team.teamColor;
+        }
         initialPosition = transform.position;
         initalRotation = rb2d.rotation;
-        Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
+        GameModel.instance.players.Add(this);
+        // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
     }
 
     void Update() {

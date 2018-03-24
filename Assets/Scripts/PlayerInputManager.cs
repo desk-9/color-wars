@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UtilityExtensions;
 using InputDevice = InControl.InputDevice;
 using InputManager = InControl.InputManager;
 
@@ -16,6 +16,8 @@ public class User {
         this.device = device;
     }
 }
+
+public delegate void InputDeviceCallback(InputDevice device);
 
 // InputManager
 public class PlayerInputManager : MonoBehaviour {
@@ -61,6 +63,9 @@ public class PlayerInputManager : MonoBehaviour {
 
             devices.Add(device, false);
             // users.Add(device, new User(device));
+            this.FrameDelayCall(() => {
+                    HandoutDevices();
+                }, 1);
         };
 
         InputManager.OnDeviceDetached += (device) => {
@@ -72,6 +77,10 @@ public class PlayerInputManager : MonoBehaviour {
             actions.Remove(device);
             // users.Remove(device);
         };
+
+        this.FrameDelayCall(() => {
+                HandoutDevices();
+            }, 2);
         SceneManager.sceneLoaded += OnLevelLoaded;
     }
 
@@ -79,6 +88,41 @@ public class PlayerInputManager : MonoBehaviour {
         Debug.Log("on level loaded");
         foreach (var k in devices.Keys.ToList()) {
             devices[k] = false;
+        }
+    }
+
+    SortedList<int, Tuple<InputDeviceCallback, Action>> inputRequests =
+        new SortedList<int, Tuple<InputDeviceCallback, Action>>();
+
+    public void AddToInputQueue(int priority, InputDeviceCallback callback, Action action) {
+        inputRequests.Add(priority, Tuple.Create(callback, action));
+    }
+
+    void HandoutDevices() {
+        if (!inputRequests.Any()) {
+            return;
+        }
+        var unusedDevices =
+            from pair in devices
+            where pair.Key != null && !pair.Value
+            select pair.Key;
+        var sortedDevices = unusedDevices.OrderBy(d => d.SortOrder).ToList();
+        if (sortedDevices.Any()) {
+            // This int is outside the loop because it must be used to remove
+            // all fulfilled requests (if there are more requests than devices,
+            // i will go up to the index of the first request left unfulfilled)
+            int i = 0;
+            for (; i < sortedDevices.Count && i < inputRequests.Count; i++) {
+                var device = sortedDevices[i];
+                var createdCallback = inputRequests.Values[i].Item1;
+                var action = inputRequests.Values[i].Item2;
+                devices[device] = true;
+                actions[device] = action;
+                createdCallback(device);
+            }
+            var unfufilledRequestsDictionary = inputRequests.Skip(i).ToDictionary(
+                pair => pair.Key, pair => pair.Value);
+            inputRequests = new SortedList<int, Tuple<InputDeviceCallback, Action>>(unfufilledRequestsDictionary);
         }
     }
 
@@ -97,7 +141,7 @@ public class PlayerInputManager : MonoBehaviour {
     }
 
     public bool Any(DevicePredicate devicePredicate) {
-        return InputManager.Devices.Any((device) => devicePredicate(device));
+        return devices.Any((devicePair) => devicePredicate(devicePair.Key));
     }
 
 

@@ -9,6 +9,9 @@ using UtilityExtensions;
 
 public class GameModel : MonoBehaviour {
 
+    public static bool playerTeamsAlreadySelected = false;
+    public static Dictionary<int, int> playerTeamAssignments = new Dictionary<int, int>();
+    public static bool cheatForcePlayerAssignment = false;
     public static GameModel instance;
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
@@ -22,6 +25,7 @@ public class GameModel : MonoBehaviour {
     public float pauseAfterGoalScore = 3f;
     public float pauseAfterReset = 2f;
     public bool staticGoals = false;
+    public List<Player> players = new List<Player>();
 
     public bool pushAwayOtherPlayers = false;
     public float blowbackRadius = 3f;
@@ -125,9 +129,16 @@ public class GameModel : MonoBehaviour {
 
 
     public TeamManager GetTeamAssignment(Player caller) {
-        var assignedTeam = teams[NextTeamAssignmentIndex()];
-        assignedTeam.AddTeamMember(caller);
-        return assignedTeam;
+        if (GameModel.playerTeamsAlreadySelected) {
+            var assignedTeam = teams[playerTeamAssignments[caller.playerNumber]];
+            assignedTeam.AddTeamMember(caller);
+            return assignedTeam;
+        } else if (GameModel.cheatForcePlayerAssignment) {
+            var assignedTeam = teams[NextTeamAssignmentIndex()];
+            assignedTeam.AddTeamMember(caller);
+            return assignedTeam;
+        }
+        return null;
     }
 
     void InitializeTeams() {
@@ -214,12 +225,16 @@ public class GameModel : MonoBehaviour {
         }
     }
 
-    List<Player> GetPlayers() {
+    public List<Player> GetPlayersWithTeams() {
         var result = new List<Player>();
         foreach (var team in teams) {
             result.AddRange(team.teamMembers);
         }
         return result;
+    }
+
+    public List<Player> GetAllPlayers() {
+        return players;
     }
 
     IEnumerator PitchShifter(float target, float time) {
@@ -239,22 +254,53 @@ public class GameModel : MonoBehaviour {
         backgroundMusic.pitch = target;
     }
 
+
+    int slowMoCount = 0;
     public void SlowMo() {
         Utility.ChangeTimeScale(slowMoFactor);
-        foreach (var player in GetPlayers()) {
-            player.GetComponent<PlayerMovement>().instantRotation = false;
+        foreach (var player in GetAllPlayers()) {
+            var movement = player.GetComponent<PlayerMovement>();
+            if (movement != null) {
+                movement.instantRotation = false;
+            }
         }
-
+        // Ensure slowMo doesn't stop until ALL balls are dropped
+        slowMoCount += 1;
         StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
     }
 
     public void ResetSlowMo() {
-        Utility.ChangeTimeScale(1);
-        foreach (var player in GetPlayers()) {
-            player.GetComponent<PlayerMovement>().instantRotation = true;
-        }
+        // Ensure slowMo doesn't stop until ALL balls are dropped
+        slowMoCount -= 1;
+        if (slowMoCount == 0) {
+            Utility.ChangeTimeScale(1);
+            foreach (var player in GetPlayersWithTeams()) {
+                player.GetComponent<PlayerMovement>().instantRotation = true;
+            }
 
-        // Pitch-shift BGM back to normal.
-        StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+            // Pitch-shift BGM back to normal.
+            StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+        }
+    }
+
+    public void FlashScreen(float flashLength = 0.1f, Color? flashColor = null) {
+        if (flashColor == null) {
+            flashColor = Color.white;
+        }
+        drawFlash = true;
+        this.flashColor = flashColor.Value;
+        this.TimeDelayCall(() => drawFlash = false, flashLength);
+    }
+
+    bool drawFlash = false;
+    Color flashColor = Color.white;
+
+    void OnGUI() {
+        if (drawFlash) {
+            var texture = new Texture2D(1, 1);
+            texture.SetPixel(0, 0, flashColor);
+            texture.Apply();
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), texture);
+        }
     }
 }

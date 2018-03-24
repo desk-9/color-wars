@@ -12,6 +12,7 @@ public enum TutorialRequirement {
     AllPlayers,
     AnyPlayer,
     ShortTimeout,
+    ReallyShortTimeout,
     Called
 };
 
@@ -33,8 +34,9 @@ public struct TutorialStageInfo {
 
 public class PlayerTutorial : MonoBehaviour {
     public static PlayerTutorial instance;
-    public static bool runTutorial = false;
+    public static bool runTutorial = true;
 
+    GameObject tutorial;
     GameObject tutorialCanvas;
     Text tutorialText;
     Image tutorialImage;
@@ -42,23 +44,95 @@ public class PlayerTutorial : MonoBehaviour {
     string currentTutorialStage;
 
     List<TutorialStageInfo> tutorialInfo = new List<TutorialStageInfo>() {
-        {"Move", "Move with the joystick", "LeftThumbstick"},
-        {"Dash", "Press A to quick dash", "AButton"},
-        {"DashCharge", "Hold A for longer dash", "AButton"},
-        {"BallPickup", "Run into the ball to pick it up", null, TutorialRequirement.AnyPlayer},
-        {"Shoot", "Press A to shoot", "AButton", TutorialRequirement.AnyPlayer},
-        {"ShootCharge", "Hold A to shoot farther", "AButton", TutorialRequirement.AnyPlayer},
-        {"BallPickupTimeout", "Pick up the ball and don't shoot", null, TutorialRequirement.AnyPlayer},
-        {"TimeoutShort", "You can't hold the ball forever", null, TutorialRequirement.ShortTimeout},
-        {"Steal", "Dash at the ball an enemy player holds to steal", null, TutorialRequirement.AnyPlayer},
-        {"resetgoal", "", null},
-        {"Backboard", "Bounce the ball off the top edge", null, TutorialRequirement.AnyPlayer},
-        {"TimeoutShort", "That sets the goal to your color", null, TutorialRequirement.ShortTimeout},
-        {"Score", "Score into the goal when it's the same color as you", null, TutorialRequirement.Called},
-        {"TimeoutShort", "You should now know how to play Kefi!", null, TutorialRequirement.ShortTimeout},
+        {"TeamsCorrect", "Dash at color to select team (teams of 2)", "AButton", TutorialRequirement.Called},
+        {"PassSwitch", "Pass to your teammate to power up the ball", null},
+        {"TimeoutShort", "Score into the goal when the ball is powered!", null, TutorialRequirement.ShortTimeout},
+        {"Steal", "Dash at the ball when an enemy player holds to steal", null},
+        {"TimeoutShort", "Stealing from a player stuns them", null, TutorialRequirement.ShortTimeout},
         {"Done", "Finished! Press A to play", "AButton"},
     };
 
+    Dictionary<string, Callback> stageStarts = new Dictionary<string, Callback>();
+
+    void Start() {
+
+        stageStarts = new Dictionary<string, Callback>() {
+            {"Steal", SetUpStealDummies},
+            {"PassSwitch", SetUpPassSwitch},
+            {"Done", SetUpDone}
+        };
+
+        if (runTutorial) {
+            GameModel.playerTeamsAlreadySelected = false;
+            TeamManager.playerSpritesAlreadySet = false;
+            tutorial = GameObject.Find("Tutorial");
+            tutorialCanvas = tutorial.transform.Find("TutorialCanvas").gameObject;
+            tutorialCanvas.SetActive(true);
+            tutorialText = tutorialCanvas.FindComponent<Text>("TutorialText");
+            tutorialImage = tutorialCanvas.FindComponent<Image>("TutorialImage");
+            tutorialReadyText = GameObject.FindWithTag("TutorialReadyText").GetComponent<Text>();
+            StartCoroutine(Tutorial());
+        }
+    }
+
+    void SetTutorialElementActive(string name, bool activation) {
+        tutorial.FindChild(name).SetActive(activation);
+    }
+
+    void SetUpStealDummies() {
+        GameModel.instance.FlashScreen();
+        ResetPlayerStates();
+        MovePlayersToSpawnLocations();
+        SetTutorialElementActive("TeamSelection", false);
+        SetTutorialElementActive("SeperatedTeams", true);
+        SetTutorialElementActive("SeperatedPlayers", true);
+        SetTutorialElementActive("StealDummies", true);
+        SetTutorialElementActive("PassBalls", false);
+    }
+
+    void SetUpPassSwitch() {
+        GameModel.instance.FlashScreen();
+        ResetPlayerStates();
+        MovePlayersToSpawnLocations();
+        SetTutorialElementActive("TeamSelection", false);
+        SetTutorialElementActive("SeperatedTeams", true);
+        SetTutorialElementActive("SeperatedPlayers", false);
+        SetTutorialElementActive("StealDummies", false);
+        SetTutorialElementActive("PassBalls", true);
+    }
+
+    void SetUpDone() {
+        ResetPlayerStates();
+        GameModel.instance.FlashScreen();
+        SetTutorialElementActive("TeamSelection", false);
+        SetTutorialElementActive("PassBalls", false);
+        SetTutorialElementActive("SeperatedTeams", false);
+        SetTutorialElementActive("SeperatedPlayers", false);
+        SetTutorialElementActive("StealDummies", false);
+    }
+
+    void ResetPlayerStates() {
+        foreach (var realPlayer in GameModel.instance.GetPlayersWithTeams()) {
+            var stateManager = realPlayer.GetComponent<PlayerStateManager>();
+            stateManager.CurrentStateHasFinished();
+        }
+    }
+
+    void MovePlayersToSpawnLocations() {
+        var spawnPoints = (new List<String>() {"PinkStartPoint", "BlueStartPoint"}).Select(
+            s => GameObject.FindGameObjectWithTag(s)).ToList();
+        Debug.Log(spawnPoints.Count);
+        for (int i = 0; i < spawnPoints.Count; i++) {
+            var spawnPoint = spawnPoints[i];
+            foreach (var player in GameModel.instance.teams[i].teamMembers) {
+                var angle = 180 * player.playerNumber;
+                var displacement = new Vector2(0, 9);
+                var finalDisplacement = Quaternion.AngleAxis(angle, Vector3.forward) * displacement;
+                player.transform.position =
+                    spawnPoint.transform.position + finalDisplacement;
+            }
+        }
+    }
 
     List<Player> GetPlayerComponents() {
         var result = new List<Player>();
@@ -89,12 +163,16 @@ public class PlayerTutorial : MonoBehaviour {
     void ResetStage() {
         ResetCheckin();
         timeoutShort = false;
+        timeoutReallyShort = false;
         eventCalled = false;
     }
 
     bool AllCheckedIn() {
         bool all = true;
         foreach (var player in GetPlayers()) {
+            if (player.GetComponent<PlayerMovement>().GetInputDevice() == null) {
+                continue;
+            }
             if (checkin.ContainsKey(player)) {
                 // Debug.LogFormat("{0}: {1}", player, checkin[player]);
                 if (!checkin[player]) {
@@ -108,14 +186,11 @@ public class PlayerTutorial : MonoBehaviour {
     }
 
     bool AnyCheckedIn() {
-        Debug.LogFormat("Any check {0}", checkin.Values.ToList());
-        foreach (var check in checkin.Values) {
-            Debug.Log(check);
-        }
         return checkin.Values.Any(i => i);
     }
 
     bool timeoutShort = false;
+    bool timeoutReallyShort = false;
 
     bool eventCalled = false;
 
@@ -126,6 +201,8 @@ public class PlayerTutorial : MonoBehaviour {
             return AnyCheckedIn();
         } else if (requirement == TutorialRequirement.ShortTimeout) {
             return timeoutShort;
+        } else if (requirement == TutorialRequirement.ReallyShortTimeout) {
+            return timeoutReallyShort;
         } else if (requirement == TutorialRequirement.Called) {
             return eventCalled;
         } else {
@@ -141,20 +218,12 @@ public class PlayerTutorial : MonoBehaviour {
         }
     }
 
-    void Start() {
-        tutorialCanvas = GameObject.Find("TutorialCanvas");
-        tutorialCanvas.SetActive(true);
-        tutorialText = tutorialCanvas.FindComponent<Text>("TutorialText");
-        tutorialImage = tutorialCanvas.FindComponent<Image>("TutorialImage");
-        tutorialReadyText = GameObject.FindWithTag("TutorialReadyText").GetComponent<Text>();
-        Debug.Log(tutorialReadyText);
-        if (runTutorial) {
-            StartCoroutine(Tutorial());
-        }
+    void StartShortTimeout() {
+        this.RealtimeDelayCall(() => timeoutShort = true, 4f);
     }
 
-    void StartShortTimeout() {
-        this.TimeDelayCall(() => timeoutShort = true, 4f);
+    void StartReallyShortTimeout() {
+        this.RealtimeDelayCall(() => timeoutReallyShort = true, 2f);
     }
 
     void SetTutorialText(string text) {
@@ -165,7 +234,6 @@ public class PlayerTutorial : MonoBehaviour {
         Debug.Log("setting tutorial image");
         if (imagePath != null) {
             var image = Resources.Load<Sprite>(string.Format("TutorialImages/{0}", imagePath));
-            Debug.Log(image);
             tutorialImage.sprite = image;
             tutorialImage.color = Color.white;
         } else {
@@ -197,7 +265,11 @@ public class PlayerTutorial : MonoBehaviour {
                 tutorialReadyText.text = "";
             }
             StartShortTimeout();
+            StartReallyShortTimeout();
             SetDisplayToInfo(tutorialStage);
+            if (stageStarts.ContainsKey(tutorialStage.eventString)) {
+                stageStarts[tutorialStage.eventString]();
+            }
             var eventString = tutorialStage.eventString + "Tutorial";
             bool stageOver = false;
             currentTutorialStage = eventString;
@@ -219,12 +291,32 @@ public class PlayerTutorial : MonoBehaviour {
                 yield return null;
             }
         }
-        TutorialFinished();
+        this.TimeDelayCall(TutorialFinished, 0.3f);
     }
 
     void TutorialFinished() {
         runTutorial = false;
-        SceneStateController.instance.Load(Scene.Court);
+        this.TimeDelayCall(() => GameModel.instance.FlashScreen(0.5f), 0.1f);
+        this.TimeDelayCall(() => SceneStateController.instance.Load(Scene.Court), 0.4f);
     }
 
+    void TeamSelectionFinished() {
+        GameModel.playerTeamsAlreadySelected = true;
+        GameModel.playerTeamAssignments = new Dictionary<int, int>();
+        foreach (var player in GameModel.instance.GetPlayersWithTeams()) {
+            var teamIndex = Array.FindIndex(
+                GameModel.instance.teams, team => team == player.team);
+            GameModel.playerTeamAssignments[player.playerNumber] = teamIndex;
+        }
+        TeamManager.playerSpritesAlreadySet = true;
+    }
+
+    void Update() {
+        if (currentTutorialStage == "TeamsCorrectTutorial") {
+            if (GameModel.instance.teams.All(team => team.teamMembers.Count == 2)) {
+                Utility.TutEvent("TeamsCorrect", this);
+                TeamSelectionFinished();
+            }
+        }
+    }
 }

@@ -4,16 +4,27 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class TeamManager {
+    public static bool playerSpritesAlreadySet = false;
+    static Dictionary<int, Sprite> playerSpriteUsages = new Dictionary<int, Sprite>();
     public int teamNumber { get; set; }
     public NamedColor teamColor { get; set; }
 
     public int score {get; private set;}
     public List<Player> teamMembers = new List<Player>();
 
+    List<Sprite> memberSprites;
+    Dictionary<Player, Sprite> spriteUsage = new Dictionary<Player, Sprite>();
+    Stack<Sprite> unusedSprites;
     public TeamManager(int teamNumber, NamedColor teamColor) {
         this.teamNumber = teamNumber;
         this.teamColor = teamColor;
+        memberSprites = new List<Sprite>() {
+            Resources.Load<Sprite>("Sprites/alt-player-sprite"),
+            Resources.Load<Sprite>("Sprites/fuzzy-player-sprite"),
+        };
+        unusedSprites = new Stack<Sprite>(memberSprites);
     }
+
 
     public void ResetScore() {
         score = 0;
@@ -27,6 +38,30 @@ public class TeamManager {
 
     public void AddTeamMember(Player newMember) {
         teamMembers.Add(newMember);
+        var renderer = newMember.GetComponent<SpriteRenderer>();
+        var sprite = unusedSprites.Peek();
+        if (renderer != null && sprite != null) {
+            if (!playerSpritesAlreadySet) {
+                renderer.sprite = sprite;
+                spriteUsage[newMember] = sprite;
+                playerSpriteUsages[newMember.playerNumber] = sprite;
+                unusedSprites.Pop();
+            } else {
+                renderer.sprite = playerSpriteUsages[newMember.playerNumber];
+            }
+        }
+    }
+
+    public void RemoveTeamMember(Player member) {
+        if (teamMembers.Contains(member)) {
+            var renderer = member.GetComponent<SpriteRenderer>();
+            unusedSprites.Push(spriteUsage[member]);
+            spriteUsage.Remove(member);
+            teamMembers.Remove(member);
+            if (!playerSpritesAlreadySet) {
+                playerSpriteUsages.Remove(member.playerNumber);
+            }
+        }
     }
 
     public void MakeInvisibleAfterGoal() {

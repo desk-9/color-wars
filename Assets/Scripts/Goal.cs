@@ -103,7 +103,7 @@ public class Goal : MonoBehaviour {
         var gameThing = (GameObject) thing;
         var ball = gameThing.GetComponent<Ball>();
         if (ball != null) {
-            Utility.TutEvent("Backboard", this);
+            // Utility.TutEvent("Backboard", ball.lastOwner);
             var ballTeam = ball.lastOwner?.GetComponent<Player>()?.team;
             SwitchToTeam(ballTeam);
         }

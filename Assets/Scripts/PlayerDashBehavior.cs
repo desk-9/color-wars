@@ -29,32 +29,34 @@ public class PlayerDashBehavior : MonoBehaviour {
     Coroutine          chargeCoroutine;
     Coroutine          dashCoroutine;
     BallCarrier carrier;
-
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
         player         = this.EnsureComponent<Player>();
         carrier        = this.EnsureComponent<BallCarrier>();
-        this.FrameDelayCall(() => {
-                var name = player.team.teamColor.name;
-                var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-                if (name == "Pink") {
-                    dashEffectPrefab = pinkDashEffectPrefab;
-                    chargeEffectSpawner.effectPrefab = pinkChargeEffectPrefab;
-                } else if (name == "Blue") {
-                    dashEffectPrefab = blueDashEffectPrefab;
-                    chargeEffectSpawner.effectPrefab = blueChargeEffectPrefab;
-                }
-            }, 2);
         dashGrabField.enabled = false;
+    }
+
+    public void SetPrefabColors() {
+        if (player.team != null) {
+            var name = player.team.teamColor.name;
+            var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
+            if (name == "Pink") {
+                dashEffectPrefab = pinkDashEffectPrefab;
+                chargeEffectSpawner.effectPrefab = pinkChargeEffectPrefab;
+            } else if (name == "Blue") {
+                dashEffectPrefab = blueDashEffectPrefab;
+                chargeEffectSpawner.effectPrefab = blueChargeEffectPrefab;
+            }
+        }
     }
 
     void Update() {
         var input = playerMovement.GetInputDevice();
 
         if (Time.time - lastDashTime < cooldown) return;
-
+        // Utility.Print(this.name, input, input?.GetControl(IC.InputControlType.Action1).WasPressed);
         if (input != null && input.GetControl(dashButton).WasPressed) {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
@@ -163,7 +165,8 @@ public class PlayerDashBehavior : MonoBehaviour {
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
         var otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
-            otherPlayer.team.teamColor != player.team.teamColor) {
+            (otherPlayer.team?.teamColor != player.team?.teamColor
+             || otherPlayer.team == null || player.team == null) ) {
             var ball = TrySteal(otherPlayer);
 
             bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);

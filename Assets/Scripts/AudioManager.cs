@@ -21,7 +21,8 @@ public class AudioManager : MonoBehaviour {
 
     public static AudioManager instance;
 
-    public SoundName GoalSwitchWarning = "GoalSwitchWarning";
+    public SoundName GoalSwitchWarning = "Beep";
+    public SoundName Beep = "Beep";
     public SoundName GoalSwitch = "GoalSwitch";
 
     public void Awake() {

@@ -12,7 +12,7 @@ public class CircularTimer : MonoBehaviour {
     }
 
     Image fillImage;
-    Callback endTimerCallback;
+    Callback endTimerCallback = delegate{};
     Coroutine timer;
 
     public virtual void Start () {

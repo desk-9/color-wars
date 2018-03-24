@@ -5,7 +5,7 @@ using InControl;
 using UtilityExtensions;
 
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour, IPlayerMovement {
 
     public float movementSpeed;
     public float rotationSpeed = 1080;
@@ -87,18 +87,26 @@ public class PlayerMovement : MonoBehaviour {
     void Start () {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-
-        TryToGetInputDevice();
+        PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
+                                                    GivenInputDevice,
+                                                    InputDeviceDisconnectedCallback);
+        // TryToGetInputDevice();
     }
 
-    void TryToGetInputDevice() {
-        inputDevice = PlayerInputManager.instance.GetInputDevice(
-            InputDeviceDisconnectedCallback);
-        if (inputDevice != null) {
-            Debug.LogFormat("Acquired device {0}", GetComponent<Player>().team.teamNumber);
-            stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
-        }
+    void GivenInputDevice(InputDevice device) {
+        inputDevice = device;
+        Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
+        stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
     }
+
+    // void TryToGetInputDevice() {
+    //     inputDevice = PlayerInputManager.instance.GetInputDevice(
+    //         InputDeviceDisconnectedCallback);
+    //     if (inputDevice != null) {
+    //         Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
+    //         stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
+    //     }
+    // }
 
     public InputDevice GetInputDevice() {
         return inputDevice;
@@ -111,11 +119,11 @@ public class PlayerMovement : MonoBehaviour {
         inputDevice = null;
     }
 
-    void Update() {
-        if (inputDevice == null) {
-            TryToGetInputDevice();
-        }
-    }
+    // void Update() {
+    //     if (inputDevice == null) {
+    //         TryToGetInputDevice();
+    //     }
+    // }
 
     void OnDestroy() {
         if (inputDevice != null) {

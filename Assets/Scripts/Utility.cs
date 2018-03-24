@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public delegate void Callback();
@@ -41,6 +42,13 @@ namespace UtilityExtensions {
                     CoroutineUtility.WaitForSeconds(seconds), function));
         }
 
+        public static void RealtimeDelayCall(this MonoBehaviour component, Callback function,
+                                             float seconds = 1) {
+            component.StartCoroutine(
+                CoroutineUtility.RunThenCallback(
+                    CoroutineUtility.WaitForRealtimeSeconds(seconds), function));
+        }
+
         public static T FindComponent<T>(this Transform transform, string name) where T : Component {
             var thing = transform.Find(name);
             var component = thing?.gameObject.GetComponent<T>();
@@ -57,6 +65,10 @@ namespace UtilityExtensions {
             var thing = comp.transform.Find(name);
             var component = thing?.gameObject.GetComponent<T>();
             return component;
+        }
+
+        public static GameObject FindChild(this GameObject thing, string name) {
+            return thing.transform.Find(name).gameObject;
         }
 
         public static void Add<T1, T2>(this IList<Tuple<T1, T2>> list, T1 item1, T2 item2) {
@@ -169,7 +181,7 @@ public class Utility {
         GameObjectCallback stunPlayer = (GameObject thing) => {
             var player = thing.GetComponent<PlayerStateManager>();
             var stun = thing.GetComponent<PlayerStun>();
-            if (player != null) {
+            if (player != null && stun != null) {
                 player.AttemptStun(
                     () => stun.StartStun(null, stunTime), stun.StopStunned);
             }
@@ -182,10 +194,13 @@ public class Utility {
                                           float blowback_strength,
                                           bool blowback_is_velocity = false,
                                           float? stunTime = null) {
-        var ignoreList = player.GetComponent<Player>().team.teamMembers;
-        var ignoreSet = new HashSet<GameObject>();
-        foreach (Player ignore in ignoreList) {
-            ignoreSet.Add(ignore.gameObject);
+
+        var ignoreList = player.GetComponent<Player>().team?.teamMembers;
+        HashSet<GameObject> ignoreSet = new HashSet<GameObject>() {player.gameObject};
+        if (player.GetComponent<Player>().team != null) {
+            ignoreSet = new HashSet<GameObject>(
+                player.GetComponent<Player>().team.teamMembers.Select(p => p.gameObject)
+                );
         }
         BlowbackPlayers(player.transform.position, radius,
                         blowback_strength, blowback_is_velocity,
@@ -274,6 +289,10 @@ public class CoroutineUtility : MonoBehaviour {
     // custom class instance
     public static IEnumerator WaitForSeconds(float seconds) {
         yield return new WaitForSeconds(seconds);
+    }
+
+    public static IEnumerator WaitForRealtimeSeconds(float seconds) {
+        yield return new WaitForSecondsRealtime(seconds);
     }
 
 }

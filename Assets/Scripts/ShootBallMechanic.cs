@@ -92,6 +92,9 @@ public class ShootBallMechanic : MonoBehaviour {
 
     GameObject GetTeammate() {
         var team = player.team;
+        if (team == null) {
+            return null;
+        }
         foreach (var teammate in team.teamMembers) {
             if (teammate != player) {
                 return teammate.gameObject;
@@ -188,7 +191,7 @@ public class ShootBallMechanic : MonoBehaviour {
 
     void Update() {
         if (teamMate == null) {
-            teamMate = GetTeammate().EnsureComponent<Player>();
+            teamMate = GetTeammate()?.EnsureComponent<Player>();
         }
     }
 
@@ -216,7 +219,12 @@ public class ShootBallMechanic : MonoBehaviour {
 
     Vector3 GetShotDirection(Vector3 defaultAngle, out GameObject target) {
         var goalAngle = Mathf.Abs(Vector3.Angle(transform.right, goal.transform.position - transform.position));
-        var teamMateAngle = Mathf.Abs(Vector3.Angle(transform.right, teamMate.transform.position - transform.position));
+        float teamMateAngle = 360f;
+        if (teamMate != null) {
+            teamMateAngle = Mathf.Abs(
+                Vector3.Angle(transform.right,
+                              teamMate.transform.position - transform.position));
+        }
         if (Mathf.Min(goalAngle, teamMateAngle) < aimAssistAngle) {
             target = goalAngle < teamMateAngle ? goal.gameObject : teamMate.gameObject;
             return target.transform.position - transform.position;

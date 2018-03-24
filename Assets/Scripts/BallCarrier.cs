@@ -14,7 +14,7 @@ public class BallCarrier : MonoBehaviour {
     public bool slowMoOnCarry = true;
 
     float ballOffsetFromCenter = .5f;
-    PlayerMovement playerMovement;
+    IPlayerMovement playerMovement;
     PlayerStateManager stateManager;
     Coroutine carryBallCoroutine;
     bool isCoolingDown = false;
@@ -27,7 +27,7 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void Start() {
-        playerMovement = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<IPlayerMovement>();
         stateManager = GetComponent<PlayerStateManager>();
         if (playerMovement != null && stateManager != null) {
             stateManager.CallOnStateEnter(
@@ -35,7 +35,7 @@ public class BallCarrier : MonoBehaviour {
             stateManager.CallOnStateExit(
                 State.Posession, playerMovement.UnFreezePlayer);
         }
-        laserGuide = this.EnsureComponent<LaserGuide>();
+        laserGuide = this.GetComponent<LaserGuide>();
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -47,7 +47,15 @@ public class BallCarrier : MonoBehaviour {
         }
         ball.charged = false;
         Utility.TutEvent("BallPickup", this);
-        laserGuide.DrawLaser();
+        laserGuide?.DrawLaser();
+        var player = GetComponent<Player>();
+        var lastPlayer = ball.lastOwner?.GetComponent<Player>();
+        if (player != null && lastPlayer != null) {
+            if (player.team == lastPlayer.team && player != lastPlayer) {
+                Utility.TutEvent("PassSwitch", player);
+                Utility.TutEvent("PassSwitch", lastPlayer);
+            }
+        }
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 
@@ -87,7 +95,7 @@ public class BallCarrier : MonoBehaviour {
             // Reset references
             ball.owner = null;
             ball = null;
-            laserGuide.StopDrawingLaser();
+            laserGuide?.StopDrawingLaser();
             StartCoroutine(CoolDownTimer());
         }
     }
@@ -149,8 +157,12 @@ public class BallCarrier : MonoBehaviour {
         HandleCollision(collision.gameObject);
     }
 
+    public void OnCollisionStay2D(Collision2D collision) {
+        HandleCollision(collision.gameObject);
+    }
+
     void OnTriggerEnter2D(Collider2D other) {
-        if (stateManager.IsInState(State.Dash)) {
+        if (stateManager != null && stateManager.IsInState(State.Dash)) {
             HandleCollision(other.gameObject);
         }
     }
