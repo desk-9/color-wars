@@ -164,6 +164,10 @@ Prefab:
       propertyPath: m_Name
       value: BottomUnitWallObject
       objectReference: {fileID: 0}
+    - target: {fileID: 1164549941224490, guid: 62f1e5ce4c2a643399add782a46c41f5, type: 2}
+      propertyPath: m_Layer
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 62f1e5ce4c2a643399add782a46c41f5, type: 2}
   m_IsPrefabParent: 0
@@ -2344,6 +2348,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -22.07
       objectReference: {fileID: 0}
+    - target: {fileID: 1164549941224490, guid: 62f1e5ce4c2a643399add782a46c41f5, type: 2}
+      propertyPath: m_Layer
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 62f1e5ce4c2a643399add782a46c41f5, type: 2}
   m_IsPrefabParent: 0
@@ -2360,7 +2368,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1428853031}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: GoalWalls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2608,6 +2616,10 @@ Prefab:
     - target: {fileID: 4715769131765478, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
       propertyPath: m_LocalPosition.y
       value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1450231971021814, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114502463884434860, guid: 03201c32840fa452c9dca448868f2be7, type: 2}
@@ -3082,6 +3094,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 22.07
       objectReference: {fileID: 0}
+    - target: {fileID: 1164549941224490, guid: 62f1e5ce4c2a643399add782a46c41f5, type: 2}
+      propertyPath: m_Layer
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 62f1e5ce4c2a643399add782a46c41f5, type: 2}
   m_IsPrefabParent: 0
@@ -3101,7 +3117,7 @@ GameObject:
   - component: {fileID: 1924940200}
   - component: {fileID: 1924940202}
   - component: {fileID: 1924940201}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class LaserGuide : MonoBehaviour {
 
-    public float maxDrawDistance = 50.0f;
-    public string WallLayer = "Wall";
+    public float drawDistanceAfterCollision = 30.0f;
     public float epsilon = 0.02f;
+
+    const float RAYCAST_LIMIT = 300f;
 
     LineRenderer lineRenderer;
     Coroutine laserCoroutine;
+    LayerMask rayCastMask;
+    int goalLayer;
 
     void Start() {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
+        rayCastMask = LayerMask.GetMask(new string[]{"Wall", "Goal"});
+        goalLayer = LayerMask.NameToLayer("Goal");
     }
-
 
     public void DrawLaser() {
         lineRenderer.enabled = true;
@@ -37,23 +41,39 @@ public class LaserGuide : MonoBehaviour {
             points.Add(transform.position);
             var laserStart = transform.position;
             var laserDirection = transform.right;
-            var drawDistanceRemaining = maxDrawDistance;
-            while (drawDistanceRemaining > 0f) {
-                var raycastHit = Physics2D.Raycast(laserStart + laserDirection * epsilon,
+            var drawDistanceRemaining = drawDistanceAfterCollision;
+
+            var raycastHit = Physics2D.Raycast(laserStart + laserDirection * epsilon,
+                                               laserDirection,
+                                               RAYCAST_LIMIT,
+                                               rayCastMask);
+
+            Debug.Assert(raycastHit.collider != null, "Make RAYCAST_LIMIT larger");
+            points.Add(raycastHit.point);
+            if (raycastHit.transform.gameObject.layer != goalLayer) {
+                laserStart = raycastHit.point;
+                laserDirection = Vector3.Reflect(laserDirection, raycastHit.normal);
+
+
+                while (drawDistanceRemaining > 0f) {
+                    raycastHit = Physics2D.Raycast(laserStart + laserDirection * epsilon,
                                                    laserDirection,
                                                    drawDistanceRemaining,
-                                                   LayerMask.GetMask(WallLayer));
+                                                   rayCastMask);
 
-                if (raycastHit.collider != null) {
-                    points.Add(raycastHit.point);
-                    drawDistanceRemaining -= ((Vector2)laserStart - raycastHit.point).magnitude;
-                    laserStart = raycastHit.point;
-                    laserDirection = Vector3.Reflect(laserDirection, raycastHit.normal);
-                } else {
-                    points.Add(laserStart + laserDirection * drawDistanceRemaining);
-                    drawDistanceRemaining = 0f;
+                    if (raycastHit.collider != null) {
+                        points.Add(raycastHit.point);
+                        if (raycastHit.transform.gameObject.layer == goalLayer) {
+                            break;
+                        }
+                        drawDistanceRemaining -= ((Vector2)laserStart - raycastHit.point).magnitude;
+                        laserStart = raycastHit.point;
+                        laserDirection = Vector3.Reflect(laserDirection, raycastHit.normal);
+                    } else {
+                        points.Add(laserStart + laserDirection * drawDistanceRemaining);
+                        drawDistanceRemaining = 0f;
+                    }
                 }
-
             }
 
             var pointsArray = points.ToArray();

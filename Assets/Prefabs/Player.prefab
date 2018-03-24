@@ -291,8 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc9d5c77132154d129f38ef058cda5ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDrawDistance: 50
-  WallLayer: Wall
+  drawDistanceAfterCollision: 30
   epsilon: 0.02
 --- !u!114 &114772672773334790
 MonoBehaviour:
@@ -392,8 +391,8 @@ LineRenderer:
       ctime6: 0
       ctime7: 0
       atime0: 0
-      atime1: 65535
-      atime2: 0
+      atime1: 56861
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0
@@ -401,7 +400,7 @@ LineRenderer:
       atime7: 0
       m_Mode: 0
       m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
+      m_NumAlphaKeys: 3
     numCornerVertices: 0
     numCapVertices: 0
     alignment: 0
