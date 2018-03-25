@@ -183,7 +183,6 @@ public class GameModel : MonoBehaviour {
     }
 
     public void GoalScoredForTeam(TeamManager scored) {
-        Debug.Log(ball);
         ball.HandleGoalScore(scored.teamColor);
         goal?.StopTeamSwitching();
         foreach (var team in teams) {
@@ -193,6 +192,9 @@ public class GameModel : MonoBehaviour {
             } else {
                 team.MakeInvisibleAfterGoal();
             }
+        }
+        foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
+            wall.KillSelf();
         }
         UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
     }

@@ -58,7 +58,7 @@ public class TronWall : MonoBehaviour {
         }
     }
 
-    void KillSelf() {
+    public void KillSelf() {
         creator.StopWatching(this);
         Destroy(gameObject);
     }

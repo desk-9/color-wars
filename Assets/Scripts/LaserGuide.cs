@@ -17,7 +17,7 @@ public class LaserGuide : MonoBehaviour {
     void Start() {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
-        rayCastMask = LayerMask.GetMask(new string[]{"Wall", "Goal"});
+        rayCastMask = LayerMask.GetMask(new string[]{"Wall", "Goal", "TronWall"});
         goalLayer = LayerMask.NameToLayer("Goal");
     }
 
