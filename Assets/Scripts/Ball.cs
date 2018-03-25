@@ -31,12 +31,16 @@ public class Ball : MonoBehaviour {
                 target_ = null;
             }
             owner_ = value;
+
+            var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
+            notificationCenter.NotifyMessage(message, this);
         }
     }
     public BallCarrier lastOwner { get; private set; }
     public float chargedMassFactor = 1;
 
     new Rigidbody2D rigidbody;
+    NotificationCenter notificationCenter;
 
     bool charged_ = false;
     float base_mass;
@@ -73,6 +77,7 @@ public class Ball : MonoBehaviour {
     }
 
     void Start() {
+        notificationCenter = GameModel.instance.nc;
         start_location = transform.position;
         renderer = this.EnsureComponent<SpriteRenderer>();
         circleCollider = this.EnsureComponent<CircleCollider2D>();

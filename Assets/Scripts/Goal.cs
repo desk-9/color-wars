@@ -17,37 +17,37 @@ public class Goal : MonoBehaviour {
     public bool resetTimerOnSwitchToSameTeam = false;
 
     ModCycle nextTeamIndex;
-    new SpriteRenderer renderer;
+    //new SpriteRenderer renderer;
     Text goalSwitchText;
     Coroutine teamSwitching;
 
     Color originalColor;
 
-    GameObject GetPlayerBlocker() {
-        return transform.Find("PlayerBlocker").gameObject;
-    }
+    // GameObject GetPlayerBlocker() {
+    //     return transform.Find("PlayerBlocker").gameObject;
+    // }
 
-    void BlockBalls() {
-        GetPlayerBlocker().layer = LayerMask.NameToLayer("Default");
-    }
+    // void BlockBalls() {
+    //     GetPlayerBlocker().layer = LayerMask.NameToLayer("Default");
+    // }
 
-    void OnlyBlockPlayers() {
-        GetPlayerBlocker().layer = LayerMask.NameToLayer("PlayerBlocker");
-    }
+    // void OnlyBlockPlayers() {
+    //     GetPlayerBlocker().layer = LayerMask.NameToLayer("PlayerBlocker");
+    // }
 
     void Awake() {
-        renderer = GetComponent<SpriteRenderer>();
+        //renderer = GetComponent<SpriteRenderer>();
     }
 
     public void ResetNeutral() {
         SwitchToNextTeam(false);
         currentTeam = null;
-        BlockBalls();
-        renderer.color = originalColor;
+//        BlockBalls();
+        //renderer.color = originalColor;
     }
 
     void Start () {
-        originalColor = renderer.color;
+        //originalColor = renderer.color;
         nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Length);
         goalSwitchText = GetComponentInChildren<Text>();
         GameModel.instance.OnGameOver += StopTeamSwitching;
@@ -61,11 +61,11 @@ public class Goal : MonoBehaviour {
     }
 
     public void RestartTeamSwitching() {
-        if (teamSwitching != null) {
-            SetNotificationText("");
-            StopCoroutine(teamSwitching);
-        }
-        teamSwitching = StartCoroutine(TeamSwitching());
+        // if (teamSwitching != null) {
+        //     SetNotificationText("");
+        //     StopCoroutine(teamSwitching);
+        // }
+        // teamSwitching = StartCoroutine(TeamSwitching());
     }
 
     void RegisterPassSwitching() {
@@ -109,37 +109,37 @@ public class Goal : MonoBehaviour {
         }
     }
 
-    void SetNotificationText(string to, bool playSound = true) {
-        if (!goalSwitchText.enabled) {
-            goalSwitchText.enabled = true;
-        }
-        goalSwitchText.text = to;
-        if (playSound) {
-            AudioManager.instance.GoalSwitchWarning.Play(goalSwitchWarningVolume);
-        }
-    }
+    // void SetNotificationText(string to, bool playSound = true) {
+    //     if (!goalSwitchText.enabled) {
+    //         goalSwitchText.enabled = true;
+    //     }
+    //     goalSwitchText.text = to;
+    //     if (playSound) {
+    //         AudioManager.instance.GoalSwitchWarning.Play(goalSwitchWarningVolume);
+    //     }
+    // }
 
-    IEnumerator TeamSwitching() {
+    // IEnumerator TeamSwitching() {
 
-        yield return new WaitForSeconds(goalSwitchInterval - goalSwitchNotificationLength);
-        if (!timedSwitching) {
-            yield break;
-        }
-        goalSwitchText.color = PeekNextTeam().teamColor;
-        for (int i = goalSwitchNotificationLength; i > 0; --i) {
-            SetNotificationText(i.ToString());
-            yield return new WaitForSeconds(1);
-        }
-        goalSwitchText.enabled = false;
-        SwitchToNextTeam(true);
-    }
+    //     yield return new WaitForSeconds(goalSwitchInterval - goalSwitchNotificationLength);
+    //     if (!timedSwitching) {
+    //         yield break;
+    //     }
+    //     goalSwitchText.color = PeekNextTeam().teamColor;
+    //     for (int i = goalSwitchNotificationLength; i > 0; --i) {
+    //         SetNotificationText(i.ToString());
+    //         yield return new WaitForSeconds(1);
+    //     }
+    //     goalSwitchText.enabled = false;
+    //     SwitchToNextTeam(true);
+    // }
 
     public void StopTeamSwitching() {
-        if (teamSwitching != null) {
-            StopCoroutine(teamSwitching);
-            teamSwitching = null;
-            SetNotificationText("", false);
-        }
+        // if (teamSwitching != null) {
+        //     StopCoroutine(teamSwitching);
+        //     teamSwitching = null;
+        //     SetNotificationText("", false);
+        // }
     }
 
 
@@ -155,11 +155,10 @@ public class Goal : MonoBehaviour {
         if (playSound) {
             AudioManager.instance.GoalSwitch.Play();
         }
-        OnlyBlockPlayers();
         currentTeam = GetNextTeam();
-        if (renderer != null) {
-            renderer.color = currentTeam.teamColor;
-        }
+        // if (renderer != null) {
+        //     renderer.color = currentTeam.teamColor;
+        // }
         RestartTeamSwitching();
     }
 
@@ -170,7 +169,6 @@ public class Goal : MonoBehaviour {
                 stateManager.CurrentStateHasFinished();
             }
         }
-
         if (ball.IsOwnable()) {
             if (ball.lastOwner?.GetComponent<Player>()?.team == currentTeam) {
                 Utility.TutEvent("Score", this);
@@ -181,18 +179,14 @@ public class Goal : MonoBehaviour {
         }
     }
 
-    void BallCheck(Collider2D collider) {
-        var ball = collider.gameObject.GetComponent<Ball>();
+    void BallCheck(GameObject thing) {
+        var ball = thing.gameObject.GetComponent<Ball>();
         if (ball != null) {
             ScoreGoal(ball);
         }
     }
 
-    void OnTriggerEnter2D(Collider2D collider) {
-        BallCheck(collider);
-    }
-
-    void OnTriggerStay2D(Collider2D collider) {
-        BallCheck(collider);
+    void OnCollisionEnter2D(Collision2D collider) {
+        BallCheck(collider.gameObject);
     }
 }

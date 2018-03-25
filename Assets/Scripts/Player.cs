@@ -8,6 +8,10 @@ public class Player : MonoBehaviour {
     public GameObject inline;
     public TeamManager team {get; private set;}
     public int playerNumber;
+    public Dictionary<string, string> teamToSprite = new Dictionary<string, string>() {
+        {"Fire", "Sprites/FirePlayer"},
+        {"Ice", "Sprites/IcePlayer"}
+    };
 
     new SpriteRenderer renderer;
     PlayerStateManager stateManager;
@@ -71,7 +75,8 @@ public class Player : MonoBehaviour {
             this.FrameDelayCall(
                 () => GetComponent<PlayerDashBehavior>()?.SetPrefabColors(),
                 2);
-            renderer.color = team.teamColor;
+            var teamSprite = Resources.Load<Sprite>(teamToSprite[team.teamColor.name]);
+            renderer.sprite = teamSprite;
         }
         initialPosition = transform.position;
         initalRotation = rb2d.rotation;
@@ -82,7 +87,6 @@ public class Player : MonoBehaviour {
     void Update() {
         var device = GetComponent<PlayerMovement>()?.GetInputDevice();
         if (device != null && device.GetControl(IC.InputControlType.Action1).WasPressed) {
-            Debug.LogWarning("A pressed");
             Utility.TutEvent("Done", this);
         }
     }
