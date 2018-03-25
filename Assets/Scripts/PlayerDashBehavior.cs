@@ -21,7 +21,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
-    public bool layWallOnDash;
 
 
     PlayerStateManager stateManager;
@@ -116,7 +115,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     void StartDash(float chargeAmount) {
         dashCoroutine = StartCoroutine(Dash(chargeAmount));
         lastDashTime = Time.time;
-        if (layWallOnDash) {
+        if (tronMechanic.layWallOnDash) {
             tronMechanic.PlaceWallAnchor();
         }
     }
@@ -126,7 +125,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
 
-            if (layWallOnDash) {
+            if (tronMechanic.layWallOnDash) {
                 tronMechanic.PlaceCurrentWall();
             }
         }
@@ -252,7 +251,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         dashGrabField.enabled = false;
         Destroy(dashEffect, 1.0f);
         dashCoroutine = null;
-        if (layWallOnDash) {
+        if (tronMechanic.layWallOnDash) {
             tronMechanic.PlaceCurrentWall();
         }
         stateManager.CurrentStateHasFinished();
