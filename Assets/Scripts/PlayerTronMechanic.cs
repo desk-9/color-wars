@@ -46,7 +46,8 @@ public class PlayerTronMechanic : MonoBehaviour {
             return;
         }
 
-        if (inputDevice.GetControl(tronButton).WasPressed) {
+        if (inputDevice.GetControl(tronButton).WasPressed &&
+            player.team != null) {
             stateManager.AttemptLayTronWall(() => layWallCoroutine = StartCoroutine(LayTronWall())
                                             , StopLayingWall);
         }
