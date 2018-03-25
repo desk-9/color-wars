@@ -20,6 +20,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float dashPower = 0.1f;
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
+    public string[] stopDashOnCollisionWith;
+    public bool layWallOnDash;
 
 
     PlayerStateManager stateManager;
@@ -28,13 +30,16 @@ public class PlayerDashBehavior : MonoBehaviour {
     Rigidbody2D        rb;
     Coroutine          chargeCoroutine;
     Coroutine          dashCoroutine;
+    PlayerTronMechanic tronMechanic;
     BallCarrier carrier;
+    GameObject dashEffect;
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
         player         = this.EnsureComponent<Player>();
         carrier        = this.EnsureComponent<BallCarrier>();
+        tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         dashGrabField.enabled = false;
     }
 
@@ -73,8 +78,9 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (chargeCoroutine != null) {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
-
-            // Release player from position lock.
+            Destroy(dashEffect, 1.0f);
+            dashGrabField.enabled = false;
+            Destroy(dashEffect);
             playerMovement.UnFreezePlayer();
         }
     }
@@ -100,7 +106,7 @@ public class PlayerDashBehavior : MonoBehaviour {
                     newMaxChargeTime
                 )
             ) {
-                stateManager.AttemptDash(() => StartNewDash(chargeAmount), StopDash);
+                stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
                 yield break;
             }
 
@@ -108,46 +114,29 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
-    void StartDash(float dashSpeed) {
-        dashCoroutine = StartCoroutine(Dash(dashSpeed));
-    }
-
-    void StartNewDash(float chargeAmount) {
-        dashCoroutine = StartCoroutine(NewDash(chargeAmount));
+    void StartDash(float chargeAmount) {
+        dashCoroutine = StartCoroutine(Dash(chargeAmount));
         lastDashTime = Time.time;
+        if (layWallOnDash) {
+            tronMechanic.PlaceWallAnchor();
+        }
     }
 
     void StopDash() {
         if (dashCoroutine != null) {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
+
+            if (layWallOnDash) {
+                tronMechanic.PlaceCurrentWall();
+            }
         }
-    }
-
-    IEnumerator Dash(float speed) {
-        var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
-        var startTime = Time.time;
-        // Apply scaled dash speed on top of base movement speed.
-        speed = playerMovement.movementSpeed + Mathf.Pow(speed, dashPower);
-
-        dashGrabField.enabled = true;
-
-        while (Time.time - startTime < dashDuration) {
-            rb.velocity = direction * speed;
-
-            yield return null;
-        }
-
-        dashGrabField.enabled = false;
-        dashCoroutine = null;
-        stateManager.CurrentStateHasFinished();
     }
 
     Ball TrySteal(Player otherPlayer) {
         var otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
         return otherCarrier?.ball;
     }
-
     void Stun(Player otherPlayer) {
         var otherStun = otherPlayer.GetComponent<PlayerStun>();
         var otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
@@ -159,9 +148,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
     void StunAndSteal(GameObject otherGameObject) {
-        if (!stateManager.IsInState(State.Dash)) {
-            return;
-        }
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
         var otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
@@ -194,8 +180,26 @@ public class PlayerDashBehavior : MonoBehaviour {
         StunAndSteal(collider.gameObject);
     }
 
+    void HandleCollision(GameObject other) {
+        if (!stateManager.IsInState(State.Dash)) {
+            return;
+        }
+
+        var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
+        if (layerMask == (layerMask | 1 << other.layer)) {
+            stateManager.CurrentStateHasFinished();
+        } else {
+            StunAndSteal(other);
+        }
+
+    }
+
     public void OnCollisionEnter2D(Collision2D collision) {
-        StunAndSteal(collision.gameObject);
+        HandleCollision(collision.gameObject);
+    }
+
+    void OnCollisionStay2D(Collision2D collision) {
+        HandleCollision(collision.gameObject);
     }
 
 
@@ -216,14 +220,14 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     float lastDashTime;
 
-    IEnumerator NewDash(float chargeAmount) {
+    IEnumerator Dash(float chargeAmount) {
         var dashDuration = Mathf.Min(chargeAmount, 0.5f);
         Utility.TutEvent("Dash", this);
         if (dashDuration > 0.25f) {
             Utility.TutEvent("DashCharge", this);
         }
         // Set duration of particle system for each dash trail.
-        var dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
+        dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
         foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
             ps.Stop();
             var main = ps.main;
@@ -248,6 +252,10 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         dashGrabField.enabled = false;
         Destroy(dashEffect, 1.0f);
+        dashCoroutine = null;
+        if (layWallOnDash) {
+            tronMechanic.PlaceCurrentWall();
+        }
         stateManager.CurrentStateHasFinished();
     }
 }

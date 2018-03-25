@@ -22,7 +22,7 @@ TagManager:
   - Player
   - Background
   - Ball
-  - 
+  - TronWall
   - 
   - Goal
   - PlayerBlocker

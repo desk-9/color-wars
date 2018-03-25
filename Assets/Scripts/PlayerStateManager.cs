@@ -18,7 +18,8 @@ public enum State
   Posession,
   ChargeShot,
   Stun,
-  FrozenAfterGoal
+  FrozenAfterGoal,
+  LayTronWall
 };
 
 public delegate void ToggleCallback(bool isEnteringState);
@@ -34,7 +35,7 @@ public class PlayerStateManager : MonoBehaviour {
     SortedDictionary<State, Callback> onEndState =
         new SortedDictionary<State, Callback>();
     TransitionCallback onAnyChange = delegate{};
-    State currentState;
+    public State currentState {get; private set;}
     Callback stopCurrentState;
     State defaultState = State.NormalMovement;
     Callback startDefaultState;
@@ -99,7 +100,7 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     public void AttemptPossession(Callback start, Callback stop) {
-        if (IsInState(State.NormalMovement, State.Dash, State.ChargeDash)) {
+        if (IsInState(State.NormalMovement, State.Dash, State.ChargeDash, State.LayTronWall)) {
             SwitchToState(State.Posession, start, stop);
         }
     }
@@ -111,8 +112,14 @@ public class PlayerStateManager : MonoBehaviour {
     }
 
     public void AttemptStun(Callback start, Callback stop) {
-        if (IsInState(State.NormalMovement, State.Posession)) {
+        if (IsInState(State.NormalMovement, State.Posession, State.LayTronWall, State.Dash)) {
             SwitchToState(State.Stun, start, stop);
+        }
+    }
+
+    public void AttemptLayTronWall(Callback start, Callback stop) {
+        if (IsInState(State.NormalMovement)) {
+            SwitchToState(State.LayTronWall, start, stop);
         }
     }
 

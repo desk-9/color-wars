@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 199164662744462886}
   - component: {fileID: 120631931489294666}
   - component: {fileID: 114759646302619538}
+  - component: {fileID: 114885571489087022}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -150,6 +151,11 @@ MonoBehaviour:
   dashPower: 2
   onlyStunBallCarriers: 1
   onlyStealOnBallHit: 1
+  stopDashOnCollisionWith:
+  - Wall
+  - TronWall
+  - PlayerBlocker
+  layWallOnDash: 0
   blueDashEffectPrefab: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
     type: 2}
   pinkDashEffectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
@@ -312,6 +318,25 @@ MonoBehaviour:
   parentEffectToPlayer: 1
   destroyWait: 5
   effectType: 1
+--- !u!114 &114885571489087022
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b31f31e3cae45443eb82857cd992377a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tronWall: {fileID: 1293006675088886, guid: 12e0ce2da3e4646c0aaecdf8cfb5975f, type: 2}
+  tronButton: 12
+  wallLifeLength: 4
+  lengthStunWhileLaying: 2.5
+  layingSpeedMovementSpeedRatio: 0.79
+  tronWallOffset: 2
+  wallLimit: 2
+  layWallOnDash: 0
 --- !u!114 &114920135743144974
 MonoBehaviour:
   m_ObjectHideFlags: 1
