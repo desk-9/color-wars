@@ -80,7 +80,6 @@ public class PlayerDashBehavior : MonoBehaviour {
             chargeCoroutine = null;
             Destroy(dashEffect, 1.0f);
             dashGrabField.enabled = false;
-            Destroy(dashEffect);
             playerMovement.UnFreezePlayer();
         }
     }
