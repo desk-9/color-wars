@@ -175,7 +175,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         return gameObject.GetComponent<Player>();
     }
 
-    public void OnTrigger2D(Collider2D collider) {
+    public void OnTriggerEnter2D(Collider2D collider) {
         StunAndSteal(collider.gameObject);
     }
 
