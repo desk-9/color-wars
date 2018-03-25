@@ -91,6 +91,10 @@ public class PlayerTronMechanic : MonoBehaviour {
 
     public void StopWatching(TronWall wall) {
         walls.Remove(wall);
+        if (!walls.Any() && layWallCoroutine != null) {
+            StopCoroutine(layWallCoroutine);
+            layWallCoroutine = null;
+        }
     }
 
     public void HandleWallCollision() {
