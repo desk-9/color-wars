@@ -68,7 +68,9 @@ public class Player : MonoBehaviour {
               && playerNumber > 0) {
             // Dummies have a player number of -1, and shouldn't get a team
             team = GameModel.instance.GetTeamAssignment(this);
-            GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
+            this.FrameDelayCall(
+                () => GetComponent<PlayerDashBehavior>()?.SetPrefabColors(),
+                2);
             renderer.color = team.teamColor;
         }
         initialPosition = transform.position;
