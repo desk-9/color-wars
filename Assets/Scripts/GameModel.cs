@@ -53,10 +53,23 @@ public class GameModel : MonoBehaviour {
     string[] countdownSoundNames = new string[]
     {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
 
+    List<string> backgroundSprites = new List<string>() {
+        "grass-cold-2",
+        "grass-cold-2",
+        "grass-cold-1",
+        "grass-cold-1",
+        "neutral-grass",
+        "grass-hot-1",
+        "grass-hot-1",
+        "grass-hot-2",
+        "grass-hot-2",
+    };
+
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
     Ball ball;
     ThermometerFill thermometerFill;
+    SpriteRenderer background;
     public Goal goal;
 
     void Awake() {
@@ -107,6 +120,7 @@ public class GameModel : MonoBehaviour {
             Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
         thermometerFill = Object.FindObjectOfType<ThermometerFill>();
+        background = GameObject.FindGameObjectWithTag("BackgroundGrass")?.GetComponent<SpriteRenderer>();
     }
 
     IEnumerator EndGameCountdown() {
@@ -203,7 +217,17 @@ public class GameModel : MonoBehaviour {
             }
         }
         thermometerFill.UpdateScore();
+        UpdateBackground();
         UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
+    }
+
+    void UpdateBackground() {
+        var backgroundIndex = (fireTeam.score - iceTeam.score) + requiredWinMargin;
+        if (backgroundIndex < backgroundSprites.Count && background != null) {
+            var sprite = Resources.Load<Sprite>(
+                string.Format("Sprites/{0}", backgroundSprites[backgroundIndex]));
+            background.sprite = sprite;
+        }
     }
 
     void ResetGameAfterGoal() {

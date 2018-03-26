@@ -12,6 +12,7 @@ TagManager:
   - SeperatedTeams
   - IceStartPoint
   - FireStartPoint
+  - BackgroundGrass
   layers:
   - Default
   - TransparentFX

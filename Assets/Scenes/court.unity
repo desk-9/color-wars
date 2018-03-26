@@ -2523,7 +2523,7 @@ GameObject:
   - component: {fileID: 1518960433}
   m_Layer: 0
   m_Name: BackgroundGrass
-  m_TagString: Untagged
+  m_TagString: BackgroundGrass
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
