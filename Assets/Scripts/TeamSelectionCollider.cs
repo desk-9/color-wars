@@ -13,7 +13,6 @@ public class TeamSelectionCollider : MonoBehaviour {
     void Start () {
         if (teamNumber < GameModel.instance.teams.Length) {
             team = GameModel.instance.teams[teamNumber];
-            GetComponent<SpriteRenderer>().color = team.teamColor + 0.1f * Color.white;
         }
     }
 
@@ -40,10 +39,10 @@ public class TeamSelectionCollider : MonoBehaviour {
             if (team.teamMembers.Count >= maxOnTeam) {
                 this.TimeDelayCall(() => {
                         AudioManager.instance.GoalSwitch.Play();
-                        renderer.color = team.teamColor + 0.4f * Color.white;
+                        renderer.color = 0.7f * Color.white;
                     }, 0.3f);
             } else {
-                renderer.color = team.teamColor + 0.1f * Color.white;
+                renderer.color = Color.white;
             }
             lastCount = team.teamMembers.Count;
         }

@@ -44,11 +44,12 @@ public class PlayerTutorial : MonoBehaviour {
     string currentTutorialStage;
 
     List<TutorialStageInfo> tutorialInfo = new List<TutorialStageInfo>() {
-        {"TeamsCorrect", "Dash at color to select team (teams of 2)", "AButton", TutorialRequirement.Called},
+        {"TeamsCorrect", "Dash at an element to select team", "AButton", TutorialRequirement.Called},
         {"PassSwitch", "Pass to your teammate to power up the ball", null},
-        {"TimeoutShort", "Score into the goal when the ball is powered!", null, TutorialRequirement.ShortTimeout},
-        {"Steal", "Dash at the ball when an enemy player holds to steal", null},
+        {"TimeoutShort", "Shoot at the thermometer when the ball is powered!", null, TutorialRequirement.ShortTimeout},
+        {"Steal", "Steal the ball by dashing at it", null},
         {"TimeoutShort", "Stealing from a player stuns them", null, TutorialRequirement.ShortTimeout},
+        {"MakeWalls", "Hold B to lay walls", null},
         {"Done", "Finished! Press A to play", "AButton"},
     };
 
@@ -59,6 +60,7 @@ public class PlayerTutorial : MonoBehaviour {
         stageStarts = new Dictionary<string, Callback>() {
             {"Steal", SetUpStealDummies},
             {"PassSwitch", SetUpPassSwitch},
+            {"MakeWalls", SetUpMakeWalls},
             {"Done", SetUpDone}
         };
 
@@ -102,6 +104,16 @@ public class PlayerTutorial : MonoBehaviour {
         SetTutorialElementActive("PassBalls", true);
     }
 
+    void SetUpMakeWalls() {
+        ResetPlayerStates();
+        GameModel.instance.FlashScreen();
+        SetTutorialElementActive("TeamSelection", false);
+        SetTutorialElementActive("PassBalls", false);
+        SetTutorialElementActive("SeperatedTeams", false);
+        SetTutorialElementActive("SeperatedPlayers", false);
+        SetTutorialElementActive("StealDummies", false);
+    }
+
     void SetUpDone() {
         ResetPlayerStates();
         GameModel.instance.FlashScreen();
@@ -120,9 +132,8 @@ public class PlayerTutorial : MonoBehaviour {
     }
 
     void MovePlayersToSpawnLocations() {
-        var spawnPoints = (new List<String>() {"PinkStartPoint", "BlueStartPoint"}).Select(
+        var spawnPoints = (new List<String>() {"FireStartPoint", "IceStartPoint"}).Select(
             s => GameObject.FindGameObjectWithTag(s)).ToList();
-        Debug.Log(spawnPoints.Count);
         for (int i = 0; i < spawnPoints.Count; i++) {
             var spawnPoint = spawnPoints[i];
             foreach (var player in GameModel.instance.teams[i].teamMembers) {

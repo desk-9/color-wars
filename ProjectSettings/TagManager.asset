@@ -10,6 +10,8 @@ TagManager:
   - SelectPink
   - SelectBlue
   - SeperatedTeams
+  - IceStartPoint
+  - FireStartPoint
   layers:
   - Default
   - TransparentFX

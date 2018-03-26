@@ -69,6 +69,7 @@ public class PlayerTronMechanic : MonoBehaviour {
 
     public void PlaceCurrentWall() {
         walls.Last().PlaceWall();
+        Utility.TutEvent("MakeWalls", this);
     }
 
     IEnumerator LayTronWall() {
