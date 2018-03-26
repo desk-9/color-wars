@@ -20,7 +20,7 @@ public class Goal : MonoBehaviour {
     //new SpriteRenderer renderer;
     Text goalSwitchText;
     Coroutine teamSwitching;
-
+    Player lastPlayer = null;
     Color originalColor;
 
     // GameObject GetPlayerBlocker() {
@@ -42,6 +42,7 @@ public class Goal : MonoBehaviour {
     public void ResetNeutral() {
         SwitchToNextTeam(false);
         currentTeam = null;
+        lastPlayer = null;
 //        BlockBalls();
         //renderer.color = originalColor;
     }
@@ -68,15 +69,15 @@ public class Goal : MonoBehaviour {
         // teamSwitching = StartCoroutine(TeamSwitching());
     }
 
+
     void RegisterPassSwitching() {
-        Player last_player = null;
         GameModel.instance.nc.CallOnStateEnd(
-            State.Posession, (Player player) => last_player = player);
+            State.Posession, (Player player) => lastPlayer = player);
         GameModel.instance.nc.CallOnStateStart(
             State.Posession, (Player player) => {
-                if (player != last_player && player.team == last_player?.team) {
+                if (player != lastPlayer && player.team == lastPlayer?.team) {
                     SwitchToTeam(player.team);
-                } else if (player.team != last_player?.team) {
+                } else if (player.team != lastPlayer?.team) {
                     ResetNeutral();
                 }
             });

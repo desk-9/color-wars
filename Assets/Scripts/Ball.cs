@@ -13,13 +13,13 @@ public class Ball : MonoBehaviour {
     new SpriteRenderer renderer;
     CircleCollider2D circleCollider;
     GameObject target_;
+    Goal goal;
 
     Vector2 start_location;
     BallCarrier owner_;
 
     new Rigidbody2D rigidbody;
     NotificationCenter notificationCenter;
-    string currentSprite; // Fire, Ice, or Neutral
     TrailRenderer trailRenderer;
 
     bool charged_ = false;
@@ -38,49 +38,30 @@ public class Ball : MonoBehaviour {
     public BallCarrier owner {
         get { return owner_; }
         set {
+            lastOwner = owner_;
             if (value != null) {
                 target_ = null;
             }
-
-            lastOwner = lastOwner == null ? value : (owner_ == null) ? lastOwner : owner_;
             owner_ = value;
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             notificationCenter.NotifyMessage(message, this);
-            var player = owner_?.gameObject.GetComponent<Player>();
-
-            if (owner_ != null && player != null &&
-                player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
-                if (currentSprite == "Neutral") {
-                    var lastTeam = lastOwner.gameObject.GetComponent<Player>()?.team;;
-                    if (lastTeam != null && player.team != null &&
-                        lastTeam.teamColor.name == player.team.teamColor.name) {
-                        AdjustSpriteToTeam(player.team.teamColor);
-                    }
-                } else {
-                    if (player.team.teamColor.name != currentSprite) {
-                        AdjustSpriteToTeam(player.team.teamColor);
-                    }
-                }
-            }
+            this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
         }
     }
 
-    void AdjustSpriteToTeam(NamedColor team) {
-        if (currentSprite == "Neutral") {
-            currentSprite = team.name;
-        } else {
-            currentSprite = "Neutral";
-        }
+    void SetSpriteToNeutral() {
+        renderer.sprite = Resources.Load<Sprite>("Sprites/BallNeutral");
+        trailRenderer.enabled = false;
+    }
 
-        var newSprite = Resources.Load<Sprite>(string.Format("Sprites/Ball{0}", currentSprite));
-        renderer.sprite = newSprite;
-
-        if (currentSprite == "Neutral") {
-            trailRenderer.enabled = false;
+    void AdjustSpriteToCurrentTeam() {
+        if (goal.currentTeam == null) {
+            SetSpriteToNeutral();
         } else {
-            trailRenderer.enabled = true;
-            trailRenderer.material.color = team.color;
+            var newSprite = Resources.Load<Sprite>(string.Format("Sprites/Ball{0}", goal.currentTeam.teamColor.name));
+            renderer.sprite = newSprite;
+            trailRenderer.material.color = goal.currentTeam.teamColor;
         }
     }
 
@@ -119,12 +100,12 @@ public class Ball : MonoBehaviour {
     void Start() {
         notificationCenter = GameModel.instance.nc;
         start_location = transform.position;
-        currentSprite = "Neutral";
         trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
         circleCollider = this.EnsureComponent<CircleCollider2D>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
         base_mass = rigidbody.mass;
+        goal = GameObject.FindObjectOfType<Goal>();
     }
 
     public void HandleGoalScore(Color color) {
@@ -137,8 +118,7 @@ public class Ball : MonoBehaviour {
         circleCollider.enabled = true;
         renderer.enabled = true;
 
-        renderer.sprite = Resources.Load<Sprite>("Sprites/BallNeutral");
-        trailRenderer.enabled = false;
+        SetSpriteToNeutral();
 
         transform.position = start_location;
 
