@@ -65,9 +65,7 @@ public class PlayerTutorial : MonoBehaviour {
         };
 
         if (runTutorial) {
-            GameModel.playerTeamsAlreadySelected = false;
-            GameModel.cheatForcePlayerAssignment = false;
-            TeamManager.playerSpritesAlreadySet = false;
+            
             tutorial = GameObject.Find("Tutorial");
             tutorialCanvas = tutorial.transform.Find("TutorialCanvas").gameObject;
             tutorialCanvas.SetActive(true);

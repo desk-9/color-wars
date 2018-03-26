@@ -45,7 +45,12 @@ public class SceneStateController : MonoBehaviour {
     public void Load(Scene newScene) {
         OnExit[currentScene]();
         currentScene = newScene;
-        PlayerTutorial.runTutorial = newScene == Scene.Tutorial;
+        if (newScene == Scene.Tutorial) {
+            PlayerTutorial.runTutorial = newScene == Scene.Tutorial;
+            GameModel.playerTeamsAlreadySelected = false;
+            GameModel.cheatForcePlayerAssignment = false;
+            TeamManager.playerSpritesAlreadySet = false;
+        }
         SceneManager.LoadScene(scenes[currentScene]);
         AdjustTime(newScene);
         OnEnter[currentScene]();

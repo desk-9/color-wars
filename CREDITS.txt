@@ -25,3 +25,7 @@ Font: EMRYS' CUSTOM REGULAR
 Source: https://fontlibrary.org/en/font/ffff
 License: https://creativecommons.org/licenses/by-sa/3.0/
 (Changes were not made)
+
+Font: Acme
+Source: https://fonts.google.com/specimen/Acme?selection.family=Acme
+License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
