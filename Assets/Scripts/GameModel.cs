@@ -66,6 +66,9 @@ public class GameModel : MonoBehaviour {
     }
 
     void Initialization() {
+        if (!PlayerTutorial.runTutorial && !playerTeamsAlreadySelected) {
+            cheatForcePlayerAssignment = true;
+        }
         gameOver = false;
         InitializeTeams();
         matchLengthSeconds = 60 * matchLength;
@@ -130,13 +133,9 @@ public class GameModel : MonoBehaviour {
 
     public TeamManager GetTeamAssignment(Player caller) {
         if (GameModel.playerTeamsAlreadySelected) {
-            var assignedTeam = teams[playerTeamAssignments[caller.playerNumber]];
-            assignedTeam.AddTeamMember(caller);
-            return assignedTeam;
+            return teams[playerTeamAssignments[caller.playerNumber]];
         } else if (GameModel.cheatForcePlayerAssignment) {
-            var assignedTeam = teams[NextTeamAssignmentIndex()];
-            assignedTeam.AddTeamMember(caller);
-            return assignedTeam;
+            return teams[NextTeamAssignmentIndex()];
         }
         return null;
     }

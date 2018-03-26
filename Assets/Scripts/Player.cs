@@ -68,9 +68,9 @@ public class Player : MonoBehaviour {
               && playerNumber > 0) {
             // Dummies have a player number of -1, and shouldn't get a team
             team = GameModel.instance.GetTeamAssignment(this);
-            this.FrameDelayCall(
-                () => GetComponent<PlayerDashBehavior>()?.SetPrefabColors(),
-                2);
+            if (team != null) {
+                SetTeam(team);
+            }
         }
         initialPosition = transform.position;
         initalRotation = rb2d.rotation;

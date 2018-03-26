@@ -37,7 +37,7 @@ public class MenuController : MonoBehaviour {
             return;
         }
 
-        if (SceneStateController.instance.paused
+        if ((SceneStateController.instance.paused || GameModel.instance.gameOver)
             && PlayerInputManager.instance.Any((device)
                             => device.GetControl(MainMenuButton).WasPressed)) {
             SceneStateController.instance.Load(Scene.MainMenu);
