@@ -202,9 +202,6 @@ public class GameModel : MonoBehaviour {
                 team.MakeInvisibleAfterGoal();
             }
         }
-        foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
-            wall.KillSelf();
-        }
         thermometerFill.UpdateScore();
         UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
     }
@@ -215,6 +212,10 @@ public class GameModel : MonoBehaviour {
         }
         ball.ResetBall(pauseAfterReset);
         UtilityExtensionsContainer.TimeDelayCall(this, StartGameAfterBallAnimation, pauseAfterReset);
+        foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
+            wall.KillSelf();
+        }
+
 
         goal?.SwitchToNextTeam(false);
         goal?.ResetNeutral();

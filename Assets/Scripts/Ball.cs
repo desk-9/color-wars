@@ -38,21 +38,29 @@ public class Ball : MonoBehaviour {
     public BallCarrier owner {
         get { return owner_; }
         set {
-            lastOwner = lastOwner == null ? value : (owner_ == null) ? lastOwner : owner_;
             if (value != null) {
                 target_ = null;
             }
+
+            lastOwner = lastOwner == null ? value : (owner_ == null) ? lastOwner : owner_;
             owner_ = value;
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             notificationCenter.NotifyMessage(message, this);
+            var player = owner_?.gameObject.GetComponent<Player>();
 
-            if (owner_ != null) {
-                var player = owner_.gameObject.GetComponent<Player>();
-                if (player != null &&
-                    player.team.teamColor.name != currentSprite) {// &&
-                    //player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
-                    AdjustSpriteToTeam(player.team.teamColor);
+            if (owner_ != null && player != null &&
+                player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
+                if (currentSprite == "Neutral") {
+                    var lastTeam = lastOwner.gameObject.GetComponent<Player>()?.team;;
+                    if (lastTeam != null && player.team != null &&
+                        lastTeam.teamColor.name == player.team.teamColor.name) {
+                        AdjustSpriteToTeam(player.team.teamColor);
+                    }
+                } else {
+                    if (player.team.teamColor.name != currentSprite) {
+                        AdjustSpriteToTeam(player.team.teamColor);
+                    }
                 }
             }
         }
@@ -129,10 +137,12 @@ public class Ball : MonoBehaviour {
         circleCollider.enabled = true;
         renderer.enabled = true;
 
+        renderer.sprite = Resources.Load<Sprite>("Sprites/BallNeutral");
+        trailRenderer.enabled = false;
+
         transform.position = start_location;
 
-        var trailRenderer = GetComponent<TrailRenderer>();
-        trailRenderer.enabled = true;
+        trailRenderer.enabled = false;
         ownable = true;
         rigidbody.velocity = Vector2.zero;
         if (lengthOfEffect != null) {

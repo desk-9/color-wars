@@ -18,7 +18,11 @@ public class StunEffect : MonoBehaviour {
     IEnumerator StunEffectRoutine() {
         var renderer = this.EnsureComponent<SpriteRenderer>();
         var baseColor = renderer.color;
+        var team = GetComponent<Player>()?.team;
         var shiftedColor = baseColor + 0.8f * Color.white;
+        if (team != null) {
+            shiftedColor = team.teamColor;
+        }
 
         while (!stopEffect) {
             renderer.color = shiftedColor;

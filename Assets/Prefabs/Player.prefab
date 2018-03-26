@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coolDownTime: 0.1
-  ballTurnSpeed: 50
+  ballTurnSpeed: 65
   chargedBallStuns: 0
   slowMoOnCarry: 1
 --- !u!114 &114694489525978138
