@@ -52,7 +52,6 @@ public class Player : MonoBehaviour {
             this.team.RemoveTeamMember(this);
         }
         this.team = team;
-        renderer.color = team.teamColor;
         team.AddTeamMember(this);
         GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
     }
