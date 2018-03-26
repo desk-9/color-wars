@@ -49,7 +49,7 @@ public class PlayerTutorial : MonoBehaviour {
         {"TimeoutShort", "Shoot at the thermometer when the ball is powered!", null, TutorialRequirement.ShortTimeout},
         {"Steal", "Steal the ball by dashing at it", null},
         {"TimeoutShort", "Stealing from a player stuns them", null, TutorialRequirement.ShortTimeout},
-        {"MakeWalls", "Hold B to lay walls", null},
+        {"MakeWalls", "Hold B to lay walls", "BButton"},
         {"Done", "Finished! Press A to play", "AButton"},
     };
 
@@ -136,9 +136,11 @@ public class PlayerTutorial : MonoBehaviour {
             s => GameObject.FindGameObjectWithTag(s)).ToList();
         for (int i = 0; i < spawnPoints.Count; i++) {
             var spawnPoint = spawnPoints[i];
+            int playerAngle = 1;
             foreach (var player in GameModel.instance.teams[i].teamMembers) {
-                var angle = 180 * player.playerNumber;
-                var displacement = new Vector2(0, 9);
+                var angle = 180 * playerAngle;
+                playerAngle += 1;
+                var displacement = new Vector2(0, 14);
                 var finalDisplacement = Quaternion.AngleAxis(angle, Vector3.forward) * displacement;
                 player.transform.position =
                     spawnPoint.transform.position + finalDisplacement;
