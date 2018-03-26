@@ -27,10 +27,9 @@ public class WinDisplay : MonoBehaviour {
             winnerText.color = Color.black;
         } else {
             var otherTeam = new List<TeamManager>(GameModel.instance.teams).Find(team => team != winner);
-            winnerText.text = string.Format("Team {0} won with {1} points!",
-                                            winner.teamColor.name, winner.score);
+            winnerText.text = string.Format("{0} Team won!", winner.teamColor.name);
             winnerText.color = winner.teamColor;
-            loserText.text = string.Format("Team {0} lost with {1} points...", otherTeam.teamColor.name, otherTeam.score);
+            loserText.text = string.Format("{0} Team lost...", otherTeam.teamColor.name);
             loserText.color = otherTeam.teamColor;
         }
         StartCoroutine(ResetCountdown());

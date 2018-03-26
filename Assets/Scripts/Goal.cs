@@ -76,6 +76,8 @@ public class Goal : MonoBehaviour {
             State.Posession, (Player player) => {
                 if (player != last_player && player.team == last_player?.team) {
                     SwitchToTeam(player.team);
+                } else if (player.team != last_player?.team) {
+                    ResetNeutral();
                 }
             });
     }

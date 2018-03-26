@@ -104,7 +104,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ShootTimerSeperatePassShoot() {
-        circularTimer?.StartTimer(forcedShotTime, delegate{});
+        // circularTimer?.StartTimer(forcedShotTime, delegate{});
 
 
         elapsedTime = 0.0f;
@@ -147,7 +147,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ShootTimer() {
-        circularTimer?.StartTimer(forcedShotTime, delegate{});
+        // circularTimer?.StartTimer(forcedShotTime, delegate{});
 
         elapsedTime = 0.0f;
         shotSpeed = baseShotSpeed;
@@ -262,7 +262,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void StopChargeShot() {
-        circularTimer?.StopTimer();
+        // circularTimer?.StopTimer();
         if (shootTimer != null) {
             StopCoroutine(shootTimer);
             shootTimer = null;
