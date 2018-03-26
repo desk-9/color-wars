@@ -9,6 +9,7 @@ public class WinDisplay : MonoBehaviour {
     public int SecondsBeforeReset = 10;
     Text winnerText;
     Text restartTime;
+    Text loserText;
 
     void Start () {
         winnerText = transform.FindComponent<Text>("WinnerText");
@@ -18,15 +19,19 @@ public class WinDisplay : MonoBehaviour {
     public void GameOverFunction() {
         winnerText = transform.FindComponent<Text>("WinnerText");
         restartTime = transform.FindComponent<Text>("RestartText");
+        loserText = transform.FindComponent<Text>("LoserText");
         Debug.Log("GameOverFunction!");
         var winner = GameModel.instance.winner;
         if (winner == null) {
             winnerText.text = "Tie!";
             winnerText.color = Color.black;
         } else {
-            winnerText.text = string.Format("{0} Team won with {1} points",
+            var otherTeam = new List<TeamManager>(GameModel.instance.teams).Find(team => team != winner);
+            winnerText.text = string.Format("Team {0} won with {1} points!",
                                             winner.teamColor.name, winner.score);
             winnerText.color = winner.teamColor;
+            loserText.text = string.Format("Team {0} lost with {1} points...", otherTeam.teamColor.name, otherTeam.score);
+            loserText.color = otherTeam.teamColor;
         }
         StartCoroutine(ResetCountdown());
     }

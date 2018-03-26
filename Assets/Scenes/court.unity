@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 104172858}
   - component: {fileID: 104172860}
   - component: {fileID: 104172859}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: StoneWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,7 +234,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 13.333333, y: 2.9333334}
+  m_Size: {x: 129, y: 2.9333334}
   m_EdgeRadius: 0
 --- !u!212 &104172860
 SpriteRenderer:
@@ -499,7 +499,8 @@ GameObject:
   - component: {fileID: 406070864}
   - component: {fileID: 406070866}
   - component: {fileID: 406070865}
-  m_Layer: 0
+  - component: {fileID: 406070867}
+  m_Layer: 15
   m_Name: StoneWall (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -531,7 +532,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -35.3, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -542,7 +543,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 13.333333, y: 2.9333334}
+  m_Size: {x: 55, y: 2.9333334}
   m_EdgeRadius: 0
 --- !u!212 &406070866
 SpriteRenderer:
@@ -588,6 +589,31 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!61 &406070867
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 406070863}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 35.3, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 13.333333, y: 2.9333334}
+    newSize: {x: 128.4, y: 2.9}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 2
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 55, y: 2.9333334}
+  m_EdgeRadius: 0
 --- !u!1 &441383114
 GameObject:
   m_ObjectHideFlags: 0
@@ -906,6 +932,95 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &514595436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 514595437}
+  - component: {fileID: 514595440}
+  - component: {fileID: 514595439}
+  - component: {fileID: 514595438}
+  m_Layer: 0
+  m_Name: LoserText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &514595437
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514595436}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.9999973, y: 0.9999973, z: 0.9999973}
+  m_Children: []
+  m_Father: {fileID: 900835211}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -71.9}
+  m_SizeDelta: {x: 373.1, y: 46.6}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &514595438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514595436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -900027084, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.1397059, g: 0.1397059, b: 0.1397059, a: 0.5}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
+--- !u!114 &514595439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514595436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.88235295, g: 1, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: becbed6094c7f4c439266dd22bf30523, type: 3}
+    m_FontSize: 32
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 300
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: Ice team lost...
+--- !u!222 &514595440
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 514595436}
 --- !u!1 &529171553
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,7 +1031,7 @@ GameObject:
   - component: {fileID: 529171554}
   - component: {fileID: 529171556}
   - component: {fileID: 529171555}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: StoneWall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -959,7 +1074,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 13.333333, y: 2.9333334}
+  m_Size: {x: 67, y: 2.9333334}
   m_EdgeRadius: 0
 --- !u!212 &529171556
 SpriteRenderer:
@@ -1200,7 +1315,7 @@ GameObject:
   - component: {fileID: 599013204}
   - component: {fileID: 599013206}
   - component: {fileID: 599013205}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: StoneWall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1243,7 +1358,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 13.333333, y: 2.9333334}
+  m_Size: {x: 67, y: 2.9333334}
   m_EdgeRadius: 0
 --- !u!212 &599013206
 SpriteRenderer:
@@ -1579,7 +1694,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 900835211}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1778,6 +1893,7 @@ RectTransform:
   m_Children:
   - {fileID: 989458721}
   - {fileID: 1209685342}
+  - {fileID: 514595437}
   - {fileID: 803571608}
   m_Father: {fileID: 563911783}
   m_RootOrder: 2
