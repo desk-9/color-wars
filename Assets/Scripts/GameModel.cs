@@ -39,6 +39,9 @@ public class GameModel : MonoBehaviour {
     public int winningScore = 5;
     public int requiredWinMargin = 2;
 
+    public TeamManager iceTeam;
+    public TeamManager fireTeam;
+
     public enum WinCondition {
         Time, FirstToX, TennisRules
     }
@@ -53,6 +56,7 @@ public class GameModel : MonoBehaviour {
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
     Ball ball;
+    ThermometerFill thermometerFill;
     public Goal goal;
 
     void Awake() {
@@ -102,6 +106,7 @@ public class GameModel : MonoBehaviour {
         foreach (var i in PlayerInputManager.instance.devices) {
             Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
+        thermometerFill = Object.FindObjectOfType<ThermometerFill>();
     }
 
     IEnumerator EndGameCountdown() {
@@ -151,6 +156,11 @@ public class GameModel : MonoBehaviour {
         for (int i = 0; i < teamColors.Length; ++i) {
             // Add 1 so we get Team 1 and Team 2
             teams[i] = new TeamManager(i + 1, teamColors[i]);
+            if (teamColors[i].name == "Ice") {
+                iceTeam = teams[i];
+            } else if (teamColors[i].name == "Fire") {
+                fireTeam = teams[i];
+            }
             if (staticGoals) {
                 goals[i].SetTeam(teams[i]);
             }
@@ -195,6 +205,7 @@ public class GameModel : MonoBehaviour {
         foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
             wall.KillSelf();
         }
+        thermometerFill.UpdateScore();
         UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
     }
 

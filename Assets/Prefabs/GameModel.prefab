@@ -75,8 +75,8 @@ MonoBehaviour:
   slowMoFactor: 0.4
   PitchShiftTime: 0.3
   SlowedPitch: 0.5
-  winningScore: 5
-  requiredWinMargin: 2
+  winningScore: 4
+  requiredWinMargin: 4
   winCondition: 2
   goal: {fileID: 0}
 --- !u!114 &114211205889215070
