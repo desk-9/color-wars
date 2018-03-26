@@ -20,6 +20,7 @@ public class Ball : MonoBehaviour {
     new Rigidbody2D rigidbody;
     NotificationCenter notificationCenter;
     string currentSprite; // Fire, Ice, or Neutral
+    TrailRenderer trailRenderer;
 
     bool charged_ = false;
     float base_mass;
@@ -51,21 +52,28 @@ public class Ball : MonoBehaviour {
                 if (player != null &&
                     player.team.teamColor.name != currentSprite &&
                     player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
-                    AdjustSpriteToTeam(player.team.teamColor.name);
+                    AdjustSpriteToTeam(player.team.teamColor);
                 }
             }
         }
     }
 
-    void AdjustSpriteToTeam(string team) {
+    void AdjustSpriteToTeam(NamedColor team) {
         if (currentSprite == "Neutral") {
-            currentSprite = team;
+            currentSprite = team.name;
         } else {
             currentSprite = "Neutral";
         }
 
         var newSprite = Resources.Load<Sprite>(string.Format("Sprites/Ball{0}", currentSprite));
         renderer.sprite = newSprite;
+
+        if (currentSprite == "Neutral") {
+            trailRenderer.enabled = false;
+        } else {
+            trailRenderer.enabled = true;
+            trailRenderer.material.color = team.color;
+        }
     }
 
     public bool charged {
@@ -104,6 +112,7 @@ public class Ball : MonoBehaviour {
         notificationCenter = GameModel.instance.nc;
         start_location = transform.position;
         currentSprite = "Neutral";
+        trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
         circleCollider = this.EnsureComponent<CircleCollider2D>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
