@@ -50,8 +50,8 @@ public class Ball : MonoBehaviour {
             if (owner_ != null) {
                 var player = owner_.gameObject.GetComponent<Player>();
                 if (player != null &&
-                    player.team.teamColor.name != currentSprite &&
-                    player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
+                    player.team.teamColor.name != currentSprite) {// &&
+                    //player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
                     AdjustSpriteToTeam(player.team.teamColor);
                 }
             }

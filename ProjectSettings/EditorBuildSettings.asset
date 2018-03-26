@@ -43,3 +43,6 @@ EditorBuildSettings:
     guid: 01dede488e9bd45d29d39e3c85425183
     path: Assets/Scenes/court-fire-ice.unity
     guid: b979d41be1e864a3c83c346d3e82f7da
+  - enabled: 1
+    path: Assets/Scenes/court.unity
+    guid: 1c2cb60301f544a03b8593a1b144db6b

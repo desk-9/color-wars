@@ -26,16 +26,11 @@ public class TronWall : MonoBehaviour {
         lineRenderer.positionCount = 2;
         linePoints[0] = creator.transform.position - ((creator.transform.position - transform.position)).normalized * tronWallOffset;
 
-        var wallColorGradient = new Gradient();
-        wallColorGradient.SetKeys(
-                                  new GradientColorKey[] {new GradientColorKey(team.teamColor, 0f),
-                                                          new GradientColorKey(team.teamColor, 1f)},
-                                  new GradientAlphaKey[] { new GradientAlphaKey(1f,0f),
-                                                           new GradientAlphaKey(1f, 1f)});
+        var wallMaterial = Resources.Load<Material>(string.Format("Material/{0}Wall", team.teamColor.name));
 
         edgeCollider = this.EnsureComponent<EdgeCollider2D>();
 
-        lineRenderer.colorGradient = wallColorGradient;
+        lineRenderer.material = wallMaterial;
         stretchWallCoroutine = StartCoroutine(StretchWall());
     }
 
@@ -46,6 +41,7 @@ public class TronWall : MonoBehaviour {
             lineRenderer.SetPositions(linePoints);
             edgeCollider.points = linePoints.
                 Select(point => (Vector2) transform.InverseTransformPoint(point)).ToArray();
+
             yield return new WaitForFixedUpdate();
         }
     }
