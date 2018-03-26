@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class TeamManager {
     public static bool playerSpritesAlreadySet = false;
@@ -15,13 +16,16 @@ public class TeamManager {
     List<Sprite> memberSprites;
     Dictionary<Player, Sprite> spriteUsage = new Dictionary<Player, Sprite>();
     Stack<Sprite> unusedSprites;
+    public static Dictionary<string, List<string>> teamToSprite = new Dictionary<string, List<string>>() {
+        {"Fire", new List<string>(){"FirePlayer", "FirePlayer2"}},
+        {"Ice", new List<string>(){"IcePlayer", "IcePlayer2"}}
+    };
+
     public TeamManager(int teamNumber, NamedColor teamColor) {
         this.teamNumber = teamNumber;
         this.teamColor = teamColor;
-        memberSprites = new List<Sprite>() {
-            Resources.Load<Sprite>("Sprites/alt-player-sprite"),
-            Resources.Load<Sprite>("Sprites/fuzzy-player-sprite"),
-        };
+        memberSprites = teamToSprite[teamColor.name].
+            Select(name => Resources.Load<Sprite>(string.Format("Sprites/{0}", name))).ToList();
         unusedSprites = new Stack<Sprite>(memberSprites);
     }
 

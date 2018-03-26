@@ -36,7 +36,6 @@ public class PlayerTronMechanic : MonoBehaviour {
         player         = this.EnsureComponent<Player>();
         playerStun = this.EnsureComponent<PlayerStun>();
         velocityWhileLaying = playerMovement.movementSpeed * layingSpeedMovementSpeedRatio;
-        this.EnsureComponent<PlayerDashBehavior>().layWallOnDash = layWallOnDash;
     }
 
     // Update is called once per frame

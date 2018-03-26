@@ -46,12 +46,12 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (player.team != null) {
             var name = player.team.teamColor.name;
             var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-            if (name == "Pink") {
-                dashEffectPrefab = pinkDashEffectPrefab;
-                chargeEffectSpawner.effectPrefab = pinkChargeEffectPrefab;
-            } else if (name == "Blue") {
-                dashEffectPrefab = blueDashEffectPrefab;
-                chargeEffectSpawner.effectPrefab = blueChargeEffectPrefab;
+            if (name == "Fire") {
+                dashEffectPrefab = fireDashEffectPrefab;
+                chargeEffectSpawner.effectPrefab = fireChargeEffectPrefab;
+            } else if (name == "Ice") {
+                dashEffectPrefab = iceDashEffectPrefab;
+                chargeEffectSpawner.effectPrefab = iceChargeEffectPrefab;
             }
         }
     }
@@ -201,15 +201,14 @@ public class PlayerDashBehavior : MonoBehaviour {
     }
 
 
-
     // ==================== //
     // === NEW BEHAVIOR === //
     // ==================== //
 
-    public GameObject blueDashEffectPrefab;
-    public GameObject pinkDashEffectPrefab;
-    public GameObject blueChargeEffectPrefab;
-    public GameObject pinkChargeEffectPrefab;
+    public GameObject iceDashEffectPrefab;
+    public GameObject fireDashEffectPrefab;
+    public GameObject iceChargeEffectPrefab;
+    public GameObject fireChargeEffectPrefab;
     public GameObject dashEffectPrefab;
     public float newMaxChargeTime = 1.0f;
     public float newChargeRate    = 1.0f;
