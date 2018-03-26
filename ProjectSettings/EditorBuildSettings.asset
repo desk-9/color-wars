@@ -32,7 +32,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/court-tutorial-2.unity
     guid: 2d6563ea653eb40efb09941cb4ea7198
   - enabled: 1
@@ -41,8 +41,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/court-tutorial.unity
     guid: 01dede488e9bd45d29d39e3c85425183
-    path: Assets/Scenes/court-fire-ice.unity
-    guid: b979d41be1e864a3c83c346d3e82f7da
-  - enabled: 1
-    path: Assets/Scenes/court.unity
-    guid: 1c2cb60301f544a03b8593a1b144db6b
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
