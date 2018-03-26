@@ -8,6 +8,23 @@ public class Ball : MonoBehaviour {
     public bool ownable {get; set;} = true;
     public GameObject implosionPrefab;
     public float adjustmentCoefficient;
+    public float chargedMassFactor = 1;
+
+    new SpriteRenderer renderer;
+    CircleCollider2D circleCollider;
+    GameObject target_;
+
+    Vector2 start_location;
+    BallCarrier owner_;
+
+    new Rigidbody2D rigidbody;
+    NotificationCenter notificationCenter;
+    string currentSprite; // Fire, Ice, or Neutral
+
+    bool charged_ = false;
+    float base_mass;
+
+    public BallCarrier lastOwner { get; private set; }
 
     public GameObject target {
         get { return target_;}
@@ -17,16 +34,10 @@ public class Ball : MonoBehaviour {
         }
     }
 
-    new SpriteRenderer renderer;
-    CircleCollider2D circleCollider;
-    GameObject target_;
-
-    Vector2 start_location;
-    BallCarrier owner_;
     public BallCarrier owner {
         get { return owner_; }
         set {
-            lastOwner = owner_;
+            lastOwner = lastOwner == null ? value : (owner_ == null) ? lastOwner : owner_;
             if (value != null) {
                 target_ = null;
             }
@@ -34,16 +45,29 @@ public class Ball : MonoBehaviour {
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             notificationCenter.NotifyMessage(message, this);
+
+            if (owner_ != null) {
+                var player = owner_.gameObject.GetComponent<Player>();
+                if (player != null &&
+                    player.team.teamColor.name != currentSprite &&
+                    player.playerNumber != lastOwner.gameObject.GetComponent<Player>().playerNumber) {
+                    AdjustSpriteToTeam(player.team.teamColor.name);
+                }
+            }
         }
     }
-    public BallCarrier lastOwner { get; private set; }
-    public float chargedMassFactor = 1;
 
-    new Rigidbody2D rigidbody;
-    NotificationCenter notificationCenter;
+    void AdjustSpriteToTeam(string team) {
+        if (currentSprite == "Neutral") {
+            currentSprite = team;
+        } else {
+            currentSprite = "Neutral";
+        }
 
-    bool charged_ = false;
-    float base_mass;
+        var newSprite = Resources.Load<Sprite>(string.Format("Sprites/Ball{0}", currentSprite));
+        renderer.sprite = newSprite;
+    }
+
     public bool charged {
         get {
             return charged_;
@@ -79,7 +103,8 @@ public class Ball : MonoBehaviour {
     void Start() {
         notificationCenter = GameModel.instance.nc;
         start_location = transform.position;
-        renderer = this.EnsureComponent<SpriteRenderer>();
+        currentSprite = "Neutral";
+        renderer = GetComponentInChildren<SpriteRenderer>();
         circleCollider = this.EnsureComponent<CircleCollider2D>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
         base_mass = rigidbody.mass;
