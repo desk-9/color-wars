@@ -7,24 +7,21 @@ using UtilityExtensions;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
-    // ==================== //
-    // === OLD BEHAVIOR === //
-    // ==================== //
-
+    public GameObject dashEffectPrefab;
+    public GameObject dashAimerPrefab;
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
     public BoxCollider2D dashGrabField;
     public float stealKnockbackPercentage = 0.8f;
-    public float maxChargeTime = 1.0f;
-    public float dashDuration = 0.25f;
-    public float chargeRate = 1.0f;
-    public float dashPower = 0.1f;
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
-
+    public float maxChargeTime = 1.0f;
+    public float chargeRate = 1.0f;
+    public float dashSpeed = 50.0f;
+    public float cooldown = 0.5f;
 
     PlayerStateManager stateManager;
-    PlayerMovement     playerMovement;
+    PlayerMovement playerMovement;
     Player player;
     Rigidbody2D        rb;
     Coroutine          chargeCoroutine;
@@ -32,6 +29,9 @@ public class PlayerDashBehavior : MonoBehaviour {
     PlayerTronMechanic tronMechanic;
     BallCarrier carrier;
     GameObject dashEffect;
+    GameObject dashAimer;
+    float lastDashTime;
+
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb             = this.EnsureComponent<Rigidbody2D>();
@@ -46,13 +46,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (player.team != null) {
             var name = player.team.teamColor.name;
             var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-            if (name == "Fire") {
-                dashEffectPrefab = fireDashEffectPrefab;
-                chargeEffectSpawner.effectPrefab = fireChargeEffectPrefab;
-            } else if (name == "Ice") {
-                dashEffectPrefab = iceDashEffectPrefab;
-                chargeEffectSpawner.effectPrefab = iceChargeEffectPrefab;
-            }
         }
     }
 
@@ -60,7 +53,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         var input = playerMovement.GetInputDevice();
 
         if (Time.time - lastDashTime < cooldown) return;
-        // Utility.Print(this.name, input, input?.GetControl(IC.InputControlType.Action1).WasPressed);
+
         if (input != null && input.GetControl(dashButton).WasPressed) {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
@@ -71,6 +64,8 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         // Lock Player at current position when charging.
         playerMovement.FreezePlayer();
+
+        dashAimer = Instantiate(dashAimerPrefab, transform.position, transform.rotation, transform);
     }
 
     void StopChargeDash() {
@@ -80,31 +75,35 @@ public class PlayerDashBehavior : MonoBehaviour {
             Destroy(dashEffect, 1.0f);
             dashGrabField.enabled = false;
             playerMovement.UnFreezePlayer();
+
+            Destroy(dashAimer);
         }
     }
 
     IEnumerator Charge() {
         var startChargeTime = Time.time;
         var chargeAmount    = 0.0f;
-        var dashSpeed       = 1.0f;
 
         while (true) {
-            chargeAmount += newChargeRate * Time.deltaTime;
-            dashSpeed    += chargeRate    * Time.deltaTime;
+            chargeAmount += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
             playerMovement.RotatePlayer();
 
             var input = playerMovement.GetInputDevice();
-            // Start dash and terminate Charge coroutine.
+
+            input.Vibrate(chargeAmount);
+
             if (
                 input != null && (
                     input.GetControl(dashButton).WasReleased
-                    || (Time.time - startChargeTime) >=
-                    newMaxChargeTime
+                    || (Time.time - startChargeTime) >= maxChargeTime
                 )
             ) {
                 stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
+
+                input.Vibrate(0);
+
                 yield break;
             }
 
@@ -124,11 +123,44 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (dashCoroutine != null) {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
-
-            if (tronMechanic.layWallOnDash) {
-                tronMechanic.PlaceCurrentWall();
-            }
         }
+    }
+
+    IEnumerator Dash(float chargeAmount) {
+        var dashDuration = Mathf.Min(chargeAmount, 0.5f);
+
+        Utility.TutEvent("Dash", this);
+        if (dashDuration > 0.25f) {
+            Utility.TutEvent("DashCharge", this);
+        }
+
+        // Set duration of particle system for each dash trail.
+        var dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
+        foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
+            ps.Stop();
+            var main = ps.main;
+            main.duration = dashDuration;
+            ps.Play();
+        }
+
+        var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
+        var startTime = Time.time;
+
+        dashGrabField.enabled = true;
+
+        while (Time.time - startTime <= dashDuration) {
+            rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
+
+            yield return null;
+        }
+
+        foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
+            ps.Stop();
+        }
+
+        dashGrabField.enabled = false;
+        Destroy(dashEffect, 1.0f);
+        stateManager.CurrentStateHasFinished();
     }
 
     Ball TrySteal(Player otherPlayer) {
@@ -194,65 +226,5 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     public void OnCollisionEnter2D(Collision2D collision) {
         HandleCollision(collision.gameObject);
-    }
-
-    void OnCollisionStay2D(Collision2D collision) {
-        HandleCollision(collision.gameObject);
-    }
-
-
-    // ==================== //
-    // === NEW BEHAVIOR === //
-    // ==================== //
-
-    public GameObject iceDashEffectPrefab;
-    public GameObject fireDashEffectPrefab;
-    public GameObject iceChargeEffectPrefab;
-    public GameObject fireChargeEffectPrefab;
-    public GameObject dashEffectPrefab;
-    public float newMaxChargeTime = 1.0f;
-    public float newChargeRate    = 1.0f;
-    public float dashSpeed        = 50.0f;
-    public float cooldown         = 0.5f;
-
-    float lastDashTime;
-
-    IEnumerator Dash(float chargeAmount) {
-        var dashDuration = Mathf.Min(chargeAmount, 0.5f);
-        Utility.TutEvent("Dash", this);
-        if (dashDuration > 0.25f) {
-            Utility.TutEvent("DashCharge", this);
-        }
-        // Set duration of particle system for each dash trail.
-        dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
-        foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
-            ps.Stop();
-            var main = ps.main;
-            main.duration = dashDuration;
-            ps.Play();
-        }
-
-        var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
-        var startTime = Time.time;
-
-        dashGrabField.enabled = true;
-
-        while (Time.time - startTime <= dashDuration) {
-            rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
-
-            yield return null;
-        }
-
-        foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
-            ps.Stop();
-        }
-
-        dashGrabField.enabled = false;
-        Destroy(dashEffect, 1.0f);
-        dashCoroutine = null;
-        if (tronMechanic.layWallOnDash) {
-            tronMechanic.PlaceCurrentWall();
-        }
-        stateManager.CurrentStateHasFinished();
     }
 }

@@ -168,12 +168,20 @@ public class ShootBallMechanic : MonoBehaviour {
                            GameObject target = null) {
         effect = Instantiate(chargeEffect, transform.position, transform.rotation, transform);
 
+        var inputDevice = playerMovement.GetInputDevice();
+        var vibrationIntensity = 0.0f;
+
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
-            var inputDevice = playerMovement.GetInputDevice();
+
+            inputDevice.Vibrate(vibrationIntensity += Time.deltaTime);
+
             if (inputDevice.GetControl(button).WasReleased) {
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
+
+                inputDevice.Vibrate(0);
+
                 if (target == null) {
                     Shoot();
                     yield break;
@@ -185,6 +193,9 @@ public class ShootBallMechanic : MonoBehaviour {
 
             yield return null;
         }
+
+        inputDevice.Vibrate(0);
+
         shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
         Shoot();
     }
