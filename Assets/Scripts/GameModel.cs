@@ -48,6 +48,8 @@ public class GameModel : MonoBehaviour {
 
     public Callback OnGameOver = delegate{};
 
+    public BackgroundScroller backgroundScroller;
+
     string[] countdownSoundNames = new string[]
     {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
 
@@ -207,6 +209,12 @@ public class GameModel : MonoBehaviour {
         foreach (var team in teams) {
             if ((Color)team.teamColor == scored.teamColor) {
                 team.IncrementScore();
+                if (team.teamColor.name == "Pink") {
+                    backgroundScroller.SetBackground(backgroundScroller.CurrentIndex() + 1);
+                }
+                else if (team.teamColor.name == "Blue") {
+                    backgroundScroller.SetBackground(backgroundScroller.CurrentIndex() - 1);
+                }
                 ScoreChanged();
             } else {
                 team.MakeInvisibleAfterGoal();

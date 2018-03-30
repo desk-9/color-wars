@@ -78,6 +78,7 @@ MonoBehaviour:
   winningScore: 4
   requiredWinMargin: 4
   winCondition: 2
+  backgroundScroller: {fileID: 0}
   goal: {fileID: 0}
 --- !u!114 &114211205889215070
 MonoBehaviour:
