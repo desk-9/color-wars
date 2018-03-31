@@ -163,7 +163,7 @@ MonoBehaviour:
   - TronWall
   - PlayerBlocker
   maxChargeTime: 1
-  chargeRate: 10
+  chargeRate: 0.5
   dashSpeed: 100
   cooldown: 0.5
 --- !u!114 &114205997563975182
