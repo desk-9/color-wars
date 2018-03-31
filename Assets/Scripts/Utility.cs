@@ -208,7 +208,6 @@ public static class Utility {
                                           bool blowback_is_velocity = false,
                                           float? stunTime = null) {
 
-        var ignoreList = player.GetComponent<Player>().team?.teamMembers;
         HashSet<GameObject> ignoreSet = new HashSet<GameObject>() {player.gameObject};
         if (player.GetComponent<Player>().team != null) {
             ignoreSet = new HashSet<GameObject>(

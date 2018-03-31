@@ -283,7 +283,6 @@ public class PlayerTutorial : MonoBehaviour {
                 stageStarts[tutorialStage.eventString]();
             }
             var eventString = tutorialStage.eventString + "Tutorial";
-            bool stageOver = false;
             currentTutorialStage = eventString;
             GameModel.instance.nc.CallOnStringEventWithSender(
                 currentTutorialStage,

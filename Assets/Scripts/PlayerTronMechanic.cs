@@ -16,6 +16,7 @@ public class PlayerTronMechanic : MonoBehaviour {
     public int wallLimit = 3;
     public bool layWallOnDash = false;
     public float wallBreakerStunTime = .5f;
+    public float tronWallLayingLimit = 1f;
 
     PlayerStateManager stateManager;
     PlayerMovement     playerMovement;
@@ -77,10 +78,14 @@ public class PlayerTronMechanic : MonoBehaviour {
 
         if (!layWallOnDash) {
             rb.velocity = transform.right * velocityWhileLaying;
+            rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
         }
 
         yield return null;
-        while (!inputDevice.GetControl(tronButton).WasReleased) {
+        var elapsedTime = 0f;
+        while (!inputDevice.GetControl(tronButton).WasReleased &&
+               elapsedTime < tronWallLayingLimit) {
+            elapsedTime += Time.deltaTime;
             yield return null;
         }
 

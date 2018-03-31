@@ -44,7 +44,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     public void SetPrefabColors() {
         if (player.team != null) {
-            var name = player.team.teamColor.name;
             var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
             dashEffectPrefab = player.team.resources.dashEffectPrefab;
             chargeEffectSpawner.effectPrefab = player.team.resources.dashChargeEffectPrefab;

@@ -53,22 +53,9 @@ public class GameModel : MonoBehaviour {
     string[] countdownSoundNames = new string[]
     {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
 
-    List<string> backgroundSprites = new List<string>() {
-        "grass-cold-2",
-        "grass-cold-2",
-        "grass-cold-1",
-        "grass-cold-1",
-        "neutral-grass",
-        "grass-hot-1",
-        "grass-hot-1",
-        "grass-hot-2",
-        "grass-hot-2",
-    };
-
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
     Ball ball;
-    SpriteRenderer background;
     public Goal goal;
 
     void Awake() {
@@ -118,14 +105,12 @@ public class GameModel : MonoBehaviour {
         foreach (var i in PlayerInputManager.instance.devices) {
             Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
-        background = GameObject.FindGameObjectWithTag("BackgroundGrass")?.GetComponent<SpriteRenderer>();
 
         // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
         nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
         this.FrameDelayCall(
             () => {foreach (var team in teams) {team.ResetTeam();}},
             3);
-
     }
 
     IEnumerator EndGameCountdown() {

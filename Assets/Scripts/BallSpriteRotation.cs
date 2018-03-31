@@ -7,13 +7,11 @@ delegate Vector2 VectorCallback();
 
 public class BallSpriteRotation : MonoBehaviour {
 
-    new SpriteRenderer renderer;
     Coroutine rotationCoroutine;
     VectorCallback GetKeepToVector;
 
     // Use this for initialization
     void Start () {
-        renderer = this.EnsureComponent<SpriteRenderer>();
         GetKeepToVector = () => transform.right;
         GameModel.instance.nc.CallOnMessage(Message.BallIsUnpossessed, BecameUnpossessed);
         GameModel.instance.nc.CallOnMessageWithSender(Message.BallIsPossessed,

@@ -15,26 +15,10 @@ public class MainMenuController : MonoBehaviour {
 
     public List<Text> MenuOptions = new List<Text>();
     int selectionIndex = 1;
-    PlayerInputManager playerInputManager;
-
-    void Start() {
-        playerInputManager = PlayerInputManager.instance;
-    }
 
     // Update is called once per frame
     void Update () {
         foreach (var device in InputManager.Devices) {
-            // Change selection?
-            // Vector2 direction = playerInputManager.GetLeftStickInput(device);
-            // if (direction.x > 0) {
-            //     IncrementSelection();
-            // }
-            // else if (direction.x < 0) {
-            //     DecrementSelection();
-            // }
-
-            // // Load selected scene?
-            // else
             if (device.GetControl(SelectButton).WasPressed) {
                 var selection = MenuOptions[selectionIndex];
                 var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();

@@ -26,9 +26,6 @@ public class PlayerInputManager : MonoBehaviour {
     public static int maxPlayers { get { return 4; } }
     public delegate bool DevicePredicate(InputDevice inputDevice);
 
-
-    Dictionary<InputDevice, User> users = new Dictionary<InputDevice, User>();
-
     // Keep track of input devices and their assignments.
     public Dictionary<InputDevice, bool> devices = new Dictionary<InputDevice, bool>();
 
@@ -62,7 +59,6 @@ public class PlayerInputManager : MonoBehaviour {
             Debug.LogFormat(this, "{0}: New device detected! Adding {1} to list.", name, device.SortOrder);
 
             devices.Add(device, false);
-            // users.Add(device, new User(device));
             this.FrameDelayCall(() => {
                     HandoutDevices();
                 }, 1);
@@ -75,7 +71,6 @@ public class PlayerInputManager : MonoBehaviour {
 
             devices.Remove(device);
             actions.Remove(device);
-            // users.Remove(device);
         };
 
         this.FrameDelayCall(() => {

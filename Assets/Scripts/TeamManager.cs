@@ -59,7 +59,6 @@ public class TeamManager {
 
     public void RemoveTeamMember(Player member) {
         if (teamMembers.Contains(member)) {
-            var renderer = member.GetComponent<SpriteRenderer>();
             unusedSprites.Push(spriteUsage[member]);
             spriteUsage.Remove(member);
             teamMembers.Remove(member);

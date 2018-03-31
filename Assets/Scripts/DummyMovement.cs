@@ -6,7 +6,7 @@ using UtilityExtensions;
 public class DummyMovement : MonoBehaviour, IPlayerMovement {
 
     PlayerStateManager stateManager;
-    Rigidbody2D rigidbody;
+    new Rigidbody2D rigidbody;
     Coroutine stayingStill;
     // Use this for initialization
     void Start () {

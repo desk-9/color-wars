@@ -17,8 +17,6 @@ public class Goal : MonoBehaviour {
     public bool resetTimerOnSwitchToSameTeam = false;
 
     ModCycle nextTeamIndex;
-    //new SpriteRenderer renderer;
-    Text goalSwitchText;
     Coroutine teamSwitching;
     Player lastPlayer = null;
     Color originalColor;
@@ -50,7 +48,6 @@ public class Goal : MonoBehaviour {
     void Start () {
         //originalColor = renderer.color;
         nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Count);
-        goalSwitchText = GetComponentInChildren<Text>();
         GameModel.instance.OnGameOver += StopTeamSwitching;
         ResetNeutral();
         RestartTeamSwitching();
@@ -111,31 +108,6 @@ public class Goal : MonoBehaviour {
             SwitchToTeam(ballTeam);
         }
     }
-
-    // void SetNotificationText(string to, bool playSound = true) {
-    //     if (!goalSwitchText.enabled) {
-    //         goalSwitchText.enabled = true;
-    //     }
-    //     goalSwitchText.text = to;
-    //     if (playSound) {
-    //         AudioManager.instance.GoalSwitchWarning.Play(goalSwitchWarningVolume);
-    //     }
-    // }
-
-    // IEnumerator TeamSwitching() {
-
-    //     yield return new WaitForSeconds(goalSwitchInterval - goalSwitchNotificationLength);
-    //     if (!timedSwitching) {
-    //         yield break;
-    //     }
-    //     goalSwitchText.color = PeekNextTeam().teamColor;
-    //     for (int i = goalSwitchNotificationLength; i > 0; --i) {
-    //         SetNotificationText(i.ToString());
-    //         yield return new WaitForSeconds(1);
-    //     }
-    //     goalSwitchText.enabled = false;
-    //     SwitchToNextTeam(true);
-    // }
 
     public void StopTeamSwitching() {
         // if (teamSwitching != null) {
