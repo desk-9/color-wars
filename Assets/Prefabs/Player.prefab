@@ -215,18 +215,9 @@ MonoBehaviour:
   circularTimerPrefab: {fileID: 1022924467689572, guid: 3fa79a1d2b91d48e39e53e08c9f861fe,
     type: 2}
   circleTimerScale: {x: 0.6, y: 0.6}
-  seperatePassAndShoot: 0
   chargedBallPercent: 0
   chargedBallMassFactor: 100
   chargedBallStuns: 0
-  scoreGoalButton: 12
-  juggleButton: 18
-  rotationLerpTime: 0.2
-  passLeadMultiplier: 1
-  juggleSpeed: 12
-  separateScoreGoalButton: 1
-  aimAssistAngle: 7.5
-  adaptiveAimAssist: 0
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
 --- !u!114 &114319664088283476
@@ -256,6 +247,11 @@ MonoBehaviour:
   ballTurnSpeed: 65
   chargedBallStuns: 0
   slowMoOnCarry: 1
+  aimAssistThreshold: 15
+  aimAssistLerpAmount: 0.5
+  goalAimmAssistOffset: 1
+  delayBetweenSnaps: 0.2
+  snapEpsilon: 5
 --- !u!114 &114694489525978138
 MonoBehaviour:
   m_ObjectHideFlags: 1

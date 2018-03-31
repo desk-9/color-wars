@@ -15,6 +15,8 @@ public class BallCarrier : MonoBehaviour {
     public float aimAssistThreshold = 20f;
     public float aimAssistLerpAmount = .5f;
     public float goalAimmAssistOffset = 1f;
+    public float delayBetweenSnaps = .2f;
+    public float snapEpsilon = 5f;
 
     float ballOffsetFromCenter = .5f;
     IPlayerMovement playerMovement;
@@ -26,6 +28,9 @@ public class BallCarrier : MonoBehaviour {
     Player player;
     GameObject goal;
     Rigidbody2D rb2d;
+    GameObject snapToObject;
+    float snapDelay = 0f;
+    Vector2 stickAngleWhenSnapped;
 
     const float ballOffsetMultiplier = 1.07f;
 
@@ -34,17 +39,19 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void Start() {
+        snapToObject = null;
         player = GetComponent<Player>();
         playerMovement = GetComponent<IPlayerMovement>();
         stateManager = GetComponent<PlayerStateManager>();
         rb2d = GetComponent<Rigidbody2D>();
         if (playerMovement != null && stateManager != null) {
             stateManager.CallOnStateEnter(
-                State.Posession, playerMovement.FreezePlayer);
+                                          State.Posession, playerMovement.FreezePlayer);
             stateManager.CallOnStateExit(
-                State.Posession, playerMovement.UnFreezePlayer);
+                                         State.Posession, playerMovement.UnFreezePlayer);
         }
         laserGuide = this.GetComponent<LaserGuide>();
+        this.FrameDelayCall(() => {GetGoal(); GetTeammate();}, 2);
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -77,43 +84,59 @@ public class BallCarrier : MonoBehaviour {
         }
     }
 
-    GameObject GetTeammate() {
-        if (teammate != null) {
-            return teammate;
-        }
+    void GetTeammate() {
         var team = player.team;
         if (team == null) {
-            return null;
+            return;
         }
         foreach (var teammate in team.teamMembers) {
             if (teammate != player) {
-                return teammate.gameObject;
+                this.teammate = teammate.gameObject;
             }
         }
-        return null;
     }
 
-    GameObject GetGoal() {
-        if (goal != null) {
-            return goal;
-        }
-        return GameObject.FindObjectOfType<Goal>().gameObject;
+    void GetGoal() {
+        goal = GameObject.FindObjectOfType<Goal>().gameObject;
     }
 
-    void RotateTowards(Vector2 towards) {
-        var lerpedVector = Vector2.Lerp(transform.right, towards, aimAssistLerpAmount);
-        rb2d.rotation = Vector2.SignedAngle(Vector2.right, lerpedVector);
+    void SnapToGameObject() {
+        var vector = (snapToObject.transform.position - transform.position).normalized;
+        rb2d.rotation = Vector2.SignedAngle(Vector2.right, vector);
     }
 
     void SnapAimTowardsTargets() {
-        var goalVector = ((GetGoal().transform.position + Vector3.up) - transform.position).normalized;
-        var teammateVector = (GetTeammate().transform.position - transform.position).normalized;
-        if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold) {
-            playerMovement?.RotatePlayer(goalVector);
-        } else if (Mathf.Abs(Vector2.Angle(transform.right, teammateVector)) < aimAssistThreshold) {
-            playerMovement?.RotatePlayer(teammateVector);
-        } else {
+        if (snapDelay > 0f) {
             playerMovement?.RotatePlayer();
+            return;
+        }
+        PlayerMovement pm = (PlayerMovement)playerMovement;
+        var stickDirection = new Vector2(pm.GetInputDevice().LeftStickX, pm.GetInputDevice().LeftStickY);
+        if (snapToObject != null) {
+            var vector = (snapToObject.transform.position - transform.position).normalized;
+            if (stickDirection == Vector2.zero ||
+                Mathf.Abs(Vector2.Angle(vector, stickDirection)) < aimAssistThreshold ||
+                Mathf.Abs(Vector2.Angle(stickAngleWhenSnapped, stickDirection)) < snapEpsilon) {
+                SnapToGameObject();
+            } else {
+                snapDelay = delayBetweenSnaps;
+                snapToObject = null;
+                playerMovement?.RotatePlayer();
+            }
+        } else {
+            var goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
+            var teammateVector = (teammate.transform.position - transform.position).normalized;
+            if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold) {
+                snapToObject = goal;
+                stickAngleWhenSnapped = stickDirection;
+                SnapToGameObject();
+            } else if (Mathf.Abs(Vector2.Angle(transform.right, teammateVector)) < aimAssistThreshold) {
+                snapToObject = teammate;
+                stickAngleWhenSnapped = stickDirection;
+                SnapToGameObject();
+            } else {
+                playerMovement?.RotatePlayer();
+            }
         }
     }
 
@@ -125,6 +148,7 @@ public class BallCarrier : MonoBehaviour {
         while (true) {
             SnapAimTowardsTargets();
             PlaceBallAtNose();
+            snapDelay -= Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
     }
@@ -158,14 +182,14 @@ public class BallCarrier : MonoBehaviour {
         if (ball != null) {
             var rigidbody = ball.GetComponent<Rigidbody2D>();
             Vector2 newPosition = CircularLerp(
-                ball.transform.position, NosePosition(ball), transform.position,
-                ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
+                                               ball.transform.position, NosePosition(ball), transform.position,
+                                               ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
             rigidbody.MovePosition(newPosition);
         }
     }
 
     Vector2 CircularLerp(Vector2 start, Vector2 end, Vector2 center, float radius,
-                      float timeDelta, float speed) {
+                         float timeDelta, float speed) {
         float angularDistance = timeDelta * speed;
         var centeredStart = start - center;
         var centerToStartDirection = centeredStart.normalized;

@@ -33,7 +33,7 @@ public class DummyMovement : MonoBehaviour, IPlayerMovement {
         }
     }
 
-    public void RotatePlayer(Vector2? snapAngle = null) {
+    public void RotatePlayer() {
         rigidbody.rotation = Mathf.Repeat(rigidbody.rotation + 1f, 360);
     }
 
