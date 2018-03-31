@@ -14,9 +14,10 @@ public class BallCarrier : MonoBehaviour {
     public bool slowMoOnCarry = true;
     public float aimAssistThreshold = 20f;
     public float aimAssistLerpAmount = .5f;
-    public float goalAimmAssistOffset = 1f;
+    public float goalAimAssistOffset = 1f;
     public float delayBetweenSnaps = .2f;
     public float snapEpsilon = 5f;
+    public float snapLerpStrength = .5f;
 
     float ballOffsetFromCenter = .5f;
     IPlayerMovement playerMovement;
@@ -45,10 +46,8 @@ public class BallCarrier : MonoBehaviour {
         stateManager = GetComponent<PlayerStateManager>();
         rb2d = GetComponent<Rigidbody2D>();
         if (playerMovement != null && stateManager != null) {
-            stateManager.CallOnStateEnter(
-                                          State.Posession, playerMovement.FreezePlayer);
-            stateManager.CallOnStateExit(
-                                         State.Posession, playerMovement.UnFreezePlayer);
+            stateManager.CallOnStateEnter(State.Posession, playerMovement.FreezePlayer);
+            stateManager.CallOnStateExit(State.Posession, playerMovement.UnFreezePlayer);
         }
         laserGuide = this.GetComponent<LaserGuide>();
         this.FrameDelayCall(() => {GetGoal(); GetTeammate();}, 2);
@@ -102,10 +101,13 @@ public class BallCarrier : MonoBehaviour {
 
     void SnapToGameObject() {
         var vector = (snapToObject.transform.position - transform.position).normalized;
-        rb2d.rotation = Vector2.SignedAngle(Vector2.right, vector);
+        rb2d.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(transform.right, vector, snapLerpStrength));
     }
 
     void SnapAimTowardsTargets() {
+        if (teammate == null) {
+            return;
+        }
         if (snapDelay > 0f) {
             playerMovement?.RotatePlayer();
             return;
@@ -181,9 +183,9 @@ public class BallCarrier : MonoBehaviour {
     void PlaceBallAtNose() {
         if (ball != null) {
             var rigidbody = ball.GetComponent<Rigidbody2D>();
-            Vector2 newPosition = CircularLerp(
-                                               ball.transform.position, NosePosition(ball), transform.position,
-                                               ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
+            Vector2 newPosition =
+                CircularLerp(ball.transform.position, NosePosition(ball), transform.position,
+                             ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
             rigidbody.MovePosition(newPosition);
         }
     }

@@ -249,9 +249,10 @@ MonoBehaviour:
   slowMoOnCarry: 1
   aimAssistThreshold: 15
   aimAssistLerpAmount: 0.5
-  goalAimmAssistOffset: 1
+  goalAimAssistOffset: 1
   delayBetweenSnaps: 0.2
   snapEpsilon: 5
+  snapLerpStrength: 0.2
 --- !u!114 &114694489525978138
 MonoBehaviour:
   m_ObjectHideFlags: 1

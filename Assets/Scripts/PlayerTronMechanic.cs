@@ -113,7 +113,7 @@ public class PlayerTronMechanic : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") &&
-            layWallCoroutine != null) {
+                layWallCoroutine != null) {
             StopCoroutine(layWallCoroutine);
             layWallCoroutine = null;
             PlaceCurrentWall();

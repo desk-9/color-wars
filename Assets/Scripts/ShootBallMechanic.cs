@@ -14,7 +14,7 @@ public class ShootBallMechanic : MonoBehaviour {
     public GameObject circularTimerPrefab;
     public Vector2 circleTimerScale;
     CircularTimer circularTimer;
-     public float chargedBallPercent = 0.4f;
+    public float chargedBallPercent = 0.4f;
     public float chargedBallMassFactor = 1;
     public bool chargedBallStuns = false;
 
