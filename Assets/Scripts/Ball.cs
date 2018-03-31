@@ -51,7 +51,8 @@ public class Ball : MonoBehaviour {
     }
 
     void SetSpriteToNeutral() {
-        renderer.sprite = GameModel.instance.neutralResources.ballSprite;
+        // renderer.sprite = GameModel.instance.neutralResources.ballSprite;
+        renderer.color = Color.white;
         trailRenderer.enabled = false;
     }
 
@@ -59,8 +60,9 @@ public class Ball : MonoBehaviour {
         if (goal.currentTeam == null) {
             SetSpriteToNeutral();
         } else {
-            var newSprite = goal.currentTeam.resources.ballSprite;
-            renderer.sprite = newSprite;
+            // var newSprite = goal.currentTeam.resources.ballSprite;
+            // renderer.sprite = newSprite;
+            renderer.color = goal.currentTeam.teamColor;
             trailRenderer.material.color = goal.currentTeam.teamColor;
         }
     }

@@ -92,8 +92,8 @@ PolygonCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.66888887, y: 0.58}
+    pivot: {x: 0.43, y: 0.5}
+    oldSize: {x: 1, y: 1.0005571}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -120,8 +120,8 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.66888887, y: 0.58}
+    pivot: {x: 0.43, y: 0.5}
+    oldSize: {x: 1, y: 1.0005571}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -141,20 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iceDashEffectPrefab: {fileID: 1900474533239010, guid: 46280dda21ffa4df4ba81d057ac442c9,
-    type: 2}
-  fireDashEffectPrefab: {fileID: 1900474533239010, guid: 58b3a30e191904ae7be65123edc3bc8e,
-    type: 2}
-  iceChargeEffectPrefab: {fileID: 1691723634291742, guid: 6159c26c7c3ab40cfb9ebb7971ecbdb5,
-    type: 2}
-  fireChargeEffectPrefab: {fileID: 1691723634291742, guid: 9d4eb0d1094684e6f8612a9e011f290c,
-    type: 2}
   dashEffectPrefab: {fileID: 1900474533239010, guid: 6dea4c63d873f4536a25869ae766d75e,
     type: 2}
   dashAimerPrefab: {fileID: 1412520093174376, guid: 617b99692ebf74635a05668a5f115b86,
     type: 2}
   dashButton: 11
-  dashGrabField: {fileID: 61713479168382808}
   stealKnockbackPercentage: 0.8
   onlyStunBallCarriers: 1
   onlyStealOnBallHit: 1
@@ -3907,7 +3898,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: c83e77b170dfb405d95ff654ab1c7a6e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4518eb10161864846b8eb7ac354400e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
