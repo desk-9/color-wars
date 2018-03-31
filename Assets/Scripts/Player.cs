@@ -15,17 +15,19 @@ public class Player : MonoBehaviour {
     float initalRotation;
     Rigidbody2D rb2d;
     new Collider2D collider;
-    ParticleSystem explosion;
+    GameObject explosionEffect;
 
     public void MakeInvisibleAfterGoal() {
         renderer.enabled = false;
         collider.enabled = false;
         stateManager.AttemptFrozenAfterGoal(delegate{}, delegate{});
 
-        var explosionMain = explosion.main;
+        explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
+        var explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
+        var explosionMain = explosionParticleSystem.main;
         explosionMain.startLifetime = GameModel.instance.pauseAfterGoalScore;
         explosionMain.startColor = team.teamColor.color;
-        explosion.Play();
+        explosionParticleSystem.Play();
     }
 
     public void ResetPlayerPosition() {
@@ -35,6 +37,10 @@ public class Player : MonoBehaviour {
         renderer.enabled = true;
         collider.enabled = true;
         rb2d.velocity = Vector2.zero;
+        if (explosionEffect != null) {
+            Destroy(explosionEffect);
+            explosionEffect = null;
+        }
     }
 
     public void BeginPlayerMovement() {
@@ -62,7 +68,6 @@ public class Player : MonoBehaviour {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = GetComponent<PlayerStateManager>();
         collider = this.EnsureComponent<Collider2D>();
-        explosion = GetComponent<ParticleSystem>();
         if ((GameModel.playerTeamsAlreadySelected || GameModel.cheatForcePlayerAssignment)
               && playerNumber > 0) {
             // Dummies have a player number of -1, and shouldn't get a team

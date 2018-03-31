@@ -15,6 +15,7 @@ public class TeamResourceManager {
     public Material wallMaterial {get; private set;}
     public GameObject dashAimerPrefab {get; private set;}
     public Sprite ballSprite {get; private set;}
+    public GameObject explosionPrefab {get; private set;}
 
     TeamManager team;
     string teamDirectory = "Teams/Neutral";
@@ -61,5 +62,6 @@ public class TeamResourceManager {
         altPlayerSprite = MakeAllTeamResource<Sprite>("AltPlayer");
         shootChargeEffectPrefab = MakeAllTeamResource<GameObject>("ShootChargeEffect");
         dashAimerPrefab = MakeAllTeamResource<GameObject>("DashAimer");
+        explosionPrefab = MakeAllTeamResource<GameObject>("ExplosionPrefab");
     }
 }
