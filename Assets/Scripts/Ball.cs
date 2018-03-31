@@ -51,7 +51,7 @@ public class Ball : MonoBehaviour {
     }
 
     void SetSpriteToNeutral() {
-        renderer.sprite = Resources.Load<Sprite>("Sprites/BallNeutral");
+        renderer.sprite = GameModel.instance.neutralResources.ballSprite;
         trailRenderer.enabled = false;
     }
 
@@ -59,7 +59,7 @@ public class Ball : MonoBehaviour {
         if (goal.currentTeam == null) {
             SetSpriteToNeutral();
         } else {
-            var newSprite = Resources.Load<Sprite>(string.Format("Sprites/Ball{0}", goal.currentTeam.teamColor.name));
+            var newSprite = goal.currentTeam.resources.ballSprite;
             renderer.sprite = newSprite;
             trailRenderer.material.color = goal.currentTeam.teamColor;
         }

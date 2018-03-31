@@ -56,10 +56,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreDisplayer: {fileID: 0}
   teamColors:
-  - color: {r: 0.9372549, g: 0.39215687, b: 0.14117648, a: 1}
-    name: Fire
-  - color: {r: 0.21176471, g: 0.6313726, b: 0.81960785, a: 1}
-    name: Ice
+  - color: {r: 0.9254902, g: 0.32941177, b: 1, a: 1}
+    name: Pink
+  - color: {r: 0.014705896, g: 0.9184584, b: 1, a: 1}
+    name: Blue
   matchLength: 4
   meta: {fileID: 0}
   pauseAfterGoalScore: 3

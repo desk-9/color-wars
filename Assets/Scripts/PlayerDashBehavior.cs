@@ -7,14 +7,9 @@ using UtilityExtensions;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
-    public GameObject iceDashEffectPrefab;
-    public GameObject fireDashEffectPrefab;
-    public GameObject iceChargeEffectPrefab;
-    public GameObject fireChargeEffectPrefab;
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
-    public BoxCollider2D dashGrabField;
     public float stealKnockbackPercentage = 0.8f;
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
@@ -42,20 +37,15 @@ public class PlayerDashBehavior : MonoBehaviour {
         player         = this.EnsureComponent<Player>();
         carrier        = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
-        dashGrabField.enabled = false;
     }
 
     public void SetPrefabColors() {
         if (player.team != null) {
             var name = player.team.teamColor.name;
             var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-            if (name == "Fire") {
-                dashEffectPrefab = fireDashEffectPrefab;
-                chargeEffectSpawner.effectPrefab = fireChargeEffectPrefab;
-            } else if (name == "Ice") {
-                dashEffectPrefab = iceDashEffectPrefab;
-                chargeEffectSpawner.effectPrefab = iceChargeEffectPrefab;
-            }
+            dashEffectPrefab = player.team.resources.dashEffectPrefab;
+            chargeEffectSpawner.effectPrefab = player.team.resources.dashChargeEffectPrefab;
+            dashAimerPrefab = player.team.resources.dashAimerPrefab;
         }
     }
 
@@ -82,7 +72,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (chargeCoroutine != null) {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
-            dashGrabField.enabled = false;
             playerMovement.UnFreezePlayer();
 
             Destroy(dashAimer);
@@ -151,7 +140,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         var startTime = Time.time;
 
-        dashGrabField.enabled = true;
 
         while (Time.time - startTime <= dashDuration) {
             rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
@@ -163,7 +151,6 @@ public class PlayerDashBehavior : MonoBehaviour {
             ps.Stop();
         }
 
-        dashGrabField.enabled = false;
         Destroy(dashEffect, 1.0f);
         stateManager.CurrentStateHasFinished();
     }

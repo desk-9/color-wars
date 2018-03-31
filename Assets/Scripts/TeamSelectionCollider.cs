@@ -11,7 +11,7 @@ public class TeamSelectionCollider : MonoBehaviour {
     public bool mustDashToSwitch = true;
     // Use this for initialization
     void Start () {
-        if (teamNumber < GameModel.instance.teams.Length) {
+        if (teamNumber < GameModel.instance.teams.Count) {
             team = GameModel.instance.teams[teamNumber];
         }
     }

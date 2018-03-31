@@ -65,7 +65,7 @@ public class PlayerTutorial : MonoBehaviour {
         };
 
         if (runTutorial) {
-            
+
             tutorial = GameObject.Find("Tutorial");
             tutorialCanvas = tutorial.transform.Find("TutorialCanvas").gameObject;
             tutorialCanvas.SetActive(true);
@@ -316,8 +316,7 @@ public class PlayerTutorial : MonoBehaviour {
         GameModel.playerTeamsAlreadySelected = true;
         GameModel.playerTeamAssignments = new Dictionary<int, int>();
         foreach (var player in GameModel.instance.GetPlayersWithTeams()) {
-            var teamIndex = Array.FindIndex(
-                GameModel.instance.teams, team => team == player.team);
+            var teamIndex = GameModel.instance.teams.IndexOf(player.team);
             GameModel.playerTeamAssignments[player.playerNumber] = teamIndex;
         }
         TeamManager.playerSpritesAlreadySet = true;

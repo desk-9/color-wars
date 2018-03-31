@@ -15,7 +15,7 @@ public class ThermometerFill : MonoBehaviour {
     }
 
     int ScoreTemperature() {
-        return GameModel.instance.fireTeam.score - GameModel.instance.iceTeam.score;
+        return 0; // GameModel.instance.fireTeam.score - GameModel.instance.iceTeam.score;
     }
 
     public void UpdateScore() {

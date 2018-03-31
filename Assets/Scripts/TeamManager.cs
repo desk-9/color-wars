@@ -12,20 +12,19 @@ public class TeamManager {
 
     public int score {get; private set;}
     public List<Player> teamMembers = new List<Player>();
+    public TeamResourceManager resources;
 
     List<Sprite> memberSprites;
     Dictionary<Player, Sprite> spriteUsage = new Dictionary<Player, Sprite>();
     Stack<Sprite> unusedSprites;
-    public static Dictionary<string, List<string>> teamToSprite = new Dictionary<string, List<string>>() {
-        {"Fire", new List<string>(){"FirePlayer", "FirePlayer2"}},
-        {"Ice", new List<string>(){"IcePlayer", "IcePlayer2"}}
-    };
 
     public TeamManager(int teamNumber, NamedColor teamColor) {
         this.teamNumber = teamNumber;
         this.teamColor = teamColor;
-        memberSprites = teamToSprite[teamColor.name].
-            Select(name => Resources.Load<Sprite>(string.Format("Sprites/{0}", name))).ToList();
+        resources = new TeamResourceManager(this);
+        memberSprites = new List<Sprite>() {
+            resources.mainPlayerSprite, resources.altPlayerSprite
+        };
         unusedSprites = new Stack<Sprite>(memberSprites);
     }
 

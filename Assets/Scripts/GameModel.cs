@@ -15,7 +15,8 @@ public class GameModel : MonoBehaviour {
     public static GameModel instance;
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
-    public TeamManager[] teams { get; set; }
+    public List<TeamManager> teams { get; set; }
+    public TeamResourceManager neutralResources;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
     public NotificationCenter nc;
@@ -38,9 +39,6 @@ public class GameModel : MonoBehaviour {
 
     public int winningScore = 5;
     public int requiredWinMargin = 2;
-
-    public TeamManager iceTeam;
-    public TeamManager fireTeam;
 
     public enum WinCondition {
         Time, FirstToX, TennisRules
@@ -68,7 +66,6 @@ public class GameModel : MonoBehaviour {
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
     Ball ball;
-    ThermometerFill thermometerFill;
     SpriteRenderer background;
     public Goal goal;
 
@@ -119,7 +116,6 @@ public class GameModel : MonoBehaviour {
         foreach (var i in PlayerInputManager.instance.devices) {
             Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
-        thermometerFill = Object.FindObjectOfType<ThermometerFill>();
         background = GameObject.FindGameObjectWithTag("BackgroundGrass")?.GetComponent<SpriteRenderer>();
     }
 
@@ -160,26 +156,18 @@ public class GameModel : MonoBehaviour {
     }
 
     void InitializeTeams() {
-        teams = new TeamManager[teamColors.Length];
+        teams = new List<TeamManager>();
+        neutralResources = new TeamResourceManager(null);
         var goals = FindObjectsOfType<NewGoal>();
-
-        if (staticGoals) {
-            Debug.Assert(goals.Length == teams.Length);
-        }
 
         for (int i = 0; i < teamColors.Length; ++i) {
             // Add 1 so we get Team 1 and Team 2
-            teams[i] = new TeamManager(i + 1, teamColors[i]);
-            if (teamColors[i].name == "Ice") {
-                iceTeam = teams[i];
-            } else if (teamColors[i].name == "Fire") {
-                fireTeam = teams[i];
-            }
+            teams.Add(new TeamManager(i + 1, teamColors[i]));
             if (staticGoals) {
                 goals[i].SetTeam(teams[i]);
             }
         }
-        NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Length);
+        NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Count);
     }
 
     void ScoreChanged() {
@@ -216,18 +204,7 @@ public class GameModel : MonoBehaviour {
                 team.MakeInvisibleAfterGoal();
             }
         }
-        thermometerFill.UpdateScore();
-        UpdateBackground();
         UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
-    }
-
-    void UpdateBackground() {
-        var backgroundIndex = (fireTeam.score - iceTeam.score) + requiredWinMargin;
-        if (backgroundIndex < backgroundSprites.Count && background != null) {
-            var sprite = Resources.Load<Sprite>(
-                string.Format("Sprites/{0}", backgroundSprites[backgroundIndex]));
-            background.sprite = sprite;
-        }
     }
 
     void ResetGameAfterGoal() {

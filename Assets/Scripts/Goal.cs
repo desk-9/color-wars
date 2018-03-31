@@ -49,7 +49,7 @@ public class Goal : MonoBehaviour {
 
     void Start () {
         //originalColor = renderer.color;
-        nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Length);
+        nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Count);
         goalSwitchText = GetComponentInChildren<Text>();
         GameModel.instance.OnGameOver += StopTeamSwitching;
         ResetNeutral();

@@ -46,7 +46,7 @@ public class ScoreDisplayer : MonoBehaviour {
     }
 
     public void UpdateScores() {
-        for (int i = 0; i < teams.Count && i < GameModel.instance.teams.Length; i++) {
+        for (int i = 0; i < teams.Count && i < GameModel.instance.teams.Count; i++) {
             var text = teams[i];
             var team = GameModel.instance.teams[i];
             text.text = string.Format("{0} Team: {1}", team.teamColor.name, team.score);

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 198506339894622706}
   - component: {fileID: 199216439220642128}
   m_Layer: 0
-  m_Name: NeutralChargeEffect
+  m_Name: DashChargeEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

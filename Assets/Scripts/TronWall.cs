@@ -26,11 +26,9 @@ public class TronWall : MonoBehaviour {
         lineRenderer.positionCount = 2;
         linePoints[0] = creator.transform.position - ((creator.transform.position - transform.position)).normalized * tronWallOffset;
 
-        var wallMaterial = Resources.Load<Material>(string.Format("Material/{0}Wall", team.teamColor.name));
-
         edgeCollider = this.EnsureComponent<EdgeCollider2D>();
 
-        lineRenderer.material = wallMaterial;
+        lineRenderer.material = team.resources.wallMaterial;
         stretchWallCoroutine = StartCoroutine(StretchWall());
     }
 
