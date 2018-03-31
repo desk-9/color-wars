@@ -16,7 +16,9 @@ public delegate void GameObjectCallback(GameObject thing);
 
 public enum Message {
     BallIsPossessed,
-    BallIsUnpossessed
+    BallIsUnpossessed,
+    ResetAfterGoal,
+    CountdownFinished,
 };
 
 public class NotificationCenter {
@@ -26,7 +28,7 @@ public class NotificationCenter {
         new SortedDictionary<State, PlayerCallback>();
     SortedDictionary<State, PlayerCallback> onAnyPlayerEndSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    PlayerTransitionCallback onAnyCangeSubscribers = delegate{};
+    PlayerTransitionCallback onAnyChangeSubscribers = delegate{};
 
     public NotificationCenter() {
         foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
@@ -47,7 +49,7 @@ public class NotificationCenter {
             player.CallOnStateExit(
                 state, () => onAnyPlayerEndSubscribers[state](playerComponent));
             player.CallOnAnyStateChange(
-                (State start, State end) => onAnyCangeSubscribers(playerComponent, start, end));
+                (State start, State end) => onAnyChangeSubscribers(playerComponent, start, end));
         }
     }
 
@@ -60,7 +62,7 @@ public class NotificationCenter {
     }
 
     public void CallOnStateTransition(PlayerTransitionCallback callback) {
-        onAnyCangeSubscribers += callback;
+        onAnyChangeSubscribers += callback;
     }
 
     // Enum-based callback system

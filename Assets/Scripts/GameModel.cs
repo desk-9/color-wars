@@ -117,6 +117,7 @@ public class GameModel : MonoBehaviour {
             Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
         background = GameObject.FindGameObjectWithTag("BackgroundGrass")?.GetComponent<SpriteRenderer>();
+        nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
     }
 
     IEnumerator EndGameCountdown() {
@@ -212,11 +213,10 @@ public class GameModel : MonoBehaviour {
             team.ResetTeam();
         }
         ball.ResetBall(pauseAfterReset);
-        UtilityExtensionsContainer.TimeDelayCall(this, StartGameAfterBallAnimation, pauseAfterReset);
+        nc.NotifyMessage(Message.ResetAfterGoal, this);
         foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
             wall.KillSelf();
         }
-
 
         goal?.SwitchToNextTeam(false);
         goal?.ResetNeutral();
