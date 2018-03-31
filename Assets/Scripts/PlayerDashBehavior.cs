@@ -92,8 +92,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 
             var input = playerMovement.GetInputDevice();
 
-            input.Vibrate(chargeAmount);
-
             if (
                 input != null && (
                     input.GetControl(dashButton).WasReleased
@@ -101,8 +99,6 @@ public class PlayerDashBehavior : MonoBehaviour {
                 )
             ) {
                 stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
-
-                input.Vibrate(0);
 
                 yield break;
             }
