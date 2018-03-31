@@ -7,6 +7,10 @@ using UtilityExtensions;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour {
+    public GameObject iceDashEffectPrefab;
+    public GameObject fireDashEffectPrefab;
+    public GameObject iceChargeEffectPrefab;
+    public GameObject fireChargeEffectPrefab;
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
@@ -39,6 +43,20 @@ public class PlayerDashBehavior : MonoBehaviour {
         carrier        = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         dashGrabField.enabled = false;
+    }
+
+    public void SetPrefabColors() {
+        if (player.team != null) {
+            var name = player.team.teamColor.name;
+            var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
+            if (name == "Fire") {
+                dashEffectPrefab = fireDashEffectPrefab;
+                chargeEffectSpawner.effectPrefab = fireChargeEffectPrefab;
+            } else if (name == "Ice") {
+                dashEffectPrefab = iceDashEffectPrefab;
+                chargeEffectSpawner.effectPrefab = iceChargeEffectPrefab;
+            }
+        }
     }
 
     void Update() {

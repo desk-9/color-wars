@@ -53,6 +53,7 @@ public class Player : MonoBehaviour {
         }
         this.team = team;
         team.AddTeamMember(this);
+        GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
     }
 
     // Use this for initialization

@@ -720,7 +720,8 @@ MonoBehaviour:
   enableXInput: 0
   useFixedUpdate: 0
   dontDestroyOnLoad: 0
-  customProfiles: []
+  customProfiles:
+  - CustomPlayerProfile
 --- !u!4 &491648685
 Transform:
   m_ObjectHideFlags: 0
