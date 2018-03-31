@@ -126,7 +126,6 @@ public static class Utility {
         return v;
     }
 
-
     public static Color ColorComplement(Color baseColor) {
         float h;
         float s;

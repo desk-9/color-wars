@@ -7,12 +7,10 @@ public class Ball : MonoBehaviour {
 
     public bool ownable {get; set;} = true;
     public GameObject implosionPrefab;
-    public float adjustmentCoefficient;
     public float chargedMassFactor = 1;
 
     new SpriteRenderer renderer;
     CircleCollider2D circleCollider;
-    GameObject target_;
     Goal goal;
 
     Vector2 start_location;
@@ -27,21 +25,10 @@ public class Ball : MonoBehaviour {
 
     public BallCarrier lastOwner { get; private set; }
 
-    public GameObject target {
-        get { return target_;}
-        set
-        {
-            target_ = value;
-        }
-    }
-
     public BallCarrier owner {
         get { return owner_; }
         set {
             lastOwner = owner_;
-            if (value != null) {
-                target_ = null;
-            }
             owner_ = value;
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
@@ -81,20 +68,6 @@ public class Ball : MonoBehaviour {
         }
     }
 
-    void Update() {
-        if (target_ != null) {
-            var targetVec = target_.transform.position - transform.position;
-
-            if (Mathf.Abs(Vector2.SignedAngle(rigidbody.velocity, targetVec)) > 90f) {
-                target_ = null;
-                return;
-            }
-
-            var adjustmentVector = (Vector2)targetVec.normalized - rigidbody.velocity.normalized;
-            rigidbody.AddForce(adjustmentVector * adjustmentCoefficient, ForceMode2D.Impulse);
-        }
-    }
-
     public bool IsOwnable() {
         return owner == null && ownable;
     }
@@ -131,7 +104,6 @@ public class Ball : MonoBehaviour {
             StartCoroutine(ImplosionEffect(lengthOfEffect.Value));
         }
         charged = false;
-        target_ = null;
         owner = null;
         lastOwner = null;
     }
@@ -156,7 +128,6 @@ public class Ball : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall")) {
             charged = false;
-            target_ = null;
         }
     }
 }

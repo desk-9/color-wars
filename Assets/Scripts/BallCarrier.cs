@@ -12,6 +12,9 @@ public class BallCarrier : MonoBehaviour {
     public float ballTurnSpeed = 10f;
     public bool chargedBallStuns = false;
     public bool slowMoOnCarry = true;
+    public float aimAssistThreshold = 7.5f;
+    public float aimAssistLerpAmount = .5f;
+    public float goalAimmAssistOffset = 1f;
 
     float ballOffsetFromCenter = .5f;
     IPlayerMovement playerMovement;
@@ -19,6 +22,10 @@ public class BallCarrier : MonoBehaviour {
     Coroutine carryBallCoroutine;
     bool isCoolingDown = false;
     LaserGuide laserGuide;
+    GameObject teammate;
+    Player player;
+    GameObject goal;
+    Rigidbody2D rb2d;
 
     const float ballOffsetMultiplier = 1.07f;
 
@@ -27,8 +34,10 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void Start() {
+        player = GetComponent<Player>();
         playerMovement = GetComponent<IPlayerMovement>();
         stateManager = GetComponent<PlayerStateManager>();
+        rb2d = GetComponent<Rigidbody2D>();
         if (playerMovement != null && stateManager != null) {
             stateManager.CallOnStateEnter(
                 State.Posession, playerMovement.FreezePlayer);
@@ -68,13 +77,53 @@ public class BallCarrier : MonoBehaviour {
         }
     }
 
+    GameObject GetTeammate() {
+        if (teammate != null) {
+            return teammate;
+        }
+        var team = player.team;
+        if (team == null) {
+            return null;
+        }
+        foreach (var teammate in team.teamMembers) {
+            if (teammate != player) {
+                return teammate.gameObject;
+            }
+        }
+        return null;
+    }
+
+    GameObject GetGoal() {
+        if (goal != null) {
+            return goal;
+        }
+        return GameObject.FindObjectOfType<Goal>().gameObject;
+    }
+
+    void RotateTowards(Vector2 towards) {
+        var lerpedVector = Vector2.Lerp(transform.right, towards, aimAssistLerpAmount);
+        rb2d.rotation = Vector2.SignedAngle(Vector2.right, lerpedVector);
+    }
+
+    void SnapAimTowardsTargets() {
+        playerMovement?.RotatePlayer();
+        Vector2 targetVector = Vector2.zero;
+        var goalVector = ((GetGoal().transform.position + Vector3.up) - transform.position).normalized;
+        var teammateVector = (GetTeammate().transform.position - transform.position).normalized;
+        if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold) {
+            RotateTowards(goalVector);
+        } else if (Mathf.Abs(Vector2.Angle(transform.right, teammateVector)) < aimAssistThreshold) {
+            RotateTowards(teammateVector);
+        }
+    }
+
     IEnumerator CarryBall(Ball ball) {
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         this.ball = ball;
         ball.owner = this;
 
         while (true) {
-            playerMovement?.RotatePlayer();
+            SnapAimTowardsTargets();
             PlaceBallAtNose();
             yield return new WaitForFixedUpdate();
         }
