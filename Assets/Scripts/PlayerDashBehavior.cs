@@ -28,7 +28,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     Coroutine          dashCoroutine;
     PlayerTronMechanic tronMechanic;
     BallCarrier carrier;
-    GameObject dashEffect;
     GameObject dashAimer;
     float lastDashTime;
 
@@ -40,13 +39,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         carrier        = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         dashGrabField.enabled = false;
-    }
-
-    public void SetPrefabColors() {
-        if (player.team != null) {
-            var name = player.team.teamColor.name;
-            var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-        }
     }
 
     void Update() {
@@ -72,7 +64,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (chargeCoroutine != null) {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
-            Destroy(dashEffect, 1.0f);
             dashGrabField.enabled = false;
             playerMovement.UnFreezePlayer();
 

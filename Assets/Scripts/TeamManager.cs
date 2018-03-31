@@ -45,6 +45,8 @@ public class TeamManager {
         var renderer = newMember.GetComponent<SpriteRenderer>();
         var sprite = unusedSprites.Peek();
         if (renderer != null && sprite != null) {
+            renderer.color = teamColor;
+
             if (!playerSpritesAlreadySet) {
                 renderer.sprite = sprite;
                 spriteUsage[newMember] = sprite;
