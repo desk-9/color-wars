@@ -12,7 +12,7 @@ public class BallCarrier : MonoBehaviour {
     public float ballTurnSpeed = 10f;
     public bool chargedBallStuns = false;
     public bool slowMoOnCarry = true;
-    public float aimAssistThreshold = 7.5f;
+    public float aimAssistThreshold = 20f;
     public float aimAssistLerpAmount = .5f;
     public float goalAimmAssistOffset = 1f;
 
@@ -106,14 +106,14 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void SnapAimTowardsTargets() {
-        playerMovement?.RotatePlayer();
-        Vector2 targetVector = Vector2.zero;
         var goalVector = ((GetGoal().transform.position + Vector3.up) - transform.position).normalized;
         var teammateVector = (GetTeammate().transform.position - transform.position).normalized;
         if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold) {
-            RotateTowards(goalVector);
+            playerMovement?.RotatePlayer(goalVector);
         } else if (Mathf.Abs(Vector2.Angle(transform.right, teammateVector)) < aimAssistThreshold) {
-            RotateTowards(teammateVector);
+            playerMovement?.RotatePlayer(teammateVector);
+        } else {
+            playerMovement?.RotatePlayer();
         }
     }
 

@@ -34,9 +34,12 @@ public class PlayerDashBehavior : MonoBehaviour {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb             = this.EnsureComponent<Rigidbody2D>();
         stateManager   = this.EnsureComponent<PlayerStateManager>();
-        player         = this.EnsureComponent<Player>();
         carrier        = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
+    }
+
+    void Awake() {
+        player = this.EnsureComponent<Player>();
     }
 
     public void SetPrefabColors() {

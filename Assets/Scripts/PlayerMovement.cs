@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
         rb2d.isKinematic = false;
     }
 
-    public void RotatePlayer () {
+    public void RotatePlayer (Vector2? snapAngle = null) {
         if (inputDevice == null || freezeRotation) {
             return;
         }
@@ -47,15 +47,20 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
             if (instantRotation) {
                 rb2d.rotation = Vector2.SignedAngle(Vector2.right, direction);
             } else {
-                var maxAngleChange = Vector2.SignedAngle(transform.right, direction);
-                var sign = Mathf.Sign(maxAngleChange);
-                var speedChange = rotationSpeed * Time.deltaTime;
-                var actualChange = sign * Mathf.Min(Mathf.Abs(maxAngleChange), speedChange);
-                var finalRotation = rb2d.rotation + actualChange;
-                if (finalRotation <= 0) {
-                    finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
+                if (snapAngle == null || Mathf.Abs(Vector2.Angle(direction, snapAngle.Value)) > 20f) {
+                    var maxAngleChange = Vector2.SignedAngle(transform.right, direction);
+                    var sign = Mathf.Sign(maxAngleChange);
+                    var speedChange = rotationSpeed * Time.deltaTime;
+                    var actualChange = sign * Mathf.Min(Mathf.Abs(maxAngleChange), speedChange);
+                    var finalRotation = rb2d.rotation + actualChange;
+                    if (finalRotation <= 0) {
+                        finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
+                    }
+                    rb2d.rotation = Mathf.Repeat(finalRotation, 360);
+
+                } else {
+                    rb2d.rotation = Vector2.SignedAngle(Vector2.right, snapAngle.Value);
                 }
-                rb2d.rotation = Mathf.Repeat(finalRotation, 360);
             }
         }
     }

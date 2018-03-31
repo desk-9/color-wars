@@ -99,6 +99,7 @@ public class ShootBallMechanic : MonoBehaviour {
             if (inputDevice.GetControl(button).WasReleased) {
                 shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
                 Shoot();
+                yield break;
             }
 
             yield return null;
