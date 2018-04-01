@@ -225,4 +225,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     public void OnCollisionEnter2D(Collision2D collision) {
         HandleCollision(collision.gameObject);
     }
+
+    public void OnCollisionStay2D(Collision2D collision) {
+        HandleCollision(collision.gameObject);
+    }
 }
