@@ -10,12 +10,15 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     public float movementSpeed;
     public float rotationSpeed = 1080;
     public bool freezeRotation = false;
+    public float maxAwayFromBallAngle = 10f;
 
     public bool instantRotation {get; set;} = true;
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
     PlayerStateManager stateManager;
+
+    const float minBallForceRotationTime = 0.05f;
 
     void StartPlayerMovement() {
         playerMovementCoroutine = StartCoroutine(Move());
@@ -55,7 +58,25 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
                 if (finalRotation <= 0) {
                     finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
                 }
-                rb2d.rotation = Mathf.Repeat(finalRotation, 360);
+                finalRotation = Mathf.Repeat(finalRotation, 360);
+                var ballCarrier = GetComponent<BallCarrier>();
+                if (ballCarrier != null && ballCarrier.ball != null
+                        && (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime) {
+                    var ball = ballCarrier.ball;
+                    var ballDirection = (ball.transform.position - transform.position).normalized;
+                    var unitFinal = Quaternion.AngleAxis(finalRotation, Vector3.forward) * Vector2.right;
+                    float angleDifference = Vector2.SignedAngle(ballDirection, unitFinal);
+                    if (Mathf.Abs(angleDifference) >= maxAwayFromBallAngle) {
+                        finalRotation =
+                            Vector2.SignedAngle(Vector2.right, ballDirection)
+                            + Mathf.Sign(angleDifference) * maxAwayFromBallAngle;
+                    }
+                }
+                if (finalRotation <= 0) {
+                    finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
+                }
+                finalRotation = Mathf.Repeat(finalRotation, 360);
+                rb2d.rotation = finalRotation;
             }
         }
     }

@@ -16,7 +16,7 @@ public class Ball : MonoBehaviour {
     Vector2 start_location;
     BallCarrier owner_;
 
-    new Rigidbody2D rigidbody;
+    public new Rigidbody2D rigidbody;
     NotificationCenter notificationCenter;
     TrailRenderer trailRenderer;
 

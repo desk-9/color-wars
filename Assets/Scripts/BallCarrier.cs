@@ -9,7 +9,7 @@ public class BallCarrier : MonoBehaviour {
 
     public float coolDownTime = .1f;
     public Ball ball { private set; get;}
-    public float ballTurnSpeed = 10f;
+    float ballTurnSpeed = 10f;
     public bool chargedBallStuns = false;
     public bool slowMoOnCarry = true;
     public float aimAssistThreshold = 20f;
@@ -18,6 +18,7 @@ public class BallCarrier : MonoBehaviour {
     public float delayBetweenSnaps = .2f;
     public float snapEpsilon = 5f;
     public float snapLerpStrength = .5f;
+    public float timeCarryStarted {get; private set;}
 
     float ballOffsetFromCenter = .5f;
     IPlayerMovement playerMovement;
@@ -46,8 +47,13 @@ public class BallCarrier : MonoBehaviour {
         stateManager = GetComponent<PlayerStateManager>();
         rb2d = GetComponent<Rigidbody2D>();
         if (playerMovement != null && stateManager != null) {
-            stateManager.CallOnStateEnter(State.Posession, playerMovement.FreezePlayer);
-            stateManager.CallOnStateExit(State.Posession, playerMovement.UnFreezePlayer);
+            stateManager.CallOnStateEnter(
+                State.Posession, playerMovement.FreezePlayer);
+            stateManager.CallOnStateExit(
+                State.Posession, playerMovement.UnFreezePlayer);
+            if (playerMovement.GetType() == typeof(PlayerMovement)) {
+                ballTurnSpeed = (playerMovement as PlayerMovement).rotationSpeed;
+            }
         }
         laserGuide = this.GetComponent<LaserGuide>();
         this.FrameDelayCall(() => {GetGoal(); GetTeammate();}, 2);
@@ -56,6 +62,9 @@ public class BallCarrier : MonoBehaviour {
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     public void StartCarryingBall(Ball ball) {
+        timeCarryStarted = Time.time;
+        ball.rigidbody.velocity = Vector2.zero;
+        ball.rigidbody.angularVelocity = 0;
         CalculateOffset(ball);
         if (slowMoOnCarry) {
             GameModel.instance.SlowMo();
@@ -192,14 +201,13 @@ public class BallCarrier : MonoBehaviour {
 
     Vector2 CircularLerp(Vector2 start, Vector2 end, Vector2 center, float radius,
                          float timeDelta, float speed) {
-        float angularDistance = timeDelta * speed;
+        float angleMax = timeDelta * speed;
         var centeredStart = start - center;
         var centerToStartDirection = centeredStart.normalized;
 
         var centeredEndDirection = (end - center).normalized;
         var angle = Vector2.SignedAngle(centerToStartDirection, centeredEndDirection);
-        var arcDistance = radius * 2 * Mathf.PI * Mathf.Abs(angle / 360);
-        var percentArc = Mathf.Clamp(angularDistance / arcDistance, 0, 1);
+        var percentArc = Mathf.Clamp(angleMax / Mathf.Abs(angle / 360), 0, 1);
 
         var rotation = Quaternion.AngleAxis(angle * percentArc, Vector3.forward);
         var centeredResult = rotation * centerToStartDirection;

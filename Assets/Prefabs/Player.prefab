@@ -167,8 +167,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 30
-  rotationSpeed: 1080
+  rotationSpeed: 720
   freezeRotation: 0
+  maxAwayFromBallAngle: 10
 --- !u!114 &114215232534320030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -243,7 +244,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coolDownTime: 0.1
-  ballTurnSpeed: 65
   chargedBallStuns: 0
   slowMoOnCarry: 1
   aimAssistThreshold: 20
