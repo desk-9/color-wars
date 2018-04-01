@@ -6,6 +6,9 @@ using System.Linq;
 
 public class TronWall : MonoBehaviour {
 
+    public float wallDestroyTime = .3f;
+    public float particleSystemLifetime = .5f;
+
     float lifeLength {get; set;}
     TeamManager team;
     LineRenderer lineRenderer;
@@ -14,6 +17,11 @@ public class TronWall : MonoBehaviour {
     Coroutine stretchWallCoroutine;
     EdgeCollider2D edgeCollider;
     float tronWallOffset;
+    ParticleSystem ps;
+
+    void Start() {
+        ps = this.EnsureComponent<ParticleSystem>();
+    }
 
     public void Initialize (PlayerTronMechanic creator, float lifeLength, TeamManager team,
                             float tronWallOffset) {
@@ -36,10 +44,7 @@ public class TronWall : MonoBehaviour {
         while (true) {
             var endPoint = creator.transform.position - ((creator.transform.position - transform.position)).normalized * tronWallOffset;
             linePoints[1] = endPoint;
-            lineRenderer.SetPositions(linePoints);
-            edgeCollider.points = linePoints.
-                Select(point => (Vector2) transform.InverseTransformPoint(point)).ToArray();
-
+            SetRendererAndColliderPoints();
             yield return new WaitForFixedUpdate();
         }
     }
@@ -48,13 +53,38 @@ public class TronWall : MonoBehaviour {
         if (stretchWallCoroutine != null) {
             StopCoroutine(stretchWallCoroutine);
             stretchWallCoroutine = null;
-            UtilityExtensionsContainer.TimeDelayCall(this, KillSelf, lifeLength);
+            this.TimeDelayCall(() => StartCoroutine(Collapse()), lifeLength);
         }
+    }
+
+    void SetRendererAndColliderPoints() {
+        lineRenderer.SetPositions(linePoints);
+        edgeCollider.points = linePoints.
+            Select(point => (Vector2) transform.InverseTransformPoint(point)).ToArray();
     }
 
     public void KillSelf() {
         creator.StopWatching(this);
         Destroy(gameObject);
+    }
+
+    IEnumerator Collapse() {
+        creator.StopWatching(this);
+        var elapsedTime = 0f;
+        var startingPoint = linePoints[0];
+        while (elapsedTime < wallDestroyTime) {
+            linePoints[0] = Vector3.Lerp(startingPoint, linePoints[1], elapsedTime / wallDestroyTime);
+            SetRendererAndColliderPoints();
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        lineRenderer.enabled = false;
+        transform.position = linePoints[1];
+        var main = ps.main;
+        main.startColor = team.teamColor.color;
+        main.startLifetime = particleSystemLifetime;
+        ps.Play();
+        this.TimeDelayCall(() => Destroy(gameObject), particleSystemLifetime);
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
