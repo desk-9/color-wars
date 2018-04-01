@@ -55,6 +55,7 @@ public class PlayerTronMechanic : MonoBehaviour {
 
     public void PlaceWallAnchor() {
         if (walls.Count >= wallLimit) {
+            walls[0].PlayDestroyedParticleEffect();
             Destroy(walls[0].gameObject);
             walls.RemoveAt(0);
         }

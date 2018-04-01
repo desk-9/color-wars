@@ -7,7 +7,7 @@ using System.Linq;
 public class TronWall : MonoBehaviour {
 
     public float wallDestroyTime = .3f;
-    public float particleSystemLifetime = .5f;
+    public int maxParticlesOnDestroy = 100;
 
     float lifeLength {get; set;}
     TeamManager team;
@@ -17,11 +17,6 @@ public class TronWall : MonoBehaviour {
     Coroutine stretchWallCoroutine;
     EdgeCollider2D edgeCollider;
     float tronWallOffset;
-    ParticleSystem ps;
-
-    void Start() {
-        ps = this.EnsureComponent<ParticleSystem>();
-    }
 
     public void Initialize (PlayerTronMechanic creator, float lifeLength, TeamManager team,
                             float tronWallOffset) {
@@ -64,6 +59,7 @@ public class TronWall : MonoBehaviour {
     }
 
     public void KillSelf() {
+        PlayDestroyedParticleEffect();
         creator.StopWatching(this);
         Destroy(gameObject);
     }
@@ -78,13 +74,29 @@ public class TronWall : MonoBehaviour {
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        lineRenderer.enabled = false;
-        transform.position = linePoints[1];
+        // lineRenderer.enabled = false;
+        // var ps = GameObject.Instantiate(team.resources.tronWallSuicidePrefab, linePoints[1], transform.rotation).EnsureComponent<ParticleSystem>();
+        // var main = ps.main;
+        // main.startColor = team.teamColor.color;
+        // ps.Play();
+        Destroy(gameObject);
+        yield break;
+    }
+
+    public void PlayDestroyedParticleEffect() {
+        var magnitude = (linePoints[1] - linePoints[0]).magnitude; 
+        var instantiated = GameObject.Instantiate(team.resources.tronWallDestroyedPrefab,
+                                                  (linePoints[1] + linePoints[0]) / 2, transform.rotation);
+        var ps = instantiated.EnsureComponent<ParticleSystem>();
         var main = ps.main;
         main.startColor = team.teamColor.color;
-        main.startLifetime = particleSystemLifetime;
+        var shape = ps.shape;
+        shape.radius = magnitude * .65f;
+        var emission = ps.emission;
+        var burst = emission.GetBurst(0);
+        burst.count = Mathf.Min(magnitude * burst.count.constant, maxParticlesOnDestroy);
+        emission.SetBurst(0, burst);
         ps.Play();
-        this.TimeDelayCall(() => Destroy(gameObject), particleSystemLifetime);
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
@@ -101,6 +113,7 @@ public class TronWall : MonoBehaviour {
             }
 
             creator.HandleWallCollision();
+            PlayDestroyedParticleEffect();
             Destroy(gameObject);
             return;
         }
