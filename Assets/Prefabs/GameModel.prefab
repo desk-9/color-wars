@@ -60,7 +60,7 @@ MonoBehaviour:
     name: Pink
   - color: {r: 0.014705896, g: 0.9184584, b: 1, a: 1}
     name: Blue
-  matchLength: 4
+  matchLength: 99999
   meta: {fileID: 0}
   pauseAfterGoalScore: 3
   pauseAfterReset: 2
@@ -75,8 +75,8 @@ MonoBehaviour:
   slowMoFactor: 0.4
   PitchShiftTime: 0.3
   SlowedPitch: 0.5
-  winningScore: 4
-  requiredWinMargin: 4
+  winningScore: 3
+  requiredWinMargin: 1
   winCondition: 2
   backgroundScroller: {fileID: 0}
   goal: {fileID: 0}

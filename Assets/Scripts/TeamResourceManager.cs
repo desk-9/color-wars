@@ -18,7 +18,7 @@ public class TeamResourceManager {
     public GameObject explosionPrefab {get; private set;}
     public GameObject tronWallDestroyedPrefab {get; private set;}
     public GameObject tronWallSuicidePrefab {get; private set;}
-    public List<Sprite> backgrounds {get; private set;}
+    public Sprite background {get; private set;}
     public Sprite scoreIndicatorEmptySprite {get; private set;}
     public Sprite scoreIndicatorFullSprite {get; private set;}
 
@@ -68,12 +68,7 @@ public class TeamResourceManager {
         wallMaterial = MakeTeamResource<Material>("Wall");
         ballSprite = MakeTeamResource<Sprite>("Ball");
         dashAimerPrefab = MakeTeamResource<GameObject>("DashAimer");
-        if (team == null) {
-            backgrounds = MakeTeamResourceGroup<Sprite>("Background");
-        } else {
-            backgrounds = MakeTeamResourceGroup<Sprite>(
-                "Background1", "Background2", "Background3");
-        }
+        background = MakeTeamResource<Sprite>("Background");
 
         mainPlayerSprite = MakeAllTeamResource<Sprite>("MainPlayer");
         altPlayerSprite = MakeAllTeamResource<Sprite>("AltPlayer");

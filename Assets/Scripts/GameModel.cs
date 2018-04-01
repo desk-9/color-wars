@@ -202,10 +202,9 @@ public class GameModel : MonoBehaviour {
                 team.IncrementScore();
                 var winningTeam = TopTeam();
                 if (winningTeam != null) {
-                    backgroundScroller.SetBackground(winningTeam.resources,
-                                                     AmountOneTeamAhead() - 1);
+                    backgroundScroller.SetBackground(winningTeam.resources);
                 } else {
-                    backgroundScroller.SetBackground(neutralResources, 0);
+                    backgroundScroller.SetBackground(neutralResources);
                 }
                 ScoreChanged();
             } else {

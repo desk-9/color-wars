@@ -24,9 +24,7 @@ public class BackgroundScroller : MonoBehaviour {
         transform.Rotate(new Vector3(0, 0, rotationRate * Time.deltaTime));
     }
 
-    public void SetBackground(TeamResourceManager resources, int backgroundIndex) {
-        if (backgroundIndex < resources.backgrounds.Count) {
-            renderer.sprite = resources.backgrounds[backgroundIndex];
-        }
+    public void SetBackground(TeamResourceManager resource) {
+        renderer.sprite = resource.background;
     }
 }
