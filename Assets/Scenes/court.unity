@@ -721,7 +721,8 @@ MonoBehaviour:
   enableXInput: 0
   useFixedUpdate: 0
   dontDestroyOnLoad: 0
-  customProfiles: []
+  customProfiles:
+  - CustomPlayerProfile
 --- !u!4 &491648685
 Transform:
   m_ObjectHideFlags: 0
@@ -2958,7 +2959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startCountdown: 0
-  duration: 1
+  countDuration: 1
   maxPanelAlpha: 0.9
   minPanelAlpha: 0
   maxTextSize: 150
@@ -2967,41 +2968,17 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
-      time: -0.0041160583
-      value: 0.004917145
-      inSlope: 0.008975297
-      outSlope: 0.008975297
-      tangentMode: 0
+      time: 0
+      value: 0.2
+      inSlope: 0
+      outSlope: -0.4
+      tangentMode: 65
     - serializedVersion: 2
-      time: 0.09049821
-      value: 0.04707285
-      inSlope: 1.3431785
-      outSlope: 1.3431785
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.24311227
-      value: 1.0052652
-      inSlope: -0.024491942
-      outSlope: -0.024491942
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.32780132
-      value: 0.9146434
-      inSlope: -2.8069336
-      outSlope: -2.8069336
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.5350511
-      value: 0.18122695
-      inSlope: -1.0353055
-      outSlope: -1.0353055
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.9705665
-      value: -0.018844604
-      inSlope: -0.3398772
-      outSlope: -0.3398772
-      tangentMode: 0
+      time: 0.5
+      value: 0
+      inSlope: -0.4
+      outSlope: 0
+      tangentMode: 5
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
