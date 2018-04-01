@@ -19,10 +19,7 @@ public class StunEffect : MonoBehaviour {
         var renderer = this.EnsureComponent<SpriteRenderer>();
         var baseColor = renderer.color;
         var team = GetComponent<Player>()?.team;
-        var shiftedColor = baseColor + 0.8f * Color.white;
-        if (team != null) {
-            shiftedColor = team.teamColor;
-        }
+        var shiftedColor = Color.white;
 
         while (!stopEffect) {
             renderer.color = shiftedColor;

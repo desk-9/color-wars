@@ -194,6 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stunTime: 0.7
+  toggleWhiteTime: 1
 --- !u!114 &114319027261209328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -296,7 +297,7 @@ MonoBehaviour:
   tronWall: {fileID: 1293006675088886, guid: 12e0ce2da3e4646c0aaecdf8cfb5975f, type: 2}
   tronButton: 12
   wallLifeLength: 4
-  lengthStunWhileLaying: 2.5
+  lengthStunWhileLaying: 1.5
   layingSpeedMovementSpeedRatio: 0.79
   tronWallOffset: 2
   wallLimit: 2
