@@ -425,7 +425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamName: Pink
   colorLerpDuration: 0.75
-  startLerpColor: {r: 0, g: 0, b: 0, a: 1}
+  startLerpColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &128206739
 Transform:
   m_ObjectHideFlags: 0
@@ -2577,7 +2577,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamName: Blue
   colorLerpDuration: 0.75
-  startLerpColor: {r: 0, g: 0, b: 0, a: 1}
+  startLerpColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1209685341
 GameObject:
   m_ObjectHideFlags: 0
