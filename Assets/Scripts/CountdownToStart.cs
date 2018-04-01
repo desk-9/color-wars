@@ -13,7 +13,9 @@ public class CountdownToStart : MonoBehaviour {
     public float countDuration = 1.0f;
     public float totalDuration {
         get {
-            return countDuration * flashText.Count;
+            // subtract 1 here because players can move *on* "GO" rather than
+            // *after* "GO"
+            return countDuration * (flashText.Count - 1);
         }
     }
 
@@ -22,6 +24,7 @@ public class CountdownToStart : MonoBehaviour {
     public float minPanelAlpha = 0.0f;
     float panelAlphaRange;
 
+    public float goTextSizeMultiplier = 1.30f;
     public float maxTextSize = 150.0f;
     public float minTextSize = 24.0f;
     float textSizeRange;
@@ -29,9 +32,6 @@ public class CountdownToStart : MonoBehaviour {
     // Curve values should be in the range [0, 1]
     public AnimationCurve panelAlpha;
     public AnimationCurve textSize;
-    
-    int maxCount = 3; // inclusive
-    int minCount = 1; // inclusive
     
     public Text countdownText;
     Image panelBackground;
@@ -68,32 +68,54 @@ public class CountdownToStart : MonoBehaviour {
 
     IEnumerator FlashCount() {
         int index = 0;
-        while (index < flashText.Count) {
+        float elapsedTime = 0.0f;
+        float progress = 0.0f;
+
+        // up to count-1 b/c we do something different on last round
+        while (index < flashText.Count-1) {
+            elapsedTime = progress = 0.0f;
             countdownText.text = flashText[index];
-
-            float elapsedTime = 0.0f;
-            float progress = 0.0f;
             while (elapsedTime < countDuration) {
-
-                float newAlpha = ScaleByCurve(
-                    panelAlpha.Evaluate(progress),
-                    minPanelAlpha, panelAlphaRange);
-                SetPanelAlpha(newAlpha);
-
-                float newTextSize = ScaleByCurve(
-                    textSize.Evaluate(progress),
-                    minTextSize, textSizeRange);
-                countdownText.fontSize = (int)newTextSize;
-
+                FlashText(progress);
+                FlashAlpha(progress);
                 elapsedTime += Time.deltaTime;
                 progress = elapsedTime/countDuration;
                 yield return null;
             }
-            
             ++index;
         }
-        HideCountdown();
+
+        // Last round ("GO!" + players can start moving)
+        // Do some extra stuff (make text bigger, notify players that they can move)
+        textSizeRange *= goTextSizeMultiplier;
         GameModel.instance.nc.NotifyMessage(Message.CountdownFinished, this);
+
+        // Reset vars for the last count
+        elapsedTime = progress = 0.0f;
+        countdownText.text = flashText[index];
+        while (elapsedTime < countDuration) {
+            FlashText(progress);
+            elapsedTime += Time.deltaTime;
+            progress = elapsedTime/countDuration;
+            yield return null;
+        }
+        textSizeRange /= goTextSizeMultiplier;
+        
+        HideCountdown();
+    }
+
+    void FlashText(float progress) {
+        float newTextSize = ScaleByCurve(
+            textSize.Evaluate(progress),
+            minTextSize, textSizeRange);
+        countdownText.fontSize = (int)newTextSize;
+    }
+
+    void FlashAlpha(float progress) {
+        float newAlpha = ScaleByCurve(
+            panelAlpha.Evaluate(progress),
+            minPanelAlpha, panelAlphaRange);
+        SetPanelAlpha(newAlpha);
     }
 
     void HideCountdown() {

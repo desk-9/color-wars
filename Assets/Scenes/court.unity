@@ -2962,6 +2962,7 @@ MonoBehaviour:
   countDuration: 1
   maxPanelAlpha: 0.9
   minPanelAlpha: 0
+  goTextSizeMultiplier: 3
   maxTextSize: 150
   minTextSize: 100
   panelAlpha:
