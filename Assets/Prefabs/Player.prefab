@@ -167,7 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 30
-  rotationSpeed: 720
+  rotationSpeed: 1080
   freezeRotation: 0
   maxAwayFromBallAngle: 10
 --- !u!114 &114215232534320030
