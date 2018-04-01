@@ -59,11 +59,11 @@ public class TeamResourceManager {
         dashChargeEffectPrefab = MakeTeamResource<GameObject>("DashChargeEffect");
         wallMaterial = MakeTeamResource<Material>("Wall");
         ballSprite = MakeTeamResource<Sprite>("Ball");
+        dashAimerPrefab = MakeTeamResource<GameObject>("DashAimer");
 
         mainPlayerSprite = MakeAllTeamResource<Sprite>("MainPlayer");
         altPlayerSprite = MakeAllTeamResource<Sprite>("AltPlayer");
         shootChargeEffectPrefab = MakeAllTeamResource<GameObject>("ShootChargeEffect");
-        dashAimerPrefab = MakeAllTeamResource<GameObject>("DashAimer");
         explosionPrefab = MakeAllTeamResource<GameObject>("ExplosionPrefab");
         tronWallDestroyedPrefab = MakeAllTeamResource<GameObject>("TronWallDestroyed");
         tronWallSuicidePrefab = MakeAllTeamResource<GameObject>("TronWallSuicide");
