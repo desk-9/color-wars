@@ -43,7 +43,9 @@ public class CountdownToStart : MonoBehaviour {
         textSizeRange = maxTextSize - minTextSize;
 
         
-        GameModel.instance.nc.CallOnMessage(Message.ResetAfterGoal, StartCountdown);
+        GameModel.instance.nc.CallOnMessage(Message.StartCountdown,
+                                            () => StartCountdown());
+        this.FrameDelayCall(() => StartCountdown(), 3);
     }
 
     void FixedUpdate() { // TODO

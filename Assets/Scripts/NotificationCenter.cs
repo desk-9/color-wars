@@ -17,7 +17,7 @@ public delegate void GameObjectCallback(GameObject thing);
 public enum Message {
     BallIsPossessed,
     BallIsUnpossessed,
-    ResetAfterGoal,
+    StartCountdown,
     CountdownFinished,
 };
 

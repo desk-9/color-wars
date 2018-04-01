@@ -117,7 +117,13 @@ public class GameModel : MonoBehaviour {
             Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
         background = GameObject.FindGameObjectWithTag("BackgroundGrass")?.GetComponent<SpriteRenderer>();
+
+        // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
         nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
+        this.FrameDelayCall(
+            () => {foreach (var team in teams) {team.ResetTeam();}},
+            3);
+
     }
 
     IEnumerator EndGameCountdown() {
@@ -169,6 +175,7 @@ public class GameModel : MonoBehaviour {
             }
         }
         NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Count);
+        Debug.Log("Teams have been initialized!!!");
     }
 
     void ScoreChanged() {
@@ -213,7 +220,7 @@ public class GameModel : MonoBehaviour {
             team.ResetTeam();
         }
         ball.ResetBall(pauseAfterReset);
-        nc.NotifyMessage(Message.ResetAfterGoal, this);
+        nc.NotifyMessage(Message.StartCountdown, this);
         foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
             wall.KillSelf();
         }
@@ -223,7 +230,7 @@ public class GameModel : MonoBehaviour {
     }
 
     void StartGameAfterBallAnimation() {
-        goal?.RestartTeamSwitching();
+        // goal?.RestartTeamSwitching(); // <-- (Empty function body)
         foreach (var team in teams) {
             team.BeginMovement();
         }
