@@ -135,6 +135,10 @@ public class BallCarrier : MonoBehaviour {
                 playerMovement?.RotatePlayer();
             }
         } else {
+            if (stickDirection == Vector2.zero) {
+                playerMovement?.RotatePlayer();
+                return;
+            }
             var goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
             var teammateVector = (teammate.transform.position - transform.position).normalized;
             if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold) {
@@ -155,6 +159,7 @@ public class BallCarrier : MonoBehaviour {
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         this.ball = ball;
         ball.owner = this;
+        snapToObject = null;
 
         while (true) {
             SnapAimTowardsTargets();
@@ -175,6 +180,7 @@ public class BallCarrier : MonoBehaviour {
             GameModel.instance.ResetSlowMo();
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
+            snapToObject = null;
 
             // Reset references
             ball.owner = null;

@@ -204,6 +204,10 @@ public class PlayerDashBehavior : MonoBehaviour {
         StunAndSteal(collider.gameObject);
     }
 
+    public void OnTriggerStay2D(Collider2D collider) {
+        StunAndSteal(collider.gameObject);
+    }
+
     void HandleCollision(GameObject other) {
         if (!stateManager.IsInState(State.Dash)) {
             return;
