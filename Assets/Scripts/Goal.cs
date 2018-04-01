@@ -17,32 +17,39 @@ public class Goal : MonoBehaviour {
     public bool resetTimerOnSwitchToSameTeam = false;
 
     ModCycle nextTeamIndex;
+    new SpriteRenderer fillRenderer;
+    Text goalSwitchText;
     Coroutine teamSwitching;
     Player lastPlayer = null;
     Color originalColor;
 
-    // GameObject GetPlayerBlocker() {
-    //     return transform.Find("PlayerBlocker").gameObject;
-    // }
+    GameObject GetPlayerBlocker() {
+        return transform.Find("PlayerBlocker").gameObject;
+    }
 
-    // void BlockBalls() {
-    //     GetPlayerBlocker().layer = LayerMask.NameToLayer("Default");
-    // }
+    void BlockBalls() {
+        GetPlayerBlocker().layer = LayerMask.NameToLayer("Default");
+    }
 
-    // void OnlyBlockPlayers() {
-    //     GetPlayerBlocker().layer = LayerMask.NameToLayer("PlayerBlocker");
-    // }
+    void OnlyBlockPlayers() {
+        GetPlayerBlocker().layer = LayerMask.NameToLayer("PlayerBlocker");
+    }
 
     void Awake() {
-        //renderer = GetComponent<SpriteRenderer>();
+        fillRenderer = transform.FindComponent<SpriteRenderer>("GoalBackground");
+        if (fillRenderer != null) {
+            originalColor = fillRenderer.color;
+        }
     }
 
     public void ResetNeutral() {
         SwitchToNextTeam(false);
         currentTeam = null;
         lastPlayer = null;
-//        BlockBalls();
-        //renderer.color = originalColor;
+        BlockBalls();
+        if (fillRenderer != null) {
+            fillRenderer.color = originalColor;
+        }
     }
 
     void Start () {
@@ -131,9 +138,10 @@ public class Goal : MonoBehaviour {
             AudioManager.instance.GoalSwitch.Play();
         }
         currentTeam = GetNextTeam();
-        // if (renderer != null) {
-        //     renderer.color = currentTeam.teamColor;
-        // }
+        OnlyBlockPlayers();
+        if (fillRenderer != null) {
+            fillRenderer.color = currentTeam.teamColor;
+        }
         RestartTeamSwitching();
     }
 
@@ -162,6 +170,10 @@ public class Goal : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D collider) {
+        BallCheck(collider.gameObject);
+    }
+
+    void OnTriggerEnter2D(Collider2D collider) {
         BallCheck(collider.gameObject);
     }
 }

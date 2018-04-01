@@ -18,6 +18,7 @@ public class TeamResourceManager {
     public GameObject explosionPrefab {get; private set;}
     public GameObject tronWallDestroyedPrefab {get; private set;}
     public GameObject tronWallSuicidePrefab {get; private set;}
+    public List<Sprite> backgrounds {get; private set;}
 
     TeamManager team;
     string teamDirectory = "Teams/Neutral";
@@ -47,6 +48,11 @@ public class TeamResourceManager {
         return LoadTeamResource<T>(name, teamDirectory);
     }
 
+    List<T> MakeTeamResourceGroup<T>(params string[] names) where T : UnityEngine.Object {
+        return (from name in names
+                select LoadTeamResource<T>(name, teamDirectory)).ToList();
+    }
+
     T MakeAllTeamResource<T>(string name) where T : UnityEngine.Object {
         // For making resources shared by all teams
         return LoadTeamResource<T>(name, allTeamDirectory);
@@ -60,6 +66,12 @@ public class TeamResourceManager {
         wallMaterial = MakeTeamResource<Material>("Wall");
         ballSprite = MakeTeamResource<Sprite>("Ball");
         dashAimerPrefab = MakeTeamResource<GameObject>("DashAimer");
+        if (team == null) {
+            backgrounds = MakeTeamResourceGroup<Sprite>("Background");
+        } else {
+            backgrounds = MakeTeamResourceGroup<Sprite>(
+                "Background1", "Background2", "Background3");
+        }
 
         mainPlayerSprite = MakeAllTeamResource<Sprite>("MainPlayer");
         altPlayerSprite = MakeAllTeamResource<Sprite>("AltPlayer");
@@ -67,5 +79,6 @@ public class TeamResourceManager {
         explosionPrefab = MakeAllTeamResource<GameObject>("ExplosionPrefab");
         tronWallDestroyedPrefab = MakeAllTeamResource<GameObject>("TronWallDestroyed");
         tronWallSuicidePrefab = MakeAllTeamResource<GameObject>("TronWallSuicide");
+
     }
 }

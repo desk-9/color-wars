@@ -188,17 +188,24 @@ public class GameModel : MonoBehaviour {
         }
     }
 
+    public int AmountOneTeamAhead() {
+        // Returns the amount the winning team is ahead by
+        Debug.Assert(teams.Count >= 2);
+        return Mathf.Abs(teams[0].score - teams[1].score);
+    }
+
     public void GoalScoredForTeam(TeamManager scored) {
         ball.HandleGoalScore(scored.teamColor);
         goal?.StopTeamSwitching();
         foreach (var team in teams) {
             if ((Color)team.teamColor == scored.teamColor) {
                 team.IncrementScore();
-                if (team.teamColor.name == "Pink") {
-                    backgroundScroller.SetBackground(backgroundScroller.CurrentIndex() + 1);
-                }
-                else if (team.teamColor.name == "Blue") {
-                    backgroundScroller.SetBackground(backgroundScroller.CurrentIndex() - 1);
+                var winningTeam = TopTeam();
+                if (winningTeam != null) {
+                    backgroundScroller.SetBackground(winningTeam.resources,
+                                                     AmountOneTeamAhead() - 1);
+                } else {
+                    backgroundScroller.SetBackground(neutralResources, 0);
                 }
                 ScoreChanged();
             } else {
