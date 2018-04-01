@@ -6,7 +6,9 @@ using UtilityExtensions;
 
 public class CountdownToStart : MonoBehaviour {
 
-    public bool startCountdown = false; // TODO
+    // Checkbox allows you to manually start a countdown in the editor
+    // Purely for testing
+    public bool startCountdown = false;
     
     public float countDuration = 1.0f;
     public float totalDuration {
@@ -48,9 +50,11 @@ public class CountdownToStart : MonoBehaviour {
         this.FrameDelayCall(() => StartCountdown(), 3);
     }
 
-    void FixedUpdate() { // TODO
-        if (startCountdown == true) { // TODO
-            startCountdown = false; // TODO
+    // Checks the startCountdown checkbox (this allows you to manually start a
+    // countdown from the editor)
+    void FixedUpdate() {
+        if (startCountdown == true) {
+            startCountdown = false;
             StartCountdown();
         }
     }
