@@ -245,7 +245,7 @@ MonoBehaviour:
   ballTurnSpeed: 65
   chargedBallStuns: 0
   slowMoOnCarry: 1
-  aimAssistThreshold: 15
+  aimAssistThreshold: 20
   aimAssistLerpAmount: 0.5
   goalAimAssistOffset: 1
   delayBetweenSnaps: 0.2
