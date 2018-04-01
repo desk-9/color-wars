@@ -105,7 +105,7 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void GetGoal() {
-        goal = GameObject.FindObjectOfType<Goal>().gameObject;
+        goal = GameObject.FindObjectOfType<GoalAimPoint>().gameObject;
     }
 
     void SnapToGameObject() {
@@ -114,7 +114,10 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void SnapAimTowardsTargets() {
-        if (teammate == null || playerMovement == null || ((PlayerMovement)playerMovement).GetInputDevice() == null) {
+        if (teammate == null ||
+            playerMovement == null ||
+            ((PlayerMovement)playerMovement).GetInputDevice() == null ||
+            player == null) {
             return;
         }
         if (snapDelay > 0f) {
@@ -141,7 +144,8 @@ public class BallCarrier : MonoBehaviour {
             }
             var goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
             var teammateVector = (teammate.transform.position - transform.position).normalized;
-            if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold) {
+            if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold &&
+                ball.renderer.color == player.team.teamColor.color) {
                 snapToObject = goal;
                 stickAngleWhenSnapped = stickDirection;
                 SnapToGameObject();

@@ -8,8 +8,8 @@ public class Ball : MonoBehaviour {
     public bool ownable {get; set;} = true;
     public GameObject implosionPrefab;
     public float chargedMassFactor = 1;
+    new public SpriteRenderer renderer;
 
-    new SpriteRenderer renderer;
     CircleCollider2D circleCollider;
     Goal goal;
 
@@ -38,7 +38,6 @@ public class Ball : MonoBehaviour {
     }
 
     void SetSpriteToNeutral() {
-        // renderer.sprite = GameModel.instance.neutralResources.ballSprite;
         renderer.color = Color.white;
         trailRenderer.enabled = false;
     }
