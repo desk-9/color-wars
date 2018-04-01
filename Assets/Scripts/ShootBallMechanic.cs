@@ -77,7 +77,7 @@ public class ShootBallMechanic : MonoBehaviour {
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             var inputDevice = playerMovement.GetInputDevice();
-            if (inputDevice.GetControl(shootButton).WasPressed) {
+            if (inputDevice != null && inputDevice.GetControl(shootButton).WasPressed) {
                 shootTimer = StartCoroutine(ChargeShot(shootButton));
                 yield break;
             }

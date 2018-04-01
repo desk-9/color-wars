@@ -105,7 +105,7 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void SnapAimTowardsTargets() {
-        if (teammate == null) {
+        if (teammate == null || playerMovement == null || ((PlayerMovement)playerMovement).GetInputDevice() == null) {
             return;
         }
         if (snapDelay > 0f) {
