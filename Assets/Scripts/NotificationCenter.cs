@@ -19,6 +19,7 @@ public enum Message {
     BallIsUnpossessed,
     StartCountdown,
     CountdownFinished,
+    GoalScored,
 };
 
 public class NotificationCenter {

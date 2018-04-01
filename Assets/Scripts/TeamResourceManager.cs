@@ -19,6 +19,8 @@ public class TeamResourceManager {
     public GameObject tronWallDestroyedPrefab {get; private set;}
     public GameObject tronWallSuicidePrefab {get; private set;}
     public List<Sprite> backgrounds {get; private set;}
+    public Sprite scoreIndicatorEmptySprite {get; private set;}
+    public Sprite scoreIndicatorFullSprite {get; private set;}
 
     TeamManager team;
     string teamDirectory = "Teams/Neutral";
@@ -79,6 +81,7 @@ public class TeamResourceManager {
         explosionPrefab = MakeAllTeamResource<GameObject>("ExplosionPrefab");
         tronWallDestroyedPrefab = MakeAllTeamResource<GameObject>("TronWallDestroyed");
         tronWallSuicidePrefab = MakeAllTeamResource<GameObject>("TronWallSuicide");
-
+        scoreIndicatorEmptySprite = MakeAllTeamResource<Sprite>("ScoreIndicatorEmpty");
+        scoreIndicatorFullSprite = MakeAllTeamResource<Sprite>("ScoreIndicatorFull");
     }
 }

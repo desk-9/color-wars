@@ -36,6 +36,7 @@ public class TeamManager {
 
     public void IncrementScore() {
         score += 1;
+        GameModel.instance.nc.NotifyMessage(Message.GoalScored, this);
         GameModel.instance.scoreDisplayer?.UpdateScores();
     }
 
