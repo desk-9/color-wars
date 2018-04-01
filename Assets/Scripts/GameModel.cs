@@ -216,6 +216,9 @@ public class GameModel : MonoBehaviour {
     }
 
     void ResetGameAfterGoal() {
+        if (gameOver) {
+            return;
+        }
         foreach (var team in teams) {
             team.ResetTeam();
         }

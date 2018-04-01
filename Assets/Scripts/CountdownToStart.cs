@@ -60,6 +60,9 @@ public class CountdownToStart : MonoBehaviour {
     }
     
     public void StartCountdown() {
+        if (GameModel.instance.gameOver) {
+            return;
+        }
         StartCoroutine(FlashCount());
     }
 
