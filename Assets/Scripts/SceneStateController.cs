@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UtilityExtensions;
 
 public enum Scene {
     Court,
@@ -22,6 +24,7 @@ public class SceneStateController : MonoBehaviour {
     public Dictionary<Scene, Callback> OnEnter = new Dictionary<Scene, Callback>();
 
     public bool paused {get; private set;} = false;
+    float sceneTransitionFadeLength = 2f;
 
     public static SceneStateController instance;
     void Awake() {
@@ -34,15 +37,52 @@ public class SceneStateController : MonoBehaviour {
         }
     }
 
+    void Start() {
+        StartCoroutine(ScreenOpacityTransition(1, 0));
+    }
+
+    GameObject MakeNewPanel() {
+        var newCanvasObj = new GameObject("Canvas");
+        Canvas newCanvas = newCanvasObj.AddComponent<Canvas>();
+        newCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        newCanvasObj.AddComponent<CanvasScaler>();
+        newCanvasObj.AddComponent<GraphicRaycaster>();
+        GameObject panel = new GameObject("Panel");
+        panel.AddComponent<CanvasRenderer>();
+        panel.transform.SetParent(newCanvasObj.transform, false);
+        var rectTransform = panel.AddComponent<RectTransform>();
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.sizeDelta = Vector2.zero;
+        return panel;
+    }
+
+    // Ripped  from
+    // https://answers.unity.com/questions/1034060/create-unity-ui-panel-via-script.html
+    IEnumerator ScreenOpacityTransition(float opacityStart, float opacityEnd) {
+        var newPanel = MakeNewPanel();
+        Image panelImage = newPanel.AddComponent<Image>();
+        var color = new Color(0,0,0,0);
+        panelImage.color = color;
+
+        var elapsedTime = 0f;
+        var lastTime = Time.realtimeSinceStartup;
+        while (elapsedTime < sceneTransitionFadeLength) {
+            color.a = Mathf.Lerp(opacityStart, opacityEnd, elapsedTime/sceneTransitionFadeLength);
+            panelImage.color = color;
+            elapsedTime += Time.realtimeSinceStartup - lastTime;
+            yield return null;
+        }
+    }
+
     void InitializeCallbacks() {
-        // DontDestroyOnLoad(this.gameObject);
         foreach (Scene scene in System.Enum.GetValues(typeof(Scene))) {
             OnEnter[scene] = delegate{};
             OnExit[scene] = delegate{};
         }
     }
 
-    public void Load(Scene newScene) {
+    void LoadHelper(Scene newScene) {
         OnExit[currentScene]();
         currentScene = newScene;
         if (newScene == Scene.Tutorial) {
@@ -58,8 +98,13 @@ public class SceneStateController : MonoBehaviour {
         UnPauseTime();
     }
 
+    public void Load(Scene newScene) {
+        StartCoroutine(CoroutineUtility.RunThenCallback(ScreenOpacityTransition(0, 1), () => LoadHelper(newScene)));
+    }
+
     public void ReloadScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(CoroutineUtility.RunThenCallback(ScreenOpacityTransition(0, 1), () =>
+                                                        SceneManager.LoadScene(SceneManager.GetActiveScene().name)));
     }
 
     public void AdjustTime(Scene newScene) {
