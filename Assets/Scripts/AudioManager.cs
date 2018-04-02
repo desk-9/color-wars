@@ -29,6 +29,8 @@ public class AudioManager : MonoBehaviour {
     public SoundName PowerUpBall = "PoweringUpBall";
     public SoundName StunPlayerWallBreak = "StunPlayerWalBreak";
     public SoundName BreakWall = "BreakWall";
+    public SoundName ScoreGoalSound = "ScoreGoalSound";
+    public SoundName DashSound = "DashSound";
 
     public void Awake() {
         if (instance != null) {

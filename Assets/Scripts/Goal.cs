@@ -168,6 +168,7 @@ public class Goal : MonoBehaviour {
         var ball = thing.gameObject.GetComponent<Ball>();
         if (ball != null) {
             ScoreGoal(ball);
+            this.FrameDelayCall(() => AudioManager.instance.ScoreGoalSound.Play(0.75f), 10);
         }
     }
 

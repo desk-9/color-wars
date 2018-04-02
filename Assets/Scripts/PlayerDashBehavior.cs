@@ -128,6 +128,7 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     IEnumerator Dash(float chargeAmount) {
         var dashDuration = Mathf.Min(chargeAmount, 0.5f);
+        AudioManager.instance.DashSound.Play();
 
         Utility.TutEvent("Dash", this);
         if (dashDuration > 0.25f) {
