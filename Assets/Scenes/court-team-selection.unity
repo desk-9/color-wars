@@ -3765,7 +3765,6 @@ GameObject:
   - component: {fileID: 1796129066}
   - component: {fileID: 1796129069}
   - component: {fileID: 1796129068}
-  - component: {fileID: 1796129067}
   m_Layer: 0
   m_Name: Ready
   m_TagString: Untagged
@@ -3793,79 +3792,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.000061035156, y: 0}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1796129067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1796129065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 572b1515e912247e195fa48e350d9db2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startCountdown: 0
-  countDuration: 1
-  maxPanelAlpha: 0.9
-  minPanelAlpha: 0
-  goTextSizeMultiplier: 3
-  maxTextSize: 150
-  minTextSize: 100
-  panelAlpha:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0.2
-      inSlope: 0
-      outSlope: -0.4
-      tangentMode: 65
-    - serializedVersion: 2
-      time: 0.5
-      value: 0
-      inSlope: -0.4
-      outSlope: 0
-      tangentMode: 5
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  textSize:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: -0.0041656494
-      value: 0.0062561035
-      inSlope: 0.07561809
-      outSlope: 0.07561809
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.123871684
-      value: 0.4549448
-      inSlope: 10.84641
-      outSlope: 10.84641
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.2198619
-      value: 1.1043437
-      inSlope: 0.821377
-      outSlope: 0.821377
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.3932406
-      value: 1.0673077
-      inSlope: -1.0036296
-      outSlope: -1.0036296
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 0.98747253
-      inSlope: -0.3473634
-      outSlope: -0.3473634
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
-  countdownText: {fileID: 2072423247}
 --- !u!114 &1796129068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4648,7 +4574,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 4acb10d0807d14d0fad62db9b0aac1f8, type: 3}
-    m_FontSize: 50
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
@@ -4659,7 +4585,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: Press A to DASH
 --- !u!222 &2072423248
 CanvasRenderer:
   m_ObjectHideFlags: 0

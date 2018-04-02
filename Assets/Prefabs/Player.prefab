@@ -141,7 +141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dashEffectPrefab: {fileID: 1900474533239010, guid: 6dea4c63d873f4536a25869ae766d75e,
     type: 2}
-  dashAimerPrefab: {fileID: 1412520093174376, guid: 617b99692ebf74635a05668a5f115b86,
+  dashAimerPrefab: {fileID: 1412520093174376, guid: eb210e989d7bd4df9bb31d913d1cfc2a,
     type: 2}
   dashButton: 11
   stealKnockbackPercentage: 0.8
