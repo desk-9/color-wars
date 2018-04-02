@@ -7,3 +7,4 @@
 * Made numerous improvement tweaks in player rotation, dash, etc.
 * Added score indicators
 * Added screen shake
+* Add sound effects

@@ -3,14 +3,19 @@ Based on the OrbitTarget demo, posted by Austin Yarger
 (See https://piazza.com/class/jbcr9wzhymw6hm?cid=214)
 
 Sounds:
-Goal Switch Notification: https://freesound.org/people/pan14/sounds/263133/
-GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
-Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
-Endgame Countdown: http://www.orangefreesounds.com/countdown-timer/
+* [deprecated] Goal Switch Notification: https://freesound.org/people/pan14/sounds/263133/
+* [deprecated] GoalSwitchWarning: https://www.soundsnap.com/tech_button_28_wav
+* [deprecated] Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
+* [deprecated] Endgame Countdown: http://www.orangefreesounds.com/countdown-timer/
+* Steal ball, power up ball, break wall (w/o stunning player) sounds: https://assetstore.unity.com/packages/audio/sound-fx/free-casual-game-sfx-pack-54116
+* Shoot sound: https://freesound.org/people/Mattix/sounds/414888/
+* Stun Player Wall Break Sound: https://freesound.org/people/josepharaoh99/sounds/368511/
+* Score Goal/Dissolve losing team sound: https://freesound.org/people/Problematist/sounds/325356/
+* Dash sound: https://freesound.org/people/VeronicaStratton/sounds/388493/
 
 Music:
-Comeback of the Green Rabbit: http://ocremix.org/remix/OCR03319
-Dance Nation: http://ocremix.org/remix/OCR01835
+* Comeback of the Green Rabbit: http://ocremix.org/remix/OCR03319
+* Dance Nation: http://ocremix.org/remix/OCR01835
 
 Asset: circulartimer sprite and idea
 Source: http://answers.unity.com/answers/856224/view.html
@@ -28,11 +33,3 @@ License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
 Screen Shake Script:
 https://gist.github.com/ftvs/5822103
 
-Steal, power up ball sounds:
-https://assetstore.unity.com/packages/audio/sound-fx/free-casual-game-sfx-pack-54116
-
-Shoot sound:
-https://freesound.org/people/Mattix/sounds/414888/
-
-Stun Player Wall Break Sound:
-https://freesound.org/people/josepharaoh99/sounds/368511/
