@@ -66,8 +66,9 @@ public class PlayerInputManager : MonoBehaviour {
 
         InputManager.OnDeviceDetached += (device) => {
             Debug.LogFormat(this, "{0}: Device {1} detached! Removing from list.", name, device.SortOrder);
-
-            actions[device]();
+            if (actions.ContainsKey(device)) {
+                actions[device]();
+            }
 
             devices.Remove(device);
             actions.Remove(device);
@@ -136,7 +137,8 @@ public class PlayerInputManager : MonoBehaviour {
     }
 
     public bool Any(DevicePredicate devicePredicate) {
-        return devices.Any((devicePair) => devicePredicate(devicePair.Key));
+        return devices.Where(devicePair => devicePair.Key != null).Any(
+            (devicePair) => devicePredicate(devicePair.Key));
     }
 
 

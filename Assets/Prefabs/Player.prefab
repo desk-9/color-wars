@@ -155,6 +155,8 @@ MonoBehaviour:
   chargeRate: 0.5
   dashSpeed: 100
   cooldown: 0.5
+  stealShakeAmount: 0.7
+  stealShakeDuration: 0.05
 --- !u!114 &114205997563975182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -195,7 +197,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stunTime: 0.7
-  toggleWhiteTime: 1
 --- !u!114 &114319027261209328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -258,7 +259,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1233221201083302}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4e43ea7dfcf541a7b0afdd2de3ab3be, type: 3}
   m_Name: 

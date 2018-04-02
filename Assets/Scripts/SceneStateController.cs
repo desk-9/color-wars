@@ -9,6 +9,7 @@ public enum Scene {
     Court,
     MainMenu,
     Tutorial,
+    Selection
 };
 
 public class SceneStateController : MonoBehaviour {
@@ -16,6 +17,7 @@ public class SceneStateController : MonoBehaviour {
     Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
         {Scene.Court, "court"},
         {Scene.MainMenu, "main-menu"},
+        {Scene.Selection, "court-team-selection"},
         {Scene.Tutorial, "court-tutorial"},
     };
     public Scene currentScene {get; private set;}
@@ -85,8 +87,8 @@ public class SceneStateController : MonoBehaviour {
     void LoadHelper(Scene newScene) {
         OnExit[currentScene]();
         currentScene = newScene;
-        if (newScene == Scene.Tutorial) {
-            PlayerTutorial.runTutorial = newScene == Scene.Tutorial;
+        if (newScene == Scene.Selection) {
+            PlayerTutorial.runTutorial = newScene == Scene.Selection;
             GameModel.playerTeamsAlreadySelected = false;
             GameModel.cheatForcePlayerAssignment = false;
             TeamManager.playerSpritesAlreadySet = false;

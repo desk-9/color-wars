@@ -38,9 +38,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/court.unity
     guid: ca110f435d769440d8595f6864cbc517
-  - enabled: 1
-    path: Assets/Scenes/court-tutorial.unity
+  - enabled: 0
+    path: Assets/Scenes/court-tutorial-melting-point.unity
     guid: 01dede488e9bd45d29d39e3c85425183
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/court-tutorial.unity
+    guid: e4951deb6f61d4f6481db6ebf2cd6218
+  - enabled: 0
+    path: Assets/Scenes/video-test.unity
+    guid: a29b006ba139044b1a66131a5289910d
+  - enabled: 1
+    path: Assets/Scenes/court-team-selection.unity
+    guid: 89a50e8af325f4979b5ab2404f8e7c3a

@@ -111,10 +111,14 @@ public class GameModel : MonoBehaviour {
         }
 
         // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
-        nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
-        this.FrameDelayCall(
-            () => {foreach (var team in teams) {team.ResetTeam();}},
-            3);
+        Utility.Print("Will reset?", !PlayerTutorial.runTutorial);
+        if (!PlayerTutorial.runTutorial) {
+            Utility.Print("reseting");
+            nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
+            this.FrameDelayCall(
+                () => {foreach (var team in teams) {team.ResetTeam();}},
+                3);
+        }
     }
 
     IEnumerator EndGameCountdown() {

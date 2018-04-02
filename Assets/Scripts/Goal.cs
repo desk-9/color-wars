@@ -80,8 +80,10 @@ public class Goal : MonoBehaviour {
         GameModel.instance.nc.CallOnStateStart(
             State.Posession, (Player player) => {
                 if (player != lastPlayer && player.team == lastPlayer?.team) {
+                    GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
                     SwitchToTeam(player.team);
                 } else if (player.team != lastPlayer?.team) {
+                    GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
                     ResetNeutral();
                 }
             });

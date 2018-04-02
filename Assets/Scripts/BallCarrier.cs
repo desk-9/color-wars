@@ -70,7 +70,6 @@ public class BallCarrier : MonoBehaviour {
             GameModel.instance.SlowMo();
         }
         ball.charged = false;
-        Utility.TutEvent("BallPickup", this);
         laserGuide?.DrawLaser();
         var player = GetComponent<Player>();
         var lastPlayer = ball.lastOwner?.GetComponent<Player>();
@@ -105,7 +104,7 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void GetGoal() {
-        goal = GameObject.FindObjectOfType<GoalAimPoint>().gameObject;
+        goal = GameObject.FindObjectOfType<GoalAimPoint>()?.gameObject;
     }
 
     void SnapToGameObject() {
@@ -114,10 +113,11 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void SnapAimTowardsTargets() {
-        if (teammate == null ||
-            playerMovement == null ||
-            ((PlayerMovement)playerMovement).GetInputDevice() == null ||
-            player == null) {
+        if (teammate == null
+            || playerMovement == null
+            || goal == null
+            || ((PlayerMovement)playerMovement).GetInputDevice() == null
+            || player == null) {
             return;
         }
         if (snapDelay > 0f) {
@@ -189,6 +189,7 @@ public class BallCarrier : MonoBehaviour {
             // Reset references
             ball.owner = null;
             ball = null;
+            
             laserGuide?.StopDrawingLaser();
             StartCoroutine(CoolDownTimer());
         }

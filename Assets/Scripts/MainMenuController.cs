@@ -14,7 +14,7 @@ public class MainMenuController : MonoBehaviour {
     public Color deselectedColor;
 
     public List<Text> MenuOptions = new List<Text>();
-    int selectionIndex = 1;
+    int selectionIndex = 0;
 
     // Update is called once per frame
     void Update () {
@@ -41,9 +41,6 @@ public class MainMenuController : MonoBehaviour {
     }
 
     void DecrementSelection() {
-        if (selectionIndex == 0) {
-            return;
-        }
         MenuOptions[selectionIndex].color = deselectedColor;
         selectionIndex -= 1;
         MenuOptions[selectionIndex].color = selectedColor;

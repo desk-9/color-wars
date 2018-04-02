@@ -21,13 +21,8 @@ Code:
 Assets/Scripts/PlayerInputManager.cs function GetLeftStickInput
 Source: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
 
-Font: EMRYS' CUSTOM REGULAR
-Source: https://fontlibrary.org/en/font/ffff
-License: https://creativecommons.org/licenses/by-sa/3.0/
-(Changes were not made)
-
-Font: Acme
-Source: https://fonts.google.com/specimen/Acme?selection.family=Acme
+Font: Play
+Source: https://fonts.google.com/specimen/Play
 License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
 
 Screen Shake Script:

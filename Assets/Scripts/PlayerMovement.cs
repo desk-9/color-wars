@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
             yield break;
         }
         float startTime = Time.time;
-        yield return new WaitForFixedUpdate();
+        yield return null;
         while (true) {
             var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
             rb2d.velocity = movementSpeed * direction;
@@ -100,7 +100,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
             }
 
             RotatePlayer();
-            yield return new WaitForFixedUpdate();
+            yield return null;
         }
     }
 
@@ -140,11 +140,20 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
         inputDevice = null;
     }
 
-    // void Update() {
-    //     if (inputDevice == null) {
-    //         TryToGetInputDevice();
-    //     }
-    // }
+    void Update() {
+        if (inputDevice != null) {
+            if (inputDevice.Action1.WasReleased) {
+                Debug.Log("A pressed!!");
+                GameModel.instance.nc.NotifyMessage(
+                    Message.PlayerPressedA, this.gameObject);
+            }
+
+            if (inputDevice.LeftBumper.WasReleased) {
+                GameModel.instance.nc.NotifyMessage(
+                    Message.PlayerPressedLeftBumper, this.gameObject);
+            }
+        }
+    }
 
     void OnDestroy() {
         if (inputDevice != null) {

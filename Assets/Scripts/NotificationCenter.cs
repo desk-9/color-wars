@@ -20,6 +20,11 @@ public enum Message {
     StartCountdown,
     CountdownFinished,
     GoalScored,
+    BallSetNeutral,
+    BallCharged,
+    PlayerPressedA,
+    PlayerPressedLeftBumper
+
 };
 
 public class NotificationCenter {

@@ -21,7 +21,6 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update () {
-
         if (SceneStateController.instance.paused
             && PlayerInputManager.instance.Any((device)
                                => device.GetControl(ResetButton).WasPressed)) {

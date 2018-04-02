@@ -9,7 +9,7 @@ public class CountdownToStart : MonoBehaviour {
     // Checkbox allows you to manually start a countdown in the editor
     // Purely for testing
     public bool startCountdown = false;
-    
+
     public float countDuration = 1.0f;
     public float totalDuration {
         get {
@@ -32,7 +32,7 @@ public class CountdownToStart : MonoBehaviour {
     // Curve values should be in the range [0, 1]
     public AnimationCurve panelAlpha;
     public AnimationCurve textSize;
-    
+
     public Text countdownText;
     Image panelBackground;
     List<string> flashText = new List<string>{ "3", "2", "1", "GO!"};
@@ -44,10 +44,12 @@ public class CountdownToStart : MonoBehaviour {
         panelAlphaRange = maxPanelAlpha - minPanelAlpha;
         textSizeRange = maxTextSize - minTextSize;
 
-        
+
         GameModel.instance.nc.CallOnMessage(Message.StartCountdown,
                                             () => StartCountdown());
-        this.FrameDelayCall(() => StartCountdown(), 3);
+        if (!PlayerTutorial.runTutorial) {
+            this.FrameDelayCall(() => StartCountdown(), 3);
+        }
     }
 
     // Checks the startCountdown checkbox (this allows you to manually start a
@@ -58,7 +60,7 @@ public class CountdownToStart : MonoBehaviour {
             StartCountdown();
         }
     }
-    
+
     public void StartCountdown() {
         if (GameModel.instance.gameOver) {
             return;
@@ -100,7 +102,7 @@ public class CountdownToStart : MonoBehaviour {
             yield return null;
         }
         textSizeRange /= goTextSizeMultiplier;
-        
+
         HideCountdown();
     }
 
@@ -132,6 +134,5 @@ public class CountdownToStart : MonoBehaviour {
         newColor.a = newAlpha;
         panelBackground.color = newColor;
     }
-    
-}
 
+}

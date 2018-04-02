@@ -36,282 +36,72 @@ public class PlayerTutorial : MonoBehaviour {
     public static PlayerTutorial instance;
     public static bool runTutorial = false;
 
-    GameObject tutorial;
-    GameObject tutorialCanvas;
-    Text tutorialText;
-    Image tutorialImage;
-    Text tutorialReadyText;
-    string currentTutorialStage;
+    Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
+    Text readyUpText;
+    Text readyUpCount;
+    bool skipReadyUpCheat = false;
 
-    List<TutorialStageInfo> tutorialInfo = new List<TutorialStageInfo>() {
-        {"TeamsCorrect", "Dash at an element to select team", "AButton", TutorialRequirement.Called},
-        {"PassSwitch", "Pass to your teammate to power up the ball", null},
-        {"TimeoutShort", "Shoot at the thermometer when the ball is powered!", null, TutorialRequirement.ShortTimeout},
-        {"Steal", "Steal the ball by dashing at it", null},
-        {"TimeoutShort", "Stealing from a player stuns them", null, TutorialRequirement.ShortTimeout},
-        {"MakeWalls", "Hold B to lay walls", "BButton"},
-        {"Done", "Finished! Press A to play", "AButton"},
-    };
-
-    Dictionary<string, Callback> stageStarts = new Dictionary<string, Callback>();
+    bool inTeamSelection = false;
 
     void Start() {
-
-        stageStarts = new Dictionary<string, Callback>() {
-            {"Steal", SetUpStealDummies},
-            {"PassSwitch", SetUpPassSwitch},
-            {"MakeWalls", SetUpMakeWalls},
-            {"Done", SetUpDone}
-        };
-
-        if (runTutorial) {
-
-            tutorial = GameObject.Find("Tutorial");
-            tutorialCanvas = tutorial.transform.Find("TutorialCanvas").gameObject;
-            tutorialCanvas.SetActive(true);
-            tutorialText = tutorialCanvas.FindComponent<Text>("TutorialText");
-            tutorialImage = tutorialCanvas.FindComponent<Image>("TutorialImage");
-            tutorialReadyText = GameObject.FindWithTag("TutorialReadyText").GetComponent<Text>();
-            StartCoroutine(Tutorial());
-        }
+        readyUpText = GameObject.Find("ReadyUpText")?.GetComponent<Text>();
+        readyUpCount = GameObject.Find("ReadyUpCount")?.GetComponent<Text>();
+        inTeamSelection = (GameObject.Find("TeamSelection") != null);
     }
 
-    void SetTutorialElementActive(string name, bool activation) {
-        tutorial.FindChild(name).SetActive(activation);
-    }
-
-    void SetUpStealDummies() {
-        GameModel.instance.FlashScreen();
-        ResetPlayerStates();
-        MovePlayersToSpawnLocations();
-        SetTutorialElementActive("TeamSelection", false);
-        SetTutorialElementActive("SeperatedTeams", true);
-        SetTutorialElementActive("SeperatedPlayers", true);
-        SetTutorialElementActive("StealDummies", true);
-        SetTutorialElementActive("PassBalls", false);
-    }
-
-    void SetUpPassSwitch() {
-        GameModel.instance.FlashScreen();
-        ResetPlayerStates();
-        MovePlayersToSpawnLocations();
-        SetTutorialElementActive("TeamSelection", false);
-        SetTutorialElementActive("SeperatedTeams", true);
-        SetTutorialElementActive("SeperatedPlayers", false);
-        SetTutorialElementActive("StealDummies", false);
-        SetTutorialElementActive("PassBalls", true);
-    }
-
-    void SetUpMakeWalls() {
-        ResetPlayerStates();
-        GameModel.instance.FlashScreen();
-        SetTutorialElementActive("TeamSelection", false);
-        SetTutorialElementActive("PassBalls", false);
-        SetTutorialElementActive("SeperatedTeams", false);
-        SetTutorialElementActive("SeperatedPlayers", false);
-        SetTutorialElementActive("StealDummies", false);
-    }
-
-    void SetUpDone() {
-        ResetPlayerStates();
-        GameModel.instance.FlashScreen();
-        SetTutorialElementActive("TeamSelection", false);
-        SetTutorialElementActive("PassBalls", false);
-        SetTutorialElementActive("SeperatedTeams", false);
-        SetTutorialElementActive("SeperatedPlayers", false);
-        SetTutorialElementActive("StealDummies", false);
-    }
-
-    void ResetPlayerStates() {
-        foreach (var realPlayer in GameModel.instance.GetPlayersWithTeams()) {
-            var stateManager = realPlayer.GetComponent<PlayerStateManager>();
-            stateManager.CurrentStateHasFinished();
-        }
-    }
-
-    void MovePlayersToSpawnLocations() {
-        var spawnPoints = (new List<String>() {"FireStartPoint", "IceStartPoint"}).Select(
-            s => GameObject.FindGameObjectWithTag(s)).ToList();
-        for (int i = 0; i < spawnPoints.Count; i++) {
-            var spawnPoint = spawnPoints[i];
-            int playerAngle = 1;
-            foreach (var player in GameModel.instance.teams[i].teamMembers) {
-                var angle = 180 * playerAngle;
-                playerAngle += 1;
-                var displacement = new Vector2(0, 14);
-                var finalDisplacement = Quaternion.AngleAxis(angle, Vector3.forward) * displacement;
-                player.transform.position =
-                    spawnPoint.transform.position + finalDisplacement;
-            }
-        }
-    }
-
-    List<Player> GetPlayerComponents() {
-        var result = new List<Player>();
-        foreach (var team in GameModel.instance.teams) {
-            result.AddRange(team.teamMembers);
-        }
-        return result;
+    void StartListeningForPlayers() {
+        GameModel.instance.nc.CallOnMessageWithSender(
+            Message.PlayerPressedA, CheckinPlayer);
+        GameModel.instance.nc.CallOnMessage(
+            Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
     }
 
     List<GameObject> GetPlayers() {
-        return GetPlayerComponents().Select(p => p.gameObject).ToList();
+        return (from player in GameModel.instance.GetAllPlayers()
+                select player.gameObject).ToList();
     }
 
-    Dictionary<object, bool> checkin = new Dictionary<object, bool>();
-    void CheckinPlayer(object player) {
-        checkin[player] = true;
-        tutorialReadyText.text = string.Format(
-            "{0}/{1}", GetPlayers().Count(p => checkin.Keys.Contains(p) && checkin[p]),
-            GetPlayers().Count());
+     void CheckinPlayer(object potentialPlayer) {
+        var player = potentialPlayer as GameObject;
+        if (player != null) {
+            checkin[player] = true;
+        }
+        Utility.Print("Checking in player", player, checkin[player], NumberCheckedIn());
+        readyUpCount.text = string.Format("{0}/{1}", NumberCheckedIn(), GetPlayers().Count);
     }
 
     void ResetCheckin() {
+        skipReadyUpCheat = false;
         foreach (var player in GetPlayers()) {
-            checkin[player] = false;
+            checkin[player.gameObject] = false;
         }
+        Utility.Print("Reseting count");
+        readyUpCount.text = string.Format("{0}/{1}", NumberCheckedIn(), GetPlayers().Count);
     }
 
-    void ResetStage() {
-        ResetCheckin();
-        timeoutShort = false;
-        timeoutReallyShort = false;
-        eventCalled = false;
+    int NumberCheckedIn() {
+        return GetPlayers().Count(player => checkin[player]);
     }
 
     bool AllCheckedIn() {
-        bool all = true;
-        foreach (var player in GetPlayers()) {
-            if (player.GetComponent<PlayerMovement>().GetInputDevice() == null) {
-                continue;
-            }
-            if (checkin.ContainsKey(player)) {
-                // Debug.LogFormat("{0}: {1}", player, checkin[player]);
-                if (!checkin[player]) {
-                    all = false;
-                }
-            } else {
-                all = false;
-            }
-        }
-        return all;
-    }
-
-    bool AnyCheckedIn() {
-        return checkin.Values.Any(i => i);
-    }
-
-    bool timeoutShort = false;
-    bool timeoutReallyShort = false;
-
-    bool eventCalled = false;
-
-    bool StageDone(TutorialRequirement requirement) {
-        if (requirement == TutorialRequirement.AllPlayers) {
-            return AllCheckedIn();
-        } else if (requirement == TutorialRequirement.AnyPlayer) {
-            return AnyCheckedIn();
-        } else if (requirement == TutorialRequirement.ShortTimeout) {
-            return timeoutShort;
-        } else if (requirement == TutorialRequirement.ReallyShortTimeout) {
-            return timeoutReallyShort;
-        } else if (requirement == TutorialRequirement.Called) {
-            return eventCalled;
-        } else {
-            return false;
-        }
-    }
-
-    void Awake() {
-        if (instance == null) {
-            instance = this;
-        } else {
-            Destroy(this);
-        }
-    }
-
-    void StartShortTimeout() {
-        this.RealtimeDelayCall(() => timeoutShort = true, 4f);
-    }
-
-    void StartReallyShortTimeout() {
-        this.RealtimeDelayCall(() => timeoutReallyShort = true, 2f);
-    }
-
-    void SetTutorialText(string text) {
-        tutorialText.text = text;
-    }
-
-    void SetTutorialImage(string imagePath) {
-        Debug.Log("setting tutorial image");
-        if (imagePath != null) {
-            var image = Resources.Load<Sprite>(string.Format("TutorialImages/{0}", imagePath));
-            tutorialImage.sprite = image;
-            tutorialImage.color = Color.white;
-        } else {
-            tutorialImage.color = Color.clear;
-        }
-    }
-
-    void SetInfoToIndex(int index) {
-        var info = tutorialInfo[index];
-        SetDisplayToInfo(info);
-    }
-
-    void SetDisplayToInfo(TutorialStageInfo info) {
-        SetTutorialText(info.prompt);
-        SetTutorialImage(info.imageResource);
-    }
-
-    IEnumerator Tutorial() {
-        yield return null;
-        foreach (var tutorialStage in tutorialInfo) {
-            ResetStage();
-            if (tutorialStage.eventString == "resetgoal") {
-                GameModel.instance.goal?.ResetNeutral();
-                continue;
-            }
-            if (tutorialStage.requirement == TutorialRequirement.AllPlayers) {
-                tutorialReadyText.text = string.Format("0/{0}", GetPlayers().Count());
-            } else {
-                tutorialReadyText.text = "";
-            }
-            StartShortTimeout();
-            StartReallyShortTimeout();
-            SetDisplayToInfo(tutorialStage);
-            if (stageStarts.ContainsKey(tutorialStage.eventString)) {
-                stageStarts[tutorialStage.eventString]();
-            }
-            var eventString = tutorialStage.eventString + "Tutorial";
-            currentTutorialStage = eventString;
-            GameModel.instance.nc.CallOnStringEventWithSender(
-                currentTutorialStage,
-                (object player) => {
-                    if (eventString == currentTutorialStage) {
-                        CheckinPlayer(player);
-                    }
-                });
-            GameModel.instance.nc.CallOnStringEvent(
-                currentTutorialStage,
-                () => {
-                    if (eventString == currentTutorialStage) {
-                        eventCalled = true;
-                    }
-                });
-            while (!StageDone(tutorialStage.requirement)) {
-                yield return null;
-            }
-        }
-        this.TimeDelayCall(TutorialFinished, 0.3f);
-    }
-
-    void TutorialFinished() {
-        runTutorial = false;
-        this.TimeDelayCall(() => GameModel.instance.FlashScreen(0.5f), 0.1f);
-        this.TimeDelayCall(() => SceneStateController.instance.Load(Scene.Court), 0.4f);
+        var allPlayers = (from player in GetPlayers() select checkin[player]).All(x => x);
+        return allPlayers || skipReadyUpCheat;
     }
 
     void TeamSelectionFinished() {
+        inTeamSelection = false;
+        StartCoroutine(EndTutorial());
+    }
+
+    IEnumerator EndTutorial() {
+        readyUpText.text = "Press A to start the tutorial";
+        ResetCheckin();
+        StartListeningForPlayers();
+        yield return null;
+        while (!AllCheckedIn()) {
+            yield return null;
+        }
+        yield return new WaitForSeconds(0.5f);
         GameModel.playerTeamsAlreadySelected = true;
         GameModel.playerTeamAssignments = new Dictionary<int, int>();
         foreach (var player in GameModel.instance.GetPlayersWithTeams()) {
@@ -319,12 +109,13 @@ public class PlayerTutorial : MonoBehaviour {
             GameModel.playerTeamAssignments[player.playerNumber] = teamIndex;
         }
         TeamManager.playerSpritesAlreadySet = true;
+        SceneStateController.instance.Load(Scene.Tutorial);
+
     }
 
     void Update() {
-        if (currentTutorialStage == "TeamsCorrectTutorial") {
+        if (inTeamSelection) {
             if (GameModel.instance.teams.All(team => team.teamMembers.Count == 2)) {
-                Utility.TutEvent("TeamsCorrect", this);
                 TeamSelectionFinished();
             }
         }
