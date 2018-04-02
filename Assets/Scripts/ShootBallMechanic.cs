@@ -111,6 +111,7 @@ public class ShootBallMechanic : MonoBehaviour {
 
     void Shoot() {
         Utility.TutEvent("Shoot", this);
+        AudioManager.instance.ShootBallSound.Play(.5f);
         shootTimer = null;
         var ball = ballCarrier.ball;
         var shotDirection = ball.transform.position - transform.position;

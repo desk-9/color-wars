@@ -27,3 +27,12 @@ License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
 
 Screen Shake Script:
 https://gist.github.com/ftvs/5822103
+
+Steal, power up ball sounds:
+https://assetstore.unity.com/packages/audio/sound-fx/free-casual-game-sfx-pack-54116
+
+Shoot sound:
+https://freesound.org/people/Mattix/sounds/414888/
+
+Stun Player Wall Break Sound:
+https://freesound.org/people/josepharaoh99/sounds/368511/

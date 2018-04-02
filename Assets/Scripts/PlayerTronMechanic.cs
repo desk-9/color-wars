@@ -104,6 +104,7 @@ public class PlayerTronMechanic : MonoBehaviour {
     }
 
     public void HandleWallCollision() {
+        AudioManager.instance.StunPlayerWallBreak.Play(.5f);
         stateManager.AttemptStun(() => playerStun.StartStun(Vector2.zero, lengthStunWhileLaying),
                                  () => playerStun.StopStunned());
     }

@@ -24,6 +24,11 @@ public class AudioManager : MonoBehaviour {
     public SoundName GoalSwitchWarning = "Beep";
     public SoundName Beep = "Beep";
     public SoundName GoalSwitch = "GoalSwitch";
+    public SoundName StealSound = "StealSoundEffect";
+    public SoundName ShootBallSound = "BallShoot";
+    public SoundName PowerUpBall = "PoweringUpBall";
+    public SoundName StunPlayerWallBreak = "StunPlayerWalBreak";
+    public SoundName BreakWall = "BreakWall";
 
     public void Awake() {
         if (instance != null) {
