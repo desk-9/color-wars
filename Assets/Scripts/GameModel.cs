@@ -36,6 +36,8 @@ public class GameModel : MonoBehaviour {
     public float slowMoFactor = 0.4f;
     public float PitchShiftTime = 0.2f;
     public float SlowedPitch = 0.9f;
+    public float goalShakeAmount = 1.5f;
+    public float goalShakeDuration = .4f;
 
     public int winningScore = 5;
     public int requiredWinMargin = 2;
@@ -57,6 +59,7 @@ public class GameModel : MonoBehaviour {
     IntCallback NextTeamAssignmentIndex;
     Ball ball;
     public Goal goal;
+    CameraShake cameraShake;
 
     void Awake() {
         Debug.Log(PlayerTutorial.runTutorial);
@@ -92,6 +95,7 @@ public class GameModel : MonoBehaviour {
         Debug.Log(Time.timeScale);
         ball = GameObject.FindObjectOfType<Ball>();
         goal = GameObject.FindObjectOfType<Goal>();
+        cameraShake = GameObject.FindObjectOfType<CameraShake>();
         if (winCondition == WinCondition.Time) {
             scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
         }
@@ -212,6 +216,8 @@ public class GameModel : MonoBehaviour {
             }
         }
         UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
+        cameraShake.shakeAmount = goalShakeAmount;
+        cameraShake.shakeDuration = goalShakeDuration;
     }
 
     void ResetGameAfterGoal() {

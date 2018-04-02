@@ -29,3 +29,6 @@ License: https://creativecommons.org/licenses/by-sa/3.0/
 Font: Acme
 Source: https://fonts.google.com/specimen/Acme?selection.family=Acme
 License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
+
+Screen Shake Script:
+https://gist.github.com/ftvs/5822103

@@ -1031,6 +1031,7 @@ GameObject:
   - component: {fileID: 497832507}
   - component: {fileID: 497832506}
   - component: {fileID: 497832511}
+  - component: {fileID: 497832512}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1126,6 +1127,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profile: {fileID: 11400000, guid: 1a5f9e5ce3c294ff7849bc0938f7228f, type: 2}
+--- !u!114 &497832512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 497832505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52b37546de6d4bc5833aa5d9794b6f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camTransform: {fileID: 0}
+  shakeDuration: 0
+  shakeAmount: 0.7
+  decreaseFactor: 1
 --- !u!1 &514595436
 GameObject:
   m_ObjectHideFlags: 0
@@ -3161,6 +3177,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4166382533016198, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 2}
       propertyPath: m_LocalPosition.x
       value: -2.2622766
@@ -3208,6 +3229,76 @@ Prefab:
       propertyPath: winDisplay
       value: 
       objectReference: {fileID: 900835214}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[1].time
+      value: 0.4982422
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[1].value
+      value: 0.10421143
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[1].inSlope
+      value: 0.19032457
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[1].outSlope
+      value: 0.19032457
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[2].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[2].inSlope
+      value: 4.7057314
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[2].outSlope
+      value: 4.7057314
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: goalScreenShakeCurve.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 2}
   m_IsPrefabParent: 0

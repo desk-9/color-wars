@@ -18,6 +18,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float chargeRate = 1.0f;
     public float dashSpeed = 50.0f;
     public float cooldown = 0.5f;
+    public float stealShakeAmount = .7f;
+    public float stealShakeDuration = .05f;
 
     PlayerStateManager stateManager;
     PlayerMovement playerMovement;
@@ -29,6 +31,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     BallCarrier carrier;
     GameObject dashAimer;
     float lastDashTime;
+    CameraShake cameraShake;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
@@ -36,6 +39,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         stateManager   = this.EnsureComponent<PlayerStateManager>();
         carrier        = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
+        cameraShake = GameObject.FindObjectOfType<CameraShake>();
     }
 
     void Awake() {
@@ -165,6 +169,8 @@ public class PlayerDashBehavior : MonoBehaviour {
         var otherStun = otherPlayer.GetComponent<PlayerStun>();
         var otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
         if (otherStun != null && otherStateManager != null) {
+            cameraShake.shakeAmount = stealShakeAmount;
+            cameraShake.shakeDuration = stealShakeDuration;
             otherStateManager.AttemptStun(
                 () => otherStun.StartStun(rb.velocity * stealKnockbackPercentage),
                 otherStun.StopStunned);
