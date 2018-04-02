@@ -1,8 +1,9 @@
-* Completely changed theme from neon to Fire vs. Ice.
-* Added aim assist laser
-* Made time slow down on ball possession (including music pitch change)
-* Added ability for players to lay obstacles in front of opposing players/ball
-* Significantly improved tutorial
-* Made game no longer time-based, but first to reach certain temperature change (win by "x" points)
-* Added background music
-* Added art/sprites for most objects
+* Changed theme from Fire vs. Ice back to neon
+* Added aim assist that snaps players towards goal or teammate
+* Added moving background
+* Completely changed tutorial from interactive based to short instructive clip based
+* Added scene transitions
+* Added countdown before game start
+* Made numerous improvement tweaks in player rotation, dash, etc.
+* Added score indicators
+* Added screen shake
