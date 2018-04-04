@@ -48,7 +48,7 @@ public class Ball : MonoBehaviour {
         } else {
             // var newSprite = goal.currentTeam.resources.ballSprite;
             // renderer.sprite = newSprite;
-            AudioManager.instance.PowerUpBall.Play(.5f);
+            AudioManager.instance.PowerUpBall.Play(.75f);
             renderer.color = goal.currentTeam.teamColor;
             trailRenderer.material.color = goal.currentTeam.teamColor;
         }
