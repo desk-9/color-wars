@@ -62,7 +62,7 @@ public class GameModel : MonoBehaviour {
     CameraShake cameraShake;
 
     void Awake() {
-        Debug.Log(PlayerTutorial.runTutorial);
+        // Debug.Log(PlayerTutorial.runTutorial);
         if (instance == null) {
             instance = this;
             Initialization();
