@@ -46,8 +46,19 @@ public class MenuController : MonoBehaviour {
 
 
     public void TogglePause() {
-        SceneStateController.instance.TogglePauseTime();
-        pauseMenu.SetActive(SceneStateController.instance.paused);
+        // Case: not paused now => toggling will pause
+        if (!SceneStateController.instance.paused) {
+            Debug.Log("Game paused");
+            AudioManager.instance.PauseSound.Play(1.0f);
+            pauseMenu.SetActive(true);
+            SceneStateController.instance.PauseTime();
+        }
+        else {
+            SceneStateController.instance.UnPauseTime();
+            Debug.Log("Game un-paused");
+            AudioManager.instance.UnPauseSound.Play(2.5f);
+            pauseMenu.SetActive(false);
+        }
     }
 
 }

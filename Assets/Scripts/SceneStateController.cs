@@ -136,13 +136,11 @@ public class SceneStateController : MonoBehaviour {
     }
 
     public void PauseTime() {
-        AudioManager.instance.PauseSound.Play(.75f);        
         Time.timeScale = 0.0f;
         paused = true;
     }
 
     public void UnPauseTime() {
-        AudioManager.instance.UnPauseSound.Play(.75f);
         Time.timeScale = 1.0f;
         paused = false;
     }

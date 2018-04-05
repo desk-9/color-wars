@@ -21,11 +21,20 @@ public class MainMenuController : MonoBehaviour {
         foreach (var device in InputManager.Devices) {
             if (device.GetControl(SelectButton).WasPressed) {
                 var selection = MenuOptions[selectionIndex];
-                var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
-                trigger?.LoadAssociatedScene();
+                AudioManager.instance.ConfirmSelectionSound.Play();
+                
+                this.TimeDelayCall(
+                    () => {
+                        var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
+                        trigger?.LoadAssociatedScene();
+                    },
+                    AudioManager.instance.ConfirmSelectionSound.Length());
             } else if (device.GetControl(IC.InputControlType.LeftBumper).WasPressed) {
                 GameModel.cheatForcePlayerAssignment = true;
-                SceneStateController.instance.Load(Scene.Court);
+                AudioManager.instance.CheatCodeSound.Play();
+                this.TimeDelayCall(
+                    () => SceneStateController.instance.Load(Scene.Court),
+                    AudioManager.instance.CheatCodeSound.Length());
             }
         }
     }
