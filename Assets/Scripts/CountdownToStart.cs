@@ -49,6 +49,7 @@ public class CountdownToStart : MonoBehaviour {
                                             () => StartCountdown());
         if (!PlayerTutorial.runTutorial) {
             this.FrameDelayCall(() => StartCountdown(), 3);
+            // this.FrameDelayCall(() => GameModel.instance.nc.NotifyMessage(Message.CountdownFinished, this), 3);
         }
     }
 

@@ -137,8 +137,14 @@ public class PlayerInputManager : MonoBehaviour {
     }
 
     public bool Any(DevicePredicate devicePredicate) {
-        return devices.Where(devicePair => devicePair.Key != null).Any(
-            (devicePair) => devicePredicate(devicePair.Key));
+        return devices.Any(
+            (devicePair) => {
+                if (devicePair.Key != null) {
+                    return devicePredicate(devicePair.Key);
+                } else {
+                    return false;
+                }
+            });
     }
 
 

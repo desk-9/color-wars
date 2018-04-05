@@ -28,9 +28,9 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update () {
-        if (SceneStateController.instance.paused
-            && PlayerInputManager.instance.Any((device)
-                               => device.GetControl(ResetButton).WasPressed)) {
+        var paused = SceneStateController.instance?.paused ?? false;
+        var devicePressed = PlayerInputManager.instance.Any((device) => device.GetControl(ResetButton).WasPressed);
+        if (paused && devicePressed) {
             SceneStateController.instance.ReloadScene();
             return;
         }

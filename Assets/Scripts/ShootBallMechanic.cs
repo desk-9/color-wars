@@ -41,11 +41,14 @@ public class ShootBallMechanic : MonoBehaviour {
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
         goal = GameObject.FindObjectOfType<Goal>();
-        stateManager.CallOnStateEnter(
-                                      State.Posession, StartTimer);
+        stateManager.CallOnStateEnter(State.Posession, StartTimer);
         stateManager.CallOnStateExit(
             State.Posession, () => StopChargeShot());
 
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerPressedShoot, ShootPressed, gameObject);
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerReleasedShoot, ShootReleased, gameObject);
         if (chargeEffect != null) {
             var ps = chargeEffect.GetComponent<ParticleSystem>();
             var main = ps.main;
@@ -69,6 +72,23 @@ public class ShootBallMechanic : MonoBehaviour {
         shootTimer = StartCoroutine(ShootTimer());
     }
 
+    void ShootPressed() {
+        if (stateManager.IsInState(State.Posession)) {
+            if (shootTimer != null) {
+                StopCoroutine(shootTimer);
+            }
+            shootTimer = StartCoroutine(ChargeShot());
+        }
+    }
+
+    void ShootReleased() {
+        if (shootTimer != null) {
+            StopCoroutine(shootTimer);
+            shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
+            Shoot();
+        }
+    }
+
     IEnumerator ShootTimer() {
         // circularTimer?.StartTimer(forcedShotTime, delegate{});
 
@@ -76,18 +96,13 @@ public class ShootBallMechanic : MonoBehaviour {
         shotSpeed = baseShotSpeed;
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
-            var inputDevice = playerMovement.GetInputDevice();
-            if (inputDevice != null && inputDevice.GetControl(shootButton).WasPressed) {
-                shootTimer = StartCoroutine(ChargeShot(shootButton));
-                yield break;
-            }
             yield return null;
         }
         Utility.TutEvent("BallPickupTimeout", this);
         Shoot();
     }
 
-    IEnumerator ChargeShot(IC.InputControlType button) {
+    IEnumerator ChargeShot() {
         effect = Instantiate(chargeEffect, transform.position, transform.rotation, transform);
 
         var inputDevice = playerMovement.GetInputDevice();
@@ -95,12 +110,6 @@ public class ShootBallMechanic : MonoBehaviour {
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             shotSpeed += chargeRate * Time.deltaTime;
-
-            if (inputDevice.GetControl(button).WasReleased) {
-                shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
-                Shoot();
-                yield break;
-            }
 
             yield return null;
         }

@@ -40,6 +40,9 @@ public class PlayerDashBehavior : MonoBehaviour {
         carrier        = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
+
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerPressedDash, DashPressed, this.gameObject);
     }
 
     void Awake() {
@@ -55,12 +58,8 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
-    void Update() {
-        var input = playerMovement.GetInputDevice();
-
-        if (Time.time - lastDashTime < cooldown) return;
-
-        if (input != null && input.GetControl(dashButton).WasPressed) {
+    void DashPressed() {
+        if (Time.time - lastDashTime >= cooldown) {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
     }
@@ -88,22 +87,18 @@ public class PlayerDashBehavior : MonoBehaviour {
         var startChargeTime = Time.time;
         var chargeAmount    = 0.0f;
 
+        bool released = false;
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerReleasedDash, () => released = true, gameObject);
         while (true) {
             chargeAmount += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
             playerMovement.RotatePlayer();
 
-            var input = playerMovement.GetInputDevice();
 
-            if (
-                input != null && (
-                    input.GetControl(dashButton).WasReleased
-                    || (Time.time - startChargeTime) >= maxChargeTime
-                )
-            ) {
+            if (released) {
                 stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
-
                 yield break;
             }
 

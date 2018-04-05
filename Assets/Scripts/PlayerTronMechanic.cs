@@ -37,19 +37,17 @@ public class PlayerTronMechanic : MonoBehaviour {
         player         = this.EnsureComponent<Player>();
         playerStun = this.EnsureComponent<PlayerStun>();
         velocityWhileLaying = playerMovement.movementSpeed * layingSpeedMovementSpeedRatio;
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerPressedWall, WallPressed, gameObject);
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerReleasedWall, WallEnd, gameObject);
+
     }
 
-    // Update is called once per frame
-    void Update () {
-        if (inputDevice == null) {
-            inputDevice = playerMovement.GetInputDevice();
-            return;
-        }
-
-        if (inputDevice.GetControl(tronButton).WasPressed &&
-            player.team != null) {
-            stateManager.AttemptLayTronWall(() => layWallCoroutine = StartCoroutine(LayTronWall())
-                                            , StopLayingWall);
+    void WallPressed() {
+        if (player.team != null) {
+            stateManager.AttemptLayTronWall(
+                () => layWallCoroutine = StartCoroutine(LayTronWall()), StopLayingWall);
         }
     }
 
@@ -76,6 +74,17 @@ public class PlayerTronMechanic : MonoBehaviour {
         Utility.TutEvent("MakeWalls", this);
     }
 
+    void WallEnd() {
+        if (stateManager.IsInState(State.LayTronWall)) {
+            if (layWallCoroutine != null) {
+                StopCoroutine(layWallCoroutine);
+            }
+            layWallCoroutine = null;
+            PlaceCurrentWall();
+            stateManager.CurrentStateHasFinished();
+        }
+    }
+
     IEnumerator LayTronWall() {
         PlaceWallAnchor();
 
@@ -86,15 +95,11 @@ public class PlayerTronMechanic : MonoBehaviour {
 
         yield return null;
         var elapsedTime = 0f;
-        while (!inputDevice.GetControl(tronButton).WasReleased &&
-               elapsedTime < tronWallLayingLimit) {
+        while (elapsedTime < tronWallLayingLimit) {
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-
-        PlaceCurrentWall();
-        layWallCoroutine = null;
-        stateManager.CurrentStateHasFinished();
+        WallEnd();
     }
 
     public void StopWatching(TronWall wall) {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using InControl;
@@ -16,7 +17,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     Rigidbody2D rb2d;
     InputDevice inputDevice;
     Coroutine playerMovementCoroutine = null;
+    Coroutine broadcast;
     PlayerStateManager stateManager;
+
+    public Vector2 lastDirection = Vector2.zero;
 
     const float minBallForceRotationTime = 0.05f;
 
@@ -40,10 +44,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     }
 
     public void RotatePlayer () {
-        if (inputDevice == null || freezeRotation) {
+        if (freezeRotation) {
             return;
         }
-        var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
+        var direction = lastDirection;
         if (direction != Vector2.zero) {
             // Only do if nonzero, otherwise [SignedAngle] returns 90 degrees
             // and player snaps to up direction
@@ -61,7 +65,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
                 finalRotation = Mathf.Repeat(finalRotation, 360);
                 var ballCarrier = GetComponent<BallCarrier>();
                 if (ballCarrier != null && ballCarrier.ball != null
-                        && (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime) {
+                    && (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime) {
                     var ball = ballCarrier.ball;
                     var ballDirection = (ball.transform.position - transform.position).normalized;
                     var unitFinal = Quaternion.AngleAxis(finalRotation, Vector3.forward) * Vector2.right;
@@ -82,16 +86,13 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     }
 
     IEnumerator Move () {
-        if (inputDevice == null) {
-            yield break;
-        }
         float startTime = Time.time;
-        yield return null;
+        yield return new WaitForFixedUpdate();
+
         while (true) {
-            var direction = new Vector2(inputDevice.LeftStickX, inputDevice.LeftStickY);
-            rb2d.velocity = movementSpeed * direction;
+            rb2d.velocity = movementSpeed * lastDirection;
             // TODO: TUTORIAL
-            if (direction.magnitude > 0.1f) {
+            if (lastDirection.magnitude > 0.1f) {
                 if (Time.time - startTime > 0.75f) {
                     GameModel.instance.nc.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
@@ -111,13 +112,25 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
         PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
                                                     GivenInputDevice,
                                                     InputDeviceDisconnectedCallback);
+        GameModel.instance.nc.CallOnMessageWithSender(
+            Message.PlayerStick, playerPair => {
+                var pair = playerPair as Tuple<Vector2, GameObject>;
+                var player = pair?.Item2;
+                if (pair != null && player == this.gameObject) {
+                    lastDirection = pair.Item1;
+                }
+            });
+        stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
         // TryToGetInputDevice();
     }
 
     void GivenInputDevice(InputDevice device) {
         inputDevice = device;
         Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
-        stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
+        var puppet = GetComponent<PlayerPuppet>();
+        if (puppet == null || !puppet.doPuppeting) {
+            broadcast = StartCoroutine(ControlsBroadcast());
+        }
     }
 
     // void TryToGetInputDevice() {
@@ -136,24 +149,80 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     void InputDeviceDisconnectedCallback() {
         Debug.LogFormat(this, "{0}: Input Device Disconnected", name);
         StopAllMovement();
+        if (broadcast != null) {
+            StopCoroutine(broadcast);
+        }
+        broadcast = null;
         stateManager.AttemptStartState(delegate{}, delegate{});
         inputDevice = null;
     }
 
-    void Update() {
-        if (inputDevice != null) {
-            if (inputDevice.Action1.WasReleased) {
-                Debug.Log("A pressed!!");
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerPressedA, this.gameObject);
+    IEnumerator ControlsBroadcast() {
+        while (true) {
+            if (inputDevice == null) {
+                yield return null;
+                continue;
             }
 
-            if (inputDevice.LeftBumper.WasReleased) {
+            SendInputEvents(inputDevice.LeftStickX, inputDevice.LeftStickY,
+                            inputDevice.Action1.WasPressed,
+                            inputDevice.Action1.WasReleased,
+                            inputDevice.Action2.WasPressed,
+                            inputDevice.Action2.WasReleased,
+                            this.gameObject);
+
+            if (inputDevice.LeftBumper.WasPressed) {
                 GameModel.instance.nc.NotifyMessage(
                     Message.PlayerPressedLeftBumper, this.gameObject);
             }
+            if (inputDevice.LeftBumper.WasReleased) {
+                GameModel.instance.nc.NotifyMessage(
+                    Message.PlayerReleasedLeftBumper, this.gameObject);
+            }
+
+            yield return null;
         }
     }
+
+    public static void SendInputEvents(float stickX, float stickY, bool APressed,
+                                       bool AReleased, bool BPressed, bool BReleased,
+                                       GameObject thing) {
+
+        GameModel.instance.nc.NotifyMessage(
+            Message.PlayerStick,
+            Tuple.Create(new Vector2(stickX, stickY), thing));
+
+        if (APressed) {
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerPressedA, thing);
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerPressedDash, thing);
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerPressedShoot, thing);
+        }
+        if (AReleased) {
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerReleasedA, thing);
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerReleasedDash, thing);
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerReleasedShoot, thing);
+        }
+
+        if (BPressed) {
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerPressedB, thing);
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerPressedWall, thing);
+        }
+        if (BReleased) {
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerReleasedB, thing);
+            GameModel.instance.nc.NotifyMessage(
+                Message.PlayerReleasedWall, thing);
+        }
+    }
+
 
     void OnDestroy() {
         if (inputDevice != null) {

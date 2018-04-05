@@ -55,7 +55,7 @@ Transform:
   m_GameObject: {fileID: 1302162468020258}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2.7, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 4, y: 4, z: 1}
   m_Children:
   - {fileID: 4752171050471876}
   m_Father: {fileID: 0}
@@ -69,7 +69,7 @@ Transform:
   m_GameObject: {fileID: 1295680539210760}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_Children: []
   m_Father: {fileID: 4429568621961682}
   m_RootOrder: 0
@@ -215,8 +215,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   implosionPrefab: {fileID: 1070085223310474, guid: 0b18c9d735f894333af57d63750d6af3,
     type: 2}
-  adjustmentCoefficient: 0
   chargedMassFactor: 1
+  renderer: {fileID: 0}
+  rigidbody: {fileID: 0}
 --- !u!212 &212372124968514046
 SpriteRenderer:
   m_ObjectHideFlags: 1

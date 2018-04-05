@@ -116,7 +116,6 @@ public class BallCarrier : MonoBehaviour {
         if (teammate == null
             || playerMovement == null
             || goal == null
-            || ((PlayerMovement)playerMovement).GetInputDevice() == null
             || player == null) {
             return;
         }
@@ -125,7 +124,7 @@ public class BallCarrier : MonoBehaviour {
             return;
         }
         PlayerMovement pm = (PlayerMovement)playerMovement;
-        var stickDirection = new Vector2(pm.GetInputDevice().LeftStickX, pm.GetInputDevice().LeftStickY);
+        var stickDirection = pm.lastDirection;
         if (snapToObject != null) {
             var vector = (snapToObject.transform.position - transform.position).normalized;
             if (stickDirection == Vector2.zero ||
@@ -189,7 +188,7 @@ public class BallCarrier : MonoBehaviour {
             // Reset references
             ball.owner = null;
             ball = null;
-            
+
             laserGuide?.StopDrawingLaser();
             StartCoroutine(CoolDownTimer());
         }
@@ -231,7 +230,9 @@ public class BallCarrier : MonoBehaviour {
         if (ball == null || !ball.IsOwnable() || isCoolingDown) {
             return;
         }
+        Utility.Print("Ownable");
         if (stateManager != null) {
+            Utility.Print("Has state manager");
             var last_team = ball.lastOwner?.GetComponent<Player>().team;
             var this_team = GetComponent<Player>().team;
             if (chargedBallStuns && ball.charged && last_team != this_team) {
@@ -240,6 +241,7 @@ public class BallCarrier : MonoBehaviour {
                 var knockback = ball.GetComponent<Rigidbody2D>().velocity.magnitude * direction;
                 stateManager.AttemptStun(() => stun.StartStun(knockback), stun.StopStunned);
             } else {
+                Utility.Print("attempting posession");
                 stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
             }
         } else {

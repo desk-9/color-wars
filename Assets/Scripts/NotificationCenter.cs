@@ -14,6 +14,8 @@ public delegate void EventCallback(object sender);
 public delegate void GameObjectCallback(GameObject thing);
 
 
+public delegate bool EventPredicate(object sender);
+
 public enum Message {
     BallIsPossessed,
     BallIsUnpossessed,
@@ -24,9 +26,26 @@ public enum Message {
     SlowMoExited,
     BallSetNeutral,
     BallCharged,
+
+    PlayerStick,
+
     PlayerPressedA,
     PlayerPressedLeftBumper,
-    NullChargePrevention
+    NullChargePrevention,
+    PlayerReleasedA,
+
+    PlayerPressedLeftBumper,
+    PlayerReleasedLeftBumper,
+
+    PlayerPressedB,
+    PlayerReleasedB,
+
+    PlayerPressedDash,
+    PlayerReleasedDash,
+    PlayerPressedShoot,
+    PlayerReleasedShoot,
+    PlayerPressedWall,
+    PlayerReleasedWall
 };
 
 public class NotificationCenter {
@@ -87,6 +106,19 @@ public class NotificationCenter {
 
     public void CallOnMessage(Message event_type, Callback callback) {
         onMessage[event_type] += (object o) => callback();
+    }
+
+    public void CallOnMessageIf(Message event_type, EventCallback callback,
+                                EventPredicate predicate) {
+        onMessage[event_type] += (object o) => {
+            if (predicate(o)) {
+                callback(o);
+            }
+        };
+    }
+
+    public void CallOnMessageIfSameObject(Message event_type, Callback callback, GameObject thing) {
+        CallOnMessageIf(event_type, o => callback(), o => (o as GameObject) == thing);
     }
 
     public void NotifyMessage(Message event_type, object sender) {
