@@ -25,14 +25,15 @@ public class TeamResourceManager {
     public Gradient aimLaserColorGradient_ = null;
     public Gradient aimLaserColorGradient {
         get {
+            Color teamColor = team == null? Color.white : this.team.teamColor.color;
             if (aimLaserColorGradient_ == null) {
                 Gradient gradient = new Gradient();
                 float opaque = 1.0f;
                 float transparent = 0.0f;
                 gradient.SetKeys(
                     new GradientColorKey[] {
-                        new GradientColorKey(this.team.teamColor.color, 0.0f),
-                        new GradientColorKey(this.team.teamColor.color, 1.0f) },
+                        new GradientColorKey(teamColor, 0.0f),
+                        new GradientColorKey(teamColor, 1.0f) },
                     new GradientAlphaKey[] {
                         new GradientAlphaKey(opaque, 0.0f),
                         new GradientAlphaKey(opaque, 0.8f),
