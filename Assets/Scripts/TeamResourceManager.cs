@@ -22,6 +22,30 @@ public class TeamResourceManager {
     public Sprite scoreIndicatorEmptySprite {get; private set;}
     public Sprite scoreIndicatorFullSprite {get; private set;}
 
+    public Gradient aimLaserColorGradient_ = null;
+    public Gradient aimLaserColorGradient {
+        get {
+            if (aimLaserColorGradient_ == null) {
+                Gradient gradient = new Gradient();
+                float opaque = 1.0f;
+                float transparent = 0.0f;
+                gradient.SetKeys(
+                    new GradientColorKey[] {
+                        new GradientColorKey(this.team.teamColor.color, 0.0f),
+                        new GradientColorKey(this.team.teamColor.color, 1.0f) },
+                    new GradientAlphaKey[] {
+                        new GradientAlphaKey(opaque, 0.0f),
+                        new GradientAlphaKey(opaque, 0.8f),
+                        new GradientAlphaKey(transparent, 1.0f) }
+                    );
+                aimLaserColorGradient_ = gradient;
+            }
+            return aimLaserColorGradient_;
+        }
+        
+        private set {aimLaserColorGradient_ = value;}
+    }
+
     TeamManager team;
     string teamDirectory = "Teams/Neutral";
     // The directory for resources all teams use

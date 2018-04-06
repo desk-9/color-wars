@@ -23,6 +23,8 @@ public class LaserGuide : MonoBehaviour {
 
     public void DrawLaser() {
         lineRenderer.enabled = true;
+        var team = GetComponent<Player>().team;
+        lineRenderer.colorGradient = team.resources.aimLaserColorGradient;
         laserCoroutine = StartCoroutine(DrawAimingLaser());
     }
 
