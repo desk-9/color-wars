@@ -12,9 +12,9 @@ public class CameraScaling : MonoBehaviour {
     Camera camera;
     // Use this for initialization
     void Start () {
-        FixCameraSize();
         camera = GetComponent<Camera>();
         camera.transparencySortMode = TransparencySortMode.Orthographic;
+        FixCameraSize();
     }
 
     public void FixCameraSize() {
