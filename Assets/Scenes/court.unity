@@ -3497,6 +3497,16 @@ Prefab:
       propertyPath: goalScreenShakeCurve.m_Curve.Array.data[1].tangentMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: blowbackRadius
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114006280797977270, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: blowbackStunTime
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 2}
   m_IsPrefabParent: 0

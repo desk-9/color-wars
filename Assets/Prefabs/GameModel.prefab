@@ -67,14 +67,16 @@ MonoBehaviour:
   staticGoals: 0
   players: []
   pushAwayOtherPlayers: 1
-  blowbackRadius: 6
+  blowbackRadius: 15
   blowbackSpeed: 30
-  blowbackStunTime: 0.05
+  blowbackStunTime: 0.1
   blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
     type: 2}
   slowMoFactor: 0.4
   PitchShiftTime: 0.3
   SlowedPitch: 0.5
+  goalShakeAmount: 1.5
+  goalShakeDuration: 0.4
   winningScore: 3
   requiredWinMargin: 1
   winCondition: 2
