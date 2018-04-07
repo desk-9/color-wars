@@ -119,12 +119,15 @@ public class PlayerTronMechanic : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") &&
-                layWallCoroutine != null) {
+        if ((collision.gameObject.layer == LayerMask.NameToLayer("Wall")
+             || collision.gameObject.layer == LayerMask.NameToLayer("Goal"))
+            && layWallCoroutine != null) {
+
             StopCoroutine(layWallCoroutine);
             layWallCoroutine = null;
             PlaceCurrentWall();
             stateManager.CurrentStateHasFinished();
         }
     }
+
 }
