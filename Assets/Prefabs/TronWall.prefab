@@ -92,7 +92,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wallDestroyTime: 0.2
-  particleSystemLifetime: 0.5
+  maxParticlesOnDestroy: 100
+  knockbackOnBreak: 10
 --- !u!120 &120330706074638064
 LineRenderer:
   m_ObjectHideFlags: 1

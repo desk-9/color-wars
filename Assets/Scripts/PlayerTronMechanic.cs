@@ -15,7 +15,7 @@ public class PlayerTronMechanic : MonoBehaviour {
     public float tronWallOffset = 2f;
     public int wallLimit = 3;
     public bool layWallOnDash = false;
-    public float wallBreakerStunTime = .5f;
+    public float wallBreakerStunTime = .35f;
     public float tronWallLayingLimit = 1f;
 
     PlayerStateManager stateManager;

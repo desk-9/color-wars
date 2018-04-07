@@ -303,7 +303,7 @@ MonoBehaviour:
   tronWallOffset: 2
   wallLimit: 2
   layWallOnDash: 0
-  wallBreakerStunTime: 0.5
+  wallBreakerStunTime: 0.35
   tronWallLayingLimit: 1
 --- !u!114 &114920135743144974
 MonoBehaviour:

@@ -75,6 +75,8 @@ public class SceneStateController : MonoBehaviour {
             elapsedTime += Time.realtimeSinceStartup - lastTime;
             yield return null;
         }
+        color.a = 0f;
+        panelImage.color = color; 
     }
 
     void InitializeCallbacks() {

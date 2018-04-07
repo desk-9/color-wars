@@ -8,6 +8,7 @@ public class TronWall : MonoBehaviour {
 
     public float wallDestroyTime = .3f;
     public int maxParticlesOnDestroy = 100;
+    public float knockbackOnBreak = 1f;
 
     float lifeLength {get; set;}
     TeamManager team;
@@ -127,8 +128,9 @@ public class TronWall : MonoBehaviour {
             KillSelf();
             var playerStun = other.EnsureComponent<PlayerStun>();
             stateManager.AttemptStun(() =>
-                    {playerStun.StartStun(Vector2.zero, creator.wallBreakerStunTime);
-                     other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
+                    { var otherDirection = player.transform.right;
+                      other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
+                      playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
                     },
                                      playerStun.StopStunned);
         }
