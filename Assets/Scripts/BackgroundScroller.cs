@@ -4,9 +4,9 @@ using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class BackgroundScroller : MonoBehaviour {
-    public ChromeEffect chrome;
+    public ChromaticAberrationController chromaticAberrationController;
     public float scrollMagnitude = 50.0f;
-    public float chromeMagnitude = 0.5f;
+    public float chromeAberMagnitude = 0.5f;
     public float rotationRate = 0.0f;
     public float loopTime = 0.0f;
     public float transitionTime = 0.3f;
@@ -32,11 +32,11 @@ public class BackgroundScroller : MonoBehaviour {
         if (gm.InSlowMo() && !inSlowMo) {
             inSlowMo = true;
             if (zoomer != null) StopCoroutine(zoomer);
-            chrome.SetIntensitySmooth(chromeMagnitude, transitionTime);
+            chromaticAberrationController.SetIntensitySmooth(chromeAberMagnitude, transitionTime);
         }
         else if (!gm.InSlowMo() && inSlowMo) {
             inSlowMo = false;
-            chrome.SetIntensitySmooth(0.0f, transitionTime);
+            chromaticAberrationController.SetIntensitySmooth(0.0f, transitionTime);
         }
 
         transform.position = origin + new Vector3(x, y, 0);

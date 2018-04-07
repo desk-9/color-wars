@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PostProcessing;
 
-public class ChromeEffect : MonoBehaviour {
-    public PostProcessingProfile ppp;
-
+[RequireComponent(typeof(PostProcessingProfile))]
+public class ChromaticAberrationController : MonoBehaviour {
+    PostProcessingProfile ppp;
     Coroutine smoothTransition;
     float currentIntensity = 0.0f;
+
+    void Awake() {
+        ppp = GetComponent<PostProcessingProfile>();
+    }
 
     void Start() {
         currentIntensity = GetIntensity();
