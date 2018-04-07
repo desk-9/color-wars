@@ -34,8 +34,8 @@ public class GameModel : MonoBehaviour {
     public float blowbackStunTime = 0.1f;
     public GameObject blowbackPrefab;
     public float slowMoFactor = 0.4f;
-    public float PitchShiftTime = 0.2f;
-    public float SlowedPitch = 0.9f;
+    public float PitchShiftTime = 0.3f;
+    public float SlowedPitch = 0.5f;
     public float goalShakeAmount = 1.5f;
     public float goalShakeDuration = .4f;
 
@@ -300,6 +300,10 @@ public class GameModel : MonoBehaviour {
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
         StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
+    }
+
+    public bool InSlowMo() {
+        return slowMoCount != 0;
     }
 
     public void ResetSlowMo() {

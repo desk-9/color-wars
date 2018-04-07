@@ -4097,6 +4097,22 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114296828198626906, guid: c51b9cfd5e3b344aaa02f6f29848e063,
+        type: 2}
+      propertyPath: ppp
+      value: 
+      objectReference: {fileID: 11400000, guid: 1a5f9e5ce3c294ff7849bc0938f7228f,
+        type: 2}
+    - target: {fileID: 114296828198626906, guid: c51b9cfd5e3b344aaa02f6f29848e063,
+        type: 2}
+      propertyPath: chromeMagnitude
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114296828198626906, guid: c51b9cfd5e3b344aaa02f6f29848e063,
+        type: 2}
+      propertyPath: transitionTime
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c51b9cfd5e3b344aaa02f6f29848e063, type: 2}
   m_IsPrefabParent: 0
