@@ -78,15 +78,17 @@ public class Goal : MonoBehaviour {
         GameModel.instance.nc.CallOnStateEnd(
             State.Posession, (Player player) => lastPlayer = player);
         GameModel.instance.nc.CallOnStateStart(
-            State.Posession, (Player player) => {
-                if (player != lastPlayer && player.team == lastPlayer?.team) {
-                    GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
-                    SwitchToTeam(player.team);
-                } else if (player.team != lastPlayer?.team) {
-                    GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
-                    ResetNeutral();
-                }
-            });
+            State.Posession, (Player player) => PlayerBallColorSwitch(player));
+    }
+
+    void PlayerBallColorSwitch(Player player) {
+        if (player != lastPlayer && player.team == lastPlayer?.team) {
+            GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
+            SwitchToTeam(player.team);
+        } else if (player.team != lastPlayer?.team) {
+            GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
+            ResetNeutral();
+        }
     }
 
     void SwitchToTeam(TeamManager team) {
@@ -170,10 +172,6 @@ public class Goal : MonoBehaviour {
             ScoreGoal(ball);
             this.FrameDelayCall(() => AudioManager.instance.ScoreGoalSound.Play(0.75f), 10);
         }
-    }
-
-    void OnCollisionEnter2D(Collision2D collider) {
-        BallCheck(collider.gameObject);
     }
 
     void OnTriggerEnter2D(Collider2D collider) {
