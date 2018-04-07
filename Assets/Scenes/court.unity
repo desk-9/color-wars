@@ -1032,6 +1032,7 @@ GameObject:
   - component: {fileID: 497832506}
   - component: {fileID: 497832511}
   - component: {fileID: 497832512}
+  - component: {fileID: 497832513}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1142,6 +1143,18 @@ MonoBehaviour:
   shakeDuration: 0
   shakeAmount: 0.7
   decreaseFactor: 1
+--- !u!114 &497832513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 497832505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123cbf2a716274329987527eeae7d217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ppp: {fileID: 11400000, guid: 1a5f9e5ce3c294ff7849bc0938f7228f, type: 2}
 --- !u!1 &514595436
 GameObject:
   m_ObjectHideFlags: 0
@@ -4113,6 +4126,11 @@ Prefab:
       propertyPath: transitionTime
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 114296828198626906, guid: c51b9cfd5e3b344aaa02f6f29848e063,
+        type: 2}
+      propertyPath: chrome
+      value: 
+      objectReference: {fileID: 497832513}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c51b9cfd5e3b344aaa02f6f29848e063, type: 2}
   m_IsPrefabParent: 0
