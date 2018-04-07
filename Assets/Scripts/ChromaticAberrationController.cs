@@ -5,12 +5,12 @@ using UnityEngine.PostProcessing;
 
 [RequireComponent(typeof(PostProcessingProfile))]
 public class ChromaticAberrationController : MonoBehaviour {
-    PostProcessingProfile ppp;
+    PostProcessingProfile profile;
     Coroutine smoothTransition;
     float currentIntensity = 0.0f;
 
     void Awake() {
-        ppp = GetComponent<PostProcessingProfile>();
+        profile = GetComponent<PostProcessingBehaviour>().profile;
     }
 
     void Start() {
@@ -22,13 +22,13 @@ public class ChromaticAberrationController : MonoBehaviour {
     }
 
     public float GetIntensity() {
-        return ppp.chromaticAberration.settings.intensity;
+        return profile.chromaticAberration.settings.intensity;
     }
 
     public void SetIntensity(float intensity) {
-        var settings = ppp.chromaticAberration.settings;
+        var settings = profile.chromaticAberration.settings;
         settings.intensity = intensity;
-        ppp.chromaticAberration.settings = settings;
+        profile.chromaticAberration.settings = settings;
     }
 
     public void SetIntensitySmooth(float target, float time) {

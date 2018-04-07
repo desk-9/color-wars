@@ -299,11 +299,8 @@ public class GameModel : MonoBehaviour {
         }
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
+        nc.NotifyMessage(Message.SlowMoEntered, this);
         StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
-    }
-
-    public bool InSlowMo() {
-        return slowMoCount != 0;
     }
 
     public void ResetSlowMo() {
@@ -317,6 +314,7 @@ public class GameModel : MonoBehaviour {
 
             // Pitch-shift BGM back to normal.
             StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+            nc.NotifyMessage(Message.SlowMoExited, this);
         }
     }
 

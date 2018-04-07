@@ -20,6 +20,8 @@ public enum Message {
     StartCountdown,
     CountdownFinished,
     GoalScored,
+    SlowMoEntered,
+    SlowMoExited,
     BallSetNeutral,
     BallCharged,
     PlayerPressedA,
