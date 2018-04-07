@@ -22,30 +22,9 @@ public class TeamResourceManager {
     public Sprite scoreIndicatorEmptySprite {get; private set;}
     public Sprite scoreIndicatorFullSprite {get; private set;}
 
-    public Gradient aimLaserColorGradient_ = null;
-    public Gradient aimLaserColorGradient {
-        get {
-            Color teamColor = team == null? Color.white : this.team.teamColor.color;
-            if (aimLaserColorGradient_ == null) {
-                Gradient gradient = new Gradient();
-                float opaque = 1.0f;
-                float transparent = 0.0f;
-                gradient.SetKeys(
-                    new GradientColorKey[] {
-                        new GradientColorKey(teamColor, 0.0f),
-                        new GradientColorKey(teamColor, 1.0f) },
-                    new GradientAlphaKey[] {
-                        new GradientAlphaKey(opaque, 0.0f),
-                        new GradientAlphaKey(opaque, 0.8f),
-                        new GradientAlphaKey(transparent, 1.0f) }
-                    );
-                aimLaserColorGradient_ = gradient;
-            }
-            return aimLaserColorGradient_;
-        }
-        
-        private set {aimLaserColorGradient_ = value;}
-    }
+    public Color teamColor = Color.white;
+    public Gradient aimLaserGradient = null;
+    public Gradient aimLaserToGoalGradient = null;
 
     TeamManager team;
     string teamDirectory = "Teams/Neutral";
@@ -103,5 +82,29 @@ public class TeamResourceManager {
         tronWallSuicidePrefab = MakeAllTeamResource<GameObject>("TronWallSuicide");
         scoreIndicatorEmptySprite = MakeAllTeamResource<Sprite>("ScoreIndicatorEmpty");
         scoreIndicatorFullSprite = MakeAllTeamResource<Sprite>("ScoreIndicatorFull");
+
+        teamColor = (team == null)? Color.white : this.team.teamColor.color;
+
+        aimLaserGradient = aimLaserGradient != null?
+            aimLaserGradient : TeamAimLaserGradient();
+        
+        aimLaserToGoalGradient = aimLaserToGoalGradient != null?
+            aimLaserToGoalGradient : TeamAimLaserGradient(false);
     }
+
+    Gradient TeamAimLaserGradient(bool fade = true) {
+        float alpha = fade? 0.0f : 1.0f;
+        var gradient = new Gradient();
+        gradient.SetKeys(
+            new GradientColorKey[] {
+                new GradientColorKey(teamColor, 0.0f),
+                new GradientColorKey(teamColor, 1.0f) },
+            new GradientAlphaKey[] {
+                new GradientAlphaKey(1.0f, 0.0f),
+                new GradientAlphaKey(1.0f, 0.8f),
+                new GradientAlphaKey(alpha, 1.0f) }
+            );
+        return gradient;
+    }
+    
 }
