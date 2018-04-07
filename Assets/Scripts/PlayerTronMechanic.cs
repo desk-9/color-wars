@@ -113,21 +113,14 @@ public class PlayerTronMechanic : MonoBehaviour {
         if (layWallCoroutine != null) {
             StopCoroutine(layWallCoroutine);
             layWallCoroutine = null;
-            Destroy(walls.Last().gameObject);
-            walls.RemoveAt(walls.Count - 1);
+            PlaceCurrentWall();
         }
     }
 
     void OnCollisionEnter2D(Collision2D collision) {
-        if ((collision.gameObject.layer == LayerMask.NameToLayer("Wall")
-             || collision.gameObject.layer == LayerMask.NameToLayer("Goal"))
-            && layWallCoroutine != null) {
-
-            StopCoroutine(layWallCoroutine);
-            layWallCoroutine = null;
-            PlaceCurrentWall();
+        if (layWallCoroutine != null && collision.gameObject != gameObject) {
+            StopLayingWall();
             stateManager.CurrentStateHasFinished();
         }
     }
-
 }
