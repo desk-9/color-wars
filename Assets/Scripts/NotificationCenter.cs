@@ -23,8 +23,8 @@ public enum Message {
     BallSetNeutral,
     BallCharged,
     PlayerPressedA,
-    PlayerPressedLeftBumper
-
+    PlayerPressedLeftBumper,
+    NullChargePrevention
 };
 
 public class NotificationCenter {

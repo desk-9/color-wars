@@ -13,6 +13,7 @@ TagManager:
   - IceStartPoint
   - FireStartPoint
   - BackgroundGrass
+  - NullZone
   layers:
   - Default
   - TransparentFX

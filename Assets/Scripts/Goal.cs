@@ -16,6 +16,8 @@ public class Goal : MonoBehaviour {
     public bool respondToSwitchColliders = false;
     public bool resetTimerOnSwitchToSameTeam = false;
 
+    public const float playerNullZoneRadius = 0.1f;
+
     ModCycle nextTeamIndex;
     new SpriteRenderer fillRenderer;
     Text goalSwitchText;
@@ -81,10 +83,20 @@ public class Goal : MonoBehaviour {
             State.Posession, (Player player) => PlayerBallColorSwitch(player));
     }
 
+    bool PlayerInNullZone(Player player, float radius = playerNullZoneRadius) {
+        var collider = Physics2D.OverlapCircle(
+            player.transform.position, radius, LayerMask.GetMask("NullZone"));
+        return collider != null;
+    }
+
     void PlayerBallColorSwitch(Player player) {
         if (player != lastPlayer && player.team == lastPlayer?.team) {
-            GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
-            SwitchToTeam(player.team);
+            if (!PlayerInNullZone(player)) {
+                GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
+                SwitchToTeam(player.team);
+            } else {
+                GameModel.instance.nc.NotifyMessage(Message.NullChargePrevention, player);
+            }
         } else if (player.team != lastPlayer?.team) {
             GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
             ResetNeutral();

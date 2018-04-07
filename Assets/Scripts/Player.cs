@@ -88,12 +88,4 @@ public class Player : MonoBehaviour {
             Utility.TutEvent("Done", this);
         }
     }
-
-    void OnTriggerEnter2D(Collider2D collider) {
-
-    }
-
-    void OnTriggerExit2D(Collider2D collider) {
-
-    }
 }
