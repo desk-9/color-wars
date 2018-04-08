@@ -233,6 +233,7 @@ public class GameModel : MonoBehaviour {
         }
         ball.ResetBall(pauseAfterReset);
         nc.NotifyMessage(Message.StartCountdown, this);
+        GameObject.FindObjectOfType<RoundStartBlocker>().Reset();
         foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
             wall.KillSelf();
         }

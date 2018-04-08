@@ -76,11 +76,6 @@ public class TronWall : MonoBehaviour {
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        // lineRenderer.enabled = false;
-        // var ps = GameObject.Instantiate(team.resources.tronWallSuicidePrefab, linePoints[1], transform.rotation).EnsureComponent<ParticleSystem>();
-        // var main = ps.main;
-        // main.startColor = team.teamColor.color;
-        // ps.Play();
         Destroy(gameObject);
         yield break;
     }
