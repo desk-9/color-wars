@@ -24,7 +24,7 @@ public class MenuController : MonoBehaviour {
 
     void GameOverFunction() {
         winDisplay.gameObject.SetActive(true);
-        GameModel.instance.OnGameOver += winDisplay.GameOverFunction;
+        winDisplay.GameOverFunction();
     }
 
     void Update () {

@@ -7,7 +7,6 @@ using UtilityExtensions;
 public class WinDisplay : MonoBehaviour {
     public string mainMenuInstructions = "Press dpad-up to return to main menu";
     public int SecondsBeforeReset = 10;
-    public float delayBeforeWinScreen = 5.0f;
     Text winnerText;
     Text restartTime;
     Text loserText;
