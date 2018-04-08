@@ -76,11 +76,9 @@ public class ScoreIndicator : MonoBehaviour {
         var renderer = pointIndicator.GetComponent<SpriteRenderer>();
 
         renderer.sprite = team.resources.scoreIndicatorFullSprite;
-
-        CoroutineUtility.LerpColorSequence(
+        StartCoroutine(TransitionUtility.LerpColorSequence(
             (Color color) => renderer.color = color,
-            stops, durations);
-
+            stops, durations));
         StartParticleEffect(pointIndicator);
     }
 

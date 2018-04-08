@@ -98,6 +98,7 @@ MonoBehaviour:
   delayBeforeWinDisplay: 5
   pauseMenu: {fileID: 0}
   winDisplay: {fileID: 0}
+  pauseTransitionDuration: 0.25
 --- !u!114 &114416457825299406
 MonoBehaviour:
   m_ObjectHideFlags: 1

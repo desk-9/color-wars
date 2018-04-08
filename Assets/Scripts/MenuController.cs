@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
+using UnityEngine.UI;
 
 using IC = InControl;
 
@@ -9,22 +10,24 @@ public class MenuController : MonoBehaviour {
     public IC.InputControlType StartButton = IC.InputControlType.Start;
     public IC.InputControlType ResetButton = IC.InputControlType.DPadDown;
     public IC.InputControlType MainMenuButton = IC.InputControlType.DPadUp;
-    public float delayBeforeWinDisplay = 5.0f;
 
     public GameObject pauseMenu;
-    public WinDisplay winDisplay;
+    TransitionUtility.Panel pauseMenuPanel;
+    float pauseBeforeWinDisplay = 7.0f;
+    float pauseTransitionDuration = 0.25f;
 
+    public WinDisplay winDisplay;
+    
     void Start() {
         if (winDisplay != null) {
             GameModel.instance.OnGameOver += () => {
-                this.TimeDelayCall(GameOverFunction, delayBeforeWinDisplay);
+                this.RealtimeDelayCall(winDisplay.GameOverFunction, pauseBeforeWinDisplay);
             };
         }
-    }
-
-    void GameOverFunction() {
-        winDisplay.gameObject.SetActive(true);
-        winDisplay.GameOverFunction();
+        if (pauseMenu != null) {
+            pauseMenuPanel = new TransitionUtility.Panel(
+                pauseMenu, pauseTransitionDuration);
+        }
     }
 
     void Update () {
@@ -55,16 +58,16 @@ public class MenuController : MonoBehaviour {
     public void TogglePause() {
         // Case: not paused now => toggling will pause
         if (!SceneStateController.instance.paused) {
-            Debug.Log("Game paused");
             AudioManager.instance.PauseSound.Play(1.0f);
-            pauseMenu.SetActive(true);
+            StartCoroutine(pauseMenuPanel.FadeIn());
             SceneStateController.instance.PauseTime();
+            Debug.Log("Game paused");
         }
         else {
             SceneStateController.instance.UnPauseTime();
             Debug.Log("Game un-paused");
             AudioManager.instance.UnPauseSound.Play(2.5f);
-            pauseMenu.SetActive(false);
+            StartCoroutine(pauseMenuPanel.FadeOut());
         }
     }
 
