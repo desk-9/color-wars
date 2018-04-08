@@ -230,7 +230,6 @@ public class BallCarrier : MonoBehaviour {
         if (ball == null || !ball.IsOwnable() || isCoolingDown) {
             return;
         }
-        Utility.Print("Ownable");
         if (stateManager != null) {
             Utility.Print("Has state manager");
             var last_team = ball.lastOwner?.GetComponent<Player>().team;

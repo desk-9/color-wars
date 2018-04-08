@@ -117,9 +117,7 @@ public class PlayerPuppet : MonoBehaviour {
 
     public IEnumerator PlayRecording() {
         yield return new WaitForFixedUpdate();
-        Debug.Log("Playing recording");
         var record = LoadRecording(recordingName);
-        Utility.Print("Record length", record.Count);
         yield return PlayRecording(record, true);
     }
 }

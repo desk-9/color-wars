@@ -84,9 +84,6 @@ public class PlayerRecorder : MonoBehaviour {
 
     List<string> RecordingsForPlayer() {
         var pattern = string.Format("{0}*.{1}", GetPlayerName(), extension);
-        foreach (var path in Directory.GetFiles(recordingFolder, pattern)) {
-            Utility.Print("Rec path ", path);
-        }
         return (from path in Directory.GetFiles(recordingFolder, pattern)
                 select Path.GetFileName(path)).ToList();
     }
@@ -98,9 +95,6 @@ public class PlayerRecorder : MonoBehaviour {
     }
 
     int NextRecordingNumber() {
-        foreach (var path in RecordingsForPlayer()) {
-            Utility.Print("Processed Rec path ", path);
-        }
         var result = RecordingsForPlayer().Select<string, int?>((string filename) => {
                 var prefixLength = string.Format("{0}-recording-", GetPlayerName()).Length;
                 var num = Path.GetFileNameWithoutExtension(filename).Substring(prefixLength);
@@ -112,7 +106,6 @@ public class PlayerRecorder : MonoBehaviour {
                     return null;
                 }
             }).Where(x => x != null).OfType<int>().DefaultIfEmpty(0).Max();
-        Utility.Print("Next number: ", result + 1);
         return result + 1;
     }
 
