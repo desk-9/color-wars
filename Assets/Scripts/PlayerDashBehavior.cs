@@ -32,6 +32,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     GameObject dashAimer;
     float lastDashTime;
     CameraShake cameraShake;
+    float chargeAmount = 0;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
@@ -43,6 +44,8 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         GameModel.instance.nc.CallOnMessageIfSameObject(
             Message.PlayerPressedDash, DashPressed, this.gameObject);
+        GameModel.instance.nc.CallOnMessageIfSameObject(
+            Message.PlayerReleasedDash, ChargeReleased, this.gameObject);
     }
 
     void Awake() {
@@ -83,24 +86,24 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
+
+    void ChargeReleased() {
+        if (stateManager.IsInState(State.ChargeDash)) {
+            StopCoroutine(chargeCoroutine);
+            chargeCoroutine = null;
+            stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
+        }
+    }
+
     IEnumerator Charge() {
         var startChargeTime = Time.time;
-        var chargeAmount    = 0.0f;
+        chargeAmount    = 0.0f;
 
-        bool released = false;
-        GameModel.instance.nc.CallOnMessageIfSameObject(
-            Message.PlayerReleasedDash, () => released = true, gameObject);
         while (true) {
             chargeAmount += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
             playerMovement.RotatePlayer();
-
-
-            if (released) {
-                stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
-                yield break;
-            }
 
             yield return null;
         }

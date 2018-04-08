@@ -26,12 +26,11 @@ public enum Message {
     SlowMoExited,
     BallSetNeutral,
     BallCharged,
+    NullChargePrevention,
 
     PlayerStick,
 
     PlayerPressedA,
-    PlayerPressedLeftBumper,
-    NullChargePrevention,
     PlayerReleasedA,
 
     PlayerPressedLeftBumper,
