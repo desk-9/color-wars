@@ -9,15 +9,22 @@ public class MenuController : MonoBehaviour {
     public IC.InputControlType StartButton = IC.InputControlType.Start;
     public IC.InputControlType ResetButton = IC.InputControlType.DPadDown;
     public IC.InputControlType MainMenuButton = IC.InputControlType.DPadUp;
+    public float delayBeforeWinDisplay = 5.0f;
 
     public GameObject pauseMenu;
     public WinDisplay winDisplay;
 
     void Start() {
         if (winDisplay != null) {
-            GameModel.instance.OnGameOver += () => winDisplay.gameObject.SetActive(true);
-            GameModel.instance.OnGameOver += winDisplay.GameOverFunction;
+            GameModel.instance.OnGameOver += () => {
+                this.TimeDelayCall(GameOverFunction, delayBeforeWinDisplay);
+            };
         }
+    }
+
+    void GameOverFunction() {
+        winDisplay.gameObject.SetActive(true);
+        GameModel.instance.OnGameOver += winDisplay.GameOverFunction;
     }
 
     void Update () {

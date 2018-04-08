@@ -7,6 +7,7 @@ using UtilityExtensions;
 public class WinDisplay : MonoBehaviour {
     public string mainMenuInstructions = "Press dpad-up to return to main menu";
     public int SecondsBeforeReset = 10;
+    public float delayBeforeWinScreen = 5.0f;
     Text winnerText;
     Text restartTime;
     Text loserText;
@@ -20,7 +21,6 @@ public class WinDisplay : MonoBehaviour {
         winnerText = transform.FindComponent<Text>("WinnerText");
         restartTime = transform.FindComponent<Text>("RestartText");
         loserText = transform.FindComponent<Text>("LoserText");
-        Debug.Log("GameOverFunction!");
         var winner = GameModel.instance.winner;
         if (winner == null) {
             winnerText.text = "Tie!";
