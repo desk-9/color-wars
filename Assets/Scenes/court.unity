@@ -1168,7 +1168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chromaticAberrationController: {fileID: 0}
   aberationMagnitude: 0.5
-  transitionTime: 0.3
+  transitionTime: 0.1
 --- !u!1 &514595436
 GameObject:
   m_ObjectHideFlags: 0
