@@ -899,7 +899,7 @@ Prefab:
     - target: {fileID: 114205997563975182, guid: 1e5ce0bbe8321cf459586a2d8d215280,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
@@ -4408,26 +4408,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
---- !u!1 &1987946865 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 1233221201083302, guid: 1e5ce0bbe8321cf459586a2d8d215280,
-    type: 2}
-  m_PrefabInternal: {fileID: 449406376}
---- !u!114 &1987946866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1987946865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79790079822d74371a02e4f5e7f6ac0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  program: 0
-  defaultMovementSpeed: 30
-  recordingName: test
-  doPuppeting: 1
 --- !u!1001 &2010721557
 Prefab:
   m_ObjectHideFlags: 0

@@ -89,8 +89,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 
     void ChargeReleased() {
         if (stateManager.IsInState(State.ChargeDash)) {
-            StopCoroutine(chargeCoroutine);
-            chargeCoroutine = null;
             stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
         }
     }
