@@ -15,6 +15,7 @@ public class Ball : MonoBehaviour {
 
     Vector2 start_location;
     BallCarrier owner_;
+    BallFillColor ballFill;
 
     public new Rigidbody2D rigidbody;
     NotificationCenter notificationCenter;
@@ -22,37 +23,63 @@ public class Ball : MonoBehaviour {
 
     bool charged_ = false;
     float base_mass;
+    Color neutralColor = Color.white;
+    Color currentColor;
 
     public BallCarrier lastOwner { get; private set; }
 
     public BallCarrier owner {
         get { return owner_; }
         set {
-            lastOwner = owner_;
+            if (owner_ != null) {
+                lastOwner = owner_;
+            }
             owner_ = value;
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             notificationCenter.NotifyMessage(message, this);
-            if (this.isActiveAndEnabled) {
+            if (this.isActiveAndEnabled && owner_ != null) {
+                this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
+            }
+            if (owner_ != null) {
                 this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
             }
         }
     }
 
+    void SetColor(Color to_, bool fill) {
+        renderer.color = to_;
+        if (fill) {
+            ballFill.EnableAndSetColor(to_);
+            trailRenderer.material.color = to_;
+        } else {
+            ballFill.DisableFill();
+            trailRenderer.enabled = false;
+        }
+    }
+
+    // This is for resets
     void SetSpriteToNeutral() {
-        renderer.color = Color.white;
-        trailRenderer.enabled = false;
+        SetColor(neutralColor, false);
+    }
+
+    Color ColorFromBallCarrier(BallCarrier carrier) {
+        return carrier.EnsureComponent<Player>().team.teamColor.color;
     }
 
     void AdjustSpriteToCurrentTeam() {
-        if (goal?.currentTeam == null) {
-            SetSpriteToNeutral();
+        // Only happens at beginning of round
+        var currentOwnerColor = ColorFromBallCarrier(owner);
+        if (lastOwner == null) {
+            SetColor(currentOwnerColor, false);
+            return;
+        }
+
+        if (ColorFromBallCarrier(lastOwner) == currentOwnerColor) {
+            SetColor(currentOwnerColor, true);
         } else {
-            // var newSprite = goal.currentTeam.resources.ballSprite;
-            // renderer.sprite = newSprite;
-            AudioManager.instance.PowerUpBall.Play(.75f);
-            renderer.color = goal.currentTeam.teamColor;
-            trailRenderer.material.color = goal.currentTeam.teamColor;
+            SetColor(currentOwnerColor, false);
+
         }
     }
 
@@ -83,6 +110,8 @@ public class Ball : MonoBehaviour {
         rigidbody = this.EnsureComponent<Rigidbody2D>();
         base_mass = rigidbody.mass;
         goal = GameObject.FindObjectOfType<Goal>();
+        ballFill = this.GetComponentInChildren<BallFillColor>();
+        currentColor = Color.white;
     }
 
     public void HandleGoalScore(Color color) {
