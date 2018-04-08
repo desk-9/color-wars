@@ -55,8 +55,8 @@ public class CustomPlayerProfile : UnityInputDeviceProfile {
                 Source = KeyCodeButton( KeyCode.Z )
             },
             new InputControlMapping {
-                Handle = "Parry",
-                Target = InputControlType.None,
+                Handle = "Wall",
+                Target = InputControlType.Action2,
                 Source = KeyCodeButton( KeyCode.X )
             }
         };
