@@ -6,6 +6,7 @@ using UnityEngine;
 
 public delegate void Callback();
 public delegate int IntCallback();
+public delegate void ColorSetter(Color color);
 
 namespace UtilityExtensions {
     // This namespace is for any general utility extensions to existing classes
@@ -307,4 +308,34 @@ public class CoroutineUtility : MonoBehaviour {
         yield return new WaitForSecondsRealtime(seconds);
     }
 
+
+    
+    public static IEnumerator LerpColor(ColorSetter colorSetter,
+                                        Color startColor, Color endColor,
+                                        float duration) {
+        float timeElapsed = 0.0f;
+        float progress = 0.0f;
+        while (timeElapsed < duration) {
+            timeElapsed += Time.deltaTime;
+            progress = timeElapsed / duration;
+            Color newColor = Color.Lerp(startColor, endColor, progress);
+            colorSetter(newColor);
+            yield return null;
+        }
+        colorSetter(endColor);
+    }
+
+    public static IEnumerator LerpColorSequence(ColorSetter colorSetter,
+                                                List<Color> stops,
+                                                List<float> durations) {
+        int i = 0;
+        while (i < stops.Count - 1) {
+            Color startColor = stops[i];
+            Color endColor = stops[i+1];
+            float duration = durations[i];
+            yield return LerpColor(colorSetter, startColor, endColor, duration);
+            ++i;
+        }
+    }
+    
 }
