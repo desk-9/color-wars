@@ -7,8 +7,6 @@ using UtilityExtensions;
 public class ScoreIndicator : MonoBehaviour {
 
     public string teamName;
-    public float colorLerpDuration = 0.75f;
-    public Color startLerpColor = Color.black;
     
     TeamManager team = null;
     List<GameObject> pointIndicators = new List<GameObject>();
@@ -70,22 +68,31 @@ public class ScoreIndicator : MonoBehaviour {
         // Scores are 1-indexed, pointIndicators are 0-indexed
         // ASSUMPTION: this function is invoked *after* team.score has been updated
         int nextPoint = team.score - 1;
-        var renderer = pointIndicators[nextPoint].GetComponent<SpriteRenderer>();
+        var pointIndicator = pointIndicators[nextPoint];
+
+        var renderer = pointIndicator.GetComponent<SpriteRenderer>();
         renderer.sprite = team.resources.scoreIndicatorFullSprite;
-        StartCoroutine(LerpNewPointColor(renderer));
+        FillSprite(pointIndicator);
+        StartParticleEffect(pointIndicator);
     }
 
-    public IEnumerator LerpNewPointColor(SpriteRenderer renderer) {
-        float timeElapsed = 0.0f;
-        float progress = 0.0f;
-        Color finalColor = team.teamColor.color;
-        while (timeElapsed < colorLerpDuration) {
-            timeElapsed += Time.deltaTime;
-            progress = timeElapsed / colorLerpDuration;
-            renderer.color = Color.Lerp(startLerpColor, finalColor, progress);
-            yield return null;
-        }
-        renderer.color = team.teamColor.color;
+
+    void FillSprite(GameObject pointIndicator) {
+        var colorLerpSequence = pointIndicator.GetComponent<ColorLerpSequence>();
+        colorLerpSequence.stops[colorLerpSequence.stops.Count-1] = team.teamColor.color;
+        colorLerpSequence.StartLerping();
+    }
+
+    void StartParticleEffect(GameObject pointIndicator) {
+        // Start particle effect
+        var scoreGoalEffect = GameObject.Instantiate(team.resources.scoreGoalEffectPrefab,
+                                                     pointIndicator.gameObject.transform.position,
+                                                     pointIndicator.gameObject.transform.rotation);
+        var scoreGoalParticleSystem = scoreGoalEffect.EnsureComponent<ParticleSystem>();
+        var scoreGoalMain = scoreGoalParticleSystem.main;
+        scoreGoalMain.startColor = team.teamColor.color;
+        scoreGoalParticleSystem.Play();
+        this.TimeDelayCall(() => Destroy(scoreGoalEffect), scoreGoalMain.duration);
     }
     
 }

@@ -10,6 +10,7 @@ public class TeamResourceManager {
     public GameObject dashEffectPrefab {get; private set;}
     public GameObject dashChargeEffectPrefab {get; private set;}
     public GameObject shootChargeEffectPrefab {get; private set;}
+    public GameObject scoreGoalEffectPrefab {get; private set;}
     public Sprite mainPlayerSprite {get; private set;}
     public Sprite altPlayerSprite {get; private set;}
     public Material wallMaterial {get; private set;}
@@ -73,6 +74,7 @@ public class TeamResourceManager {
         ballSprite = MakeTeamResource<Sprite>("Ball");
         dashAimerPrefab = MakeTeamResource<GameObject>("DashAimer");
         background = MakeTeamResource<Sprite>("Background");
+        scoreGoalEffectPrefab = MakeTeamResource<GameObject>("ScoreGoalEffect");
 
         mainPlayerSprite = MakeAllTeamResource<Sprite>("MainPlayer");
         altPlayerSprite = MakeAllTeamResource<Sprite>("AltPlayer");

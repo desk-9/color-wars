@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4809706271367506}
   - component: {fileID: 212058555516088202}
+  - component: {fileID: 114549447296771874}
   m_Layer: 0
   m_Name: PointIndicator
   m_TagString: Untagged
@@ -100,6 +101,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114549447296771874
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1047917975685604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b8fbdfe1935547788d91c5c8191c00a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stops:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0, g: 0.88235295, b: 1, a: 1}
+  durations:
+  - 0.25
+  - 0.7
+  shouldStart: 0
 --- !u!212 &212058555516088202
 SpriteRenderer:
   m_ObjectHideFlags: 1
