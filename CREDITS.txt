@@ -33,3 +33,5 @@ License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
 Screen Shake Script:
 https://gist.github.com/ftvs/5822103
 
+Asset: Shader for goal indicator particle effect (happens when point is scored)
+https://assetstore.unity.com/packages/vfx/shaders/particle-light-10105
