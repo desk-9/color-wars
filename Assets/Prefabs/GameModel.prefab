@@ -67,7 +67,7 @@ MonoBehaviour:
   staticGoals: 0
   players: []
   pushAwayOtherPlayers: 1
-  blowbackRadius: 15
+  blowbackRadius: 9
   blowbackSpeed: 30
   blowbackStunTime: 0.1
   blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
