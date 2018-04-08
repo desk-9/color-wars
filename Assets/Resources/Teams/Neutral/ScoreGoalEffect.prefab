@@ -36,7 +36,7 @@ Transform:
   m_GameObject: {fileID: 1733384697961250}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -1.1}
-  m_LocalScale: {x: 2, y: 4, z: 0.4000002}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -497,7 +497,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 10000
+    maxNumParticles: 250
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -3468,7 +3468,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2ce1ad742aae3554997292eed468d59f, type: 2}
+  - {fileID: 2100000, guid: fba55569b0a5e48d39a5f59db0e9f274, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
