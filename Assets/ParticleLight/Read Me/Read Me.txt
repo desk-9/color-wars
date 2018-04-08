@@ -1,0 +1,19 @@
+Volume Particle Light
+
+This asset is a high performance, transparent additive shader that applies a custom volume light or simple light particles material, to any geometric shape along the UV mapping. This asset comes with three custom blur and noise textures and four custom ramp fade textures in PSD and PNG format. Each texture has one to two customizable layers to edit and create any type of unique noise or ramp fade map. 
+
+
+These primitive objects are set up with a custom shader. 
+
+Main Color – Main Color
+
+Base (RGB) – Main light texture (texture alpha channel controls material cutoff)
+
+Culling Mask –Texture alpha controls the overall texture alpha fade masking
+
+Alpha Cutoff – Controls the amount of alpha cutoff
+
+
+
+Nikolaus Kraus
+
