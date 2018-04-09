@@ -14,8 +14,8 @@ public class Player : MonoBehaviour {
     bool isNormalPlayer = true;
     new SpriteRenderer renderer;
     PlayerStateManager stateManager;
-    Vector2 initialPosition;
-    float initalRotation;
+    public Vector2 initialPosition;
+    public float initialRotation;
     Rigidbody2D rb2d;
     new Collider2D collider;
     GameObject explosionEffect;
@@ -38,7 +38,7 @@ public class Player : MonoBehaviour {
         if (isNormalPlayer) {
             stateManager.AttemptFrozenAfterGoal(delegate{}, delegate{});
             transform.position = initialPosition;
-            rb2d.rotation = initalRotation;
+            rb2d.rotation = initialRotation;
             renderer.enabled = true;
             collider.enabled = true;
             rb2d.velocity = Vector2.zero;
@@ -95,8 +95,8 @@ public class Player : MonoBehaviour {
             }
         }
         if (isNormalPlayer) {
-            initialPosition = transform.position;
-            initalRotation = rb2d.rotation;
+            // initialPosition = transform.position;
+            // initalRotation = rb2d.rotation;
         }
         GameModel.instance.players.Add(this);
         // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);

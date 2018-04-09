@@ -18,6 +18,16 @@ public class TeamManager {
     Dictionary<Player, Sprite> spriteUsage = new Dictionary<Player, Sprite>();
     Stack<Sprite> unusedSprites;
 
+    List<float> playerXs = new List<float>() {-15, 15};
+    List<float> playerYs = new List<float>() {-5, 27.7f};
+
+    Dictionary<int, int> teamNumberToX = new Dictionary<int, int>() {
+        {0, 1},
+        {1, 0},
+    };
+
+    Stack<float> unusedYs;
+
     public TeamManager(int teamNumber, NamedColor teamColor) {
         this.teamNumber = teamNumber;
         this.teamColor = teamColor;
@@ -26,6 +36,7 @@ public class TeamManager {
             resources.mainPlayerSprite, resources.altPlayerSprite
         };
         unusedSprites = new Stack<Sprite>(memberSprites);
+        unusedYs = new Stack<float>(playerYs);
     }
 
 
@@ -42,13 +53,31 @@ public class TeamManager {
         GameModel.instance.scoreDisplayer?.UpdateScores();
     }
 
+    float CalculateRotation(Vector2 position) {
+        int xIndex = playerXs.IndexOf(position.x);
+        int yIndex = playerYs.IndexOf(position.y);
+        if (xIndex == 0 && yIndex == 0) {
+            return 45;
+        } else if (xIndex == 1 && yIndex == 0) {
+            return 135;
+        } else if (xIndex == 1 && yIndex == 1) {
+            return 225;
+        } else {
+            return 315;
+        }
+    }
+
     public void AddTeamMember(Player newMember) {
         teamMembers.Add(newMember);
+        Utility.Print(teamNumber);
+        newMember.initialPosition = new Vector2(
+            playerXs[teamNumberToX[teamNumber-1]],
+            unusedYs.Pop());
+        newMember.initialRotation = CalculateRotation(newMember.initialPosition);
         var renderer = newMember.GetComponent<SpriteRenderer>();
         var sprite = unusedSprites.Peek();
         if (renderer != null && sprite != null) {
             renderer.color = teamColor;
-
             if (!playerSpritesAlreadySet) {
                 renderer.sprite = sprite;
                 spriteUsage[newMember] = sprite;
@@ -64,6 +93,7 @@ public class TeamManager {
 
     public void RemoveTeamMember(Player member) {
         if (teamMembers.Contains(member)) {
+            unusedYs.Push(member.initialPosition.y);
             if (spriteUsage.ContainsKey(member)) {
                 unusedSprites.Push(spriteUsage[member]);
                 spriteUsage.Remove(member);
