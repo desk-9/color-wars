@@ -16,8 +16,7 @@ public class ShootBallMechanic : MonoBehaviour {
     CircularTimer circularTimer;
     public float chargedBallPercent = 0.4f;
     public float chargedBallMassFactor = 1;
-
-    public GameObject chargeEffect;
+    public float chargeEffectOffset = 1.5f;
 
     PlayerMovement playerMovement;
     PlayerStateManager stateManager;
@@ -44,13 +43,6 @@ public class ShootBallMechanic : MonoBehaviour {
             Message.PlayerPressedShoot, ShootPressed, gameObject);
         GameModel.instance.nc.CallOnMessageIfSameObject(
             Message.PlayerReleasedShoot, ShootReleased, gameObject);
-        if (chargeEffect != null) {
-            var ps = chargeEffect.GetComponent<ParticleSystem>();
-            var main = ps.main;
-            if (main.duration != forcedShotTime) {
-                main.duration = forcedShotTime;
-            }
-        }
         circularTimer = Instantiate(
             circularTimerPrefab, transform).GetComponent<CircularTimer>();
         circularTimer.transform.localScale = circleTimerScale;
@@ -60,6 +52,7 @@ public class ShootBallMechanic : MonoBehaviour {
             ball.chargedMassFactor = chargedBallMassFactor;
         }
         maxShotSpeed = baseShotSpeed + Mathf.Pow((1 + forcedShotTime * chargeRate), shotPower);
+        this.FrameDelayCall(() => team = this.GetComponent<Player>()?.team, 2);
     }
 
     void StartTimer() {
@@ -97,7 +90,9 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ChargeShot() {
-        effect = Instantiate(chargeEffect, transform.position, transform.rotation, transform);
+        effect = Instantiate(team.resources.shootChargeEffectPrefab,
+                             transform.position + transform.right * chargeEffectOffset,
+                             transform.rotation, transform);
 
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
