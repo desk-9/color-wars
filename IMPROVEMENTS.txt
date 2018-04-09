@@ -1,10 +1,8 @@
-* Changed theme from Fire vs. Ice back to neon
-* Added aim assist that snaps players towards goal or teammate
-* Added moving background
-* Completely changed tutorial from interactive based to short instructive clip based
-* Added scene transitions
-* Added countdown before game start
-* Made numerous improvement tweaks in player rotation, dash, etc.
-* Added score indicators
-* Added screen shake
-* Add sound effects
+* Fixed fonts to match the theme
+* Added more sounds/changed sounds to match theme more
+* Player's starting positions coincide with team color
+* Made ball color two stage (to give a visual indicator of that last possession)
+* Tweaked numerous parameters including knockbacks, dash cooldown
+* Improved scene transitions
+* Added a null zone around the goal in which passes don't count (to prevent clumping around the goal)
+* Added chromatic aberration on possession 
