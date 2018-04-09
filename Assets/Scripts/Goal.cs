@@ -19,7 +19,7 @@ public class Goal : MonoBehaviour {
     public const float playerNullZoneRadius = 0.1f;
 
     ModCycle nextTeamIndex;
-    new SpriteRenderer fillRenderer;
+    SpriteRenderer fillRenderer;
     Text goalSwitchText;
     Coroutine teamSwitching;
     Player lastPlayer = null;

@@ -48,11 +48,12 @@ public class Ball : MonoBehaviour {
     }
 
     void SetColor(Color to_, bool fill) {
-        renderer.color = to_;
         if (fill) {
+            renderer.color = to_;
             ballFill.EnableAndSetColor(to_);
             trailRenderer.material.color = to_;
         } else {
+            renderer.color = Color.Lerp(to_, Color.white, .6f);
             ballFill.DisableFill();
             trailRenderer.enabled = false;
         }
@@ -75,11 +76,11 @@ public class Ball : MonoBehaviour {
             return;
         }
 
-        if (ColorFromBallCarrier(lastOwner) == currentOwnerColor) {
+        if (goal.currentTeam != null &&
+            goal.currentTeam.teamColor == currentOwnerColor) {
             SetColor(currentOwnerColor, true);
         } else {
             SetColor(currentOwnerColor, false);
-
         }
     }
 
