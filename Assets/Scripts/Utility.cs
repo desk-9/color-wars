@@ -318,6 +318,12 @@ public class CoroutineUtility : MonoBehaviour {
         callback();
     }
 
+    public static IEnumerator RunSequentially(params IEnumerator[] coroutines) {
+        for (int i = 0; i < coroutines.Length; ++i) {
+            yield return coroutines[i];
+        }
+    }
+
     public static IEnumerator WaitForFrames(int frames = 1) {
         for (int i = 0; i < frames; i++) {
             yield return null;

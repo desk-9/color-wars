@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4176559547740574}
   - component: {fileID: 114957044975578562}
   - component: {fileID: 114046482375811692}
-  - component: {fileID: 114858339103739060}
   m_Layer: 0
   m_Name: InterSceneManager
   m_TagString: Untagged
@@ -51,17 +50,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43d7fa4e35d9d43b3afc22bb073168f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114858339103739060
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1724099838662006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05ed633072d094d14ba26c418c3b37fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114957044975578562

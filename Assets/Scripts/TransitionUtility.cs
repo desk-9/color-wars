@@ -174,5 +174,20 @@ public class TransitionUtility : MonoBehaviour {
         public IEnumerator FadeIn() {yield return panel.FadeOut();}
         public IEnumerator FadeOut() {yield return panel.FadeIn();}
     }
+
+    public static void OneShotFadeTransition(float totalDuration,
+                                             float blackScreenPauseDuration = 0.0f) {
+        float fadeDuration = totalDuration * 0.5f;
+        var screenTransition = new ScreenTransition(fadeDuration);
+        var coroutineSequence = CoroutineUtility.RunSequentially(
+                screenTransition.FadeOut(),
+                CoroutineUtility.WaitForRealtimeSeconds(blackScreenPauseDuration),
+                screenTransition.FadeIn()
+            );
+        TransitionUtility.instance.StartCoroutine(
+            CoroutineUtility.RunThenCallback(
+                coroutineSequence,
+                () => Destroy(screenTransition.panel.panel)));
+    }
     
 }

@@ -144,16 +144,23 @@ public class TutorialLiveClips : MonoBehaviour {
             team.ResetScore();
         }
     }
-
+    bool clipReloadThisFrame = false;
     IEnumerator Clips() {
         runningLiveClips = true;
         StartListeningForPlayers();
         GameModel.instance.nc.CallOnMessage(Message.RecordingFinished,
-                                            ClipReload);
+                                            () => {
+                                                if (!clipReloadThisFrame) {
+                                                    ClipReload();
+                                                    clipReloadThisFrame = true;
+                                                    this.FrameDelayCall(() => clipReloadThisFrame = false, 3);
+                                                }
+                                            });
         GameModel.instance.nc.CallOnMessage(Message.RecordingInterrupt,
                                             SubclipInterrupt);
         yield return null;
         foreach (var liveClip in liveClips) {
+            clipReloadThisFrame = false;
             currentClip = liveClip;
             ResetCheckin();
             currentClipName = liveClip.clipName;
@@ -166,8 +173,11 @@ public class TutorialLiveClips : MonoBehaviour {
             }
             yield return null;
             Debug.Log("all checked in");
+            TransitionUtility.OneShotFadeTransition(0.3f, 0.2f);
+            yield return new WaitForSecondsRealtime(0.15f);
             UnloadCurrentClip();
             yield return null;
+            
         }
         yield return new WaitForSeconds(0.05f);
         runningLiveClips = false;
@@ -218,6 +228,15 @@ public class TutorialLiveClips : MonoBehaviour {
                             }
                         }, 0.05f);
                 }
-            }, currentClip.postDelay);
+            }, Mathf.Max(currentClip.postDelay, 0.1f));
+
+        // reason for this value: 0.07f is slightly longer than the 0.05f delay
+        // from a few lines up
+        float epsilon = 0.07f; 
+        float delayBeforeFade = currentClip.postDelay/4;
+        float totalTransitionDuration = Mathf.Max(delayBeforeFade + epsilon, 0.1f);
+        this.TimeDelayCall(
+            () => TransitionUtility.OneShotFadeTransition(totalTransitionDuration * 3, totalTransitionDuration),
+            delayBeforeFade);
     }
 }
