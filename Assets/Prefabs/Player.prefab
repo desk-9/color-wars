@@ -186,8 +186,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inline: {fileID: 0}
   playerNumber: 0
+  teamOverride: -1
 --- !u!114 &114261427851223390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootButton: 11
-  forcedShotTime: 100000
+  forcedShotTime: 2.5
   baseShotSpeed: 25
   chargeRate: 15
   shotPower: 1.2
@@ -221,8 +221,7 @@ MonoBehaviour:
   circleTimerScale: {x: 0.6, y: 0.6}
   chargedBallPercent: 0
   chargedBallMassFactor: 100
-  chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
-    type: 2}
+  chargeEffectOffset: 1.5
 --- !u!114 &114319664088283476
 MonoBehaviour:
   m_ObjectHideFlags: 1
