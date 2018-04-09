@@ -126,6 +126,9 @@ public class TutorialLiveClips : MonoBehaviour {
     }
 
     void CheckinPlayer(object potentialPlayer) {
+        if (!atLeastOneLoop) {
+            return;
+        }
         var player = potentialPlayer as GameObject;
         if (player != null) {
             checkin[player] = true;

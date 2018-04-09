@@ -315,7 +315,7 @@ MonoBehaviour:
   wallLifeLength: 4
   lengthStunWhileLaying: 1.5
   layingSpeedMovementSpeedRatio: 0.79
-  tronWallOffset: 2
+  tronWallOffset: 2.5
   wallLimit: 2
   layWallOnDash: 0
   wallBreakerStunTime: 0.35
