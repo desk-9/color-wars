@@ -11,8 +11,9 @@ public class PlayerStun : MonoBehaviour {
     public void StartStun(Vector2? knockbackVelocity = null, float? length = null) {
         if (knockbackVelocity != null) {
             var rigidbody = GetComponent<Rigidbody2D>();
-            rigidbody?.AddForce(knockbackVelocity.Value * rigidbody.mass,
-                                ForceMode2D.Impulse);
+            if (rigidbody != null) {
+                this.FrameDelayCall(() => rigidbody.velocity = knockbackVelocity.Value);
+            }
         }
         stunned = StartCoroutine(Stun(length));
     }

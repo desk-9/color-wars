@@ -145,7 +145,6 @@ MonoBehaviour:
   dashAimerPrefab: {fileID: 1412520093174376, guid: eb210e989d7bd4df9bb31d913d1cfc2a,
     type: 2}
   dashButton: 11
-  stealKnockbackPercentage: 0.8
   onlyStunBallCarriers: 1
   onlyStealOnBallHit: 1
   stopDashOnCollisionWith:
@@ -158,6 +157,8 @@ MonoBehaviour:
   cooldown: 0.5
   stealShakeAmount: 0.7
   stealShakeDuration: 0.05
+  stealKnockbackAmount: 100
+  stealKnockbackLength: 0.4
 --- !u!114 &114205997563975182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -220,7 +221,6 @@ MonoBehaviour:
   circleTimerScale: {x: 0.6, y: 0.6}
   chargedBallPercent: 0
   chargedBallMassFactor: 100
-  chargedBallStuns: 0
   chargeEffect: {fileID: 1691723634291742, guid: eda84bff2969b4f8d8137137f1694e52,
     type: 2}
 --- !u!114 &114319664088283476
@@ -247,7 +247,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coolDownTime: 0.1
-  chargedBallStuns: 0
   slowMoOnCarry: 1
   aimAssistThreshold: 20
   aimAssistLerpAmount: 0.5
@@ -255,6 +254,9 @@ MonoBehaviour:
   delayBetweenSnaps: 0.2
   snapEpsilon: 5
   snapLerpStrength: 0.2
+  blowbackRadius: 15
+  blowbackForce: 100
+  blowbackStunTime: 0.2
 --- !u!114 &114694489525978138
 MonoBehaviour:
   m_ObjectHideFlags: 1

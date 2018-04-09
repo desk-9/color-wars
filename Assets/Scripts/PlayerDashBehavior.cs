@@ -10,7 +10,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
-    public float stealKnockbackPercentage = 0.8f;
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
@@ -20,6 +19,8 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float cooldown = 0.5f;
     public float stealShakeAmount = .7f;
     public float stealShakeDuration = .05f;
+    public float stealKnockbackAmount = 100f;
+    public float stealKnockbackLength = .5f;
 
     PlayerStateManager stateManager;
     PlayerMovement playerMovement;
@@ -169,7 +170,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             cameraShake.shakeAmount = stealShakeAmount;
             cameraShake.shakeDuration = stealShakeDuration;
             otherStateManager.AttemptStun(
-                () => otherStun.StartStun(rb.velocity * stealKnockbackPercentage),
+                                          () => otherStun.StartStun(rb.velocity.normalized * stealKnockbackAmount, stealKnockbackLength),
                 otherStun.StopStunned);
         }
     }

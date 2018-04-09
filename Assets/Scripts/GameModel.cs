@@ -93,7 +93,7 @@ public class GameModel : MonoBehaviour {
     }
 
     void BlowBack(Player player) {
-        Utility.BlowbackFromPlayer(player.gameObject, blowbackRadius, blowbackSpeed, true,
+        Utility.BlowbackFromPlayer(player.gameObject, blowbackRadius, blowbackSpeed, false,
                                    blowbackStunTime);
         GameObject.Instantiate(blowbackPrefab, player.transform.position, player.transform.rotation);
     }
@@ -105,9 +105,9 @@ public class GameModel : MonoBehaviour {
         if (winCondition == WinCondition.Time) {
             scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
         }
-        if (pushAwayOtherPlayers) {
-            nc.CallOnStateStart(State.Posession, BlowBack);
-        }
+        // if (pushAwayOtherPlayers) {
+        //     nc.CallOnStateStart(State.Posession, BlowBack);
+        // }
         meta = SceneStateController.instance.gameObject;
         if (meta == null) {
             Debug.LogWarning("Meta object is null!!!!");

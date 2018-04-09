@@ -16,7 +16,6 @@ public class ShootBallMechanic : MonoBehaviour {
     CircularTimer circularTimer;
     public float chargedBallPercent = 0.4f;
     public float chargedBallMassFactor = 1;
-    public bool chargedBallStuns = false;
 
     public GameObject chargeEffect;
 
@@ -56,7 +55,6 @@ public class ShootBallMechanic : MonoBehaviour {
             circularTimerPrefab, transform).GetComponent<CircularTimer>();
         circularTimer.transform.localScale = circleTimerScale;
 
-        ballCarrier.chargedBallStuns = chargedBallStuns;
         var ball = GameObject.FindObjectOfType<Ball>();
         if (ball != null) {
             ball.chargedMassFactor = chargedBallMassFactor;

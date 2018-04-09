@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
+using System.Linq;
 
 using IC = InControl;
 
@@ -10,7 +11,6 @@ public class BallCarrier : MonoBehaviour {
     public float coolDownTime = .1f;
     public Ball ball { private set; get;}
     float ballTurnSpeed = 10f;
-    public bool chargedBallStuns = false;
     public bool slowMoOnCarry = true;
     public float aimAssistThreshold = 20f;
     public float aimAssistLerpAmount = .5f;
@@ -19,6 +19,9 @@ public class BallCarrier : MonoBehaviour {
     public float snapEpsilon = 5f;
     public float snapLerpStrength = .5f;
     public float timeCarryStarted {get; private set;}
+    public float blowbackRadius = 3f;
+    public float blowbackForce = 5f;
+    public float blowbackStunTime = 0.1f;
 
     float ballOffsetFromCenter = .5f;
     IPlayerMovement playerMovement;
@@ -59,9 +62,24 @@ public class BallCarrier : MonoBehaviour {
         this.FrameDelayCall(() => {GetGoal(); GetTeammate();}, 2);
     }
 
+    void BlowBackEnemyPlayers() {
+        var enemyTeam = GameModel.instance.teams.Find((teamManager) => teamManager != player.team);
+        Debug.Assert(enemyTeam != null);
+
+        foreach (var enemyPlayer in enemyTeam.teamMembers) {
+            var blowBackVector = enemyPlayer.transform.position - transform.position;
+            if (blowBackVector.magnitude < blowbackRadius) {
+                var otherStun = enemyPlayer.EnsureComponent<PlayerStun>();
+                var otherStateManager = enemyPlayer.EnsureComponent<PlayerStateManager>();
+                otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
+            }
+        }
+    }
+
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     public void StartCarryingBall(Ball ball) {
+        BlowBackEnemyPlayers();
         timeCarryStarted = Time.time;
         ball.rigidbody.velocity = Vector2.zero;
         ball.rigidbody.angularVelocity = 0;
