@@ -154,7 +154,7 @@ MonoBehaviour:
   maxChargeTime: 1
   chargeRate: 0.5
   dashSpeed: 100
-  cooldown: 0.5
+  cooldown: 0.3
   stealShakeAmount: 0.7
   stealShakeDuration: 0.05
   stealKnockbackAmount: 100
