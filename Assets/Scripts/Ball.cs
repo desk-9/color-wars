@@ -33,7 +33,9 @@ public class Ball : MonoBehaviour {
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             notificationCenter.NotifyMessage(message, this);
-            this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
+            if (this.isActiveAndEnabled) {
+                this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
+            }
         }
     }
 
@@ -43,7 +45,7 @@ public class Ball : MonoBehaviour {
     }
 
     void AdjustSpriteToCurrentTeam() {
-        if (goal.currentTeam == null) {
+        if (goal?.currentTeam == null) {
             SetSpriteToNeutral();
         } else {
             // var newSprite = goal.currentTeam.resources.ballSprite;

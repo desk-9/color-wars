@@ -9,35 +9,76 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 [System.Serializable]
-struct InputFrame {
+public struct InputFrame {
     public float leftStickX, leftStickY;
+    public float rotation;
     public bool APressed;
     public bool AReleased;
     public bool BPressed;
     public bool BReleased;
-    public InputFrame(float stickX, float stickY, bool APressed = false, bool AReleased = false,
-                      bool BPressed = false, bool BReleased = false) {
+    public bool Interrupt;
+    public float waitTime;
+    public InputFrame(float stickX, float stickY, float rotation = -1f, bool APressed = false, bool AReleased = false,
+                      bool BPressed = false, bool BReleased = false, bool Interrupt = false,
+                      float waitTime = 0) {
         this.leftStickX = stickX;
         this.leftStickY = stickY;
+        this.rotation = rotation;
         this.APressed = APressed;
         this.AReleased = AReleased;
         this.BPressed = BPressed;
         this.BReleased = BReleased;
+        this.Interrupt = Interrupt;
+        this.waitTime = waitTime;
+    }
+}
+
+[System.Serializable]
+public struct InputRecording {
+    public float startX;
+    public float startY;
+    public float startRotation;
+    public List<InputFrame> recording;
+    public InputRecording(float startX, float startY, float startRotation,
+                          List<InputFrame> recording) {
+        this.startX = startX;
+        this.startY = startY;
+        this.startRotation = startRotation;
+        this.recording = recording;
     }
 }
 
 public class PlayerRecorder : MonoBehaviour {
+    public static bool isRecording = false;
     public bool respondToRecordings = true;
-    PlayerMovement movement;
+    public bool allRecordAtOnce = false;
+    new Rigidbody2D rigidbody;
+    PlayerControls controls;
+    Coroutine recording;
+    bool endRecording = false;
     void Start() {
-        movement = this.EnsureComponent<PlayerMovement>();
-        StartCoroutine(RecordCheck());
+        rigidbody = GetComponent<Rigidbody2D>();
+        controls = this.EnsureComponent<PlayerControls>();
+        if (allRecordAtOnce) {
+            // Have all players start and stop recordings on same button press
+            GameModel.instance.nc.CallOnMessage(
+                Message.PlayerPressedRightBumper, () => {
+                    if (recording == null) {
+                        recording = StartCoroutine(Record());
+                    } else {
+                        endRecording = true;
+                    }
+                });
+        } else {
+            // Each player recording state is individual
+            StartCoroutine(RecordCheck());
+        }
         Directory.CreateDirectory(recordingFolder);
     }
 
     IEnumerator RecordCheck() {
         while (true) {
-            var input = movement.GetInputDevice();
+            var input = controls.GetInputDevice();
             if (input != null && respondToRecordings && input.RightBumper.WasPressed) {
                 yield return Record();
             }
@@ -46,25 +87,43 @@ public class PlayerRecorder : MonoBehaviour {
     }
 
     IEnumerator Record() {
+        isRecording = true;
         Debug.Log("Recording started");
         yield return null;
-        List<InputFrame> record = new List<InputFrame>();
+        InputRecording record =
+            new InputRecording(transform.position.x,
+                               transform.position.y,
+                               this.EnsureComponent<Rigidbody2D>().rotation,
+                               new List<InputFrame>());
+        var lastTime = Time.realtimeSinceStartup;
         while (true) {
-            var input = movement.GetInputDevice();
+            var input = controls.GetInputDevice();
             if (input != null) {
-                if (input.RightBumper.WasPressed) {
+                if (endRecording) {
                     SaveRecording(record);
+                    endRecording = false;
+                    recording = null;
+                    isRecording = false;
                     yield break;
                 }
-                record.Add(
+                if (input.LeftBumper.WasPressed) {
+                    Debug.Log("Recording interrupt");
+                }
+                var delta = Time.realtimeSinceStartup - lastTime;
+                lastTime = Time.realtimeSinceStartup;
+                record.recording.Add(
                     new InputFrame(
-                        input.LeftStickX, input.LeftStickY,
+                        rigidbody.position.x, rigidbody.position.y,
+                        rigidbody.rotation,
+                        // input.LeftStickX, input.LeftStickY,
                         input.Action1.WasPressed,
                         input.Action1.WasReleased,
                         input.Action2.WasPressed,
-                        input.Action2.WasReleased));
+                        input.Action2.WasReleased,
+                        input.LeftBumper.WasPressed,
+                        delta));
             } else {
-                record.Add(new InputFrame(0, 0));
+                record.recording.Add(new InputFrame(0, 0));
             }
             yield return null;
         }
@@ -109,12 +168,12 @@ public class PlayerRecorder : MonoBehaviour {
         return result + 1;
     }
 
-    void SaveRecording(List<InputFrame> record) {
+    void SaveRecording(InputRecording record) {
         var name = string.Format(filePattern, NextRecordingNumber());
         WriteRecording(record, name);
     }
 
-    void WriteRecording(List<InputFrame> record, string name) {
+    void WriteRecording(InputRecording record, string name) {
         BinaryFormatter formatter = new BinaryFormatter();
         Directory.CreateDirectory(recordingFolder);
         var path = string.Format("{0}/recordings/{1}",

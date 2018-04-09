@@ -9,14 +9,14 @@ public class ScoreIndicator : MonoBehaviour {
     public string teamName;
     public List<Color> stops;
     public List<float> durations;
-    
+
     TeamManager team = null;
     List<GameObject> pointIndicators = new List<GameObject>();
 
     void Start() {
         this.FrameDelayCall(Initialization, 2);
     }
-    
+
     // Use this for initialization
     void Initialization () {
 
@@ -51,7 +51,7 @@ public class ScoreIndicator : MonoBehaviour {
             });
 
         // Reset score indicator when game is restarted
-        GameModel.instance.nc.CallOnMessage(Message.GoalScored, UpdateAllDisplays);
+        GameModel.instance.nc.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
 
         foreach (var pointIndicator in pointIndicators) {
             pointIndicator.GetComponent<SpriteRenderer>().color = team.teamColor.color;
@@ -74,13 +74,13 @@ public class ScoreIndicator : MonoBehaviour {
         int nextPoint = team.score - 1;
         var pointIndicator = pointIndicators[nextPoint];
         var renderer = pointIndicator.GetComponent<SpriteRenderer>();
-        
+
         renderer.sprite = team.resources.scoreIndicatorFullSprite;
-        
+
         CoroutineUtility.LerpColorSequence(
             (Color color) => renderer.color = color,
             stops, durations);
-        
+
         StartParticleEffect(pointIndicator);
     }
 
@@ -96,5 +96,5 @@ public class ScoreIndicator : MonoBehaviour {
         scoreGoalParticleSystem.Play();
         this.TimeDelayCall(() => Destroy(scoreGoalEffect), scoreGoalMain.duration);
     }
-    
+
 }

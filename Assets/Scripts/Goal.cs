@@ -90,6 +90,9 @@ public class Goal : MonoBehaviour {
     }
 
     void PlayerBallColorSwitch(Player player) {
+        if (this == null) {
+            return;
+        }
         if (player != lastPlayer && player.team == lastPlayer?.team) {
             if (!PlayerInNullZone(player)) {
                 GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);

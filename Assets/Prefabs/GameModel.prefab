@@ -81,7 +81,6 @@ MonoBehaviour:
   requiredWinMargin: 1
   winCondition: 2
   backgroundScroller: {fileID: 0}
-  goal: {fileID: 0}
 --- !u!114 &114211205889215070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -96,6 +95,7 @@ MonoBehaviour:
   StartButton: 20
   ResetButton: 8
   MainMenuButton: 7
+  delayBeforeWinDisplay: 5
   pauseMenu: {fileID: 0}
   winDisplay: {fileID: 0}
 --- !u!114 &114416457825299406
@@ -120,3 +120,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08f7fb940a3a942dd8739912240d2198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tutorialType: 2

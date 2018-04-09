@@ -113,13 +113,11 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void SnapAimTowardsTargets() {
-        if (teammate == null
-            || playerMovement == null
-            || goal == null
+        if (playerMovement == null
             || player == null) {
             return;
         }
-        if (snapDelay > 0f) {
+        if (snapDelay > 0f) {// || TutorialLiveClips.runningLiveClips || PlayerRecorder.isRecording) {
             playerMovement?.RotatePlayer();
             return;
         }
@@ -141,14 +139,24 @@ public class BallCarrier : MonoBehaviour {
                 playerMovement?.RotatePlayer();
                 return;
             }
-            var goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
-            var teammateVector = (teammate.transform.position - transform.position).normalized;
-            if (Mathf.Abs(Vector2.Angle(transform.right, goalVector)) < aimAssistThreshold &&
+
+            Vector2? goalVector;
+            Vector2? teammateVector;
+            if (goal != null) {
+                goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
+            }
+            if (teammate != null) {
+                teammateVector = (teammate.transform.position - transform.position).normalized;
+            }
+
+            if (goalVector.HasValue &&
+                    Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
                 ball.renderer.color == player.team.teamColor.color) {
                 snapToObject = goal;
                 stickAngleWhenSnapped = stickDirection;
                 SnapToGameObject();
-            } else if (Mathf.Abs(Vector2.Angle(transform.right, teammateVector)) < aimAssistThreshold) {
+            } else if (teammateVector.HasValue &&
+                           Mathf.Abs(Vector2.Angle(transform.right, teammateVector.Value)) < aimAssistThreshold) {
                 snapToObject = teammate;
                 stickAngleWhenSnapped = stickDirection;
                 SnapToGameObject();
@@ -190,7 +198,9 @@ public class BallCarrier : MonoBehaviour {
             ball = null;
 
             laserGuide?.StopDrawingLaser();
-            StartCoroutine(CoolDownTimer());
+            if (this.isActiveAndEnabled) {
+                StartCoroutine(CoolDownTimer());
+            }
         }
     }
 
@@ -231,7 +241,6 @@ public class BallCarrier : MonoBehaviour {
             return;
         }
         if (stateManager != null) {
-            Utility.Print("Has state manager");
             var last_team = ball.lastOwner?.GetComponent<Player>().team;
             var this_team = GetComponent<Player>().team;
             if (chargedBallStuns && ball.charged && last_team != this_team) {
@@ -240,7 +249,6 @@ public class BallCarrier : MonoBehaviour {
                 var knockback = ball.GetComponent<Rigidbody2D>().velocity.magnitude * direction;
                 stateManager.AttemptStun(() => stun.StartStun(knockback), stun.StopStunned);
             } else {
-                Utility.Print("attempting posession");
                 stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
             }
         } else {
@@ -260,5 +268,9 @@ public class BallCarrier : MonoBehaviour {
         if (stateManager != null && stateManager.IsInState(State.Dash)) {
             HandleCollision(other.gameObject);
         }
+    }
+
+    void OnDestroy() {
+        DropBall();
     }
 }

@@ -57,8 +57,16 @@ public class GameModel : MonoBehaviour {
 
     float matchLengthSeconds;
     IntCallback NextTeamAssignmentIndex;
-    Ball ball;
-    public Goal goal;
+    Ball ball {
+        get {
+            return GameObject.FindObjectOfType<Ball>();
+        }
+    }
+    Goal goal {
+        get {
+            return GameObject.FindObjectOfType<Goal>();
+        }
+    }
     CameraShake cameraShake;
 
     void Awake() {
@@ -93,8 +101,6 @@ public class GameModel : MonoBehaviour {
     void Start() {
         SceneStateController.instance.UnPauseTime();
         Debug.Log(Time.timeScale);
-        ball = GameObject.FindObjectOfType<Ball>();
-        goal = GameObject.FindObjectOfType<Goal>();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
         if (winCondition == WinCondition.Time) {
             scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
@@ -111,9 +117,7 @@ public class GameModel : MonoBehaviour {
         }
 
         // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
-        Utility.Print("Will reset?", !PlayerTutorial.runTutorial);
-        if (!PlayerTutorial.runTutorial) {
-            Utility.Print("reseting");
+        if (!PlayerTutorial.runTutorial && SceneManager.GetActiveScene().name == "court") {
             nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
             this.FrameDelayCall(
                 () => {foreach (var team in teams) {team.ResetTeam();}},
@@ -152,7 +156,7 @@ public class GameModel : MonoBehaviour {
         if (GameModel.playerTeamsAlreadySelected) {
             return teams[playerTeamAssignments[caller.playerNumber]];
         } else if (GameModel.cheatForcePlayerAssignment) {
-            return teams[NextTeamAssignmentIndex()];
+            return teams[caller.playerNumber % teams.Count];
         }
         return null;
     }
@@ -219,7 +223,10 @@ public class GameModel : MonoBehaviour {
                 team.MakeInvisibleAfterGoal();
             }
         }
-        UtilityExtensionsContainer.TimeDelayCall(this, ResetGameAfterGoal, pauseAfterGoalScore);
+        if (!TutorialLiveClips.runningLiveClips) {
+            UtilityExtensionsContainer.TimeDelayCall(
+                this, ResetGameAfterGoal, pauseAfterGoalScore);
+        }
         cameraShake.shakeAmount = goalShakeAmount;
         cameraShake.shakeDuration = goalShakeDuration;
     }
@@ -271,6 +278,10 @@ public class GameModel : MonoBehaviour {
         return players;
     }
 
+    public List<Player> GetHumanPlayers() {
+        return players.Where(player => player.playerNumber >= 0).ToList();
+    }
+
     IEnumerator PitchShifter(float target, float time) {
         var backgroundMusic = GameObject.Find("BGM")?.GetComponent<AudioSource>();
 
@@ -301,7 +312,9 @@ public class GameModel : MonoBehaviour {
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
         nc.NotifyMessage(Message.SlowMoEntered, this);
-        StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
+        if (!TutorialLiveClips.runningLiveClips) {
+            StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
+        }
     }
 
     public void ResetSlowMo() {
@@ -309,12 +322,17 @@ public class GameModel : MonoBehaviour {
         slowMoCount -= 1;
         if (slowMoCount == 0) {
             Utility.ChangeTimeScale(1);
-            foreach (var player in GetPlayersWithTeams()) {
-                player.GetComponent<PlayerMovement>().instantRotation = true;
+            var movements = (from player in GetAllPlayers()
+                             where player.GetComponent<PlayerMovement>() != null
+                             select player.GetComponent<PlayerMovement>());
+            foreach (var movement in movements) {
+                movement.instantRotation = true;
             }
 
             // Pitch-shift BGM back to normal.
-            StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+            if (!TutorialLiveClips.runningLiveClips) {
+                StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+            }
             nc.NotifyMessage(Message.SlowMoExited, this);
         }
     }

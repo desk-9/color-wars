@@ -25,9 +25,8 @@ public class LaserGuide : MonoBehaviour {
         lineRenderer.enabled = false;
         rayCastMask = LayerMask.GetMask(new string[]{"Wall", "Goal", "TronWall"});
         goalLayer = LayerMask.NameToLayer("Goal");
-        this.FrameDelayCall(SetLaserGradients, 10);
     }
-    
+
     public void SetLaserGradients() {
         var team = GetComponent<Player>()?.team;
         if (team != null) {
@@ -55,6 +54,8 @@ public class LaserGuide : MonoBehaviour {
 
     // Returns true if the laser was reflected, false otherwise
     IEnumerator DrawAimingLaser() {
+        yield return null;
+        yield return null;
         while (true) {
             var points = new List<Vector3>();
             points.Add(transform.position);

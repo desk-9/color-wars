@@ -9,7 +9,7 @@ public delegate IEnumerator Routine();
 
 
 public class PlayerPuppet : MonoBehaviour {
-
+    public static bool puppetsPause = false;
     public enum PuppetProgram {
         ShortForward,
         PlayRecording
@@ -19,6 +19,7 @@ public class PlayerPuppet : MonoBehaviour {
     public float defaultMovementSpeed = 30;
     public string recordingName = "test";
     public bool doPuppeting = true;
+    public bool doLoop = false;
 
     const string recordingDirectory = "Recordings";
     Coroutine puppetRoutine;
@@ -28,35 +29,72 @@ public class PlayerPuppet : MonoBehaviour {
 
     Vector2 movementInput = Vector2.zero;
 
+    bool recordingFinishedThisFrame = false;
+
     void Start() {
         rigidbody = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         if (!doPuppeting) {
             return;
         }
-        this.FrameDelayCall(() => StartProgram(program), 1);
+        GameModel.instance.nc.CallOnMessage(
+            Message.RecordingFinished,
+            () => {
+                recordingFinishedThisFrame = true;
+                if (this != null) {
+                    this.FrameDelayCall(() => {
+                            if (this != null) {
+                                this.recordingFinishedThisFrame = false;
+                            }
+                        });
+                }
+            });
+        this.FrameDelayCall(() => StartProgram(program));
     }
 
 
-    List<InputFrame> LoadRecording(string name) {
+    InputRecording LoadRecording(string name) {
         var path = Path.Combine(
             Application.streamingAssetsPath, recordingDirectory, name + ".inputRecord");
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream file = File.Open(path, FileMode.Open);
-        var record = formatter.Deserialize(file) as List<InputFrame>;
-        if (record == null) {
-            Debug.LogError(string.Format("No such recording at {0}", path));
-        }
+        var record = (InputRecording) formatter.Deserialize(file);
+        file.Close();
         return record;
     }
 
-    IEnumerator PlayRecording(List<InputFrame> record, bool loop = false) {
+    IEnumerator PlayRecording(InputRecording record, bool loop = false) {
         while (true) {
-            foreach (var frame in record) {
-                PlayerMovement.SendInputEvents(
-                    frame.leftStickX, frame.leftStickY, frame.APressed, frame.AReleased,
+            transform.position = new Vector2(record.startX, record.startY);
+            rigidbody.rotation = record.startRotation;
+            foreach (var frame in record.recording) {
+                if (this.gameObject == null) {
+                    yield break;
+                }
+
+                while (puppetsPause) {
+                    PlayerControls.SendInputEvents(
+                        0, 0, false, false, false, false, this.gameObject);
+                    yield return new WaitForFixedUpdate();
+                }
+                rigidbody.position = new Vector2(frame.leftStickX, frame.leftStickY);
+                rigidbody.rotation = frame.rotation;
+                PlayerControls.SendInputEvents(
+                    0, 0, frame.APressed, frame.AReleased,
                     frame.BPressed, frame.BReleased, this.gameObject);
+                if (frame.Interrupt) {
+                    Debug.Log("Interrupt! Text will change");
+
+                        GameModel.instance.nc.NotifyMessage(
+                            Message.RecordingInterrupt, this.gameObject);
+
+                }
                 yield return null;
+
+            }
+            if (!recordingFinishedThisFrame) {
+                GameModel.instance.nc.NotifyMessage(
+                    Message.RecordingFinished, this.gameObject);
             }
             if (!loop) {
                 break;
@@ -118,6 +156,6 @@ public class PlayerPuppet : MonoBehaviour {
     public IEnumerator PlayRecording() {
         yield return new WaitForFixedUpdate();
         var record = LoadRecording(recordingName);
-        yield return PlayRecording(record, true);
+        yield return PlayRecording(record, doLoop);
     }
 }

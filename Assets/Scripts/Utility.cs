@@ -83,12 +83,33 @@ namespace UtilityExtensions {
          public static void Add(this IList<TutorialStageInfo> list,
                                 string a, string b, string c) {
              list.Add(new TutorialStageInfo(a, b, c));
-        }
+         }
 
         public static void Add(this IList<TutorialStageInfo> list,
                                string a, string b, string c, TutorialRequirement requirement) {
             list.Add(new TutorialStageInfo(a, b, c, requirement));
         }
+
+        public static void Add(this IList<SubclipInfo> list,
+                               string text, float time) {
+             list.Add(new SubclipInfo(text, time));
+        }
+
+        public static void Add(this IList<SubclipInfo> list,
+                               string text) {
+             list.Add(new SubclipInfo(text));
+        }
+
+        public static void Add(this IList<LiveClipInfo> list,
+                               string name, List<SubclipInfo> subclips) {
+            list.Add(new LiveClipInfo(name, subclips));
+        }
+
+        public static void Add(this IList<LiveClipInfo> list,
+                               string name, List<SubclipInfo> subclips, float pre, float post) {
+            list.Add(new LiveClipInfo(name, subclips, pre, post));
+        }
+
 
         public static EffectSpawner FindEffect(this Component component, EffectType type) {
             var effects = component.GetComponents<EffectSpawner>();
@@ -98,6 +119,15 @@ namespace UtilityExtensions {
                 }
             }
             return null;
+        }
+
+        public static TValue GetDefault<TValue, TKey>(
+            this Dictionary<TKey, TValue> dict, TKey key, TValue defaultValue) {
+            if (dict.ContainsKey(key)) {
+                return dict[key];
+            } else {
+                return defaultValue;
+            }
         }
     }
 }
@@ -309,7 +339,7 @@ public class CoroutineUtility : MonoBehaviour {
     }
 
 
-    
+
     public static IEnumerator LerpColor(ColorSetter colorSetter,
                                         Color startColor, Color endColor,
                                         float duration) {
@@ -337,5 +367,5 @@ public class CoroutineUtility : MonoBehaviour {
             ++i;
         }
     }
-    
+
 }

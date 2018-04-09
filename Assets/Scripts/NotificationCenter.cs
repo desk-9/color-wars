@@ -22,6 +22,7 @@ public enum Message {
     StartCountdown,
     CountdownFinished,
     GoalScored,
+    ScoreChanged,
     SlowMoEntered,
     SlowMoExited,
     BallSetNeutral,
@@ -36,15 +37,24 @@ public enum Message {
     PlayerPressedLeftBumper,
     PlayerReleasedLeftBumper,
 
+    PlayerPressedRightBumper,
+    PlayerReleasedRightBumper,
+
     PlayerPressedB,
     PlayerReleasedB,
+
+    PlayerPressedX,
+    PlayerReleasedX,
 
     PlayerPressedDash,
     PlayerReleasedDash,
     PlayerPressedShoot,
     PlayerReleasedShoot,
     PlayerPressedWall,
-    PlayerReleasedWall
+    PlayerReleasedWall,
+
+    RecordingInterrupt,
+    RecordingFinished,
 };
 
 public class NotificationCenter {

@@ -32,10 +32,19 @@ public struct TutorialStageInfo {
     }
 }
 
+public enum TutorialType {
+    TeamSelection,
+    Sandbox,
+    None
+}
+
 public class PlayerTutorial : MonoBehaviour {
     public static PlayerTutorial instance;
     public static bool runTutorial = false;
+    public TutorialType tutorialType = TutorialType.None;
 
+
+    int currentStageNumber = -1;
     Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
     Text readyUpText;
     Text readyUpCount;
@@ -46,18 +55,24 @@ public class PlayerTutorial : MonoBehaviour {
     void Start() {
         readyUpText = GameObject.Find("ReadyUpText")?.GetComponent<Text>();
         readyUpCount = GameObject.Find("ReadyUpCount")?.GetComponent<Text>();
-        inTeamSelection = (GameObject.Find("TeamSelection") != null);
+        inTeamSelection = (tutorialType == TutorialType.TeamSelection
+                           && GameObject.Find("TeamSelection") != null);
+        if (inTeamSelection) {
+            StartCoroutine(TeamSelection());
+        } else if (tutorialType == TutorialType.Sandbox) {
+            StartCoroutine(Sandbox());
+        }
     }
 
     void StartListeningForPlayers() {
         GameModel.instance.nc.CallOnMessageWithSender(
-            Message.PlayerReleasedA, CheckinPlayer);
+            Message.PlayerReleasedX, CheckinPlayer);
         GameModel.instance.nc.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
     }
 
     List<GameObject> GetPlayers() {
-        return (from player in GameModel.instance.GetAllPlayers()
+        return (from player in GameModel.instance.GetHumanPlayers()
                 select player.gameObject).ToList();
     }
 
@@ -66,7 +81,6 @@ public class PlayerTutorial : MonoBehaviour {
         if (player != null) {
             checkin[player] = true;
         }
-        Utility.Print("Checking in player", player, checkin[player], NumberCheckedIn());
         readyUpCount.text = string.Format("{0}/{1}", NumberCheckedIn(), GetPlayers().Count);
     }
 
@@ -75,12 +89,11 @@ public class PlayerTutorial : MonoBehaviour {
         foreach (var player in GetPlayers()) {
             checkin[player.gameObject] = false;
         }
-        Utility.Print("Reseting count");
         readyUpCount.text = string.Format("{0}/{1}", NumberCheckedIn(), GetPlayers().Count);
     }
 
     int NumberCheckedIn() {
-        return GetPlayers().Count(player => checkin[player]);
+        return GetPlayers().Count(player => checkin.GetDefault(player, false));
     }
 
     bool AllCheckedIn() {
@@ -94,7 +107,7 @@ public class PlayerTutorial : MonoBehaviour {
     }
 
     IEnumerator EndTutorial() {
-        readyUpText.text = "Press A to start the tutorial";
+        readyUpText.text = "Press X to start the tutorial";
         ResetCheckin();
         StartListeningForPlayers();
         yield return null;
@@ -113,11 +126,44 @@ public class PlayerTutorial : MonoBehaviour {
 
     }
 
-    void Update() {
-        if (inTeamSelection) {
-            if (GameModel.instance.teams.All(team => team.teamMembers.Count == 2)) {
+    IEnumerator TeamSelection() {
+        yield return new WaitForFixedUpdate();
+        while (true) {
+            if (inTeamSelection && GameModel.instance.teams.All(team => team.teamMembers.Count == 2)) {
                 TeamSelectionFinished();
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+    List<Tuple<string, Message>> stages = new List<Tuple<string, Message>>() {
+        {"Try laying a wall with B", Message.PlayerReleasedWall},
+        {"Press X to start the game!", Message.PlayerPressedX},
+    };
+
+    void StageCheckinListen(int stageNumber, Message playerEvent) {
+        GameModel.instance.nc.CallOnMessageIf(
+            playerEvent, CheckinPlayer, _ => currentStageNumber == stageNumber);
+        GameModel.instance.nc.CallOnMessage(
+            Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
+    }
+
+    IEnumerator Sandbox() {
+        yield return null;
+        for (int i = 0; i < stages.Count; i++) {
+            currentStageNumber = i;
+            var stageText = stages[i].Item1;
+            var stageEvent = stages[i].Item2;
+            readyUpText.text = stageText;
+            ResetCheckin();
+            StageCheckinListen(i, stageEvent);
+            yield return null;
+            while (!AllCheckedIn()) {
+                yield return null;
             }
         }
+        PlayerTutorial.runTutorial = false;
+        SceneStateController.instance.Load(Scene.Court);
     }
 }

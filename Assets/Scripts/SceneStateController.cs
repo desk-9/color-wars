@@ -9,7 +9,8 @@ public enum Scene {
     Court,
     MainMenu,
     Tutorial,
-    Selection
+    Selection,
+    Sandbox
 };
 
 public class SceneStateController : MonoBehaviour {
@@ -19,6 +20,7 @@ public class SceneStateController : MonoBehaviour {
         {Scene.MainMenu, "main-menu"},
         {Scene.Selection, "court-team-selection"},
         {Scene.Tutorial, "court-tutorial"},
+        {Scene.Sandbox, "court-sandbox"},
     };
     public Scene currentScene {get; private set;}
 
@@ -76,7 +78,7 @@ public class SceneStateController : MonoBehaviour {
             yield return null;
         }
         color.a = 0f;
-        panelImage.color = color; 
+        panelImage.color = color;
     }
 
     void InitializeCallbacks() {

@@ -2852,6 +2852,11 @@ Prefab:
       propertyPath: backgroundScroller
       value: 
       objectReference: {fileID: 1521912373}
+    - target: {fileID: 114459257248822156, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 2}
+      propertyPath: tutorialType
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 2}
   m_IsPrefabParent: 0
@@ -3356,6 +3361,11 @@ Prefab:
       value: 
       objectReference: {fileID: 12800000, guid: 958c101a50ca644c587b7ef2d3c2afef,
         type: 3}
+    - target: {fileID: 114734808852496384, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3,
+        type: 2}
+      propertyPath: m_FontData.m_FontStyle
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3, type: 2}
   m_IsPrefabParent: 0
@@ -3919,12 +3929,12 @@ Prefab:
     - target: {fileID: 114734808852496384, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3,
         type: 2}
       propertyPath: m_Color.g
-      value: 0.39310348
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114734808852496384, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3,
         type: 2}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212183062335472288, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3,
         type: 2}
@@ -3947,6 +3957,11 @@ Prefab:
       value: 
       objectReference: {fileID: 12800000, guid: 958c101a50ca644c587b7ef2d3c2afef,
         type: 3}
+    - target: {fileID: 114734808852496384, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3,
+        type: 2}
+      propertyPath: m_FontData.m_FontStyle
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3, type: 2}
   m_IsPrefabParent: 0

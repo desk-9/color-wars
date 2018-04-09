@@ -31,11 +31,13 @@ public class TeamManager {
 
     public void ResetScore() {
         score = 0;
+        GameModel.instance.nc.NotifyMessage(Message.ScoreChanged, this);
         GameModel.instance.scoreDisplayer?.UpdateScores();
     }
 
     public void IncrementScore() {
         score += 1;
+        GameModel.instance.nc.NotifyMessage(Message.ScoreChanged, this);
         GameModel.instance.nc.NotifyMessage(Message.GoalScored, this);
         GameModel.instance.scoreDisplayer?.UpdateScores();
     }
@@ -53,15 +55,19 @@ public class TeamManager {
                 playerSpriteUsages[newMember.playerNumber] = sprite;
                 unusedSprites.Pop();
             } else {
-                renderer.sprite = playerSpriteUsages[newMember.playerNumber];
+                if (newMember.playerNumber >= 0) {
+                    renderer.sprite = playerSpriteUsages[newMember.playerNumber];
+                }
             }
         }
     }
 
     public void RemoveTeamMember(Player member) {
         if (teamMembers.Contains(member)) {
-            unusedSprites.Push(spriteUsage[member]);
-            spriteUsage.Remove(member);
+            if (spriteUsage.ContainsKey(member)) {
+                unusedSprites.Push(spriteUsage[member]);
+                spriteUsage.Remove(member);
+            }
             teamMembers.Remove(member);
             if (!playerSpritesAlreadySet) {
                 playerSpriteUsages.Remove(member.playerNumber);

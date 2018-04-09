@@ -25,6 +25,8 @@ public class BackgroundScroller : MonoBehaviour {
     }
 
     public void SetBackground(TeamResourceManager resource) {
-        renderer.sprite = resource.background;
+        if (renderer != null) {
+            renderer.sprite = resource.background;
+        }
     }
 }

@@ -125,7 +125,8 @@ public class PlayerTronMechanic : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D collision) {
-        if (layWallCoroutine != null && collision.gameObject != gameObject) {
+        var currentWall = walls.Select(wall => wall.gameObject).DefaultIfEmpty(null).Last();
+        if (layWallCoroutine != null && collision.gameObject != currentWall) {
             StopLayingWall();
             stateManager.CurrentStateHasFinished();
         }
