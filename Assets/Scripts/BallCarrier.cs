@@ -261,14 +261,7 @@ public class BallCarrier : MonoBehaviour {
         if (stateManager != null) {
             var last_team = ball.lastOwner?.GetComponent<Player>().team;
             var this_team = GetComponent<Player>().team;
-            if (chargedBallStuns && ball.charged && last_team != this_team) {
-                var stun = GetComponent<PlayerStun>();
-                var direction = transform.position - ball.transform.position;
-                var knockback = ball.GetComponent<Rigidbody2D>().velocity.magnitude * direction;
-                stateManager.AttemptStun(() => stun.StartStun(knockback), stun.StopStunned);
-            } else {
-                stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
-            }
+            stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
         } else {
             StartCoroutine(CoroutineUtility.RunThenCallback(CarryBall(ball), DropBall));
         }
