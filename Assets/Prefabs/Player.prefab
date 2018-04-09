@@ -171,7 +171,8 @@ MonoBehaviour:
   movementSpeed: 30
   rotationSpeed: 1080
   freezeRotation: 0
-  maxAwayFromBallAngle: 10
+  maxAwayFromBallAngle: 30
+  lastDirection: {x: 0, y: 0}
 --- !u!114 &114215232534320030
 MonoBehaviour:
   m_ObjectHideFlags: 1

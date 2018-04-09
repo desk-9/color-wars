@@ -26,8 +26,6 @@ public class ShootBallMechanic : MonoBehaviour {
     BallCarrier ballCarrier;
     GameObject effect;
     TeamManager team;
-    Player player;
-    Goal goal;
     Player teamMate;
 
     float shotSpeed = 1.0f;
@@ -39,8 +37,6 @@ public class ShootBallMechanic : MonoBehaviour {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         ballCarrier = this.EnsureComponent<BallCarrier>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        player = this.EnsureComponent<Player>();
-        goal = GameObject.FindObjectOfType<Goal>();
         stateManager.CallOnStateEnter(State.Posession, StartTimer);
         stateManager.CallOnStateExit(
             State.Posession, () => StopChargeShot());
@@ -104,8 +100,6 @@ public class ShootBallMechanic : MonoBehaviour {
 
     IEnumerator ChargeShot() {
         effect = Instantiate(chargeEffect, transform.position, transform.rotation, transform);
-
-        var inputDevice = playerMovement.GetInputDevice();
 
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;

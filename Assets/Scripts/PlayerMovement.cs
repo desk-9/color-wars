@@ -133,15 +133,6 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
         }
     }
 
-    // void TryToGetInputDevice() {
-    //     inputDevice = PlayerInputManager.instance.GetInputDevice(
-    //         InputDeviceDisconnectedCallback);
-    //     if (inputDevice != null) {
-    //         Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
-    //         stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
-    //     }
-    // }
-
     public InputDevice GetInputDevice() {
         return inputDevice;
     }

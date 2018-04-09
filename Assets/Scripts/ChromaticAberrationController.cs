@@ -7,14 +7,9 @@ using UnityEngine.PostProcessing;
 public class ChromaticAberrationController : MonoBehaviour {
     PostProcessingProfile profile;
     Coroutine smoothTransition;
-    float currentIntensity = 0.0f;
 
     void Awake() {
         profile = GetComponent<PostProcessingBehaviour>().profile;
-    }
-
-    void Start() {
-        currentIntensity = GetIntensity();
     }
 
     void OnDestroy() {
@@ -49,7 +44,6 @@ public class ChromaticAberrationController : MonoBehaviour {
             yield return null;
         }
 
-        currentIntensity = target;
         smoothTransition = null;
     }
 }

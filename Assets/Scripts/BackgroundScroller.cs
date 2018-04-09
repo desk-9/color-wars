@@ -10,7 +10,6 @@ public class BackgroundScroller : MonoBehaviour {
 
     private new SpriteRenderer renderer;
     private Vector3 origin;
-    private float transformAmount = 0.0f;
 
     void Start() {
         renderer = GetComponent<SpriteRenderer>();
