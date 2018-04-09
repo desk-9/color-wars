@@ -56,12 +56,12 @@ public class TutorialLiveClips : MonoBehaviour {
          }},
         {"3-stealing-and-blocking",
          new List<SubclipInfo>() {
-                {"DASH at the ball to STEAL", 0.3f},
+                {"DASH with (A) at the ball to STEAL", 0.3f},
                 "BLOCK steals with your body"
          }},
         {"4-walls",
          new List<SubclipInfo>() {
-                "Hold B to lay WALLS",
+                "Hold (B) to lay WALLS",
                 "Use WALLS to BLOCK the ball",
                 "BREAK walls by DASHING"
          }}
@@ -120,7 +120,7 @@ public class TutorialLiveClips : MonoBehaviour {
 
     void SetReadyText() {
         if (atLeastOneLoop) {
-            readyText.text = string.Format("Press A to continue ({0}/{1})",
+            readyText.text = string.Format("Press (A) to continue ({0}/{1})",
                                            NumberCheckedIn(), GetPlayers().Count);
         }
     }
