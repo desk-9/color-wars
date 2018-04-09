@@ -179,6 +179,7 @@ public class TutorialLiveClips : MonoBehaviour {
             yield return null;
             
         }
+        TransitionUtility.OneShotFadeTransition(0.1f, 0.4f);
         yield return new WaitForSeconds(0.05f);
         runningLiveClips = false;
         SceneStateController.instance.Load(Scene.Sandbox);
