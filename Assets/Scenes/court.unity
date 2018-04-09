@@ -1133,6 +1133,10 @@ Prefab:
       propertyPath: playOnAwake
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4287000190746736, guid: e52e78f4f7ff34ea4b521c3212c59269, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e52e78f4f7ff34ea4b521c3212c59269, type: 2}
   m_IsPrefabParent: 0
@@ -1509,6 +1513,7 @@ RectTransform:
   - {fileID: 2082202136}
   - {fileID: 1708146074}
   - {fileID: 900835211}
+  - {fileID: 1995125425}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2603,6 +2608,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b233d598eefd4671ad3888853bf0730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  restartCountSize:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: -0.0041656494
+      value: 0.0062561035
+      inSlope: 0.07561809
+      outSlope: 0.07561809
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.123871684
+      value: 0.4549448
+      inSlope: 10.84641
+      outSlope: 10.84641
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.2198619
+      value: 1.1043437
+      inSlope: 0.821377
+      outSlope: 0.821377
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.3932406
+      value: 1.0673077
+      inSlope: -1.0036296
+      outSlope: -1.0036296
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 0.98747253
+      inSlope: -0.3473634
+      outSlope: -0.3473634
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!1 &933226222
 GameObject:
   m_ObjectHideFlags: 0
