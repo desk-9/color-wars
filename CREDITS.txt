@@ -8,10 +8,16 @@ Sounds:
 * [deprecated] Goal Switch Mechanical Sounds: http://soundbible.com/761-Switch.html
 * [deprecated] Endgame Countdown: http://www.orangefreesounds.com/countdown-timer/
 * Steal ball, power up ball, break wall (w/o stunning player) sounds: https://assetstore.unity.com/packages/audio/sound-fx/free-casual-game-sfx-pack-54116
-* Shoot sound: https://freesound.org/people/Mattix/sounds/414888/
+* Shoot sound: https://freesound.org/people/JavierZumer/sounds/257232/
 * Stun Player Wall Break Sound: https://freesound.org/people/josepharaoh99/sounds/368511/
 * Score Goal/Dissolve losing team sound: https://freesound.org/people/Problematist/sounds/325356/
 * Dash sound: https://freesound.org/people/VeronicaStratton/sounds/388493/
+* Enter pause menu: https://freesound.org/people/Soughtaftersounds/sounds/145441/
+* Exit pause menu: https://freesound.org/people/fordps3/sounds/186669/
+* Change selection: https://freesound.org/people/NenadSimic/sounds/171697/
+* Start game/confirm selection: https://freesound.org/people/broumbroum/sounds/50565/
+* Cheat to skip tutorial: https://freesound.org/people/Kastenfrosch/sounds/162462/
+* wall timeout/dissolve: https://freesound.org/people/Soughtaftersounds/sounds/145444/
 
 Music:
 * Comeback of the Green Rabbit: http://ocremix.org/remix/OCR03319
@@ -30,8 +36,14 @@ Font: Play
 Source: https://fonts.google.com/specimen/Play
 License: http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL_web
 
+Font: Beon
+Source: http://www.1001fonts.com/beon-font.html
+Author: Bastien Sozoo
+License: http://www.1001fonts.com/beon-font.html#license
+
 Screen Shake Script:
 https://gist.github.com/ftvs/5822103
 
 Asset: Shader for goal indicator particle effect (happens when point is scored)
 https://assetstore.unity.com/packages/vfx/shaders/particle-light-10105
+Author: Nikolaus Kraus
