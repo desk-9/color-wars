@@ -69,9 +69,11 @@ public class BallCarrier : MonoBehaviour {
         foreach (var enemyPlayer in enemyTeam.teamMembers) {
             var blowBackVector = enemyPlayer.transform.position - transform.position;
             if (blowBackVector.magnitude < blowbackRadius) {
-                var otherStun = enemyPlayer.EnsureComponent<PlayerStun>();
-                var otherStateManager = enemyPlayer.EnsureComponent<PlayerStateManager>();
-                otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
+                var otherStun = enemyPlayer.GetComponent<PlayerStun>();
+                var otherStateManager = enemyPlayer.GetComponent<PlayerStateManager>();
+                if (otherStun != null && otherStateManager != null) {
+                    otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
+                }
             }
         }
     }
