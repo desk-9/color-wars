@@ -131,4 +131,10 @@ public class PlayerTronMechanic : MonoBehaviour {
             stateManager.CurrentStateHasFinished();
         }
     }
+
+    void OnDestroy() {
+        foreach (var wall in new List<TronWall>(walls)) {
+            wall.KillSelf();
+        }
+    }
 }

@@ -76,8 +76,8 @@ public class Ball : MonoBehaviour {
             return;
         }
 
-        if (goal.currentTeam != null &&
-            goal.currentTeam.teamColor == currentOwnerColor) {
+        if (goal?.currentTeam != null &&
+            goal?.currentTeam.teamColor == currentOwnerColor) {
             SetColor(currentOwnerColor, true);
         } else {
             SetColor(currentOwnerColor, false);
