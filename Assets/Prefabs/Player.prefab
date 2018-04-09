@@ -188,6 +188,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerNumber: 0
   teamOverride: -1
+  initialPosition: {x: 0, y: 0}
+  initialRotation: 0
 --- !u!114 &114261427851223390
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,7 +214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shootButton: 11
-  forcedShotTime: 2.5
+  forcedShotTime: 3.75
   baseShotSpeed: 25
   chargeRate: 15
   shotPower: 1.2

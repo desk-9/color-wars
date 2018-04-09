@@ -25,7 +25,12 @@ public class CircularTimer : MonoBehaviour {
     }
 
     public void StartTimer(float secondsUntilTimeout, Callback endTimerCallback) {
-        fillImage.enabled = true;
+        if (this == null) {
+            return;
+        }
+        if (fillImage != null) {
+            fillImage.enabled = true;
+        }
         timer = StartCoroutine(Timer(secondsUntilTimeout));
         FillAmount = 0;
         this.endTimerCallback = endTimerCallback;

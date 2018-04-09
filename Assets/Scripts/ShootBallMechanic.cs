@@ -77,7 +77,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ShootTimer() {
-        circularTimer?.StartTimer(forcedShotTime, delegate{});
+        this.FrameDelayCall(() => circularTimer?.StartTimer(forcedShotTime, delegate{}), 2);
 
         elapsedTime = 0.0f;
         shotSpeed = baseShotSpeed;

@@ -31,6 +31,9 @@ public class MenuController : MonoBehaviour {
     }
 
     void Update () {
+        if (TutorialLiveClips.runningLiveClips) {
+            return;
+        }
         var paused = SceneStateController.instance?.paused ?? false;
         var devicePressed = PlayerInputManager.instance.Any((device) => device.GetControl(ResetButton).WasPressed);
         if (paused && devicePressed) {
