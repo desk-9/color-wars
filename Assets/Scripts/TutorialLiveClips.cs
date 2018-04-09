@@ -78,6 +78,7 @@ public class TutorialLiveClips : MonoBehaviour {
     string currentClipName;
     int currentSubclipIndex = 0;
     List<SubclipInfo> currentSubclips;
+    bool atLeastOneLoop = false;
 
     void Awake() {
         if (instance == null) {
@@ -109,12 +110,19 @@ public class TutorialLiveClips : MonoBehaviour {
     }
 
     void ResetCheckin() {
+        atLeastOneLoop = false;
         nextSlideForceCheat = false;
         foreach (var player in GetPlayers()) {
             checkin[player.gameObject] = false;
         }
-        readyText.text = string.Format("Press A to continue ({0}/{1})",
-                                       NumberCheckedIn(), GetPlayers().Count);
+        readyText.text = "";
+    }
+
+    void SetReadyText() {
+        if (atLeastOneLoop) {
+            readyText.text = string.Format("Press A to continue ({0}/{1})",
+                                           NumberCheckedIn(), GetPlayers().Count);
+        }
     }
 
     void CheckinPlayer(object potentialPlayer) {
@@ -122,8 +130,7 @@ public class TutorialLiveClips : MonoBehaviour {
         if (player != null) {
             checkin[player] = true;
         }
-        readyText.text = string.Format("Press A to continue ({0}/{1})",
-                                       NumberCheckedIn(), GetPlayers().Count);
+        SetReadyText();
     }
 
     int NumberCheckedIn() {
@@ -132,7 +139,7 @@ public class TutorialLiveClips : MonoBehaviour {
 
     bool AllCheckedIn() {
         var allPlayers = (from player in GetPlayers() select checkin[player]).All(x => x);
-        return allPlayers || nextSlideForceCheat;
+        return (allPlayers && atLeastOneLoop) || nextSlideForceCheat;
     }
 
     void LoadLiveClip(string clipName) {
@@ -220,6 +227,8 @@ public class TutorialLiveClips : MonoBehaviour {
     void ClipReload() {
         Debug.Log("Clip reload");
         var clipName = currentClipName;
+        atLeastOneLoop = true;
+        SetReadyText();
         this.TimeDelayCall(() => {
                 if (currentClipName == clipName) {
                     UnloadCurrentClip();

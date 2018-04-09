@@ -34,7 +34,7 @@ public class JustInTimeTutorial : MonoBehaviour {
     void ShootAtGoal(object sender) {
         var player = sender as Player;
         if (player != null && player.team != null && player.team.score == 0) {
-            display.text = "Shoot at the goal!";
+            display.text = "Shoot at the goal";
         } else {
             display.text = "";
         }
