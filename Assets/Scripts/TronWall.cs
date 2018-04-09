@@ -60,6 +60,9 @@ public class TronWall : MonoBehaviour {
     }
 
     public void KillSelf() {
+        if (this == null) {
+            return;
+        }
         AudioManager.instance.BreakWall.Play(.5f);
         PlayDestroyedParticleEffect();
         creator.StopWatching(this);

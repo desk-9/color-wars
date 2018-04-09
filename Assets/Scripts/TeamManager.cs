@@ -70,10 +70,12 @@ public class TeamManager {
     public void AddTeamMember(Player newMember) {
         teamMembers.Add(newMember);
         Utility.Print(teamNumber);
-        newMember.initialPosition = new Vector2(
-            playerXs[teamNumberToX[teamNumber-1]],
-            unusedYs.Pop());
-        newMember.initialRotation = CalculateRotation(newMember.initialPosition);
+        if (unusedYs.Count > 0) {
+            newMember.initialPosition = new Vector2(
+                                                    playerXs[teamNumberToX[teamNumber-1]],
+                                                    unusedYs.Pop());
+            newMember.initialRotation = CalculateRotation(newMember.initialPosition);
+        }
         var renderer = newMember.GetComponent<SpriteRenderer>();
         var sprite = unusedSprites.Peek();
         if (renderer != null && sprite != null) {

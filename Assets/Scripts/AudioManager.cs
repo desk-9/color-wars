@@ -23,7 +23,9 @@ public class SoundName {
         if (asset == null) {
             asset = AudioManager.LoadAsset(name);
         }
-        AudioSource.PlayClipAtPoint(asset, Camera.main.transform.position, volume);
+        if (Camera.main != null) {
+            AudioSource.PlayClipAtPoint(asset, Camera.main.transform.position, volume);
+        }
     }
 
     public float Length() {
