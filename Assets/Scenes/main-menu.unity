@@ -303,7 +303,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Press A To Start
+  m_Text: Press X To Start
 --- !u!222 &517987646
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -524,7 +524,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f71b0bcfe6e0d488fb6caf0329ae0640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelectButton: 11
   selectedColor: {r: 0.88235295, g: 1, b: 0, a: 1}
   deselectedColor: {r: 0.78891987, g: 0.86989546, b: 0.9338235, a: 1}
   MenuOptions:

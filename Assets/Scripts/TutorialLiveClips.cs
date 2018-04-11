@@ -100,7 +100,7 @@ public class TutorialLiveClips : MonoBehaviour {
 
     void StartListeningForPlayers() {
         GameModel.instance.nc.CallOnMessageWithSender(
-            Message.PlayerReleasedA, CheckinPlayer);
+            Message.PlayerPressedX, CheckinPlayer);
         GameModel.instance.nc.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
@@ -121,7 +121,7 @@ public class TutorialLiveClips : MonoBehaviour {
 
     void SetReadyText() {
         if (atLeastOneLoop) {
-            readyText.text = string.Format("Press (A) to continue ({0}/{1})",
+            readyText.text = string.Format("Press (X) to continue ({0}/{1})",
                                            NumberCheckedIn(), GetPlayers().Count);
         }
     }

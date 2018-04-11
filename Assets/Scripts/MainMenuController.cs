@@ -9,7 +9,7 @@ using InputManager = InControl.InputManager;
 
 public class MainMenuController : MonoBehaviour {
 
-    public IC.InputControlType SelectButton = IC.InputControlType.Action1; // A
+    IC.InputControlType SelectButton = IC.InputControlType.Action3; // X
     public Color selectedColor;
     public Color deselectedColor;
 
@@ -22,7 +22,7 @@ public class MainMenuController : MonoBehaviour {
             if (device.GetControl(SelectButton).WasPressed) {
                 var selection = MenuOptions[selectionIndex];
                 AudioManager.instance.ConfirmSelectionSound.Play();
-                
+
                 this.TimeDelayCall(
                     () => {
                         var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
