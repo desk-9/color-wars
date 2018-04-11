@@ -79,6 +79,7 @@ public class TutorialLiveClips : MonoBehaviour {
     int currentSubclipIndex = 0;
     List<SubclipInfo> currentSubclips;
     bool atLeastOneLoop = false;
+    bool clipReloadThisFrame = false;
 
     void Awake() {
         if (instance == null) {
@@ -154,7 +155,7 @@ public class TutorialLiveClips : MonoBehaviour {
             team.ResetScore();
         }
     }
-    bool clipReloadThisFrame = false;
+
     IEnumerator Clips() {
         runningLiveClips = true;
         StartListeningForPlayers();
@@ -187,7 +188,6 @@ public class TutorialLiveClips : MonoBehaviour {
             yield return new WaitForSecondsRealtime(0.15f);
             UnloadCurrentClip();
             yield return null;
-            
         }
         TransitionUtility.OneShotFadeTransition(0.1f, 0.4f);
         yield return new WaitForSeconds(0.05f);
@@ -231,13 +231,13 @@ public class TutorialLiveClips : MonoBehaviour {
         Debug.Log("Clip reload");
         var clipName = currentClipName;
         atLeastOneLoop = true;
-        SetReadyText();
         this.TimeDelayCall(() => {
                 if (currentClipName == clipName) {
                     UnloadCurrentClip();
                     this.RealtimeDelayCall(() => {
                             if (currentClipName == clipName) {
                                 LoadLiveClip(clipName);
+                                SetReadyText();
                             }
                         }, 0.05f);
                 }
@@ -245,7 +245,7 @@ public class TutorialLiveClips : MonoBehaviour {
 
         // reason for this value: 0.07f is slightly longer than the 0.05f delay
         // from a few lines up
-        float epsilon = 0.07f; 
+        float epsilon = 0.07f;
         float delayBeforeFade = currentClip.postDelay/4;
         float totalTransitionDuration = Mathf.Max(delayBeforeFade + epsilon, 0.1f);
         this.TimeDelayCall(
