@@ -7212,7 +7212,7 @@ EdgeCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0.5
+  m_EdgeRadius: 0.8
   m_Points:
   - {x: -5.836971, y: 1.1712635}
   - {x: -4.5772533, y: 1.1708488}
@@ -7242,7 +7242,7 @@ EdgeCollider2D:
   - {x: 4.183382, y: 1.0677656}
   - {x: 4.371149, y: 1.1404432}
   - {x: 4.668666, y: 1.170124}
-  - {x: 6.1336336, y: 1.1560936}
+  - {x: 6.133634, y: 1.1786411}
 --- !u!114 &1299703924
 MonoBehaviour:
   m_ObjectHideFlags: 0
