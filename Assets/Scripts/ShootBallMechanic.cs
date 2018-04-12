@@ -112,7 +112,6 @@ public class ShootBallMechanic : MonoBehaviour {
         var ball = ballCarrier.ball;
         var shotDirection = ball.transform.position - transform.position;
 
-        shootTimer = null;
         var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
         if (shotSpeed / maxShotSpeed >= 0.45f) {
             Utility.TutEvent("ShootCharge", this);

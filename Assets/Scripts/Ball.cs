@@ -41,9 +41,6 @@ public class Ball : MonoBehaviour {
             if (this.isActiveAndEnabled && owner_ != null) {
                 this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
             }
-            if (owner_ != null) {
-                this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
-            }
         }
     }
 
@@ -69,12 +66,16 @@ public class Ball : MonoBehaviour {
     }
 
     void AdjustSpriteToCurrentTeam() {
-        // Only happens at beginning of round
-        var currentOwnerColor = ColorFromBallCarrier(owner);
-        if (lastOwner == null) {
-            SetColor(currentOwnerColor, false);
+        // Happens if player shoots a frame after pickup
+        if (owner == null) {
+            Debug.Assert(lastOwner != null);
+            var lastOwnerColor = ColorFromBallCarrier(lastOwner);
+            var fill = goal?.currentTeam != null && goal?.currentTeam.teamColor == lastOwnerColor;
+            SetColor(lastOwnerColor, fill);
             return;
         }
+
+        var currentOwnerColor = ColorFromBallCarrier(owner);
 
         if (goal?.currentTeam != null &&
             goal?.currentTeam.teamColor == currentOwnerColor) {
