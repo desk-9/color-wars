@@ -11,6 +11,7 @@ public class WinDisplay : MonoBehaviour {
     Text mainMenuInstructions = null;
 
     public AnimationCurve restartCountSize;
+    public int SecondsBeforeReset = 10;
     float minRestartCountSize = 40;
     float maxRestartCountSize = 125;
     float restartCountDuration = 1.0f;
@@ -19,11 +20,10 @@ public class WinDisplay : MonoBehaviour {
     TransitionUtility.Panel winDisplayPanel;
     float gameOverTransitionDuration = 1.0f;
     float delayBeforeResetCountdown = 0.25f;
-    int SecondsBeforeReset = 10;
 
     void Awake () {
         FindTextObjects();
-        
+
         winDisplayPanel = new TransitionUtility.Panel(
             this.gameObject, gameOverTransitionDuration);
         winDisplayPanel.MakeTransparent();
