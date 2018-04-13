@@ -189,7 +189,6 @@ public class PlayerDashBehavior : MonoBehaviour {
             }
 
             if (shouldSteal) {
-                GameModel.instance.nc.NotifyMessage(Message.StealOccurred, gameObject);
                 GameModel.instance.nc.NotifyMessage(Message.StealOccurred, otherPlayer.gameObject);
                 AudioManager.instance.StealSound.Play(.5f);
                 stateManager.AttemptPossession(

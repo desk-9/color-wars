@@ -8,10 +8,10 @@ public class ControllerRumble : MonoBehaviour {
 
     public bool rumbleEnabled = true;
     public float stealRumbleDuration = .3f;
-    public float wallDestroyRumbleIntensity = .5f;
     public float wallDestroyDuration = .2f;
     public float gameWinRumbleDuration = 1f;
     public float layingWallStunDuration = .5f;
+    public float ballPossessionRumbleDuration = .2f;
 
     IPlayerMovement playerMovement;
     PlayerStateManager stateManager;
@@ -30,10 +30,11 @@ public class ControllerRumble : MonoBehaviour {
             nc.CallOnMessageIfSameObject(Message.InputDeviceAssigned, AssignInputDevice, gameObject);
             nc.CallOnMessageIfSameObject(Message.StealOccurred, () => StartRumble(duration : stealRumbleDuration), gameObject);
             nc.CallOnMessageIfSameObject(Message.TronWallDestroyed,
-                                         () => StartRumble(intensity : wallDestroyRumbleIntensity, duration : wallDestroyDuration),
+                                         () => StartRumble(duration : wallDestroyDuration),
                                          gameObject);
             nc.CallOnMessage(Message.GoalScored, () => StartRumble(duration : gameWinRumbleDuration));
             nc.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration : layingWallStunDuration), gameObject);
+            stateManager.CallOnStateEnter(State.Posession, () => StartRumble(duration : ballPossessionRumbleDuration));
         }
     }
 

@@ -299,9 +299,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3215b35537cbded4eaf07d50253cf7d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rumbleEnabled: 1
   stealRumbleDuration: 0.3
-  wallDestroyRumbleIntensity: 1
   wallDestroyDuration: 0.1
+  gameWinRumbleDuration: 1
+  layingWallStunDuration: 0.5
+  ballPossessionRumbleDuration: 0.15
 --- !u!114 &114759646302619538
 MonoBehaviour:
   m_ObjectHideFlags: 1
