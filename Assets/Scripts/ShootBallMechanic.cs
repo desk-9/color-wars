@@ -14,8 +14,6 @@ public class ShootBallMechanic : MonoBehaviour {
     public GameObject circularTimerPrefab;
     public Vector2 circleTimerScale;
     CircularTimer circularTimer;
-    public float chargedBallPercent = 0.4f;
-    public float chargedBallMassFactor = 1;
     public float chargeEffectOffset = 1.5f;
 
     PlayerMovement playerMovement;
@@ -49,9 +47,6 @@ public class ShootBallMechanic : MonoBehaviour {
         circularTimer.transform.localScale = circleTimerScale;
 
         var ball = GameObject.FindObjectOfType<Ball>();
-        if (ball != null) {
-            ball.chargedMassFactor = chargedBallMassFactor;
-        }
         maxShotSpeed = baseShotSpeed + Mathf.Pow((1 + forcedShotTime * chargeRate), shotPower);
         this.FrameDelayCall(() => team = this.GetComponent<Player>()?.team, 2);
     }
@@ -116,9 +111,6 @@ public class ShootBallMechanic : MonoBehaviour {
         var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
         if (shotSpeed / maxShotSpeed >= 0.45f) {
             Utility.TutEvent("ShootCharge", this);
-        }
-        if (shotSpeed / maxShotSpeed >= chargedBallPercent) {
-            ball.charged = true;
         }
         ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         stateManager.CurrentStateHasFinished();

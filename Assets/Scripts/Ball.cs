@@ -7,7 +7,6 @@ public class Ball : MonoBehaviour {
 
     public bool ownable {get; set;} = true;
     public GameObject implosionPrefab;
-    public float chargedMassFactor = 1;
     new public SpriteRenderer renderer;
 
     CircleCollider2D circleCollider;
@@ -21,8 +20,6 @@ public class Ball : MonoBehaviour {
     NotificationCenter notificationCenter;
     TrailRenderer trailRenderer;
 
-    bool charged_ = false;
-    float base_mass;
     Color neutralColor = Color.white;
     Color currentColor;
 
@@ -85,20 +82,6 @@ public class Ball : MonoBehaviour {
         }
     }
 
-    public bool charged {
-        get {
-            return charged_;
-        }
-        set {
-            charged_ = value;
-            if (charged_) {
-                rigidbody.mass = base_mass * chargedMassFactor;
-            } else {
-                rigidbody.mass = base_mass;
-            }
-        }
-    }
-
     public bool IsOwnable() {
         return owner == null && ownable;
     }
@@ -110,7 +93,6 @@ public class Ball : MonoBehaviour {
         renderer = GetComponentInChildren<SpriteRenderer>();
         circleCollider = this.EnsureComponent<CircleCollider2D>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
-        base_mass = rigidbody.mass;
         goal = GameObject.FindObjectOfType<Goal>();
         ballFill = this.GetComponentInChildren<BallFillColor>();
         currentColor = Color.white;
@@ -136,7 +118,6 @@ public class Ball : MonoBehaviour {
         if (lengthOfEffect != null) {
             StartCoroutine(ImplosionEffect(lengthOfEffect.Value));
         }
-        charged = false;
         owner = null;
         lastOwner = null;
     }
@@ -155,12 +136,6 @@ public class Ball : MonoBehaviour {
             transform.localScale = Vector3.Lerp(Vector3.zero, startingScale, elapsedTime/duration);
             elapsedTime += Time.deltaTime;
             yield return null;
-        }
-    }
-
-    void OnCollisionEnter2D(Collision2D collision) {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall")) {
-            charged = false;
         }
     }
 }

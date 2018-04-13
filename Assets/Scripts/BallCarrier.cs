@@ -89,7 +89,6 @@ public class BallCarrier : MonoBehaviour {
         if (slowMoOnCarry) {
             GameModel.instance.SlowMo();
         }
-        ball.charged = false;
         laserGuide?.DrawLaser();
         var player = GetComponent<Player>();
         var lastPlayer = ball.lastOwner?.GetComponent<Player>();
