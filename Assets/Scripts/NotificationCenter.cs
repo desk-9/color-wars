@@ -29,6 +29,8 @@ public enum Message {
     BallCharged,
     NullChargePrevention,
     StealOccurred,
+    TronWallDestroyed,
+    TronWallDestroyedWhileLaying,
 
     InputDeviceAssigned,
 

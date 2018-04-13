@@ -84,7 +84,7 @@ public class TronWall : MonoBehaviour {
     }
 
     public void PlayDestroyedParticleEffect() {
-        var magnitude = (linePoints[1] - linePoints[0]).magnitude; 
+        var magnitude = (linePoints[1] - linePoints[0]).magnitude;
         var instantiated = GameObject.Instantiate(team.resources.tronWallDestroyedPrefab,
                                                   (linePoints[1] + linePoints[0]) / 2, transform.rotation);
         var ps = instantiated.EnsureComponent<ParticleSystem>();
@@ -113,6 +113,7 @@ public class TronWall : MonoBehaviour {
             }
 
             creator.HandleWallCollision();
+            GameModel.instance.nc.NotifyMessage(Message.TronWallDestroyedWhileLaying, other);
             PlayDestroyedParticleEffect();
             Destroy(gameObject);
             return;
@@ -129,6 +130,7 @@ public class TronWall : MonoBehaviour {
                     { var otherDirection = player.transform.right;
                       other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
                       playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
+                      GameModel.instance.nc.NotifyMessage(Message.TronWallDestroyed, other);
                     },
                                      playerStun.StopStunned);
         }

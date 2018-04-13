@@ -299,7 +299,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3215b35537cbded4eaf07d50253cf7d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  durationOfStealRumble: 0.3
+  stealRumbleDuration: 0.3
+  wallDestroyRumbleIntensity: 1
+  wallDestroyDuration: 0.1
 --- !u!114 &114759646302619538
 MonoBehaviour:
   m_ObjectHideFlags: 1
