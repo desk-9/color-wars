@@ -22,6 +22,7 @@ public class PlayerControls : MonoBehaviour {
     void GivenInputDevice(InputDevice device) {
         inputDevice = device;
         Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
+        GameModel.instance.nc.NotifyMessage(Message.InputDeviceAssigned, gameObject);
         var puppet = GetComponent<PlayerPuppet>();
         if (puppet == null || !puppet.doPuppeting) {
             broadcast = StartCoroutine(ControlsBroadcast());

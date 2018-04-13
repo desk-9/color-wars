@@ -28,6 +28,9 @@ public enum Message {
     BallSetNeutral,
     BallCharged,
     NullChargePrevention,
+    StealOccurred,
+
+    InputDeviceAssigned,
 
     PlayerStick,
 
