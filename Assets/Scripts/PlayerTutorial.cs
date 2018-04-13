@@ -42,22 +42,36 @@ public class PlayerTutorial : MonoBehaviour {
     public static PlayerTutorial instance;
     public static bool runTutorial = false;
     public TutorialType tutorialType = TutorialType.None;
-    public int countdownTime = 5;
+    public float tutorialStartTime = 7;
+    public float gameStartTime = 5;
 
     Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
     Text readyUpText;
     Text readyUpCount;
+    Text skipText;
+    Text skipCount;
     bool skipReadyUpCheat = false;
 
     bool inTeamSelection = false;
 
+    PlayerCheckin startTutorialCheckin;
+    PlayerCheckin skipTutorialCheckin;
+
     void Start() {
         readyUpText = GameObject.Find("ReadyUpText")?.GetComponent<Text>();
         readyUpCount = GameObject.Find("ReadyUpCount")?.GetComponent<Text>();
+        skipText = GameObject.Find("SkipText")?.GetComponent<Text>();
+        skipCount = GameObject.Find("SkipCount")?.GetComponent<Text>();
         inTeamSelection = (tutorialType == TutorialType.TeamSelection
                            && GameObject.Find("TeamSelection") != null);
+
         GameModel.instance.nc.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
+
+        skipTutorialCheckin = PlayerCheckin.TextCountCheckin(
+            () => GetPlayers(), Message.PlayerPressedY, skipCount,
+            checkoutEvent: Message.PlayerReleasedY);
+
         if (inTeamSelection) {
             StartCoroutine(TeamSelection());
         } else if (tutorialType == TutorialType.Sandbox) {
@@ -65,12 +79,11 @@ public class PlayerTutorial : MonoBehaviour {
         }
     }
 
-    void StartListeningForPlayers() {
-        GameModel.instance.nc.CallOnMessageWithSender(
-            Message.PlayerReleasedX, CheckinPlayer);
-        GameModel.instance.nc.CallOnMessage(
-            Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
+    public static void SkipTutorial() {
+        PlayerTutorial.runTutorial = false;
+        SceneStateController.instance.Load(Scene.Court);
     }
+
 
     List<GameObject> GetPlayers() {
         return (from player in GameModel.instance.GetHumanPlayers()
@@ -108,19 +121,6 @@ public class PlayerTutorial : MonoBehaviour {
     }
 
     IEnumerator EndTutorial() {
-        var start = Time.time;
-        var diff  = Time.time - start;
-
-        // Start the countdown.
-        while (diff < countdownTime) {
-            readyUpText.text = String.Format("Starting tutorial in {0:N0}", Mathf.Ceil(countdownTime - diff));
-
-            yield return null;
-
-            diff = Time.time - start;
-        }
-
-        // Switch to Tutorial scene.
         GameModel.playerTeamsAlreadySelected = true;
         GameModel.playerTeamAssignments = new Dictionary<int, int>();
         foreach (var player in GameModel.instance.GetPlayersWithTeams()) {
@@ -128,7 +128,32 @@ public class PlayerTutorial : MonoBehaviour {
             GameModel.playerTeamAssignments[player.playerNumber] = teamIndex;
         }
         TeamManager.playerSpritesAlreadySet = true;
-        SceneStateController.instance.Load(Scene.Tutorial);
+
+
+        skipTutorialCheckin.ResetCheckin();
+        skipTutorialCheckin.StartListening();
+        skipText.text = "Hold (Y) to skip the tutorial";
+        // Start the countdown.
+        var start = Time.time;
+        var diff = Time.time - start;
+        while (diff < tutorialStartTime
+               && !skipTutorialCheckin.AllCheckedIn()
+               && !skipReadyUpCheat) {
+            readyUpText.text = String.Format("Starting tutorial in {0:N0}",
+                                             Mathf.Ceil(tutorialStartTime - diff));
+            diff = Time.time - start;
+            yield return null;
+        }
+
+        // Switch to Tutorial scene.
+        yield return null;
+        skipTutorialCheckin.StopListening();
+        yield return new WaitForSeconds(0.5f);
+        if (skipTutorialCheckin.AllCheckedIn()) {
+            SkipTutorial();
+        } else {
+            SceneStateController.instance.Load(Scene.Tutorial);
+        }
 
     }
 
@@ -163,17 +188,13 @@ public class PlayerTutorial : MonoBehaviour {
 
         // Start the countdown.
         var start = Time.time;
-        var diff  = Time.time - start;
-
-        while (diff < countdownTime) {
-            readyUpText.text = String.Format("Starting the game in {0:N0}", Mathf.Ceil(countdownTime - diff));
-
-            yield return null;
-
+        var diff = Time.time - start;
+        while (diff < gameStartTime && !skipReadyUpCheat) {
+            readyUpText.text = String.Format("Starting the game in {0:N0}", Mathf.Ceil(gameStartTime - diff));
             diff = Time.time - start;
+            yield return null;
         }
 
-        PlayerTutorial.runTutorial = false;
-        SceneStateController.instance.Load(Scene.Court);
+        SkipTutorial();
     }
 }

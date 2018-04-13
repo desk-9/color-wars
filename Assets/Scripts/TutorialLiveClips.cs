@@ -81,6 +81,8 @@ public class TutorialLiveClips : MonoBehaviour {
     bool atLeastOneLoop = false;
     bool clipReloadThisFrame = false;
 
+    PlayerCheckin ySkip;
+
     void Awake() {
         if (instance == null) {
             instance = this;
@@ -92,6 +94,8 @@ public class TutorialLiveClips : MonoBehaviour {
     void Start() {
         tutorialCanvas = GameObject.Find("TutorialCanvas").GetComponent<Canvas>();
         if (tutorialCanvas != null) {
+            ySkip = new PlayerCheckin(() => GetPlayers(), Message.PlayerPressedY,
+                                      checkoutEvent: Message.PlayerReleasedY);
             infoText = tutorialCanvas.FindComponent<Text>("Info");
             readyText = tutorialCanvas.FindComponent<Text>("ReadyText");
             StartCoroutine(Clips());
@@ -170,6 +174,7 @@ public class TutorialLiveClips : MonoBehaviour {
         GameModel.instance.nc.CallOnMessage(Message.RecordingInterrupt,
                                             SubclipInterrupt);
         yield return null;
+        ySkip.StartListening();
         foreach (var liveClip in liveClips) {
             clipReloadThisFrame = false;
             currentClip = liveClip;
@@ -179,7 +184,7 @@ public class TutorialLiveClips : MonoBehaviour {
             yield return new WaitForSecondsRealtime(liveClip.preDelay);
             LoadLiveClip(currentClipName);
             yield return null;
-            while (!AllCheckedIn()) {
+            while (!AllCheckedIn() && !ySkip.AllCheckedIn()) {
                 yield return null;
             }
             yield return null;
@@ -188,11 +193,18 @@ public class TutorialLiveClips : MonoBehaviour {
             yield return new WaitForSecondsRealtime(0.15f);
             UnloadCurrentClip();
             yield return null;
+            if (ySkip.AllCheckedIn()) {
+                break;
+            }
         }
         TransitionUtility.OneShotFadeTransition(0.1f, 0.4f);
         yield return new WaitForSeconds(0.05f);
         runningLiveClips = false;
-        SceneStateController.instance.Load(Scene.Sandbox);
+        if (ySkip.AllCheckedIn()) {
+            PlayerTutorial.SkipTutorial();
+        } else {
+            SceneStateController.instance.Load(Scene.Sandbox);
+        }
     }
 
     void SetSubclipText(string text) {

@@ -51,6 +51,9 @@ public enum Message {
     PlayerPressedX,
     PlayerReleasedX,
 
+    PlayerPressedY,
+    PlayerReleasedY,
+
     PlayerPressedDash,
     PlayerReleasedDash,
     PlayerPressedShoot,

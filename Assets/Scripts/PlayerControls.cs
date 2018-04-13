@@ -2,13 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using InControl;
+using IC = InControl;
 using UtilityExtensions;
 
+public struct ButtonEventPair {
+    public Message pressedEvent;
+    public Message releasedEvent;
+    public ButtonEventPair(Message pressedEvent, Message releasedEvent) {
+        this.pressedEvent = pressedEvent;
+        this.releasedEvent = releasedEvent;
+    }
+}
 
 public class PlayerControls : MonoBehaviour {
 
-    InputDevice inputDevice;
+    IC.InputDevice inputDevice;
     Coroutine broadcast;
     PlayerStateManager stateManager;
 
@@ -19,7 +27,7 @@ public class PlayerControls : MonoBehaviour {
         stateManager = GetComponent<PlayerStateManager>();
     }
 
-    void GivenInputDevice(InputDevice device) {
+    void GivenInputDevice(IC.InputDevice device) {
         inputDevice = device;
         Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
         GameModel.instance.nc.NotifyMessage(Message.InputDeviceAssigned, gameObject);
@@ -29,7 +37,7 @@ public class PlayerControls : MonoBehaviour {
         }
     }
 
-    public InputDevice GetInputDevice() {
+    public IC.InputDevice GetInputDevice() {
         return inputDevice;
     }
 
@@ -46,6 +54,20 @@ public class PlayerControls : MonoBehaviour {
         inputDevice = null;
     }
 
+
+    Dictionary<IC.InputControlType, ButtonEventPair> buttonEvents =
+        new Dictionary<IC.InputControlType, ButtonEventPair>() {
+
+        [IC.InputControlType.LeftBumper] = new ButtonEventPair(
+            Message.PlayerPressedLeftBumper, Message.PlayerPressedRightBumper),
+        [IC.InputControlType.RightBumper] = new ButtonEventPair(
+            Message.PlayerPressedRightBumper, Message.PlayerReleasedRightBumper),
+        [IC.InputControlType.Action3] = new ButtonEventPair(
+            Message.PlayerPressedX, Message.PlayerReleasedX),
+        [IC.InputControlType.Action4] = new ButtonEventPair(
+            Message.PlayerPressedY, Message.PlayerReleasedY),
+    };
+
     IEnumerator ControlsBroadcast() {
         while (true) {
             if (inputDevice == null) {
@@ -60,34 +82,35 @@ public class PlayerControls : MonoBehaviour {
                             inputDevice.Action2.WasReleased,
                             this.gameObject);
 
-            if (inputDevice.LeftBumper.WasPressed) {
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerPressedLeftBumper, this.gameObject);
+            foreach (var kvPair in buttonEvents) {
+                CheckButtonEvents(kvPair.Key, inputDevice, gameObject,
+                                  kvPair.Value.pressedEvent, kvPair.Value.releasedEvent);
             }
-            if (inputDevice.LeftBumper.WasReleased) {
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerReleasedLeftBumper, this.gameObject);
-            }
-
-            if (inputDevice.RightBumper.WasPressed) {
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerPressedRightBumper, this.gameObject);
-            }
-            if (inputDevice.RightBumper.WasReleased) {
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerReleasedRightBumper, this.gameObject);
-            }
-
-            if (inputDevice.Action3.WasPressed) {
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerPressedX, this.gameObject);
-            }
-            if (inputDevice.Action3.WasReleased) {
-                GameModel.instance.nc.NotifyMessage(
-                    Message.PlayerReleasedX, this.gameObject);
-            }
-
             yield return null;
+        }
+    }
+
+    public static void CheckButtonEvents(IC.InputControlType type,
+                                         IC.InputDevice device,
+                                         GameObject player,
+                                         Message? pressedEvent = null,
+                                         Message? releasedEvent = null) {
+        if (device != null) {
+            var button = device.GetControl(type);
+            SendButtonEvent(button.WasPressed, button.WasReleased,
+                            player, pressedEvent, releasedEvent);
+        }
+    }
+
+    public static void SendButtonEvent(bool pressed, bool released,
+                                       GameObject player,
+                                       Message? pressedEvent = null,
+                                       Message? releasedEvent = null) {
+        if (pressed && pressedEvent.HasValue) {
+            GameModel.instance.nc.NotifyMessage(pressedEvent.Value, player);
+        }
+        if (released && releasedEvent.HasValue) {
+            GameModel.instance.nc.NotifyMessage(releasedEvent.Value, player);
         }
     }
 
@@ -101,34 +124,22 @@ public class PlayerControls : MonoBehaviour {
             Message.PlayerStick,
             Tuple.Create(new Vector2(stickX, stickY), player));
 
-        if (APressed) {
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerPressedA, player);
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerPressedDash, player);
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerPressedShoot, player);
+        var AEvents = new List<ButtonEventPair>() {
+            new ButtonEventPair(Message.PlayerPressedA, Message.PlayerReleasedA),
+            new ButtonEventPair(Message.PlayerPressedDash, Message.PlayerReleasedDash),
+            new ButtonEventPair(Message.PlayerPressedShoot, Message.PlayerReleasedShoot),
+        };
+        foreach (var events in AEvents) {
+            SendButtonEvent(APressed, AReleased, player,
+                            events.pressedEvent, events.releasedEvent);
         }
-        if (AReleased) {
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerReleasedA, player);
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerReleasedDash, player);
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerReleasedShoot, player);
-        }
-
-        if (BPressed) {
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerPressedB, player);
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerPressedWall, player);
-        }
-        if (BReleased) {
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerReleasedB, player);
-            GameModel.instance.nc.NotifyMessage(
-                Message.PlayerReleasedWall, player);
+        var BEvents = new List<ButtonEventPair>() {
+            new ButtonEventPair(Message.PlayerPressedB, Message.PlayerReleasedB),
+            new ButtonEventPair(Message.PlayerPressedWall, Message.PlayerReleasedWall),
+        };
+        foreach (var events in BEvents) {
+            SendButtonEvent(BPressed, BReleased, player,
+                            events.pressedEvent, events.releasedEvent);
         }
     }
 

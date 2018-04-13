@@ -9,6 +9,7 @@ public delegate void Callback();
 public delegate int IntCallback();
 public delegate void ColorSetter(Color color);
 public delegate void FloatSetter(float floatValue);
+public delegate bool Predicate();
 
 namespace UtilityExtensions {
     // This namespace is for any general utility extensions to existing classes
@@ -347,5 +348,3 @@ public class CoroutineUtility : MonoBehaviour {
     }
 
 }
-
-
