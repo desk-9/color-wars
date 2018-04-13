@@ -21,6 +21,7 @@ public class ShootBallMechanic : MonoBehaviour {
     PlayerMovement playerMovement;
     PlayerStateManager stateManager;
     Coroutine shootTimer;
+    Coroutine chargeShot;
     BallCarrier ballCarrier;
     GameObject effect;
     TeamManager team;
@@ -60,17 +61,16 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void ShootPressed() {
-        if (stateManager.IsInState(State.Posession)) {
-            if (shootTimer != null) {
-                StopCoroutine(shootTimer);
-            }
-            shootTimer = StartCoroutine(ChargeShot());
+        if (stateManager.IsInState(State.Posession) && shootTimer != null) {
+            StopCoroutine(shootTimer);
+            shootTimer = null;
+            chargeShot = StartCoroutine(ChargeShot());
         }
     }
 
     void ShootReleased() {
-        if (shootTimer != null) {
-            StopCoroutine(shootTimer);
+        if (chargeShot != null) {
+            StopCoroutine(chargeShot);
             shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
             Shoot();
         }
@@ -109,6 +109,7 @@ public class ShootBallMechanic : MonoBehaviour {
         Utility.TutEvent("Shoot", this);
         AudioManager.instance.ShootBallSound.Play(.5f);
         shootTimer = null;
+        chargeShot = null;
         var ball = ballCarrier.ball;
         var shotDirection = ball.transform.position - transform.position;
 
@@ -129,6 +130,11 @@ public class ShootBallMechanic : MonoBehaviour {
             StopCoroutine(shootTimer);
             shootTimer = null;
         }
+        if (chargeShot != null) {
+            StopCoroutine(chargeShot);
+            chargeShot = null;
+        }
+
         if (effect != null) {
             Destroy(effect);
         }
