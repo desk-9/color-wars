@@ -45,9 +45,9 @@ public class TutorialLiveClips : MonoBehaviour {
     List<LiveClipInfo> liveClips = new List<LiveClipInfo>() {
         {"1-shoot-pass-and-score",
          new List<SubclipInfo>() {
-                {"TOUCH the ball to pick it up", 0.3f},
-                {"SHOOT the ball with (A)", 0.3f},
-                {"but you must pass to fill the ball...", 0.5f},
+                {"TOUCH the ball to pick it up", 0},
+                {"SHOOT the ball with (A)", 0},
+                {"but you must pass to fill the ball...", 0},
                 "...and you can only score with a filled ball"
          }},
         {"2-cant-pass-in-null-zone",
@@ -56,7 +56,7 @@ public class TutorialLiveClips : MonoBehaviour {
          }},
         {"3-stealing-and-blocking",
          new List<SubclipInfo>() {
-                {"DASH with (A) at the ball to STEAL", 0.3f},
+                {"DASH with (A) at the ball to STEAL", 0},
                 "BLOCK steals with your body"
          }},
         {"4-walls",
