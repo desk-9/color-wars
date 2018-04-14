@@ -35,22 +35,36 @@ public class Ball : MonoBehaviour {
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             notificationCenter.NotifyMessage(message, this);
-            if (this.isActiveAndEnabled && owner_ != null) {
+            if (!this.isActiveAndEnabled) {
+                return;
+            }
+            if (owner_ != null) {
                 this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
+            } else {
+                trailRenderer.enabled = false;
             }
         }
     }
 
     void SetColor(Color to_, bool fill) {
+        Gradient gradient = new Gradient();
+        gradient.SetKeys(new GradientColorKey[] { new GradientColorKey(to_, 0.0f), new GradientColorKey(to_, 1.0f) },
+                         new GradientAlphaKey[] { new GradientAlphaKey(1f, 0.0f), new GradientAlphaKey(0f, 1.0f) }
+                         );
+
+        trailRenderer.colorGradient = gradient;
+        this.FrameDelayCall(EnableTrail, 5);
         if (fill) {
             renderer.color = to_;
             ballFill.EnableAndSetColor(to_);
-            trailRenderer.material.color = to_;
         } else {
             renderer.color = Color.Lerp(to_, Color.white, .6f);
             ballFill.DisableFill();
-            trailRenderer.enabled = false;
         }
+    }
+
+    void EnableTrail() {
+        trailRenderer.enabled = true;
     }
 
     // This is for resets
