@@ -136,6 +136,7 @@ public class PlayerTutorial : MonoBehaviour {
         // Start the countdown.
         var start = Time.time;
         var diff = Time.time - start;
+        // TODO: if slowmo becomes possible here might wanna use realtime instead
         while (diff < tutorialStartTime
                && !skipTutorialCheckin.AllCheckedIn()
                && !skipReadyUpCheat) {
@@ -189,6 +190,7 @@ public class PlayerTutorial : MonoBehaviour {
         // Start the countdown.
         var start = Time.time;
         var diff = Time.time - start;
+        // TODO: if slowmo becomes possible here might wanna use realtime instead
         while (diff < gameStartTime && !skipReadyUpCheat) {
             readyUpText.text = String.Format("Starting the game in {0:N0}", Mathf.Ceil(gameStartTime - diff));
             diff = Time.time - start;

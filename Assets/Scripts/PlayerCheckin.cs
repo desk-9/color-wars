@@ -64,16 +64,12 @@ public class PlayerCheckin {
         Callback modifyText = () => {
             textBox.text = string.Format("{0}/{1}", result.NumberCheckedIn(), lister().Count);
         };
-        if (onCheckin == null) {
-            onCheckin = modifyText;
-        } else {
-            onCheckin += modifyText;
-        }
-        if (onReset == null) {
-            onReset = modifyText;
-        } else {
-            onReset += modifyText;
-        }
+        onCheckin = onCheckin ?? delegate{};
+        onCheckin += modifyText;
+
+        onReset = onReset ?? delegate{};
+        onReset += modifyText;
+
         result.onCheckin = onCheckin;
         result.onReset = onReset;
         return result;
@@ -106,6 +102,8 @@ public class PlayerCheckin {
         if (player != null && checkinPredicate(player)) {
             checkin[player] = false;
         }
+        // This is not a typo. This class is in a semantically-half-backed
+        // state, and probably shouldn't be used unless your name is Spruce.
         onCheckin();
     }
 
