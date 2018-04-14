@@ -15,13 +15,18 @@ public class MainMenuController : MonoBehaviour {
 
     public List<Text> MenuOptions = new List<Text>();
     int selectionIndex = 0;
+    public HashSet<IC.InputDevice> selected = new HashSet<IC.InputDevice>();
 
     // Update is called once per frame
     void Update () {
         foreach (var device in InputManager.Devices) {
             if (device.GetControl(SelectButton).WasPressed) {
                 var selection = MenuOptions[selectionIndex];
-                AudioManager.instance.ConfirmSelectionSound.Play();
+
+                if (!selected.Contains(device)) {
+                    AudioManager.instance.ConfirmSelectionSound.Play();
+                    selected.Add(device);
+                }
 
                 this.TimeDelayCall(
                     () => {
