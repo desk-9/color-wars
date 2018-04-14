@@ -7,22 +7,39 @@ public class GhostTrail : MonoBehaviour {
 
     public float ghostLifeLength = .2f;
     public GameObject ghostObject;
+    public float timeBetweenGhosts;
+    public float startingAlpha;
 
     new SpriteRenderer renderer;
+    Coroutine ghostCoroutine;
 
     // Use this for initialization
     void Start () {
         renderer = this.EnsureComponent<SpriteRenderer>();
+        var nc = GameModel.instance.nc;
+        nc.CallOnMessage(Message.BallIsPossessed, StartGhost);
+        nc.CallOnMessage(Message.BallIsUnpossessed, StopGhost);
     }
 
-    // Update is called once per frame
-    void Update () {
-        AddGhostObject();
+    void StartGhost() {
+        if (ghostCoroutine == null) {
+            ghostCoroutine = StartCoroutine(AddGhostObject());
+        }
     }
 
-    void AddGhostObject() {
-        var newGhostObject = GameObject.Instantiate(ghostObject, transform.position, transform.rotation);
-        newGhostObject.transform.localScale = transform.localScale;
-        newGhostObject.GetComponent<Ghost>().Initialize(renderer, ghostLifeLength);
+    void StopGhost() {
+        if (ghostCoroutine != null) {
+            StopCoroutine(ghostCoroutine);
+            ghostCoroutine = null;
+        }
+    }
+
+    IEnumerator AddGhostObject() {
+        while (true) {
+            var newGhostObject = GameObject.Instantiate(ghostObject, transform.position, transform.rotation);
+            newGhostObject.transform.localScale = transform.localScale;
+            newGhostObject.GetComponent<Ghost>().Initialize(renderer, ghostLifeLength, startingAlpha);
+            yield return null;
+        }
     }
 }

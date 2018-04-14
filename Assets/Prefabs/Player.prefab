@@ -37,6 +37,7 @@ GameObject:
   - component: {fileID: 114885571489087022}
   - component: {fileID: 114738638914321764}
   - component: {fileID: 114740959938619730}
+  - component: {fileID: 114512497374375228}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -139,8 +140,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 97ed3cd97c2f14d5789fd90f0a8a7e22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   dashEffectPrefab: {fileID: 1900474533239010, guid: 6dea4c63d873f4536a25869ae766d75e,
     type: 2}
   dashAimerPrefab: {fileID: 1412520093174376, guid: eb210e989d7bd4df9bb31d913d1cfc2a,
@@ -169,8 +170,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7bbe1fa63243a2c4cbd0e785d0c0fca9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   movementSpeed: 30
   rotationSpeed: 1080
   freezeRotation: 0
@@ -185,8 +186,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0847243840536f544ba8cd8206b47c60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   playerNumber: 0
   teamOverride: -1
   initialPosition: {x: 0, y: 0}
@@ -200,8 +201,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e2c5e274b6fb4d5cb730d55a0aceb4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   stunTime: 0.7
 --- !u!114 &114319027261209328
 MonoBehaviour:
@@ -212,8 +213,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 964e4864ae7674458906684fac594544, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   shootButton: 11
   forcedShotTime: 3.75
   baseShotSpeed: 25
@@ -222,8 +223,8 @@ MonoBehaviour:
   circularTimerPrefab: {fileID: 1022924467689572, guid: 3fa79a1d2b91d48e39e53e08c9f861fe,
     type: 2}
   circleTimerScale: {x: 0.6, y: 0.6}
-  chargedBallPercent: 0
-  chargedBallMassFactor: 100
+  chargedBallPercent: 0.4
+  chargedBallMassFactor: 1
   chargeEffectOffset: 1.5
 --- !u!114 &114319664088283476
 MonoBehaviour:
@@ -234,9 +235,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 209e8991cf01b419ebe9573ca024c9ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   flashInterval: 0.1
+--- !u!114 &114512497374375228
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1233221201083302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0328f7b239f604ceb8d194a232551eb5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  ghostLifeLength: 0.1
+  ghostObject: {fileID: 1389525420028684, guid: 360fbb59cf4d44c3bb7419cc1c811362,
+    type: 2}
+  timeBetweenGhosts: 0.02
+  startingAlpha: 0.5
 --- !u!114 &114631768565738774
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -246,8 +263,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   coolDownTime: 0.1
   slowMoOnCarry: 1
   aimAssistThreshold: 20
@@ -268,8 +285,8 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4e43ea7dfcf541a7b0afdd2de3ab3be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   effectPrefab: {fileID: 1691723634291742, guid: 0265bdd9ace7444a6a8d3301050c49be,
     type: 2}
   triggerState: 2
@@ -286,8 +303,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82f70eb28cc9e49b7ac4d508acd1bb7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!114 &114740959938619730
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -297,8 +314,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3215b35537cbded4eaf07d50253cf7d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   rumbleEnabled: 1
   stealRumbleDuration: 0.3
   wallDestroyDuration: 0.1
@@ -314,8 +331,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc9d5c77132154d129f38ef058cda5ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   drawDistanceAfterCollision: 30
   epsilon: 0.02
 --- !u!114 &114885571489087022
@@ -327,8 +344,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b31f31e3cae45443eb82857cd992377a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   tronWall: {fileID: 1293006675088886, guid: 12e0ce2da3e4646c0aaecdf8cfb5975f, type: 2}
   tronButton: 12
   wallLifeLength: 4
@@ -348,8 +365,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b46c230ed06b43dbb065352c75f1577, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!120 &120631931489294666
 LineRenderer:
   m_ObjectHideFlags: 1
