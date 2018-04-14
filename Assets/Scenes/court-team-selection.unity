@@ -4866,7 +4866,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'HOLD AND RELEASE (A) TO DASH
 
-    DASH INTO A CIRCLE TO SELECT TEAM'
+    DASH at A color TO pick a TEAM'
 --- !u!222 &2072423248
 CanvasRenderer:
   m_ObjectHideFlags: 0
