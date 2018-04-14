@@ -127,10 +127,6 @@ public class PlayerDashBehavior : MonoBehaviour {
         var dashDuration = Mathf.Min(chargeAmount, 0.5f);
         AudioManager.instance.DashSound.Play();
 
-        Utility.TutEvent("Dash", this);
-        if (dashDuration > 0.25f) {
-            Utility.TutEvent("DashCharge", this);
-        }
 
         // Set duration of particle system for each dash trail.
         var dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);

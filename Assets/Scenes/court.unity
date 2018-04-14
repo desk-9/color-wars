@@ -2644,6 +2644,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  SecondsBeforeReset: 10
 --- !u!1 &933226222
 GameObject:
   m_ObjectHideFlags: 0
@@ -8515,6 +8516,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: chargeShotCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4866693309565106, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
       propertyPath: m_LocalPosition.x
       value: -15
@@ -8577,6 +8583,36 @@ Prefab:
         type: 2}
       propertyPath: playerNumber
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: maxChargeShotTime
+      value: 3.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: chargeShotCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: chargeShotCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: chargeShotCurve.m_Curve.Array.data[1].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: chargeShotCurve.m_Curve.Array.data[1].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114319027261209328, guid: 1e5ce0bbe8321cf459586a2d8d215280,
+        type: 2}
+      propertyPath: chargeShotCurve.m_RotationOrder
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}

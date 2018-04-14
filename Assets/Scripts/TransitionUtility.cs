@@ -21,7 +21,8 @@ public class TransitionUtility : MonoBehaviour {
     
     public static IEnumerator LerpFloat(FloatSetter floatSetter,
                                         float startValue, float endValue,
-                                        float duration, bool useGameTime=false) {
+                                        float duration, bool useGameTime=false,
+                                        AnimationCurve animationCurve = null) {
 
         float startTime = Time.realtimeSinceStartup;
         float timeElapsed = 0.0f;
@@ -34,11 +35,26 @@ public class TransitionUtility : MonoBehaviour {
                 timeElapsed = Time.realtimeSinceStartup - startTime;
             }
             progress = timeElapsed / duration;
-            float newFloat = Mathf.Lerp(startValue, endValue, progress);
-            floatSetter(newFloat);
+            float scaledProgress = ScaleProgress(progress,
+                                                 startValue, endValue,
+                                                 animationCurve);
+            floatSetter(scaledProgress);
             yield return null;
         }
         floatSetter(endValue);
+    }
+
+    public static float ScaleProgress(float progress, float startValue, float endValue,
+                                      AnimationCurve animationCurve = null) {
+        float scaledProgress = progress;
+        if (animationCurve != null) {
+            float delta = endValue - startValue;
+            scaledProgress = startValue + delta*animationCurve.Evaluate(progress);
+        }
+        else {
+            scaledProgress = Mathf.Lerp(startValue, endValue, progress);
+        }
+        return scaledProgress;
     }
 
     public static IEnumerator LerpColor(ColorSetter colorSetter,

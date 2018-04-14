@@ -20,6 +20,15 @@ public class Player : MonoBehaviour {
     new Collider2D collider;
     GameObject explosionEffect;
 
+    public delegate void OnTeamAssignedCallback(TeamManager team);
+    public OnTeamAssignedCallback OnTeamAssigned = delegate{};
+    public void CallAsSoonAsTeamAssigned(OnTeamAssignedCallback callback) {
+        if (team != null) {
+            callback(team);
+        }
+        OnTeamAssigned += callback;
+    }
+
     public void MakeInvisibleAfterGoal() {
         if (isNormalPlayer) {
             renderer.enabled = false;
@@ -69,7 +78,7 @@ public class Player : MonoBehaviour {
                 GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
                 GetComponent<LaserGuide>()?.SetLaserGradients();
             }, 2);
-
+        this.FrameDelayCall(() => OnTeamAssigned(team), 2);
     }
 
     // Use this for initialization
@@ -108,4 +117,5 @@ public class Player : MonoBehaviour {
         }
         GameModel.instance.players.Remove(this);
     }
+    
 }

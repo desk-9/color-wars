@@ -172,9 +172,6 @@ public class Goal : MonoBehaviour {
             }
         }
         if (ball.IsOwnable()) {
-            if (ball.lastOwner?.GetComponent<Player>()?.team == currentTeam) {
-                Utility.TutEvent("Score", this);
-            }
             if (currentTeam != null) {
                 GameModel.instance.GoalScoredForTeam(currentTeam);
             }

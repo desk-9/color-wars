@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 114702935638641286}
   - component: {fileID: 114781613769019772}
   m_Layer: 8
-  m_Name: CircularTimerChildObject
+  m_Name: CircularTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,19 +80,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.884, g: 0.884, b: 0.884, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 7f493c85ba91c488baea489859313e55, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0bd4923ca0bb04eceabfe024fd63978b, type: 3}
   m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillAmount: 0.89
   m_FillClockwise: 1
   m_FillOrigin: 2
 --- !u!114 &114702935638641286
@@ -122,6 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ac1df780a3044cdb1f24af8e73c178, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fillImage: {fileID: 114622569040227782}
+  minFillAmount: 0
+  maxFillAmount: 1
 --- !u!222 &222392327001704146
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -146,7 +149,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 30
+  m_SortingOrder: 8
   m_TargetDisplay: 0
 --- !u!224 &224215426588526334
 RectTransform:
@@ -154,7 +157,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1022924467689572}
-  m_LocalRotation: {x: -0, y: -0, z: 0.17364825, w: 0.9848078}
+  m_LocalRotation: {x: -0, y: -0, z: 0.976296, w: 0.21643952}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -182,6 +185,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000000059604645, y: -0.000000059604645}
-  m_SizeDelta: {x: 6.5, y: 6.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 5, y: 5}
   m_Pivot: {x: 0.5, y: 0.5}

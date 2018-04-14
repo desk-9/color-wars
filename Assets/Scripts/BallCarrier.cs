@@ -92,12 +92,6 @@ public class BallCarrier : MonoBehaviour {
         laserGuide?.DrawLaser();
         var player = GetComponent<Player>();
         var lastPlayer = ball.lastOwner?.GetComponent<Player>();
-        if (player != null && lastPlayer != null) {
-            if (player.team == lastPlayer.team && player != lastPlayer) {
-                Utility.TutEvent("PassSwitch", player);
-                Utility.TutEvent("PassSwitch", lastPlayer);
-            }
-        }
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 

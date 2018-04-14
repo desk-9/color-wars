@@ -9,8 +9,10 @@ public class TeamResourceManager {
 
     public GameObject dashEffectPrefab {get; private set;}
     public GameObject dashChargeEffectPrefab {get; private set;}
-    public GameObject shootChargeEffectPrefab {get; private set;}
     public GameObject scoreGoalEffectPrefab {get; private set;}
+    public GameObject circularTimerPrefab {get; private set;}
+    public GameObject shotChargeIndicatorPrefab {get; private set;}
+    
     public Sprite mainPlayerSprite {get; private set;}
     public Sprite altPlayerSprite {get; private set;}
     public Material wallMaterial {get; private set;}
@@ -75,10 +77,15 @@ public class TeamResourceManager {
         dashAimerPrefab = MakeTeamResource<GameObject>("DashAimer");
         background = MakeTeamResource<Sprite>("Background");
         scoreGoalEffectPrefab = MakeTeamResource<GameObject>("ScoreGoalEffect");
-        shootChargeEffectPrefab = MakeTeamResource<GameObject>("ShootChargeEffect");
+
+        circularTimerPrefab = MakeAllTeamResource<GameObject>("CircularTimer");
+        shotChargeIndicatorPrefab = MakeAllTeamResource<GameObject>(
+            "ShotChargeIndicator");
 
         mainPlayerSprite = MakeAllTeamResource<Sprite>("MainPlayer");
         altPlayerSprite = MakeAllTeamResource<Sprite>("AltPlayer");
+
+
         explosionPrefab = MakeAllTeamResource<GameObject>("ExplosionPrefab");
         tronWallDestroyedPrefab = MakeAllTeamResource<GameObject>("TronWallDestroyed");
         tronWallSuicidePrefab = MakeAllTeamResource<GameObject>("TronWallSuicide");

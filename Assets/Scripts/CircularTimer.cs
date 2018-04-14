@@ -5,32 +5,15 @@ using UnityEngine;
 using UtilityExtensions;
 using UnityEngine.UI;
 
-public class CircularTimer : MonoBehaviour {
-    public float FillAmount {
-        get {return fillImage.fillAmount;}
-        set {fillImage.fillAmount = value;}
-    }
-
-    Image fillImage;
+public class CircularTimer : CircularIndicator {
     Callback endTimerCallback = delegate{};
     Coroutine timer;
-
-    public virtual void Start () {
-        fillImage = transform.FindComponent<Image>("CircularTimerImage");
-        fillImage.enabled = false;
-    }
-
-    public virtual void Update() {
-        transform.rotation = Quaternion.identity;
-    }
 
     public void StartTimer(float secondsUntilTimeout, Callback endTimerCallback) {
         if (this == null) {
             return;
         }
-        if (fillImage != null) {
-            fillImage.enabled = true;
-        }
+        base.Show();
         timer = StartCoroutine(Timer(secondsUntilTimeout));
         FillAmount = 0;
         this.endTimerCallback = endTimerCallback;
@@ -42,7 +25,7 @@ public class CircularTimer : MonoBehaviour {
             timer = null;
         }
         endTimerCallback();
-        fillImage.enabled = false;
+        base.Hide();
     }
 
     IEnumerator Timer(float secondsUntilTimeout) {

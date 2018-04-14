@@ -254,12 +254,6 @@ public static class Utility {
                         stunTime);
     }
 
-    public static void TutEvent(string baseName, MonoBehaviour thing) {
-        if (PlayerTutorial.runTutorial) {
-            Debug.LogFormat("Notify: {0} -- {1}Tutorial", thing.gameObject.name, baseName);
-        }
-        GameModel.instance.nc.NotifyStringEvent(baseName + "Tutorial", thing.gameObject);
-    }
 
     public static void Print(params object[] args) {
         string formatString = "";

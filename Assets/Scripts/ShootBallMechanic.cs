@@ -6,118 +6,154 @@ using IC = InControl;
 
 public class ShootBallMechanic : MonoBehaviour {
 
-    public IC.InputControlType shootButton = IC.InputControlType.Action1;
-    public float forcedShotTime;
+    // These control how the charging progresses
+    public AnimationCurve chargeShotCurve;
     public float baseShotSpeed = 1.0f;
-    public float chargeRate = 1.0f;
-    public float shotPower = 1.1f;
-    public GameObject circularTimerPrefab;
-    public Vector2 circleTimerScale;
+    public float maxShotSpeed = 56.0f; // this value is from the previous charge-shot logic
+    // REMARK: An assumption is made in Start() that maxChargeShotTime <=
+    // forcedShotTime. Update that logic if this assumption is broken
+    public float maxChargeShotTime;
+    public float forcedShotTime;
+    public float shotSpeed {get; private set;} = 1.0f;
+    float elapsedTime = 0.0f;
+
     CircularTimer circularTimer;
-    public float chargeEffectOffset = 1.5f;
+    Coroutine shootTimer;
+    ShotChargeIndicator shotChargeIndicator;
+    Coroutine chargeShot;
 
     PlayerMovement playerMovement;
     PlayerStateManager stateManager;
-    Coroutine shootTimer;
-    Coroutine chargeShot;
     BallCarrier ballCarrier;
-    GameObject effect;
     TeamManager team;
     Player teamMate;
-
-    float shotSpeed = 1.0f;
-    float elapsedTime = 0.0f;
-
-    float maxShotSpeed;
+    Player player;
 
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         ballCarrier = this.EnsureComponent<BallCarrier>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
+        player = this.EnsureComponent<Player>();
+
         stateManager.CallOnStateEnter(State.Posession, StartTimer);
         stateManager.CallOnStateExit(
-            State.Posession, () => StopChargeShot());
+            State.Posession, () => StopShootBallCoroutines());
 
         GameModel.instance.nc.CallOnMessageIfSameObject(
-            Message.PlayerPressedShoot, ShootPressed, gameObject);
+            Message.PlayerPressedShoot, OnShootPressed, gameObject);
         GameModel.instance.nc.CallOnMessageIfSameObject(
-            Message.PlayerReleasedShoot, ShootReleased, gameObject);
-        circularTimer = Instantiate(
-            circularTimerPrefab, transform).GetComponent<CircularTimer>();
-        circularTimer.transform.localScale = circleTimerScale;
+            Message.PlayerReleasedShoot, OnShootReleased, gameObject);
 
         var ball = GameObject.FindObjectOfType<Ball>();
-        maxShotSpeed = baseShotSpeed + Mathf.Pow((1 + forcedShotTime * chargeRate), shotPower);
-        this.FrameDelayCall(() => team = this.GetComponent<Player>()?.team, 2);
+
+        player.CallAsSoonAsTeamAssigned((team) => {
+                this.team = team;
+                InitializeCircularIndicators(team);
+            });
+
+        // In this situation, maxChargeShotTime is irrelevant => change it to
+        // make later logic more elegant. NOTE: If removing this, also change
+        // the comment above (by the declaration of maxChargeShotTime)
+        if (maxChargeShotTime <= 0.0f) {
+            maxChargeShotTime = forcedShotTime;
+        }
+    }
+
+    // Initialize the circular timer (forced shot timeout) and the
+    // ShotChargeIndicator -- these are the little circular dials that show
+    // up when a player possesses the ball, and when a player charges their
+    // shot (respectively).
+    void InitializeCircularIndicators(TeamManager team) {
+        // Need to destroy preexisting objects (e.g. if selecting teams, and
+        // then switching team)
+        if (shotChargeIndicator != null) {Destroy(shotChargeIndicator);}
+        if (circularTimer != null) {Destroy(circularTimer);}
+        
+        // Circular timer
+        GameObject circularTimerPrefab = team.resources.circularTimerPrefab;
+        circularTimer = Instantiate(
+            circularTimerPrefab, transform).GetComponent<CircularTimer>();
+
+        // ShotCharge indicator
+        GameObject shotChargeIndicatorPrefab = team.resources.shotChargeIndicatorPrefab;
+        shotChargeIndicator = Instantiate(
+            shotChargeIndicatorPrefab, transform).GetComponent<ShotChargeIndicator>();
+
+        // REMARK: See comment below ("[Krista fri 4/13] I found this little
+        // gem...") for an explanation of why we need to set minFillAmount and
+        // maxFillAmount like this
+        shotChargeIndicator.minFillAmount = baseShotSpeed;
+        shotChargeIndicator.maxFillAmount = maxShotSpeed;
+        // Debug.LogFormat("shot charge min fill amount: {1}, max fill amount: {0}",
+        //                 shotChargeIndicator.maxFillAmount,
+        //                 shotChargeIndicator.minFillAmount);
+
     }
 
     void StartTimer() {
+        bool shootTimerRunning = shootTimer != null;
+        bool alreadyChargingShot = chargeShot != null;
+        if (shootTimerRunning || alreadyChargingShot) {
+            return;
+        }
         shootTimer = StartCoroutine(ShootTimer());
-    }
-
-    void ShootPressed() {
-        if (stateManager.IsInState(State.Posession) && shootTimer != null) {
-            StopCoroutine(shootTimer);
-            shootTimer = null;
-            chargeShot = StartCoroutine(ChargeShot());
-        }
-    }
-
-    void ShootReleased() {
-        if (chargeShot != null) {
-            StopCoroutine(chargeShot);
-            shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
-            Shoot();
-        }
     }
 
     IEnumerator ShootTimer() {
         this.FrameDelayCall(() => circularTimer?.StartTimer(forcedShotTime, delegate{}), 2);
-
-        elapsedTime = 0.0f;
         shotSpeed = baseShotSpeed;
+        elapsedTime = 0.0f;
         while (elapsedTime < forcedShotTime) {
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        Utility.TutEvent("BallPickupTimeout", this);
         Shoot();
     }
 
-    IEnumerator ChargeShot() {
-        effect = Instantiate(team.resources.shootChargeEffectPrefab,
-                             transform.position + transform.right * chargeEffectOffset,
-                             transform.rotation, transform);
+    // Warning: this function may be called any time the player presses the A
+    // button (or whatever xbox controller button is bound to shoot). This
+    // includes dash
+    void OnShootPressed() {
+        bool shootTimerRunning = shootTimer != null;
+        bool alreadyChargingShot = chargeShot != null;
+        if (stateManager.IsInState(State.Posession)
+            && shootTimerRunning && !alreadyChargingShot) {
 
-        while (elapsedTime < forcedShotTime) {
-            elapsedTime += Time.deltaTime;
-            shotSpeed += chargeRate * Time.deltaTime;
-
-            yield return null;
+            shotChargeIndicator.Show();
+            chargeShot = StartCoroutine(TransitionUtility.LerpFloat((value) => {
+                        this.shotSpeed = value;
+                        shotChargeIndicator.FillAmount = value;
+                    },
+                    startValue: baseShotSpeed, endValue: maxShotSpeed,
+                    duration: maxChargeShotTime,
+                    useGameTime: true, animationCurve: chargeShotCurve));
         }
-
-        shotSpeed = baseShotSpeed + Mathf.Pow(shotSpeed, shotPower);
-        Shoot();
     }
 
-    void Shoot() {
-        Utility.TutEvent("Shoot", this);
+    void OnShootReleased() {
+        bool shootTimerRunning = shootTimer != null;
+        bool alreadyChargingShot = chargeShot != null;
+        if (alreadyChargingShot) {
+            Debug.Assert(shootTimerRunning == true);
+            Shoot();
+        }
+    }
+
+    public void Shoot() {
         AudioManager.instance.ShootBallSound.Play(.5f);
-        shootTimer = null;
-        chargeShot = null;
         var ball = ballCarrier.ball;
-        var shotDirection = ball.transform.position - transform.position;
-
-        var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
-        if (shotSpeed / maxShotSpeed >= 0.45f) {
-            Utility.TutEvent("ShootCharge", this);
+        if (ball != null) {
+            var shotDirection = ball.transform.position - transform.position;
+            var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
+            ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         }
-        ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
+        StopShootBallCoroutines();
         stateManager.CurrentStateHasFinished();
     }
 
-    void StopChargeShot() {
+    void StopShootBallCoroutines() {
         circularTimer?.StopTimer();
+        shotChargeIndicator.Stop();
         if (shootTimer != null) {
             StopCoroutine(shootTimer);
             shootTimer = null;
@@ -127,9 +163,6 @@ public class ShootBallMechanic : MonoBehaviour {
             chargeShot = null;
         }
 
-        if (effect != null) {
-            Destroy(effect);
-        }
         playerMovement.freezeRotation = false;
     }
 
