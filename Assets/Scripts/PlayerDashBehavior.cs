@@ -30,6 +30,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     Coroutine          dashCoroutine;
     PlayerTronMechanic tronMechanic;
     BallCarrier carrier;
+    GameObject dashEffect;
     GameObject dashAimer;
     float lastDashTime;
     CameraShake cameraShake;
@@ -120,6 +121,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         if (dashCoroutine != null) {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
+            Destroy(dashEffect, 1.0f);
         }
     }
 
@@ -129,7 +131,8 @@ public class PlayerDashBehavior : MonoBehaviour {
 
 
         // Set duration of particle system for each dash trail.
-        var dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
+        dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
+
         foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
             ps.Stop();
             var main = ps.main;
@@ -139,7 +142,6 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         var startTime = Time.time;
-
 
         while (Time.time - startTime <= dashDuration) {
             rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
@@ -151,7 +153,6 @@ public class PlayerDashBehavior : MonoBehaviour {
             ps.Stop();
         }
 
-        Destroy(dashEffect, 1.0f);
         stateManager.CurrentStateHasFinished();
     }
 
