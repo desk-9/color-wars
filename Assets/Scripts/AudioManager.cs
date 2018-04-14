@@ -50,6 +50,7 @@ public class AudioManager : MonoBehaviour {
     public SoundName BreakWall = "BreakWall";
     public SoundName ScoreGoalSound = "ScoreGoalSound";
     public SoundName DashSound = "DashSound";
+    public SoundName PassToNullZone = "PassToNullZone";
 
     // Menu sounds
     public SoundName PauseSound = "PauseSound";
