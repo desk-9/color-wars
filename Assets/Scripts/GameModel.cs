@@ -247,6 +247,9 @@ public class GameModel : MonoBehaviour {
 
         goal?.SwitchToNextTeam(false);
         goal?.ResetNeutral();
+
+        // Reset music.
+        StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
     }
 
     void StartGameAfterBallAnimation() {
