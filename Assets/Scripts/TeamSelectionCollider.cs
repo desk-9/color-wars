@@ -19,9 +19,9 @@ public class TeamSelectionCollider : MonoBehaviour {
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision) {
+    void OnCollisionStay2D(Collision2D collision) {
         var player = collision.gameObject.GetComponent<Player>();
-        if (player != null && team != null) {
+        if (player != null && team != null && player.team != team) {
             var stateManager = player.GetComponent<PlayerStateManager>();
             if (stateManager != null) {
                 if (mustDashToSwitch && !stateManager.IsInState(State.Dash)) {

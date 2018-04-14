@@ -11,6 +11,12 @@ public delegate void ColorSetter(Color color);
 public delegate void FloatSetter(float floatValue);
 public delegate bool Predicate();
 
+public enum LogLevel {
+    Normal,
+    Warning,
+    Error
+}
+
 namespace UtilityExtensions {
     // This namespace is for any general utility extensions to existing classes
 
@@ -83,10 +89,10 @@ namespace UtilityExtensions {
             list.Add(Tuple.Create(item1, item2, item3));
         }
 
-         public static void Add(this IList<TutorialStageInfo> list,
-                                string a, string b, string c) {
-             list.Add(new TutorialStageInfo(a, b, c));
-         }
+        public static void Add(this IList<TutorialStageInfo> list,
+                               string a, string b, string c) {
+            list.Add(new TutorialStageInfo(a, b, c));
+        }
 
         public static void Add(this IList<TutorialStageInfo> list,
                                string a, string b, string c, TutorialRequirement requirement) {
@@ -95,12 +101,12 @@ namespace UtilityExtensions {
 
         public static void Add(this IList<SubclipInfo> list,
                                string text, float time) {
-             list.Add(new SubclipInfo(text, time));
+            list.Add(new SubclipInfo(text, time));
         }
 
         public static void Add(this IList<SubclipInfo> list,
                                string text) {
-             list.Add(new SubclipInfo(text));
+            list.Add(new SubclipInfo(text));
         }
 
         public static void Add(this IList<LiveClipInfo> list,
@@ -256,16 +262,39 @@ public static class Utility {
 
 
     public static void Print(params object[] args) {
+        LogLevel logLevel = LogLevel.Normal;
+        int argsEnd = args.Length;
+        if (args.Length > 1) {
+            var last = args[args.Length - 1];
+            if (last.GetType() == typeof(LogLevel)) {
+                logLevel = (LogLevel) last;
+                argsEnd -= 1;
+            }
+        }
         string formatString = "";
-        for (int i = 0; i < args.Length; i++) {
+        for (int i = 0; i < argsEnd; i++) {
             formatString += string.Format("{{{0}}} ", i);
         }
-        Debug.LogFormat(formatString, args);
+        if (logLevel == LogLevel.Normal) {
+            Debug.LogFormat(formatString, args);
+        } else if (logLevel == LogLevel.Warning) {
+            Debug.LogWarningFormat(formatString, args);
+        } else if (logLevel == LogLevel.Error) {
+            Debug.LogErrorFormat(formatString, args);
+        }
     }
 
     public static void ChangeTimeScale(float factor) {
         Time.timeScale = 1 * factor;
         Time.fixedDeltaTime = 0.02f * factor;
+    }
+    public static float NormalizeDegree(float degree) {
+        if (degree <= 0) {
+            degree = 360 - Mathf.Repeat(-degree, 360);
+        } else {
+            degree = Mathf.Repeat(degree, 360);
+        }
+        return degree;
     }
 }
 

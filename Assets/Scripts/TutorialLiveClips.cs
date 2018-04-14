@@ -236,7 +236,7 @@ public class TutorialLiveClips : MonoBehaviour {
         if (clipObject) {
             Destroy(clipObject);
         }
-        SceneManager.UnloadScene(currentClipName);
+        SceneManager.UnloadSceneAsync(currentClipName);
     }
 
     void ClipReload() {
