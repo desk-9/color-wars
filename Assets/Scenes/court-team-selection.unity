@@ -954,10 +954,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   logDebugInfo: 0
   invertYAxis: 0
-  enableXInput: 0
+  enableXInput: 1
   useFixedUpdate: 0
   dontDestroyOnLoad: 0
-  customProfiles: []
+  customProfiles:
+  - CustomPlayerProfile
+  - CustomPlayerProfile
+  - CustomPlayerProfile
+  - CustomPlayerProfile
 --- !u!4 &491648685
 Transform:
   m_ObjectHideFlags: 0
@@ -2180,7 +2184,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b233d598eefd4671ad3888853bf0730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuInstructions: Press dpad-up to return to main menu
+  restartCountSize:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   SecondsBeforeReset: 10
 --- !u!1 &939587273
 GameObject:
