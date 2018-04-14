@@ -118,10 +118,6 @@ public class PlayerTutorial : MonoBehaviour {
             diff = Time.time - start;
         }
 
-        readyUpText.text = String.Format("Starting tutorial in {0:N0}", 0);
-
-        yield return new WaitForSeconds(0.5f);
-
         // Switch to Tutorial scene.
         GameModel.playerTeamsAlreadySelected = true;
         GameModel.playerTeamAssignments = new Dictionary<int, int>();
@@ -170,8 +166,6 @@ public class PlayerTutorial : MonoBehaviour {
 
             diff = Time.time - start;
         }
-
-        readyUpText.text = String.Format("Starting the game in {0:N0}", 0);
 
         PlayerTutorial.runTutorial = false;
         SceneStateController.instance.Load(Scene.Court);
