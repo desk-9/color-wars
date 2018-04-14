@@ -15,6 +15,9 @@ public class GhostTrail : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        if (this == null) {
+            return;
+        }
         renderer = this.EnsureComponent<SpriteRenderer>();
         var nc = GameModel.instance.nc;
         nc.CallOnMessage(Message.BallIsPossessed, StartGhost);
@@ -22,12 +25,18 @@ public class GhostTrail : MonoBehaviour {
     }
 
     void StartGhost() {
+        if (this == null) {
+            return;
+        }
         if (ghostCoroutine == null) {
             ghostCoroutine = StartCoroutine(AddGhostObject());
         }
     }
 
     void StopGhost() {
+        if (this == null) {
+            return;
+        }
         if (ghostCoroutine != null) {
             StopCoroutine(ghostCoroutine);
             ghostCoroutine = null;
