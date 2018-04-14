@@ -45,22 +45,4 @@ public class MainMenuController : MonoBehaviour {
             }
         }
     }
-
-    void IncrementSelection() {
-        // Can't increment -- we're at the last element
-        if (selectionIndex == MenuOptions.Count-1) {
-            return;
-        }
-        MenuOptions[selectionIndex].color = deselectedColor;
-        selectionIndex += 1;
-        MenuOptions[selectionIndex].color = selectedColor;
-    }
-
-    void DecrementSelection() {
-        MenuOptions[selectionIndex].color = deselectedColor;
-        selectionIndex -= 1;
-        MenuOptions[selectionIndex].color = selectedColor;
-    }
-
-
 }
