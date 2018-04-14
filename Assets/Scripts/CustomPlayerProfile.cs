@@ -58,6 +58,16 @@ public class CustomPlayerProfile : UnityInputDeviceProfile {
                 Handle = "Wall",
                 Target = InputControlType.Action2,
                 Source = KeyCodeButton( KeyCode.X )
+            },
+            new InputControlMapping {
+                Handle = "Continue",
+                Target = InputControlType.Action3,
+                Source = KeyCodeButton( KeyCode.C )
+            },
+            new InputControlMapping {
+                Handle = "Skip",
+                Target = InputControlType.LeftBumper,
+                Source = KeyCodeButton( KeyCode.V )
             }
         };
     }
