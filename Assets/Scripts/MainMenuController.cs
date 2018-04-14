@@ -26,14 +26,16 @@ public class MainMenuController : MonoBehaviour {
                 if (!selected.Contains(device)) {
                     AudioManager.instance.ConfirmSelectionSound.Play();
                     selected.Add(device);
+
+                    this.TimeDelayCall(
+                        () => {
+                            var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
+                            trigger?.LoadAssociatedScene();
+                        },
+                        AudioManager.instance.ConfirmSelectionSound.Length()
+                    );
                 }
 
-                this.TimeDelayCall(
-                    () => {
-                        var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
-                        trigger?.LoadAssociatedScene();
-                    },
-                    AudioManager.instance.ConfirmSelectionSound.Length());
             } else if (device.GetControl(IC.InputControlType.LeftBumper).WasPressed) {
                 GameModel.cheatForcePlayerAssignment = true;
                 AudioManager.instance.CheatCodeSound.Play();
