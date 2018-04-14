@@ -15,7 +15,6 @@ public class ControllerRumble : MonoBehaviour {
 
     IPlayerMovement playerMovement;
     PlayerStateManager stateManager;
-    InputDevice inputDevice;
     int levelsOfRumble;
 
     // Use this for initialization
@@ -38,11 +37,11 @@ public class ControllerRumble : MonoBehaviour {
         }
     }
 
-    void AssignInputDevice() {
-        inputDevice = this.EnsureComponent<PlayerControls>().GetInputDevice();
-    }
-
     void StartRumble(float intensity = 1f, float? duration = null) {
+        var inputDevice = this.GetComponent<PlayerControls>().GetInputDevice();
+        if (inputDevice == null) {
+            return;
+        }
         levelsOfRumble += 1;
         inputDevice.Vibrate(intensity);
         if (duration.HasValue) {
@@ -51,8 +50,9 @@ public class ControllerRumble : MonoBehaviour {
     }
 
     void StopRumble() {
+        var inputDevice = this.GetComponent<PlayerControls>().GetInputDevice();
         levelsOfRumble -= 1;
-        if (levelsOfRumble == 0) {
+        if (levelsOfRumble == 0 && inputDevice != null) {
             inputDevice.Vibrate(0f);
         }
     }

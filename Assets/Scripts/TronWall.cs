@@ -113,7 +113,7 @@ public class TronWall : MonoBehaviour {
             }
 
             creator.HandleWallCollision();
-            GameModel.instance.nc.NotifyMessage(Message.TronWallDestroyedWhileLaying, other);
+            GameModel.instance.nc.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
             PlayDestroyedParticleEffect();
             Destroy(gameObject);
             return;
