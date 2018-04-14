@@ -33,8 +33,12 @@ public class Player : MonoBehaviour {
         if (isNormalPlayer) {
             renderer.enabled = false;
             collider.enabled = false;
-            stateManager.AttemptFrozenAfterGoal(delegate{}, delegate{});
+
+            stateManager.AttemptFrozenAfterGoal(
+                GetComponent<PlayerMovement>().StartRotateOnly, delegate{}
+            );
         }
+
         explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
         var explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         var explosionMain = explosionParticleSystem.main;
@@ -45,7 +49,11 @@ public class Player : MonoBehaviour {
 
     public void ResetPlayerPosition() {
         if (isNormalPlayer) {
-            stateManager.AttemptFrozenAfterGoal(delegate{}, delegate{});
+
+            stateManager.AttemptFrozenAfterGoal(
+                GetComponent<PlayerMovement>().StartRotateOnly, delegate{}
+            );
+
             transform.position = initialPosition;
             rb2d.rotation = initialRotation;
             renderer.enabled = true;

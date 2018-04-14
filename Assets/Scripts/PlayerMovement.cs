@@ -23,7 +23,26 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     const float minBallForceRotationTime = 0.05f;
 
     void StartPlayerMovement() {
+        if (playerMovementCoroutine != null) {
+            StopCoroutine(playerMovementCoroutine);
+        }
+
         playerMovementCoroutine = StartCoroutine(Move());
+    }
+
+    IEnumerator RotateOnly() {
+        while (true) {
+            RotatePlayer();
+            yield return null;
+        }
+    }
+
+    public void StartRotateOnly() {
+        if (playerMovementCoroutine != null) {
+            StopCoroutine(playerMovementCoroutine);
+        }
+
+        playerMovementCoroutine = StartCoroutine(RotateOnly());
     }
 
     public void StopAllMovement() {
