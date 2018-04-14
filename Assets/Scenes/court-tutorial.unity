@@ -1130,6 +1130,7 @@ Prefab:
     - {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 60192982943300094, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 212918527776535888, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
+    - {fileID: 114740959938619730, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &459899256
@@ -2741,7 +2742,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b233d598eefd4671ad3888853bf0730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMenuInstructions: Press dpad-up to return to main menu
+  restartCountSize:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   SecondsBeforeReset: 10
 --- !u!1 &939587273
 GameObject:
@@ -8149,6 +8155,7 @@ Prefab:
     - {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 60192982943300094, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 212918527776535888, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
+    - {fileID: 114740959938619730, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1946476400
@@ -8439,6 +8446,7 @@ Prefab:
     - {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 60192982943300094, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 212918527776535888, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
+    - {fileID: 114740959938619730, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &2042251370
@@ -8647,6 +8655,7 @@ Prefab:
     - {fileID: 50968593018913712, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 60192982943300094, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
     - {fileID: 212918527776535888, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
+    - {fileID: 114740959938619730, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1e5ce0bbe8321cf459586a2d8d215280, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &2067126164
