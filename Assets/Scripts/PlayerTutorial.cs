@@ -152,13 +152,12 @@ public class PlayerTutorial : MonoBehaviour {
         readyUpText.text = "Try laying a wall with B";
 
         ResetCheckin();
+        readyUpCount.text = "";
         GameModel.instance.nc.CallOnMessageWithSender(
             Message.PlayerReleasedWall, CheckinPlayer
         );
         yield return null;
         while (!AllCheckedIn()) yield return null;
-
-        readyUpCount.text = "";
 
         // Start the countdown.
         var start = Time.time;
