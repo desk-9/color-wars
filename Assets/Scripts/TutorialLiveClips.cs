@@ -47,12 +47,12 @@ public class TutorialLiveClips : MonoBehaviour {
          new List<SubclipInfo>() {
                 {"TOUCH the ball to pick it up", 0.3f},
                 {"SHOOT the ball with (A)", 0.3f},
-                {"but you must pass to your teammate...", 0.5f},
-                "...before you can score a goal"
+                {"but you must pass to fill the ball...", 0.5f},
+                "...and you can only score with a filled ball"
          }},
         {"2-cant-pass-in-null-zone",
          new List<SubclipInfo>() {
-                "passes don't count in the null zone",
+                "passes don't fill the ball in the null zone",
          }},
         {"3-stealing-and-blocking",
          new List<SubclipInfo>() {
