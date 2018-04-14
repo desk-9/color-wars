@@ -13,7 +13,7 @@ public class ControllerRumble : MonoBehaviour {
     public float layingWallStunDuration = .5f;
     public float ballPossessionRumbleDuration = .2f;
 
-    IPlayerMovement playerMovement;
+    PlayerControls playerControls;
     PlayerStateManager stateManager;
     int levelsOfRumble;
 
@@ -22,11 +22,10 @@ public class ControllerRumble : MonoBehaviour {
         if (!rumbleEnabled) {
             return;
         }
-        playerMovement = GetComponent<IPlayerMovement>();
+        playerControls = this.GetComponent<PlayerControls>();
         stateManager = GetComponent<PlayerStateManager>();
-        if (playerMovement != null && stateManager != null) {
+        if (playerControls != null && stateManager != null) {
             var nc = GameModel.instance.nc;
-            nc.CallOnMessageIfSameObject(Message.InputDeviceAssigned, AssignInputDevice, gameObject);
             nc.CallOnMessageIfSameObject(Message.StealOccurred, () => StartRumble(duration : stealRumbleDuration), gameObject);
             nc.CallOnMessageIfSameObject(Message.TronWallDestroyed,
                                          () => StartRumble(duration : wallDestroyDuration),
@@ -38,7 +37,7 @@ public class ControllerRumble : MonoBehaviour {
     }
 
     void StartRumble(float intensity = 1f, float? duration = null) {
-        var inputDevice = this.GetComponent<PlayerControls>().GetInputDevice();
+        var inputDevice = playerControls?.GetInputDevice();
         if (inputDevice == null) {
             return;
         }
@@ -50,7 +49,7 @@ public class ControllerRumble : MonoBehaviour {
     }
 
     void StopRumble() {
-        var inputDevice = this.GetComponent<PlayerControls>().GetInputDevice();
+        var inputDevice = playerControls?.GetInputDevice();
         levelsOfRumble -= 1;
         if (levelsOfRumble == 0 && inputDevice != null) {
             inputDevice.Vibrate(0f);
