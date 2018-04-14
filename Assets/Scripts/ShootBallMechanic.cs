@@ -93,7 +93,8 @@ public class ShootBallMechanic : MonoBehaviour {
     void StartTimer() {
         bool shootTimerRunning = shootTimer != null;
         bool alreadyChargingShot = chargeShot != null;
-        if (shootTimerRunning || alreadyChargingShot) {
+        if (shootTimerRunning || alreadyChargingShot ||
+            !stateManager.IsInState(State.Posession)) {
             return;
         }
         shootTimer = StartCoroutine(ShootTimer());
