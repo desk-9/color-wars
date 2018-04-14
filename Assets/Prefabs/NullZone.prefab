@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4262072401159130}
   - component: {fileID: 212333915980229984}
   - component: {fileID: 60580474122315470}
+  - component: {fileID: 114950601206574354}
   m_Layer: 16
   m_Name: NullZone
   m_TagString: NullZone
@@ -100,7 +101,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1350907628732248}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.05, y: 0, z: 0}
+  m_LocalPosition: {x: 0.05, y: -0.01, z: 0}
   m_LocalScale: {x: 0.98, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4262072401159130}
@@ -227,6 +228,20 @@ MonoBehaviour:
   collapseTime: 0.25
   numberOfParticles: 250
   explosionRadius: 18
+--- !u!114 &114950601206574354
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1237022127055280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1dfc3a3002dc2c49905deccdac5e6d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashOpacity: 0.6
+  stayedFlashDuration: 0
+  flashTransitionDuration: 0.1
 --- !u!120 &120110245116406866
 LineRenderer:
   m_ObjectHideFlags: 1

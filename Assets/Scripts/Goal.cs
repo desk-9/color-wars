@@ -98,7 +98,9 @@ public class Goal : MonoBehaviour {
                 GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
                 SwitchToTeam(player.team);
             } else {
-                GameModel.instance.nc.NotifyMessage(Message.NullChargePrevention, player);
+                if (currentTeam == null) {
+                        GameModel.instance.nc.NotifyMessage(Message.NullChargePrevention, player);
+                    }
             }
         } else if (player.team != lastPlayer?.team) {
             GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
