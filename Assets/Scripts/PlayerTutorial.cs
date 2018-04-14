@@ -56,6 +56,8 @@ public class PlayerTutorial : MonoBehaviour {
         readyUpCount = GameObject.Find("ReadyUpCount")?.GetComponent<Text>();
         inTeamSelection = (tutorialType == TutorialType.TeamSelection
                            && GameObject.Find("TeamSelection") != null);
+        GameModel.instance.nc.CallOnMessage(
+            Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
         if (inTeamSelection) {
             StartCoroutine(TeamSelection());
         } else if (tutorialType == TutorialType.Sandbox) {
@@ -148,12 +150,16 @@ public class PlayerTutorial : MonoBehaviour {
         readyUpText.text = "Try laying a wall with B";
 
         ResetCheckin();
-        readyUpCount.text = "";
         GameModel.instance.nc.CallOnMessageWithSender(
             Message.PlayerReleasedWall, CheckinPlayer
         );
         yield return null;
-        while (!AllCheckedIn()) yield return null;
+        while (!AllCheckedIn()) {
+            yield return null;
+        }
+        ResetCheckin();
+        GameModel.instance.nc.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
+        readyUpCount.text = "";
 
         // Start the countdown.
         var start = Time.time;

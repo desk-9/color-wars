@@ -134,6 +134,10 @@ public class NotificationCenter {
         onMessage[event_type](sender);
     }
 
+    public void UnsubscribeMessage(Message event_type, EventCallback callback) {
+        onMessage[event_type] -= callback;
+    }
+
     // String-based event system
     //
     // Useful for hacky/quick setup of simple events without writing extra code,
