@@ -46,6 +46,9 @@ public class SceneStateController : MonoBehaviour {
         screenTransition = new TransitionUtility.ScreenTransition(
             sceneTransitionDuration);
         StartCoroutine(screenTransition.FadeIn());
+
+        // Disable mouse.
+        Cursor.visible = false;
     }
 
     void InitializeCallbacks() {
