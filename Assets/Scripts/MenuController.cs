@@ -13,11 +13,11 @@ public class MenuController : MonoBehaviour {
 
     public GameObject pauseMenu;
     TransitionUtility.Panel pauseMenuPanel;
-    float pauseBeforeWinDisplay = 7.0f;
+    float pauseBeforeWinDisplay = 3;
     float pauseTransitionDuration = 0.25f;
 
     public WinDisplay winDisplay;
-    
+
     void Start() {
         if (winDisplay != null) {
             GameModel.instance.OnGameOver += () => {
