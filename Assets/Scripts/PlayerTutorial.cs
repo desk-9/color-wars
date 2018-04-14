@@ -42,9 +42,8 @@ public class PlayerTutorial : MonoBehaviour {
     public static PlayerTutorial instance;
     public static bool runTutorial = false;
     public TutorialType tutorialType = TutorialType.None;
+    public int countdownTime = 5;
 
-
-    int currentStageNumber = -1;
     Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
     Text readyUpText;
     Text readyUpCount;
@@ -107,14 +106,23 @@ public class PlayerTutorial : MonoBehaviour {
     }
 
     IEnumerator EndTutorial() {
-        readyUpText.text = "Press X to start the tutorial";
-        ResetCheckin();
-        StartListeningForPlayers();
-        yield return null;
-        while (!AllCheckedIn()) {
+        var start = Time.time;
+        var diff  = Time.time - start;
+
+        // Start the countdown.
+        while (diff < countdownTime) {
+            readyUpText.text = String.Format("Starting tutorial in {0:N0}", Mathf.Ceil(countdownTime - diff));
+
             yield return null;
+
+            diff = Time.time - start;
         }
+
+        readyUpText.text = String.Format("Starting tutorial in {0:N0}", 0);
+
         yield return new WaitForSeconds(0.5f);
+
+        // Switch to Tutorial scene.
         GameModel.playerTeamsAlreadySelected = true;
         GameModel.playerTeamAssignments = new Dictionary<int, int>();
         foreach (var player in GameModel.instance.GetPlayersWithTeams()) {
@@ -137,32 +145,35 @@ public class PlayerTutorial : MonoBehaviour {
         }
     }
 
-    List<Tuple<string, Message>> stages = new List<Tuple<string, Message>>() {
-        {"Try laying a wall with B", Message.PlayerReleasedWall},
-        {"Press X to start the game!", Message.PlayerPressedX},
-    };
-
-    void StageCheckinListen(int stageNumber, Message playerEvent) {
-        GameModel.instance.nc.CallOnMessageIf(
-            playerEvent, CheckinPlayer, _ => currentStageNumber == stageNumber);
-        GameModel.instance.nc.CallOnMessage(
-            Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
-    }
-
     IEnumerator Sandbox() {
         yield return null;
-        for (int i = 0; i < stages.Count; i++) {
-            currentStageNumber = i;
-            var stageText = stages[i].Item1;
-            var stageEvent = stages[i].Item2;
-            readyUpText.text = stageText;
-            ResetCheckin();
-            StageCheckinListen(i, stageEvent);
+
+        // Press B to lay a wall!
+        readyUpText.text = "Try laying a wall with B";
+
+        ResetCheckin();
+        GameModel.instance.nc.CallOnMessageWithSender(
+            Message.PlayerReleasedWall, CheckinPlayer
+        );
+        yield return null;
+        while (!AllCheckedIn()) yield return null;
+
+        readyUpCount.text = "";
+
+        // Start the countdown.
+        var start = Time.time;
+        var diff  = Time.time - start;
+
+        while (diff < countdownTime) {
+            readyUpText.text = String.Format("Starting the game in {0:N0}", Mathf.Ceil(countdownTime - diff));
+
             yield return null;
-            while (!AllCheckedIn()) {
-                yield return null;
-            }
+
+            diff = Time.time - start;
         }
+
+        readyUpText.text = String.Format("Starting the game in {0:N0}", 0);
+
         PlayerTutorial.runTutorial = false;
         SceneStateController.instance.Load(Scene.Court);
     }
