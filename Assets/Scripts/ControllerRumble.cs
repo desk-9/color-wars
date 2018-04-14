@@ -26,7 +26,7 @@ public class ControllerRumble : MonoBehaviour {
         stateManager = GetComponent<PlayerStateManager>();
         if (playerControls != null && stateManager != null) {
             var nc = GameModel.instance.nc;
-            nc.CallOnMessageIfSameObject(Message.StealOccurred, () => StartRumble(duration : stealRumbleDuration), gameObject);
+            nc.CallOnMessageIfSameObject(Message.StolenFrom, () => StartRumble(duration : stealRumbleDuration), gameObject);
             nc.CallOnMessageIfSameObject(Message.TronWallDestroyed,
                                          () => StartRumble(duration : wallDestroyDuration),
                                          gameObject);
@@ -37,6 +37,7 @@ public class ControllerRumble : MonoBehaviour {
     }
 
     void StartRumble(float intensity = 1f, float? duration = null) {
+        // If duration is null, this will rumble until StopRumble is called
         var inputDevice = playerControls?.GetInputDevice();
         if (inputDevice == null) {
             return;

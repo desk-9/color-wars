@@ -189,7 +189,7 @@ public class PlayerDashBehavior : MonoBehaviour {
             }
 
             if (shouldSteal) {
-                GameModel.instance.nc.NotifyMessage(Message.StealOccurred, otherPlayer.gameObject);
+                GameModel.instance.nc.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
                 AudioManager.instance.StealSound.Play(.5f);
                 stateManager.AttemptPossession(
                     () => carrier.StartCarryingBall(ball), carrier.DropBall);

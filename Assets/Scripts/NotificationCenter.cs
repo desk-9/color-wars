@@ -28,7 +28,7 @@ public enum Message {
     BallSetNeutral,
     BallCharged,
     NullChargePrevention,
-    StealOccurred,
+    StolenFrom,
     TronWallDestroyed,
     TronWallDestroyedWhileLaying,
 
