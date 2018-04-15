@@ -348,9 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3628126b696db4a939ebfd566a2621c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lerpSize: 0
-  minFontSize: 60
-  maxFontSize: 64
+  lerpFontSize: 1
   period: 1
   fontSizeCurve:
     serializedVersion: 2
@@ -382,7 +380,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  lerpColor: 0
+  lerpColor: 1
   startColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 0.541}
   endColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}
   colorCurve:

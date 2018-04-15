@@ -6,9 +6,9 @@ using UtilityExtensions;
 
 public class BreathingText : MonoBehaviour {
 
-    public bool lerpSize = true;
-    public int minFontSize;
-    public int maxFontSize;
+    public bool lerpFontSize = true;
+    // public int minFontSize;
+    // public int maxFontSize;
     public float period;
     public AnimationCurve fontSizeCurve;
 
@@ -36,21 +36,11 @@ public class BreathingText : MonoBehaviour {
         InitializeTextElement();
 
         if (lerpColor) {
-            StartCoroutine(
-                TransitionUtility.PingPongColor(
-                    (value) => text.color = value,
-                    startColor, endColor, period,
-                    useGameTime: false, animationCurve: colorCurve));
+            LerpColor();
         }
 
-        if (lerpSize) {
-            StartCoroutine(
-                TransitionUtility.PingPongFloat(
-                    (newScale) => {
-                        rect.localScale = new Vector3(newScale, newScale, 1.0f);
-                    },
-                    minRectScale, maxRectScale, period,
-                    useGameTime: false, animationCurve: fontSizeCurve));
+        if (lerpFontSize) {
+            LerpFontSize();
         }
 
     }
@@ -59,14 +49,31 @@ public class BreathingText : MonoBehaviour {
         // Makes the text lerping stay "centered" in place
         text.alignByGeometry = true;
 
-        // Allow the text to breathe even if the RectTransform is set to stretch
+        // Make sure that the "best fit" fontSize will scale nicely
         text.resizeTextForBestFit = true; // "Best Fit" checkbox in the editor
-        text.resizeTextMinSize = minFontSize - 5; // "Best Fit" -> Min Size in editor
-        text.resizeTextMaxSize = maxFontSize + 5; // "Best Fit" -> Max Size in editor
+        text.resizeTextMinSize = text.fontSize - 5; // "Best Fit" -> Min Size in editor
+        text.resizeTextMaxSize = text.fontSize + 5; // "Best Fit" -> Max Size in editor
         // I'm adding/subtracting 5, because the font size is constrained by those values (and I want to have some wiggle room)
-        
+
+        // Make sure that the text isn't truncated / wrapped (i.e. invisible)
         text.horizontalOverflow = HorizontalWrapMode.Overflow;
         text.verticalOverflow = VerticalWrapMode.Overflow;
+    }
+
+    void LerpColor() {
+        StartCoroutine(
+            TransitionUtility.PingPongColor(
+                (value) => text.color = value,
+                startColor, endColor, period,
+                useGameTime: false, animationCurve: colorCurve));
+    }
+
+    void LerpFontSize() {
+        StartCoroutine(
+            TransitionUtility.PingPongFloat(
+                (newScale) => rect.localScale = new Vector3(newScale, newScale, 1.0f),
+                minRectScale, maxRectScale, period,
+                useGameTime: false, animationCurve: fontSizeCurve));
     }
 
 }
