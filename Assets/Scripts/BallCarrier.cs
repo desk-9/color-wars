@@ -8,6 +8,7 @@ using IC = InControl;
 
 public class BallCarrier : MonoBehaviour {
 
+    public GameObject blowbackEffectPrefab;
     public float coolDownTime = .1f;
     public Ball ball { private set; get;}
     float ballTurnSpeed = 10f;
@@ -65,6 +66,30 @@ public class BallCarrier : MonoBehaviour {
     void BlowBackEnemyPlayers() {
         var enemyTeam = GameModel.instance.teams.Find((teamManager) => teamManager != player.team);
         Debug.Assert(enemyTeam != null);
+
+        {
+            // Because C# doesn't have lvalue references. FML.
+            var effect = Instantiate(blowbackEffectPrefab, transform.position, transform.rotation);
+            var ps     = effect.GetComponent<ParticleSystem>();
+            var col    = ps.colorOverLifetime;
+
+            col.enabled = true;
+
+            var grad = new Gradient();
+            grad.SetKeys(
+                new GradientColorKey[] {
+                    new GradientColorKey(player.team.teamColor, 0.0f)
+                },
+                new GradientAlphaKey[] {
+                    new GradientAlphaKey(1.0f,  0.0f),
+                    new GradientAlphaKey(0.25f, 0.75f),
+                    new GradientAlphaKey(0.0f,  1.0f)
+                }
+            );
+            col.color = grad;
+
+            Destroy(effect, 1.0f);
+        }
 
         foreach (var enemyPlayer in enemyTeam.teamMembers) {
             var blowBackVector = enemyPlayer.transform.position - transform.position;

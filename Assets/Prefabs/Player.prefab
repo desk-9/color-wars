@@ -276,6 +276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blowbackEffectPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
+    type: 2}
   coolDownTime: 0.1
   slowMoOnCarry: 1
   aimAssistThreshold: 20
