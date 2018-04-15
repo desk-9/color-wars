@@ -15,27 +15,28 @@ public class MainMenuController : MonoBehaviour {
 
     public List<Text> MenuOptions = new List<Text>();
     int selectionIndex = 0;
-    public HashSet<IC.InputDevice> selected = new HashSet<IC.InputDevice>();
+    bool selected;
 
     // Update is called once per frame
     void Update () {
+        if (selected) {
+            return;
+        }
         foreach (var device in InputManager.Devices) {
             if (device.GetControl(SelectButton).WasPressed) {
                 var selection = MenuOptions[selectionIndex];
 
-                if (!selected.Contains(device)) {
-                    AudioManager.instance.ConfirmSelectionSound.Play();
-                    selected.Add(device);
+                AudioManager.instance.ConfirmSelectionSound.Play();
 
-                    this.TimeDelayCall(
-                        () => {
-                            var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
-                            trigger?.LoadAssociatedScene();
-                        },
-                        AudioManager.instance.ConfirmSelectionSound.Length()
-                    );
-                }
-
+                this.TimeDelayCall(
+                                   () => {
+                                       var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
+                                       trigger?.LoadAssociatedScene();
+                                   },
+                                   AudioManager.instance.ConfirmSelectionSound.Length()
+                                   );
+                selected = true;
+                break;
             } else if (device.GetControl(IC.InputControlType.LeftBumper).WasPressed) {
                 GameModel.cheatForcePlayerAssignment = true;
                 AudioManager.instance.CheatCodeSound.Play();
