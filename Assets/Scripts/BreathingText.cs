@@ -18,21 +18,44 @@ public class BreathingText : MonoBehaviour {
     public AnimationCurve colorCurve;
 
     Text text;
-    ContentSizeFitter contentSizeFitter;
+
+    RectTransform rect;
+    public bool lerpRectTransform = true;
+    // REMARK: both x & y scale are set by the same factor in this code, so
+    // there's only a min/max scale rather than a min/max y scale & a min/max x
+    // scale. This is to prevent stretching/weird warping of canvas elements
+    public float minRectScale;
+    public float maxRectScale;
 
     public void Start() {
-        // The ContentSizeFitter component makes the breathing text scale
-        // w/aspect ratio
-        // See also:
-        // https://answers.unity.com/questions/1040610/re-sizing-ui-text-font-relative-to-screen-size.html
-        // https://docs.unity3d.com/Manual/HOWTO-UIFitContentSize.html
-        contentSizeFitter = this.EnsureComponent<ContentSizeFitter>();
-        contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-        contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;        
 
+        rect = this.EnsureComponent<RectTransform>();
+        
         // Text lerping seems to look wayyyy better with these settings
         text = this.EnsureComponent<Text>();
+        InitializeTextElement();
 
+        if (lerpColor) {
+            StartCoroutine(
+                TransitionUtility.PingPongColor(
+                    (value) => text.color = value,
+                    startColor, endColor, period,
+                    useGameTime: false, animationCurve: colorCurve));
+        }
+
+        if (lerpSize) {
+            StartCoroutine(
+                TransitionUtility.PingPongFloat(
+                    (newScale) => {
+                        rect.localScale = new Vector3(newScale, newScale, 1.0f);
+                    },
+                    minRectScale, maxRectScale, period,
+                    useGameTime: false, animationCurve: fontSizeCurve));
+        }
+
+    }
+
+    void InitializeTextElement() {
         // Makes the text lerping stay "centered" in place
         text.alignByGeometry = true;
 
@@ -44,25 +67,6 @@ public class BreathingText : MonoBehaviour {
         
         text.horizontalOverflow = HorizontalWrapMode.Overflow;
         text.verticalOverflow = VerticalWrapMode.Overflow;
-
-        // Start lerping text size
-        if (lerpSize) {
-            StartCoroutine(
-                TransitionUtility.PingPongFloat(
-                    (value) => text.fontSize = (int) value,
-                    minFontSize, maxFontSize, period,
-                    useGameTime: false, animationCurve: fontSizeCurve));
-        }
-
-        // Start lerping text color
-        if (lerpColor) {
-            StartCoroutine(
-                TransitionUtility.PingPongColor(
-                    (value) => text.color = value,
-                    startColor, endColor, period,
-                    useGameTime: false, animationCurve: colorCurve));
-        }
-
     }
-        
+
 }
