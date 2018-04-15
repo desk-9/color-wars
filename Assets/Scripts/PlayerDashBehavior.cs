@@ -217,7 +217,7 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
         if (layerMask == (layerMask | 1 << other.layer)) {
-            stateManager.CurrentStateHasFinished();
+            this.FrameDelayCall(stateManager.CurrentStateHasFinished, 1);
         } else {
             StunAndSteal(other);
         }
