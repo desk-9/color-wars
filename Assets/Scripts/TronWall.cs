@@ -123,15 +123,15 @@ public class TronWall : MonoBehaviour {
         if (ball != null) {
             KillSelf();
         } else if ((player != null) && (stateManager != null) &&
-            (stateManager.currentState == State.Dash)) {
+									 (stateManager.currentState == State.Dash)) {
             KillSelf();
             var playerStun = other.EnsureComponent<PlayerStun>();
             stateManager.AttemptStun(() =>
-                    { var otherDirection = player.transform.right;
-                      other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
-                      playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
-                      GameModel.instance.nc.NotifyMessage(Message.TronWallDestroyed, other);
-                    },
+								{ var otherDirection = player.transform.right;
+									other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
+									playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
+									GameModel.instance.nc.NotifyMessage(Message.TronWallDestroyed, other);
+								},
                                      playerStun.StopStunned);
         }
 

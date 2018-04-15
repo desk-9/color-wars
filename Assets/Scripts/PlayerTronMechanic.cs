@@ -125,9 +125,12 @@ public class PlayerTronMechanic : MonoBehaviour {
     }
 
     void OnCollisionStay2D(Collision2D collision) {
-        var currentWall = walls.Select(wall => wall.gameObject).DefaultIfEmpty(null).Last();
+				if (layWallCoroutine == null) {
+						return;
+				}
+        var currentWall = walls.Last(); // This shouldn't ever be null
         var layerMask = LayerMask.GetMask("Wall", "TronWall", "PlayerBlocker", "Goal", "PlayerBlocker");
-        if (layWallCoroutine != null && collision.gameObject != currentWall &&
+        if (collision.gameObject != currentWall &&
             layerMask == (layerMask | (1 << collision.gameObject.layer))){
             StopLayingWall();
             stateManager.CurrentStateHasFinished();
