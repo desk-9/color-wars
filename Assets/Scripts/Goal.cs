@@ -107,6 +107,11 @@ public class Goal : MonoBehaviour {
             GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
             ResetNeutral();
         }
+        if (currentTeam == null) {
+            GameModel.instance.nc.NotifyMessage(Message.BallPossessedWhileNeutral, player);
+        } else {
+            GameModel.instance.nc.NotifyMessage(Message.BallPossessedWhileCharged, player);
+        }
     }
 
     void SwitchToTeam(TeamManager team) {

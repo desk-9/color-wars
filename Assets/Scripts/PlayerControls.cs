@@ -66,6 +66,8 @@ public class PlayerControls : MonoBehaviour {
             Message.PlayerPressedX, Message.PlayerReleasedX),
         [IC.InputControlType.Action4] = new ButtonEventPair(
             Message.PlayerPressedY, Message.PlayerReleasedY),
+        [IC.InputControlType.Back] = new ButtonEventPair(
+            Message.PlayerPressedBack, Message.PlayerReleasedBack),
     };
 
     IEnumerator ControlsBroadcast() {

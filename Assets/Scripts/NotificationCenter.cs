@@ -26,7 +26,9 @@ public enum Message {
     SlowMoEntered,
     SlowMoExited,
     BallSetNeutral,
+    BallPossessedWhileNeutral,
     BallCharged,
+    BallPossessedWhileCharged,
     NullChargePrevention,
     StolenFrom,
     TronWallDestroyed,
@@ -53,6 +55,9 @@ public enum Message {
 
     PlayerPressedY,
     PlayerReleasedY,
+
+    PlayerPressedBack,
+    PlayerReleasedBack,
 
     PlayerPressedDash,
     PlayerReleasedDash,
