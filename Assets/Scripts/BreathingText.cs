@@ -6,26 +6,23 @@ using UtilityExtensions;
 
 public class BreathingText : MonoBehaviour {
 
-    public bool lerpFontSize = true;
-    // public int minFontSize;
-    // public int maxFontSize;
-    public float period;
-    public AnimationCurve fontSizeCurve;
+    public float period = 1.0f;
 
-    public bool lerpColor = true;
-    public Color startColor = Color.clear;
-    public Color endColor = Color.clear;
+    public bool lerpFontSize = true;
+    // REMARK: both x & y scale are set by the same factor in this code, so
+    // there's only a min/max rect scale rather than a separate min/max for both
+    // x and y. This is to prevent stretching/weird warping of canvas elements
+    public float minRectScale = 1.0f;
+    public float maxRectScale = 1.15f;
+    public AnimationCurve fontSizeCurve = AnimationCurve.EaseInOut(0.0f, 1.0f, 1.0f, 1.15f);
+
+    public bool lerpColor = false;
+    public Color startColor;
+    public Color endColor;
     public AnimationCurve colorCurve;
 
     Text text;
-
     RectTransform rect;
-    public bool lerpRectTransform = true;
-    // REMARK: both x & y scale are set by the same factor in this code, so
-    // there's only a min/max scale rather than a min/max y scale & a min/max x
-    // scale. This is to prevent stretching/weird warping of canvas elements
-    public float minRectScale;
-    public float maxRectScale;
 
     public void Start() {
 

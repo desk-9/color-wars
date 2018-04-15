@@ -7885,7 +7885,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 95}
+  m_AnchoredPosition: {x: 0, y: 80}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1667101168
@@ -7938,30 +7938,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3628126b696db4a939ebfd566a2621c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lerpSize: 1
-  minFontSize: 40
-  maxFontSize: 45
   period: 1
+  lerpFontSize: 1
+  minRectScale: 1
+  maxRectScale: 1.15
   fontSizeCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: -0.025444193
-      outSlope: -0.025444193
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.24999388
-      value: 0.00013892353
-      inSlope: -0.0006411674
-      outSlope: -0.0006411674
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.7093731
-      value: 0.46697277
-      inSlope: 2.0010507
-      outSlope: 2.0010507
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
       time: 1

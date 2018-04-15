@@ -2155,7 +2155,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -3502,14 +3502,14 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 15
-    m_MaxSize: 50
+    m_MaxSize: 25
     m_Alignment: 4
     m_AlignByGeometry: 1
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: Ready
 --- !u!222 &1421014469
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3527,9 +3527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3628126b696db4a939ebfd566a2621c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lerpSize: 0
-  minFontSize: 20
-  maxFontSize: 45
+  lerpFontSize: 1
   period: 1
   fontSizeCurve:
     serializedVersion: 2
@@ -3537,20 +3535,8 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: -0.025444193
-      outSlope: -0.025444193
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.24999388
-      value: 0.00013892353
-      inSlope: -0.0006411674
-      outSlope: -0.0006411674
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 0.7093731
-      value: 0.46697277
-      inSlope: 2.0010507
-      outSlope: 2.0010507
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
       time: 1
@@ -3561,7 +3547,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  lerpColor: 1
+  lerpColor: 0
   startColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 0.50980395}
   endColor: {r: 1, g: 1, b: 1, a: 1}
   colorCurve:
@@ -3588,6 +3574,9 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
+  lerpRectTransform: 1
+  minRectScale: 1
+  maxRectScale: 1.15
 --- !u!114 &1421014471
 MonoBehaviour:
   m_ObjectHideFlags: 0
