@@ -147,6 +147,7 @@ public class ShootBallMechanic : MonoBehaviour {
             var shotDirection = ball.transform.position - transform.position;
             var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
             ballRigidBody.rotation = 0;
+            ballRigidBody.angularVelocity = 0;
             ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         }
         StopShootBallCoroutines();
