@@ -67,6 +67,7 @@ public class SceneStateController : MonoBehaviour {
             GameModel.playerTeamsAlreadySelected = false;
             GameModel.cheatForcePlayerAssignment = false;
             TeamManager.playerSpritesAlreadySet = false;
+            JustInTimeTutorial.alreadySeen = false;
         }
         SceneManager.LoadScene(scenes[currentScene]);
         AdjustTime(newScene);
