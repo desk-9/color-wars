@@ -176,6 +176,28 @@ public static class Utility {
         return Color.HSVToRGB(h, s, v);
     }
 
+    public struct HSVColor {
+        public float h;
+        public float s;
+        public float v;
+        public HSVColor(float h, float s, float v) {
+            this.h = h;
+            this.s = s;
+            this.v = v;
+        }
+
+        public HSVColor(Color color) {
+            Color.RGBToHSV(color, out h, out s, out v);
+        }
+
+        public Color ToColor() {
+            return Color.HSVToRGB(h, s, v);
+        }
+    }
+
+
+
+
     public static void Toggle(GameObject gameObj) {
         gameObj.SetActive(!gameObj.activeInHierarchy);
     }

@@ -64,7 +64,7 @@ public class GameModel : MonoBehaviour {
             return GameObject.FindObjectOfType<Ball>();
         }
     }
-    Goal goal {
+    public Goal goal {
         get {
             return GameObject.FindObjectOfType<Goal>();
         }
