@@ -49,6 +49,7 @@ public class SceneStateController : MonoBehaviour {
 
         // Disable mouse.
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void InitializeCallbacks() {
