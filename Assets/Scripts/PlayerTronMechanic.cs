@@ -87,14 +87,15 @@ public class PlayerTronMechanic : MonoBehaviour {
     IEnumerator LayTronWall() {
         PlaceWallAnchor();
 
-        if (!layWallOnDash) {
-            rb.velocity = transform.right * velocityWhileLaying;
-            rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
-        }
+        rb.velocity = transform.right * velocityWhileLaying;
+        rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
 
         yield return null;
         var elapsedTime = 0f;
         while (elapsedTime < tronWallLayingLimit) {
+            rb.velocity = transform.right * velocityWhileLaying;
+            rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
+
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -125,7 +126,9 @@ public class PlayerTronMechanic : MonoBehaviour {
 
     void OnCollisionStay2D(Collision2D collision) {
         var currentWall = walls.Select(wall => wall.gameObject).DefaultIfEmpty(null).Last();
-        if (layWallCoroutine != null && collision.gameObject != currentWall) {
+        var layerMask = LayerMask.GetMask("Wall", "TronWall", "PlayerBlocker", "Goal", "PlayerBlocker");
+        if (layWallCoroutine != null && collision.gameObject != currentWall &&
+            layerMask == (layerMask | (1 << collision.gameObject.layer))){
             StopLayingWall();
             stateManager.CurrentStateHasFinished();
         }

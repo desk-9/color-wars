@@ -30,7 +30,7 @@ public class Goal : MonoBehaviour {
     }
 
     void BlockBalls() {
-        GetPlayerBlocker().layer = LayerMask.NameToLayer("Default");
+        GetPlayerBlocker().layer = LayerMask.NameToLayer("Wall");
     }
 
     void OnlyBlockPlayers() {

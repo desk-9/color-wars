@@ -101,7 +101,7 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     IEnumerator ShootTimer() {
-        this.FrameDelayCall(() => circularTimer?.StartTimer(forcedShotTime, delegate{}), 2);
+        this.FrameDelayCall(() => circularTimer?.StartTimer(forcedShotTime, delegate{}));
         shotSpeed = baseShotSpeed;
         elapsedTime = 0.0f;
         while (elapsedTime < forcedShotTime) {
@@ -154,13 +154,13 @@ public class ShootBallMechanic : MonoBehaviour {
     }
 
     void StopShootBallCoroutines() {
-        circularTimer?.StopTimer();
-        shotChargeIndicator.Stop();
         if (shootTimer != null) {
+            circularTimer?.StopTimer();
             StopCoroutine(shootTimer);
             shootTimer = null;
         }
         if (chargeShot != null) {
+            shotChargeIndicator.Stop();
             StopCoroutine(chargeShot);
             chargeShot = null;
         }
