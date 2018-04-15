@@ -39,6 +39,8 @@ public class GameModel : MonoBehaviour {
     public float goalShakeAmount = 1.5f;
     public float goalShakeDuration = .4f;
 
+    public bool respectSoundEffectSlowMo = true;
+
     public int winningScore = 5;
     public int requiredWinMargin = 2;
 
@@ -302,6 +304,9 @@ public class GameModel : MonoBehaviour {
         backgroundMusic.pitch = target;
     }
 
+    public bool IsSlowMo() {
+        return slowMoCount > 0;
+    }
 
     int slowMoCount = 0;
     public void SlowMo() {

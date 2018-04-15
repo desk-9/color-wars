@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityExtensions;
 
 public class SoundName {
+    public bool shouldSlowMo = false;
     string name;
     AudioClip asset = null;
 
-    public SoundName(string name, AudioClip asset = null) {
+    public SoundName(string name, AudioClip asset = null, bool shouldSlowMo = false) {
         this.name = name;
         this.asset = asset;
+        this.shouldSlowMo = shouldSlowMo;
     }
 
     public static implicit operator SoundName(string s) {
@@ -24,7 +27,7 @@ public class SoundName {
             asset = AudioManager.LoadAsset(name);
         }
         if (Camera.main != null) {
-            AudioSource.PlayClipAtPoint(asset, Camera.main.transform.position, volume);
+            AudioManager.instance.PlayClip(asset, volume, shouldSlowMo);
         }
     }
 
@@ -39,6 +42,7 @@ public class SoundName {
 public class AudioManager : MonoBehaviour {
 
     public static AudioManager instance;
+    AudioSource source;
 
     public SoundName GoalSwitchWarning = "Beep";
     public SoundName Beep = "Beep";
@@ -49,7 +53,7 @@ public class AudioManager : MonoBehaviour {
     public SoundName StunPlayerWallBreak = "StunPlayerWalBreak";
     public SoundName BreakWall = "BreakWall";
     public SoundName ScoreGoalSound = "ScoreGoalSound";
-    public SoundName DashSound = "DashSound";
+    public SoundName DashSound = new SoundName("DashSound", shouldSlowMo: true);
     public SoundName PassToNullZone = "PassToNullZone";
 
     // Menu sounds
@@ -63,6 +67,23 @@ public class AudioManager : MonoBehaviour {
             Destroy(this);
         } else {
             instance = this;
+        }
+    }
+
+    void Start() {
+        source = Camera.main.gameObject.AddComponent<AudioSource>();
+    }
+
+    public void PlayClip(AudioClip asset, float volume, bool shouldSlowMo = false) {
+        if (shouldSlowMo && GameModel.instance != null
+            && GameModel.instance.respectSoundEffectSlowMo
+            && GameModel.instance.IsSlowMo()) {
+
+            source.pitch = GameModel.instance.SlowedPitch;
+            source.PlayOneShot(asset, volume);
+            this.RealtimeDelayCall(() => source.pitch = 1, asset.length);
+        } else {
+            source.PlayOneShot(asset, volume);
         }
     }
 
