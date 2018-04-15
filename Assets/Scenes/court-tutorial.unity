@@ -7960,7 +7960,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  lerpColor: 1
+  lerpColor: 0
   startColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 0.50980395}
   endColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}
   colorCurve:
