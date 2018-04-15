@@ -61,6 +61,10 @@ public class WinDisplay : MonoBehaviour {
     }
 
     void StartCountdown() {
+        GameModel.instance.nc.CallOnMessage(
+            Message.PlayerPressedX, () => SceneStateController.instance.ReloadScene());
+        GameModel.instance.nc.CallOnMessage(
+            Message.PlayerPressedY, () => SceneStateController.instance.Load(Scene.Selection));
         StartCoroutine(ResetCountdown());
     }
 
