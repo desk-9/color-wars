@@ -68,7 +68,7 @@ public class ShootBallMechanic : MonoBehaviour {
         // then switching team)
         if (shotChargeIndicator != null) {Destroy(shotChargeIndicator);}
         if (circularTimer != null) {Destroy(circularTimer);}
-        
+
         // Circular timer
         GameObject circularTimerPrefab = team.resources.circularTimerPrefab;
         circularTimer = Instantiate(
@@ -146,6 +146,7 @@ public class ShootBallMechanic : MonoBehaviour {
         if (ball != null) {
             var shotDirection = ball.transform.position - transform.position;
             var ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
+            ballRigidBody.rotation = 0;
             ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
         }
         StopShootBallCoroutines();

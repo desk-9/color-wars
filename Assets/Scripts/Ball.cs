@@ -152,4 +152,8 @@ public class Ball : MonoBehaviour {
             yield return null;
         }
     }
+
+    void FixedUpdate() {
+        rigidbody.rotation = Utility.NormalizeDegree(rigidbody.rotation);
+    }
 }
