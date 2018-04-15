@@ -38,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1217675377384306}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.2622766, y: 12.32656, z: -0.27263254}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +78,7 @@ MonoBehaviour:
   SlowedPitch: 0.5
   goalShakeAmount: 1.5
   goalShakeDuration: 0.4
-  winningScore: 3
+  winningScore: 4
   requiredWinMargin: 1
   winCondition: 2
   backgroundScroller: {fileID: 0}
@@ -132,3 +132,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tutorialType: 2
+  tutorialStartTime: 7
+  gameStartTime: 5
