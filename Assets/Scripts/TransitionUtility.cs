@@ -9,6 +9,9 @@ using UtilityExtensions;
 public class TransitionUtility : MonoBehaviour {
     // Class for utility functions involving screen transitions, color lerping
 
+    // ASSUMPTION: All animation curves for this file have values in the range
+    // [0,1], and the actual max/min values to attain are passed as parameters
+    // to any lerpy functions
     public static TransitionUtility instance;
 
     void Awake() {
@@ -18,7 +21,59 @@ public class TransitionUtility : MonoBehaviour {
             Destroy(gameObject);
         }
     }
-    
+
+
+    public static IEnumerator PingPongFloat(FloatSetter floatSetter,
+                                            float minValue, float maxValue,
+                                            float period, bool useGameTime=false,
+                                            AnimationCurve animationCurve = null) {
+
+        animationCurve = animationCurve?? AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
+        animationCurve.preWrapMode = WrapMode.PingPong;
+        animationCurve.postWrapMode = WrapMode.PingPong;
+        float startTime = Time.realtimeSinceStartup;
+        float timeElapsed = 0.0f;
+        float progress = 0.0f;
+        floatSetter(minValue);
+        float duration = period/2;
+        while (true) {
+            timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
+            progress = timeElapsed / duration;
+            float scaledProgress = ScaleProgress(
+                progress, minValue, maxValue, animationCurve);
+            floatSetter(scaledProgress);
+            yield return null;
+        }
+    }
+    public static IEnumerator PingPongColor(ColorSetter colorSetter,
+                                            Color startValue, Color endValue,
+                                            float period, bool useGameTime=false,
+                                            AnimationCurve animationCurve = null) {
+
+        animationCurve = animationCurve?? AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
+        animationCurve.preWrapMode = WrapMode.PingPong;
+        animationCurve.postWrapMode = WrapMode.PingPong;
+        float startTime = Time.realtimeSinceStartup;
+        float timeElapsed = 0.0f;
+        float progress = 0.0f;
+        colorSetter(startValue);
+        float duration = period/2;
+        while (true) {
+            timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
+            progress = timeElapsed / duration;
+            float scaledProgress = ScaleProgress(progress, 0.0f, 1.0f, animationCurve);
+            Color newColor = Color.Lerp(startValue, endValue, scaledProgress);
+            colorSetter(newColor);
+            yield return null;
+        }
+    }
+
+    static float UpdateTimeElapsed(float timeElapsed, float startTime,
+                                   bool useGameTime=false) {
+        if (useGameTime) {return timeElapsed + Time.deltaTime;}
+        return Time.realtimeSinceStartup - startTime;
+    }
+
     public static IEnumerator LerpFloat(FloatSetter floatSetter,
                                         float startValue, float endValue,
                                         float duration, bool useGameTime=false,
@@ -29,15 +84,10 @@ public class TransitionUtility : MonoBehaviour {
         float progress = 0.0f;
         floatSetter(startValue);
         while (timeElapsed < duration) {
-            if (useGameTime) {
-                timeElapsed += Time.deltaTime;
-            } else {
-                timeElapsed = Time.realtimeSinceStartup - startTime;
-            }
+            timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
             progress = timeElapsed / duration;
-            float scaledProgress = ScaleProgress(progress,
-                                                 startValue, endValue,
-                                                 animationCurve);
+            float scaledProgress = ScaleProgress(
+                progress, startValue, endValue, animationCurve);
             floatSetter(scaledProgress);
             yield return null;
         }
@@ -66,11 +116,7 @@ public class TransitionUtility : MonoBehaviour {
         float progress = 0.0f;
         colorSetter(startColor);
         while (timeElapsed < duration) {
-            if (useGameTime) {
-                timeElapsed += Time.deltaTime;
-            } else {
-                timeElapsed = Time.realtimeSinceStartup - startTime;
-            }
+            timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
             progress = timeElapsed / duration;
             Color newColor = Color.Lerp(startColor, endColor, progress);
             colorSetter(newColor);

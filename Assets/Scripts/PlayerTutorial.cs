@@ -173,7 +173,7 @@ public class PlayerTutorial : MonoBehaviour {
         yield return null;
 
         // Press B to lay a wall!
-        readyUpText.text = "Try laying a wall with B";
+        readyUpText.text = "TRY LAYING A WALL WITH B";
 
         ResetCheckin();
         GameModel.instance.nc.CallOnMessageWithSender(

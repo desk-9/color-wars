@@ -197,7 +197,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -246,6 +246,8 @@ GameObject:
   - component: {fileID: 517987645}
   - component: {fileID: 517987647}
   - component: {fileID: 517987648}
+  - component: {fileID: 517987650}
+  - component: {fileID: 517987649}
   m_Layer: 0
   m_Name: StartGameText
   m_TagString: Untagged
@@ -269,7 +271,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 57.229996}
-  m_SizeDelta: {x: -404, y: 114.45999}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &517987645
 MonoBehaviour:
@@ -283,7 +285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -292,16 +294,16 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 958c101a50ca644c587b7ef2d3c2afef, type: 3}
-    m_FontSize: 70
+    m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 300
+    m_MaxSize: 80
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: PRESS X TO START
 --- !u!222 &517987646
@@ -336,6 +338,91 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &517987649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 517987643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 2
+--- !u!114 &517987650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 517987643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3628126b696db4a939ebfd566a2621c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lerpSize: 1
+  minFontSize: 60
+  maxFontSize: 64
+  period: 1
+  fontSizeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: -0.025444193
+      outSlope: -0.025444193
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.24999388
+      value: 0.00013892353
+      inSlope: -0.0006411674
+      outSlope: -0.0006411674
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.7093731
+      value: 0.46697277
+      inSlope: 2.0010507
+      outSlope: 2.0010507
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  lerpColor: 1
+  startColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 0.541}
+  endColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}
+  colorCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.40798575
+      value: 0.36353675
+      inSlope: 1.4491379
+      outSlope: 1.4491379
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!1 &763806160
 GameObject:
   m_ObjectHideFlags: 0
