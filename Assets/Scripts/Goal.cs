@@ -100,7 +100,7 @@ public class Goal : MonoBehaviour {
             } else {
                 if (currentTeam == null) {
                         GameModel.instance.nc.NotifyMessage(Message.NullChargePrevention, player);
-                        AudioManager.instance.PassToNullZone.Play();
+                        AudioManager.instance.PassToNullZone.Play(.1f);
                     }
             }
         } else if (player.team != lastPlayer?.team) {

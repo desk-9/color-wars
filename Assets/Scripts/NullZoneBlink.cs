@@ -8,6 +8,7 @@ public class NullZoneBlink : MonoBehaviour {
     public float flashOpacity = .6f;
     public float stayedFlashDuration = 0f;
     public float flashTransitionDuration = .1f;
+    public Color flashColor;
 
     // Use this for initialization
     void Start () {
@@ -19,18 +20,19 @@ public class NullZoneBlink : MonoBehaviour {
             return;
         }
         var renderer = this.EnsureComponent<SpriteRenderer>();
-        var startingAlpha = renderer.color.a;
-        StartCoroutine(TransitionUtility.LerpAlpha(color => renderer.color = color,
-                                                   renderer.color.a, flashOpacity, flashTransitionDuration, maybeTint : renderer.color));
-        this.RealtimeDelayCall(() => FlashBackToNormal(startingAlpha), stayedFlashDuration+flashTransitionDuration);
+        var startingColor = renderer.color;
+        StartCoroutine(TransitionUtility.LerpColor(color => renderer.color = color,
+                                                   renderer.color, flashColor, flashTransitionDuration));
+        this.RealtimeDelayCall(() => FlashBackToNormal(startingColor), stayedFlashDuration+flashTransitionDuration);
     }
 
-    void FlashBackToNormal(float alpha) {
+    void FlashBackToNormal(Color startingColor) {
         var renderer = GetComponent<SpriteRenderer>();
         if (renderer == null) {
             return;
         }
 
-        StartCoroutine(TransitionUtility.LerpAlpha(color => renderer.color = color, renderer.color.a, alpha, flashTransitionDuration, maybeTint : renderer.color));
+        StartCoroutine(TransitionUtility.LerpColor(color => renderer.color = color, renderer.color, startingColor, flashTransitionDuration));
+
     }
 }
