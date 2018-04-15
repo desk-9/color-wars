@@ -111,7 +111,16 @@ public class Ball : MonoBehaviour {
         goal = GameObject.FindObjectOfType<Goal>();
         ballFill = this.GetComponentInChildren<BallFillColor>();
         currentColor = Color.white;
-        GameModel.instance.nc.CallOnMessage(Message.BallIsUnpossessed, () => this.FrameDelayCall(() => speedOnShoot = rigidbody.velocity.magnitude));
+        GameModel.instance.nc.CallOnMessage(
+            Message.BallIsUnpossessed, () => {
+                if (this == null) return;
+
+                this.FrameDelayCall(() => {
+                    if (this == null) return;
+                    speedOnShoot = rigidbody.velocity.magnitude;
+                });
+            }
+        );
     }
 
     public void HandleGoalScore(Color color) {
