@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 224262197041206738}
   - component: {fileID: 222583474681952658}
   - component: {fileID: 114725357322491918}
+  - component: {fileID: 114996337276861178}
   m_Layer: 5
   m_Name: ToolTipText
   m_TagString: Untagged
@@ -90,7 +91,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1505800050560468}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -129,6 +130,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticalOffset: 7
+  attemptSmartPlacement: 1
+--- !u!114 &114996337276861178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1505800050560468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83f6c6be0b17d4b5693782a205a1eda1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fontSize: 3
+  initialSpacing: 0
+  elementSpacing: 1
+  imageVerticalSpacing: 12.5
+  center: 1
+  textColor: {r: 1, g: 1, b: 1, a: 1}
+  textPrefabName: RichTextPrefabs/RichElementText
+  imagePrefabName: RichTextPrefabs/RichElementImage
+  initialContent: 
 --- !u!222 &222583474681952658
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -153,7 +175,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!224 &224262197041206738
 RectTransform:

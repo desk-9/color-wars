@@ -52,7 +52,7 @@ public class Ball : MonoBehaviour {
         Gradient gradient = new Gradient();
         gradient.SetKeys(new GradientColorKey[] { new GradientColorKey(to_, 0.0f), new GradientColorKey(to_, 1.0f) },
                          new GradientAlphaKey[] { new GradientAlphaKey(1f, 0.0f), new GradientAlphaKey(0f, 1.0f) }
-						);
+                        );
 
         trailRenderer.colorGradient = gradient;
         this.FrameDelayCall(EnableTrail, 5);
@@ -114,10 +114,10 @@ public class Ball : MonoBehaviour {
         currentColor = Color.white;
         GameModel.instance.nc.CallOnMessage(
             Message.BallIsUnpossessed, () => {
-                if (this == null) return;
+                if (this == null || !this.enabled) return;
 
                 this.FrameDelayCall(() => {
-                    if (this == null) return;
+                    if (this == null || !this.enabled) return;
                     speedOnShoot = rigidbody.velocity.magnitude;
                 });
             }
@@ -173,10 +173,10 @@ public class Ball : MonoBehaviour {
         var layerMask = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
         if (layerMask == (layerMask | 1 << collision.gameObject.layer)) {
             this.FrameDelayCall(() =>
-								{ if (rigidbody.velocity.magnitude > speedOnShoot) {
-												Debug.LogWarning("Prevented ball from speeding up after wall");
-												rigidbody.velocity = rigidbody.velocity.normalized * speedOnShoot;
-										}}
-								);
+                                { if (rigidbody.velocity.magnitude > speedOnShoot) {
+                                                Debug.LogWarning("Prevented ball from speeding up after wall");
+                                                rigidbody.velocity = rigidbody.velocity.normalized * speedOnShoot;
+                                        }}
+                                );
         }
     }}

@@ -7,13 +7,13 @@ public class ToolTipPlacement : MonoBehaviour {
     public float verticalOffset = 5f;
     public bool attemptSmartPlacement = true;
     RectTransform rect;
-    Text text;
+    RichText text;
     void Start () {
         rect = GetComponent<RectTransform>();
     }
 
     public void SetText(string newText) {
-        text = GetComponentInChildren<Text>();
+        text = GetComponentInChildren<RichText>();
         if (text != null) {
             text.text = newText;
         }

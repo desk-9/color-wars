@@ -46,7 +46,7 @@ public class TutorialLiveClips : MonoBehaviour {
         {"1-shoot-pass-and-score",
          new List<SubclipInfo>() {
                 {"TOUCH the ball to pick it up", 0},
-                {"SHOOT the ball with (A)", 0},
+                {"SHOOT the ball with <AButton>", 0},
                 {"but you must pass to fill the ball...", 0},
                 "...and you can only score with a filled ball"
          }},
@@ -56,12 +56,12 @@ public class TutorialLiveClips : MonoBehaviour {
          }},
         {"3-stealing-and-blocking",
          new List<SubclipInfo>() {
-                {"DASH with (A) at the ball to STEAL", 0},
+                {"DASH with <AButton> at the ball to STEAL", 0},
                 "BLOCK steals with your body"
          }},
         {"4-walls",
          new List<SubclipInfo>() {
-                "Hold (B) to lay WALLS",
+                "Hold <BButton> to lay WALLS",
                 "Use WALLS to BLOCK the ball",
                 "BREAK walls by DASHING"
          }}
@@ -69,8 +69,8 @@ public class TutorialLiveClips : MonoBehaviour {
     };
 
     Canvas tutorialCanvas;
-    Text infoText;
-    Text readyText;
+    RichText infoText;
+    RichText readyText;
     Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
     bool nextSlideForceCheat = false;
 
@@ -96,8 +96,8 @@ public class TutorialLiveClips : MonoBehaviour {
         if (tutorialCanvas != null) {
             ySkip = new PlayerCheckin(() => GetPlayers(), Message.PlayerPressedY,
                                       checkoutEvent: Message.PlayerReleasedY);
-            infoText = tutorialCanvas.FindComponent<Text>("Info");
-            readyText = tutorialCanvas.FindComponent<Text>("ReadyText");
+            infoText = tutorialCanvas.FindComponent<RichText>("Info");
+            readyText = tutorialCanvas.FindComponent<RichText>("ReadyText");
             StartCoroutine(Clips());
         }
     }
@@ -125,7 +125,7 @@ public class TutorialLiveClips : MonoBehaviour {
 
     void SetReadyText() {
         if (atLeastOneLoop) {
-            readyText.text = string.Format("Press (X) to continue ({0}/{1})",
+            readyText.text = string.Format("Press <XButton> to continue ({0}/{1})",
                                            NumberCheckedIn(), GetPlayers().Count);
         }
     }

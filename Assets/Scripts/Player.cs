@@ -107,7 +107,7 @@ public class Player : MonoBehaviour {
               && playerNumber >= 0) {
             // Dummies have a player number of -1, and shouldn't get a team
             team = GameModel.instance.GetTeamAssignment(this);
-            if (team != null) {
+            if (team != null && isNormalPlayer) {
                 SetTeam(team);
             }
         }
@@ -125,5 +125,5 @@ public class Player : MonoBehaviour {
         }
         GameModel.instance.players.Remove(this);
     }
-    
+
 }

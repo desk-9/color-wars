@@ -46,9 +46,10 @@ public class PlayerTutorial : MonoBehaviour {
     public float gameStartTime = 5;
 
     Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
-    Text readyUpText;
+    RichText readyUpText;
+    Text teamSelectionLineTwo;
     Text readyUpCount;
-    Text skipText;
+    RichText skipText;
     Text skipCount;
     bool skipReadyUpCheat = false;
 
@@ -58,9 +59,10 @@ public class PlayerTutorial : MonoBehaviour {
     PlayerCheckin skipTutorialCheckin;
 
     void Start() {
-        readyUpText = GameObject.Find("ReadyUpText")?.GetComponent<Text>();
+        readyUpText = GameObject.Find("ReadyUpText")?.GetComponent<RichText>();
+        teamSelectionLineTwo = GameObject.Find("TeamSelectionLineTwo")?.GetComponent<Text>();
         readyUpCount = GameObject.Find("ReadyUpCount")?.GetComponent<Text>();
-        skipText = GameObject.Find("SkipText")?.GetComponent<Text>();
+        skipText = GameObject.Find("SkipText")?.GetComponent<RichText>();
         skipCount = GameObject.Find("SkipCount")?.GetComponent<Text>();
         inTeamSelection = (tutorialType == TutorialType.TeamSelection
                            && GameObject.Find("TeamSelection") != null);
@@ -132,16 +134,19 @@ public class PlayerTutorial : MonoBehaviour {
 
         skipTutorialCheckin.ResetCheckin();
         skipTutorialCheckin.StartListening();
-        skipText.text = "Hold (Y) to skip the tutorial";
+        skipText.text = "Hold <YButton> to skip the tutorial";
         // Start the countdown.
         var start = Time.time;
         var diff = Time.time - start;
         // TODO: if slowmo becomes possible here might wanna use realtime instead
+        readyUpText.text = "";
         while (diff < tutorialStartTime
                && !skipTutorialCheckin.AllCheckedIn()
                && !skipReadyUpCheat) {
-            readyUpText.text = String.Format("Starting tutorial in {0:N0}",
-                                             Mathf.Ceil(tutorialStartTime - diff));
+            if (teamSelectionLineTwo != null) {
+                teamSelectionLineTwo.text = String.Format(
+                    "Starting tutorial in {0:N0}", Mathf.Ceil(tutorialStartTime - diff));
+            }
             diff = Time.time - start;
             yield return null;
         }
@@ -173,7 +178,7 @@ public class PlayerTutorial : MonoBehaviour {
         yield return null;
 
         // Press B to lay a wall!
-        readyUpText.text = "TRY LAYING A WALL WITH B";
+        readyUpText.text = "TRY LAYING A WALL WITH <BButton>";
 
         ResetCheckin();
         GameModel.instance.nc.CallOnMessageWithSender(

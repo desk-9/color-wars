@@ -66,7 +66,7 @@ public class JustInTimeTutorial : MonoBehaviour {
         var tooltipCanvas = CheckMakeCanvas(player);
         if (!alreadySeen && player != null && player.team != null
             && player.team.score <= scoreThreshold) {
-            tooltipCanvas?.SetText("Pass to your teammate");
+            tooltipCanvas?.SetText("<AButton> Pass to your teammate");
         } else {
             tooltipCanvas?.SetText("");
         }
@@ -77,7 +77,7 @@ public class JustInTimeTutorial : MonoBehaviour {
         var tooltipCanvas = CheckMakeCanvas(player);
         if (!alreadySeen && player != null && player.team != null
             && player.team.score <= scoreThreshold) {
-            tooltipCanvas?.SetText("Shoot at the goal");
+            tooltipCanvas?.SetText("<AButton> Shoot at the goal");
         } else {
             tooltipCanvas?.SetText("");
         }

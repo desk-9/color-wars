@@ -30,8 +30,7 @@ public class MainMenuController : MonoBehaviour {
 
                 this.TimeDelayCall(
                                    () => {
-                                       var trigger = selection.gameObject.GetComponent<SceneLoadTrigger>();
-                                       trigger?.LoadAssociatedScene();
+                                       SceneStateController.instance.Load(Scene.Selection);
                                    },
                                    AudioManager.instance.ConfirmSelectionSound.Length()
                                    );
