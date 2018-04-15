@@ -466,6 +466,10 @@ Prefab:
       propertyPath: m_SortingLayer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
   m_IsPrefabParent: 0
@@ -681,6 +685,36 @@ Transform:
   m_Father: {fileID: 1229941009}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &436276102 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70,
+    type: 2}
+  m_PrefabInternal: {fileID: 244845673}
+--- !u!61 &436276103
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 436276102}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1001 &439086875
 Prefab:
   m_ObjectHideFlags: 0
@@ -752,6 +786,10 @@ Prefab:
       propertyPath: m_SortingLayer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
   m_IsPrefabParent: 0
@@ -769,7 +807,8 @@ GameObject:
   m_Component:
   - component: {fileID: 439142900}
   - component: {fileID: 439142901}
-  m_Layer: 0
+  - component: {fileID: 439142902}
+  m_Layer: 17
   m_Name: CornerCircle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -833,6 +872,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!58 &439142902
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 439142899}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &441383114
 GameObject:
   m_ObjectHideFlags: 0
@@ -1579,6 +1633,66 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 100
   m_TargetDisplay: 0
+--- !u!1 &577386389 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70,
+    type: 2}
+  m_PrefabInternal: {fileID: 1891255964}
+--- !u!61 &577386390
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 577386389}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!1 &655543179 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70,
+    type: 2}
+  m_PrefabInternal: {fileID: 439086875}
+--- !u!61 &655543180
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 655543179}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &687356460
 GameObject:
   m_ObjectHideFlags: 0
@@ -1998,7 +2112,8 @@ GameObject:
   m_Component:
   - component: {fileID: 806270890}
   - component: {fileID: 806270891}
-  m_Layer: 0
+  - component: {fileID: 806270892}
+  m_Layer: 17
   m_Name: CornerCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2062,6 +2177,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!58 &806270892
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 806270889}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &809415598
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,6 +2409,10 @@ Prefab:
         type: 2}
       propertyPath: m_SortingLayer
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
+      propertyPath: m_Layer
+      value: 17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
@@ -6154,7 +6288,8 @@ GameObject:
   m_Component:
   - component: {fileID: 939587274}
   - component: {fileID: 939587275}
-  m_Layer: 0
+  - component: {fileID: 939587276}
+  m_Layer: 17
   m_Name: CornerCircle3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6218,6 +6353,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!58 &939587276
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 939587273}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &942261126 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1233221201083302, guid: 1e5ce0bbe8321cf459586a2d8d215280,
@@ -7676,6 +7826,10 @@ Prefab:
       propertyPath: m_SortingLayer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
   m_IsPrefabParent: 0
@@ -7690,6 +7844,36 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1673871024}
   m_Script: {fileID: 11500000, guid: 2941ffa90bbc24625a176d92e41ac2f3, type: 3}
+--- !u!1 &1528461986 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70,
+    type: 2}
+  m_PrefabInternal: {fileID: 1441604953}
+--- !u!61 &1528461987
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1528461986}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &1593569457
 GameObject:
   m_ObjectHideFlags: 0
@@ -8319,6 +8503,36 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1780530438}
+--- !u!1 &1785047798 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70,
+    type: 2}
+  m_PrefabInternal: {fileID: 857941354}
+--- !u!61 &1785047799
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1785047798}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &1826548445
 GameObject:
   m_ObjectHideFlags: 0
@@ -8506,6 +8720,10 @@ Prefab:
       propertyPath: m_SortingLayer
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1583598543925102, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
+      propertyPath: m_Layer
+      value: 17
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 78dd080d2348342c09865e0967e82d70, type: 2}
   m_IsPrefabParent: 0
@@ -8651,7 +8869,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1983203107}
   - component: {fileID: 1983203108}
-  m_Layer: 0
+  - component: {fileID: 1983203109}
+  m_Layer: 17
   m_Name: CornerCircle4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8715,6 +8934,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!58 &1983203109
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1983203106}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1 &1995125424
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,13 +5,21 @@ using UnityEngine.UI;
 using System.Linq;
 
 public class JustInTimeTutorial : MonoBehaviour {
+    public static JustInTimeTutorial instance;
     public static bool alreadySeen = false;
     int scoreThreshold = 0;
-    Text display;
+    GameObject canvasPrefab;
+
+    void Awake() {
+        if (instance == null) {
+            instance = this;
+        } else {
+            Destroy(this);
+        }
+    }
+
     void Start () {
-        display = GetComponentInChildren<Text>();
-        GameModel.instance.nc.CallOnMessage(
-            Message.BallIsUnpossessed, Unpossessed);
+        canvasPrefab = Resources.Load<GameObject>("ToolTipCanvas");
         GameModel.instance.nc.CallOnMessageWithSender(
             Message.BallPossessedWhileNeutral, PassToTeammate);
         GameModel.instance.nc.CallOnMessageWithSender(
@@ -25,10 +33,11 @@ public class JustInTimeTutorial : MonoBehaviour {
                 }
             });
 
+        GameModel.instance.nc.CallOnStateEnd(State.Posession, Unpossessed);
+
         GameModel.instance.nc.CallOnMessage(
             Message.PlayerReleasedBack,
             () => {
-                Debug.LogError("Pressed back");
                 scoreThreshold = GameModel.instance.teams.Max(team => team.score);
                 alreadySeen = false;
             });
@@ -37,27 +46,40 @@ public class JustInTimeTutorial : MonoBehaviour {
         // On possession with charged: shoot at goal
     }
 
-    void Unpossessed() {
-        display.text = "";
+    void Unpossessed(Player player) {
+        var tooltipCanvas = player.GetComponentInChildren<ToolTipPlacement>();
+        if (tooltipCanvas != null) {
+            tooltipCanvas.SetText("");
+        }
+    }
+
+    ToolTipPlacement CheckMakeCanvas(Player player) {
+        var tooltipCanvas = player?.GetComponentInChildren<ToolTipPlacement>();
+        if (tooltipCanvas == null && player != null) {
+            tooltipCanvas = Instantiate(canvasPrefab, player.transform).GetComponent<ToolTipPlacement>();
+        }
+        return tooltipCanvas;
     }
 
     void PassToTeammate(object sender) {
         var player = sender as Player;
+        var tooltipCanvas = CheckMakeCanvas(player);
         if (!alreadySeen && player != null && player.team != null
             && player.team.score <= scoreThreshold) {
-            display.text = "Pass to your teammate";
+            tooltipCanvas?.SetText("Pass to your teammate");
         } else {
-            display.text = "";
+            tooltipCanvas?.SetText("");
         }
     }
 
     void ShootAtGoal(object sender) {
         var player = sender as Player;
+        var tooltipCanvas = CheckMakeCanvas(player);
         if (!alreadySeen && player != null && player.team != null
             && player.team.score <= scoreThreshold) {
-            display.text = "Shoot at the goal";
+            tooltipCanvas?.SetText("Shoot at the goal");
         } else {
-            display.text = "";
+            tooltipCanvas?.SetText("");
         }
     }
 }
