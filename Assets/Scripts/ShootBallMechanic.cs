@@ -46,9 +46,6 @@ public class ShootBallMechanic : MonoBehaviour {
         var ball = GameObject.FindObjectOfType<Ball>();
 
         InitializeCircularIndicators(); // This is for team selection screen
-        player.CallAsSoonAsTeamAssigned((team) => {
-                InitializeCircularIndicators(team);
-            });
 
         // In this situation, maxChargeShotTime is irrelevant => change it to
         // make later logic more elegant. NOTE: If removing this, also change
@@ -65,8 +62,12 @@ public class ShootBallMechanic : MonoBehaviour {
     void InitializeCircularIndicators(TeamManager team = null) {
         // Need to destroy preexisting objects (e.g. if selecting teams, and
         // then switching team)
-        if (shotChargeIndicator != null) {Destroy(shotChargeIndicator);}
-        if (circularTimer != null) {Destroy(circularTimer);}
+        if (shotChargeIndicator != null) {
+            Destroy(shotChargeIndicator);
+        }
+        if (circularTimer != null) {
+            Destroy(circularTimer);
+        }
 
         // Circular timer
         GameObject circularTimerPrefab = GameModel.instance.neutralResources.circularTimerPrefab;
