@@ -305,7 +305,7 @@ MonoBehaviour:
   elementSpacing: 5
   imageVerticalSpacing: 5
   center: 1
-  textColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}
+  textColor: {r: 1, g: 1, b: 1, a: 1}
   textPrefabName: RichTextPrefabs/RichElementText
   imagePrefabName: RichTextPrefabs/RichElementImage
   initialContent: Press <XButton> to start
@@ -343,8 +343,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 0
   lerpColor: 0
-  startColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 0.541}
-  endColor: {r: 0.8392157, g: 0.8392157, b: 0.8392157, a: 1}
+  startColor: {r: 1, g: 1, b: 1, a: 0.541}
+  endColor: {r: 1, g: 1, b: 1, a: 1}
   colorCurve:
     serializedVersion: 2
     m_Curve:

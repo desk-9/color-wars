@@ -29,8 +29,6 @@ public class RichText : MonoBehaviour {
     GameObject textPrefab;
     GameObject imagePrefab;
     RectTransform rectTransform;
-    CanvasGroup group;
-    Coroutine textRendering;
 
     string rawText = "";
     public string text {
@@ -47,12 +45,14 @@ public class RichText : MonoBehaviour {
         }
     }
 
-    // Use this for initialization
-    void Start () {
+    void Awake() {
         textPrefab = Resources.Load<GameObject>(textPrefabName);
         imagePrefab = Resources.Load<GameObject>(imagePrefabName);
         rectTransform = this.EnsureComponent<RectTransform>();
-        group = gameObject.AddComponent<CanvasGroup>();
+    }
+
+    // Use this for initialization
+    void Start () {
         if (initialContent != "") {
             text = initialContent;
         }
@@ -120,15 +120,6 @@ public class RichText : MonoBehaviour {
         foreach (Transform element in transform) {
             Destroy(element.gameObject);
         }
-        if (textRendering != null) {
-            StopCoroutine(textRendering);
-        }
-        textRendering = StartCoroutine(TextRendering());
-    }
-
-    IEnumerator TextRendering() {
-        yield return null;
-        group.alpha = 0;
         var richElements = ParseRichText(rawText);
         float elementStart = initialSpacing;
         foreach (var elementContent in richElements) {
@@ -141,11 +132,11 @@ public class RichText : MonoBehaviour {
                 elementTransform = image.GetComponent<RectTransform>();
                 elementTransform.sizeDelta = new Vector2(
                     inducedWidth, elementTransform.sizeDelta.y - imageVerticalSpacing * 2);
-                yield return null;
+                Canvas.ForceUpdateCanvases();
             } else {
                 var text = CreateText(elementContent.content);
                 elementTransform = text.GetComponent<RectTransform>();
-                yield return null;
+                Canvas.ForceUpdateCanvases();
             }
             elementTransform.anchoredPosition = new Vector2(elementStart, 0);
             elementStart += elementTransform.rect.width + elementSpacing;
@@ -153,8 +144,6 @@ public class RichText : MonoBehaviour {
         if (center) {
             rectTransform.sizeDelta = new Vector2(elementStart, rectTransform.sizeDelta.y);
         }
-        group.alpha = 1;
-        textRendering = null;
     }
 
     Sprite LoadSprite(string name) {
