@@ -56,4 +56,8 @@ public class ControllerRumble : MonoBehaviour {
             inputDevice.Vibrate(0f);
         }
     }
+
+    void OnDestroy() {
+        StopRumble();
+    }
 }
