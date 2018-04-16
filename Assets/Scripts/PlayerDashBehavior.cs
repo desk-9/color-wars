@@ -37,8 +37,6 @@ public class PlayerDashBehavior : MonoBehaviour {
     CameraShake cameraShake;
     float chargeAmount = 0;
 
-    Collision2D wallCollision;
-
     void Start() {
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb             = this.EnsureComponent<Rigidbody2D>();
@@ -219,38 +217,24 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
 
         var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
-        if (layerMask == (layerMask | 1 << other.layer) && other != wallCollision?.gameObject) {
-            var stun = this.GetComponent<PlayerStun>();
-            this.TimeDelayCall(() => stateManager.CurrentStateHasFinished());
+        if (layerMask == (layerMask | 1 << other.layer)) {
+            this.TimeDelayCall(() => {
+                    if (stateManager.IsInState(State.Dash)) {
+                        stateManager.CurrentStateHasFinished();
+                    }
+                }, 0.1f);
         } else {
             StunAndSteal(other);
         }
 
     }
 
-    void SetChargeCollider(Collision2D collision) {
-        var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
-        if (layerMask == (layerMask | 1 << collision.gameObject.layer)
-            && stateManager.IsInState(State.ChargeDash)) {
-
-            wallCollision = collision;
-        }
-    }
-
     public void OnCollisionEnter2D(Collision2D collision) {
-        SetChargeCollider(collision);
         HandleCollision(collision.gameObject);
     }
 
     public void OnCollisionStay2D(Collision2D collision) {
-        SetChargeCollider(collision);
         HandleCollision(collision.gameObject);
     }
 
-    public void OnCollisionExit2D(Collision2D collision) {
-        var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
-        if (layerMask == (layerMask | 1 << collision.gameObject.layer)) {
-            wallCollision = null;
-        }
-    }
 }
