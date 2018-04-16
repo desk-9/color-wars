@@ -35,7 +35,7 @@ public class TeamSelectionCollider : MonoBehaviour {
             }
             if (player.team != team && team.teamMembers.Count < maxOnTeam) {
                 player.SetTeam(team);
-                AudioManager.instance.Beep.Play();
+                AudioManager.instance.Ching.Play();
                 SpawnHitEffect(player.transform.position);
             }
         }

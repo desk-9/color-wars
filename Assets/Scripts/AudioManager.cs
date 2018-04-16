@@ -46,6 +46,7 @@ public class AudioManager : MonoBehaviour {
 
     public SoundName GoalSwitchWarning = "Beep";
     public SoundName Beep = "Beep";
+    public SoundName Ching = "Ching";
     public SoundName GoalSwitch = "GoalSwitch";
     public SoundName StealSound = "StealSoundEffect";
     public SoundName ShootBallSound = "ShootBallSound";
