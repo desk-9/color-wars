@@ -188,7 +188,12 @@ public class Goal : MonoBehaviour {
 
     void BallCheck(GameObject thing) {
         var ball = thing.gameObject.GetComponent<Ball>();
-        if (ball != null) {
+        // Need to check that ball.ownable (*not* ball.IsOwnable) here
+        // Otherwise, the body of this if statement is executed every time the
+        // ball enters the goal (even after a goal is scored!) Yikes!
+        // Right now (Monday, apr 16 2:35am), the semantics of
+        // ball.ownable are seen in Ball.cs functions ResetBall and HandleGoalScore
+        if (ball != null && ball.ownable) {
             ScoreGoal(ball);
             this.FrameDelayCall(() => AudioManager.instance.ScoreGoalSound.Play(0.75f), 10);
         }
