@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
 
     public Vector2 lastDirection = Vector2.zero;
 
-    const float minBallForceRotationTime = 0.05f;
+    public const float minBallForceRotationTime = 0.1f;
 
     void StartPlayerMovement() {
         if (playerMovementCoroutine != null) {

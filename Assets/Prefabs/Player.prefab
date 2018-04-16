@@ -173,6 +173,7 @@ MonoBehaviour:
   stealShakeDuration: 0.05
   stealKnockbackAmount: 100
   stealKnockbackLength: 0.4
+  wallHitStunTime: 0.05
 --- !u!114 &114205997563975182
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -187,7 +188,7 @@ MonoBehaviour:
   movementSpeed: 30
   rotationSpeed: 1080
   freezeRotation: 0
-  maxAwayFromBallAngle: 13
+  maxAwayFromBallAngle: 20
   lastDirection: {x: 0, y: 0}
 --- !u!114 &114215232534320030
 MonoBehaviour:

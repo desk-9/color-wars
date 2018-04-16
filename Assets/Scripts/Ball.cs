@@ -32,7 +32,7 @@ public class Ball : MonoBehaviour {
                 lastOwner = owner_;
             }
             owner_ = value;
-
+            rigidbody.mass = owner_ == null ? 0.1f : 1000;
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             rigidbody.angularVelocity = 0f;
             notificationCenter.NotifyMessage(message, gameObject);

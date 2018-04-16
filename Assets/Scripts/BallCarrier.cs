@@ -38,7 +38,7 @@ public class BallCarrier : MonoBehaviour {
     float snapDelay = 0f;
     Vector2 stickAngleWhenSnapped;
 
-    const float ballOffsetMultiplier = 1.07f;
+    const float ballOffsetMultiplier = 0.98f;
 
     public bool IsCarryingBall() {
         return ball != null;
@@ -55,8 +55,12 @@ public class BallCarrier : MonoBehaviour {
                 State.Posession, playerMovement.FreezePlayer);
             stateManager.CallOnStateExit(
                 State.Posession, playerMovement.UnFreezePlayer);
-            if (playerMovement.GetType() == typeof(PlayerMovement)) {
-                ballTurnSpeed = (playerMovement as PlayerMovement).rotationSpeed;
+            var actualPlayerMovement = playerMovement as PlayerMovement;
+            if (actualPlayerMovement != null) {
+                ballTurnSpeed = actualPlayerMovement.rotationSpeed / 20;
+                if (Time.time - timeCarryStarted < PlayerMovement.minBallForceRotationTime) {
+                    ballTurnSpeed /= 20;
+                }
             }
         }
         laserGuide = this.GetComponent<LaserGuide>();
