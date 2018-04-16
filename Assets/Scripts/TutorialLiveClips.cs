@@ -258,7 +258,7 @@ public class TutorialLiveClips : MonoBehaviour {
         float delayBeforeFade = currentClip.postDelay/4;
         float totalTransitionDuration = Mathf.Max(delayBeforeFade + epsilon, 0.1f);
         this.TimeDelayCall(
-            () => TransitionUtility.OneShotFadeTransition(totalTransitionDuration * 4, totalTransitionDuration * 3),
+            () => TransitionUtility.OneShotFadeTransition(totalTransitionDuration * 2, totalTransitionDuration * 3),
             delayBeforeFade * .3f);
     }
 }
