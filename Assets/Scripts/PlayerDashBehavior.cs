@@ -221,15 +221,7 @@ public class PlayerDashBehavior : MonoBehaviour {
         var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
         if (layerMask == (layerMask | 1 << other.layer) && other != wallCollision?.gameObject) {
             var stun = this.GetComponent<PlayerStun>();
-            this.TimeDelayCall(
-                () => stateManager.AttemptStun(
-                    () => {
-                        stun?.StartStun(-3 * transform.right, wallHitStunTime);
-                    },
-                    () => {
-                        stun?.StopStunned();
-                    }), 0.2f);
-
+            this.TimeDelayCall(() => stateManager.CurrentStateHasFinished());
         } else {
             StunAndSteal(other);
         }

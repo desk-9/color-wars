@@ -68,7 +68,7 @@ public class PlayerTutorial : MonoBehaviour {
                            && GameObject.Find("TeamSelection") != null);
 
         GameModel.instance.nc.CallOnMessage(
-            Message.PlayerPressedLeftBumper, () => skipReadyUpCheat = true);
+            Message.PlayerPressedLeftBumper, () => {if (!inTeamSelection) {skipReadyUpCheat = true;}});
 
         skipTutorialCheckin = PlayerCheckin.TextCountCheckin(
             () => GetPlayers(), Message.PlayerPressedY, skipCount,
