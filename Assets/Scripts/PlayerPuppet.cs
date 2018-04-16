@@ -72,7 +72,7 @@ public class PlayerPuppet : MonoBehaviour {
                         0, 0, false, false, false, false, this.gameObject);
                     yield return new WaitForFixedUpdate();
                 }
-                rigidbody.position = new Vector2(frame.leftStickX, frame.leftStickY);
+                rigidbody.position = new Vector2(frame.positionX, frame.positionY);
                 rigidbody.rotation = frame.rotation;
                 PlayerControls.SendInputEvents(
                     0, 0, frame.APressed, frame.AReleased,

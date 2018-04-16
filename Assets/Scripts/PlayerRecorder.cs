@@ -11,6 +11,7 @@ using System.IO;
 [System.Serializable]
 public struct InputFrame {
     public float leftStickX, leftStickY;
+    public float positionX, positionY;
     public float rotation;
     public bool APressed;
     public bool AReleased;
@@ -18,11 +19,13 @@ public struct InputFrame {
     public bool BReleased;
     public bool Interrupt;
     public float waitTime;
-    public InputFrame(float stickX, float stickY, float rotation = -1f, bool APressed = false, bool AReleased = false,
+    public InputFrame(float stickX, float stickY, float positionX, float positionY, float rotation = -1f, bool APressed = false, bool AReleased = false,
                       bool BPressed = false, bool BReleased = false, bool Interrupt = false,
                       float waitTime = 0) {
         this.leftStickX = stickX;
         this.leftStickY = stickY;
+        this.positionX = positionX;
+        this.positionY = positionY;
         this.rotation = rotation;
         this.APressed = APressed;
         this.AReleased = AReleased;
@@ -113,9 +116,9 @@ public class PlayerRecorder : MonoBehaviour {
                 lastTime = Time.realtimeSinceStartup;
                 record.recording.Add(
                     new InputFrame(
+                        input.LeftStickX, input.LeftStickY,
                         rigidbody.position.x, rigidbody.position.y,
                         rigidbody.rotation,
-                        // input.LeftStickX, input.LeftStickY,
                         input.Action1.WasPressed,
                         input.Action1.WasReleased,
                         input.Action2.WasPressed,
@@ -123,7 +126,7 @@ public class PlayerRecorder : MonoBehaviour {
                         input.LeftBumper.WasPressed,
                         delta));
             } else {
-                record.recording.Add(new InputFrame(0, 0));
+                record.recording.Add(new InputFrame(0, 0, rigidbody.position.x, rigidbody.position.y, rigidbody.rotation));
             }
             yield return null;
         }

@@ -77,6 +77,9 @@ public class TeamManager {
             newMember.initialRotation = CalculateRotation(newMember.initialPosition);
         }
         var renderer = newMember.GetComponent<SpriteRenderer>();
+        if (unusedSprites.Count == 0) {
+            return;
+        }
         var sprite = unusedSprites.Peek();
         if (renderer != null && sprite != null) {
             renderer.color = teamColor;

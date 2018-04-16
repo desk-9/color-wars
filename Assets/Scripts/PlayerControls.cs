@@ -57,7 +57,7 @@ public class PlayerControls : MonoBehaviour {
         new Dictionary<IC.InputControlType, ButtonEventPair>() {
 
         [IC.InputControlType.LeftBumper] = new ButtonEventPair(
-            Message.PlayerPressedLeftBumper, Message.PlayerPressedRightBumper),
+            Message.PlayerPressedLeftBumper, Message.PlayerReleasedLeftBumper),
         [IC.InputControlType.RightBumper] = new ButtonEventPair(
             Message.PlayerPressedRightBumper, Message.PlayerReleasedRightBumper),
         [IC.InputControlType.Action3] = new ButtonEventPair(

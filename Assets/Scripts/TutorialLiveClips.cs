@@ -47,7 +47,7 @@ public class TutorialLiveClips : MonoBehaviour {
          new List<SubclipInfo>() {
                 {"TOUCH the ball to pick it up", 0},
                 {"SHOOT the ball with <AButton>", 0},
-                {"but you must pass to fill the ball...", 0},
+                {"but you must pass to fill the ball...", 0.3f},
                 "...and you can only score with a filled ball"
          }},
         {"2-cant-pass-in-null-zone",
@@ -234,7 +234,7 @@ public class TutorialLiveClips : MonoBehaviour {
         if (clipObject) {
             Destroy(clipObject);
         }
-        SceneManager.UnloadScene(currentClipName);
+        SceneManager.UnloadSceneAsync(currentClipName);
     }
 
     void ClipReload() {
@@ -248,7 +248,7 @@ public class TutorialLiveClips : MonoBehaviour {
                                 LoadLiveClip(clipName);
                                 SetReadyText();
                             }
-                        }, 0.05f);
+                        }, 0.1f);
                 }
             }, Mathf.Max(currentClip.postDelay, 0.1f));
 
@@ -258,7 +258,7 @@ public class TutorialLiveClips : MonoBehaviour {
         float delayBeforeFade = currentClip.postDelay/4;
         float totalTransitionDuration = Mathf.Max(delayBeforeFade + epsilon, 0.1f);
         this.TimeDelayCall(
-            () => TransitionUtility.OneShotFadeTransition(totalTransitionDuration * 3, totalTransitionDuration),
+            () => TransitionUtility.OneShotFadeTransition(totalTransitionDuration * 4, totalTransitionDuration),
             delayBeforeFade);
     }
 }
