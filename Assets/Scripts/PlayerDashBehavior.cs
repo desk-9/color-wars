@@ -21,6 +21,7 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float stealShakeDuration = .05f;
     public float stealKnockbackAmount = 100f;
     public float stealKnockbackLength = .5f;
+    public float wallHitStunTime = 0.05f;
 
     PlayerStateManager stateManager;
     PlayerMovement playerMovement;
@@ -217,7 +218,15 @@ public class PlayerDashBehavior : MonoBehaviour {
 
         var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
         if (layerMask == (layerMask | 1 << other.layer)) {
-            this.FrameDelayCall(stateManager.CurrentStateHasFinished, 1);
+            var stun = this.GetComponent<PlayerStun>();
+            this.FrameDelayCall(
+                () => stateManager.AttemptStun(
+                    () => {
+                        stun?.StartStun(-3 * transform.right, wallHitStunTime);
+                    },
+                    () => {
+                        stun?.StopStunned();
+                    }), 2);
         } else {
             StunAndSteal(other);
         }

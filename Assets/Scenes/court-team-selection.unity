@@ -3529,6 +3529,10 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1792549931693360, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3, type: 2}
+      propertyPath: m_Layer
+      value: 15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3, type: 2}
   m_IsPrefabParent: 0
@@ -4274,6 +4278,10 @@ Prefab:
         type: 2}
       propertyPath: m_FontData.m_FontStyle
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1792549931693360, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3, type: 2}
+      propertyPath: m_Layer
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d8cc9d9c4d4ae4721a000c9d2c739eb3, type: 2}

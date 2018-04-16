@@ -47,14 +47,14 @@ public class TeamSelectionCollider : MonoBehaviour {
         // These magic-ish numbers depend heavily on the fact that the impact
         // effect is a hemisphere which rotates to show where the player
         // impacted the team selection collider
-        var impactEffect = Instantiate(impactEffectPrefab, transform.position,
+        var impactEffect = Instantiate(impactEffectPrefab, playerPosition,
                                        Quaternion.Euler(spawnAngle - 90.0f, 90.0f, -90.0f));
         var ps = impactEffect.GetComponent<ParticleSystem>();
         if (ps != null) {
             ps.Play();
         }
     }
-    
+
     int lastCount = 0;
     void FixedUpdate() {
         if (team != null && team.teamMembers.Count != lastCount) {
