@@ -245,7 +245,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  baseShotSpeed: 60
+  baseShotSpeed: 80
   maxShotSpeed: 195
   maxChargeShotTime: 1.5
   forcedShotTime: 3.75

@@ -35,7 +35,8 @@ public class Ball : MonoBehaviour {
             owner_ = value;
 
             var message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
-            notificationCenter.NotifyMessage(message, this);
+            rigidbody.angularVelocity = 0f;
+            notificationCenter.NotifyMessage(message, gameObject);
             if (!this.isActiveAndEnabled) {
                 return;
             }
