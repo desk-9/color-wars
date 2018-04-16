@@ -46,18 +46,14 @@ public class PlayerInputManager : MonoBehaviour {
         // Assign currently attached devices in order.
         foreach (var device in InputManager.Devices) {
             if (devices.Count >= 4) {
-                Debug.LogFormat(this, "How are there more than 4 controllers?!");
                 break;
             }
 
-            Debug.LogFormat("{0}: Adding existing device {1} to list!", name, device.SortOrder);
             devices.Add(device, false);
         }
 
         // New device attached.
         InputManager.OnDeviceAttached += (device) => {
-            Debug.LogFormat(this, "{0}: New device detected! Adding {1} to list.", name, device.SortOrder);
-
             devices.Add(device, false);
             this.FrameDelayCall(() => {
                     HandoutDevices();
@@ -65,7 +61,6 @@ public class PlayerInputManager : MonoBehaviour {
         };
 
         InputManager.OnDeviceDetached += (device) => {
-            Debug.LogFormat(this, "{0}: Device {1} detached! Removing from list.", name, device.SortOrder);
             if (actions.ContainsKey(device)) {
                 actions[device]();
             }
@@ -81,7 +76,6 @@ public class PlayerInputManager : MonoBehaviour {
     }
 
     void OnLevelLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode) {
-        Debug.Log("on level loaded");
         foreach (var k in devices.Keys.ToList()) {
             devices[k] = false;
         }

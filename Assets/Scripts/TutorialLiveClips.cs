@@ -151,7 +151,6 @@ public class TutorialLiveClips : MonoBehaviour {
     }
 
     void LoadLiveClip(string clipName) {
-        Debug.Log("Loading clip");
         currentSubclipIndex = 0;
         SceneManager.LoadScene(clipName, LoadSceneMode.Additive);
         SetCurrentSubclip();
@@ -188,7 +187,6 @@ public class TutorialLiveClips : MonoBehaviour {
                 yield return null;
             }
             yield return null;
-            Debug.Log("all checked in");
             TransitionUtility.OneShotFadeTransition(0.3f, 0.2f);
             yield return new WaitForSecondsRealtime(0.15f);
             UnloadCurrentClip();
@@ -240,7 +238,6 @@ public class TutorialLiveClips : MonoBehaviour {
     }
 
     void ClipReload() {
-        Debug.Log("Clip reload");
         var clipName = currentClipName;
         atLeastOneLoop = true;
         this.TimeDelayCall(() => {

@@ -25,8 +25,6 @@ public class TutorialSlideshow : MonoBehaviour {
         {"Press A to start the game!", "10-this-is-seriously-just-a-2-second-video-of-eigengrau-oh-god-i-hate-myself"},
     };
 
-    List<VideoClip> videos = new List<VideoClip>();
-
     Canvas tutorialCanvas;
     Text infoText;
     Text readyText;

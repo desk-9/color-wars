@@ -29,7 +29,6 @@ public class PlayerControls : MonoBehaviour {
 
     void GivenInputDevice(IC.InputDevice device) {
         inputDevice = device;
-        Debug.LogFormat("Player {1} acquired device {0}", inputDevice.SortOrder, this.name);
         GameModel.instance.nc.NotifyMessage(Message.InputDeviceAssigned, gameObject);
         var puppet = GetComponent<PlayerPuppet>();
         if (puppet == null || !puppet.doPuppeting) {
@@ -42,7 +41,6 @@ public class PlayerControls : MonoBehaviour {
     }
 
     void InputDeviceDisconnectedCallback() {
-        Debug.LogFormat(this, "{0}: Input Device Disconnected", name);
         var movement = GetComponent<PlayerMovement>();
         movement?.StopAllMovement();
 

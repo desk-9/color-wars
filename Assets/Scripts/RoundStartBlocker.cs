@@ -12,7 +12,6 @@ public class RoundStartBlocker : MonoBehaviour {
     EdgeCollider2D edgeCollider;
     LineRenderer lineRenderer;
     Vector3[] originalLinePoints = new Vector3[2];
-    Vector3 realWorldPosition;
     float lastResetTime;
 
     // Use this for initialization
@@ -20,7 +19,6 @@ public class RoundStartBlocker : MonoBehaviour {
         edgeCollider = this.EnsureComponent<EdgeCollider2D>();
         lineRenderer = this.EnsureComponent<LineRenderer>();
         lineRenderer.GetPositions(originalLinePoints);
-        realWorldPosition = Camera.main.transform.InverseTransformPoint(transform.position);
 
         lastResetTime = Time.time;
     }

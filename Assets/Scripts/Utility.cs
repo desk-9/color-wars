@@ -298,7 +298,8 @@ public static class Utility {
             formatString += string.Format("{{{0}}} ", i);
         }
         if (logLevel == LogLevel.Normal) {
-            Debug.LogFormat(formatString, args);
+            // SCREW LOGS!
+            // Debug.LogFormat(formatString, args);
         } else if (logLevel == LogLevel.Warning) {
             Debug.LogWarningFormat(formatString, args);
         } else if (logLevel == LogLevel.Error) {

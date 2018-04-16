@@ -115,8 +115,6 @@ public class BallCarrier : MonoBehaviour {
             GameModel.instance.SlowMo();
         }
         laserGuide?.DrawLaser();
-        var player = GetComponent<Player>();
-        var lastPlayer = ball.lastOwner?.GetComponent<Player>();
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 

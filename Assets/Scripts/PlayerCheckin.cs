@@ -14,7 +14,6 @@ public class PlayerCheckin {
     public bool forceCheckinBypass = false;
 
     CheckinLister lister;
-    Message checkinEvent;
     Predicate allCheckedInPredicate = () => true;
     EventPredicate checkinPredicate = (o => true);
     public Callback onCheckin = delegate{};
@@ -30,7 +29,6 @@ public class PlayerCheckin {
                          Callback onReset = null,
                          Message? checkoutEvent = null) {
         this.lister = lister;
-        this.checkinEvent = checkinEvent;
         if (allCheckedInPredicate != null) {
             this.allCheckedInPredicate = allCheckedInPredicate;
         }

@@ -22,18 +22,13 @@ public class PlayerPuppet : MonoBehaviour {
     public bool doLoop = false;
 
     const string recordingDirectory = "Recordings";
-    Coroutine puppetRoutine;
     Coroutine inputControlRoutine;
     new Rigidbody2D rigidbody;
-    PlayerStateManager stateManager;
-
-    Vector2 movementInput = Vector2.zero;
 
     bool recordingFinishedThisFrame = false;
 
     void Start() {
         rigidbody = this.EnsureComponent<Rigidbody2D>();
-        stateManager = this.EnsureComponent<PlayerStateManager>();
         if (!doPuppeting) {
             return;
         }
@@ -83,7 +78,7 @@ public class PlayerPuppet : MonoBehaviour {
                     0, 0, frame.APressed, frame.AReleased,
                     frame.BPressed, frame.BReleased, this.gameObject);
                 if (frame.Interrupt) {
-                    Debug.Log("Interrupt! Text will change");
+                    Debug.LogWarning("Interrupt! Text will change");
 
                         GameModel.instance.nc.NotifyMessage(
                             Message.RecordingInterrupt, this.gameObject);
@@ -108,8 +103,7 @@ public class PlayerPuppet : MonoBehaviour {
         if (methodInfo != null) {
             var routine = methodInfo.Invoke(this, new object[0]) as IEnumerator;
             if (routine != null) {
-                puppetRoutine = StartCoroutine(routine);
-                // stateManager.AttemptNormalMovement(StartMovementControl, StopMovementControl);
+                StartCoroutine(routine);
                 return;
             }
         }

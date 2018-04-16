@@ -116,7 +116,7 @@ public class Goal : MonoBehaviour {
 
     void SwitchToTeam(TeamManager team) {
         if (team == null) {
-            Debug.Log("Team in SwitchToTeam is null");
+            Debug.LogWarning("Team in SwitchToTeam is null");
             return;
         }
         if (resetTimerOnSwitchToSameTeam && team == currentTeam) {

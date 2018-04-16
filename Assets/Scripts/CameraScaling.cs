@@ -9,7 +9,7 @@ public class CameraScaling : MonoBehaviour {
 
     public float default_height = 900;
     public float default_width = 1440;
-    Camera camera;
+    new Camera camera;
     // Use this for initialization
     void Start () {
         camera = GetComponent<Camera>();

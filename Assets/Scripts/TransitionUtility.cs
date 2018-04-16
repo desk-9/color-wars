@@ -139,7 +139,7 @@ public class TransitionUtility : MonoBehaviour {
         }
     }
 
-    public static IEnumerator LerpAlpha(ColorSetter colorSetter, 
+    public static IEnumerator LerpAlpha(ColorSetter colorSetter,
                                         float startOpacity, float endOpacity,
                                         float duration, bool useGameTime=false,
                                         Color? maybeTint=null) {
@@ -171,7 +171,7 @@ public class TransitionUtility : MonoBehaviour {
 
         public static implicit operator Panel(Color color) {
             var newPanel = CreateCanvasPanel();
-            Image panelImage = newPanel.AddComponent<Image>();
+            newPanel.AddComponent<Image>();
             Panel panel = new Panel(newPanel);
             panel.color = color;
             return panel;
@@ -213,7 +213,7 @@ public class TransitionUtility : MonoBehaviour {
                           tint.a, 0.0f, duration, false, tint),
                 Hide);
         }
-        
+
     }
 
     public class ScreenTransition {
@@ -251,5 +251,5 @@ public class TransitionUtility : MonoBehaviour {
                 coroutineSequence,
                 () => Destroy(screenTransition.panel.panel)));
     }
-    
+
 }

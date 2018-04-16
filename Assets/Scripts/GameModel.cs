@@ -58,7 +58,6 @@ public class GameModel : MonoBehaviour {
     {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
 
     float matchLengthSeconds;
-    IntCallback NextTeamAssignmentIndex;
     Ball ball {
         get {
             return GameObject.FindObjectOfType<Ball>();
@@ -72,7 +71,6 @@ public class GameModel : MonoBehaviour {
     CameraShake cameraShake;
 
     void Awake() {
-        // Debug.Log(PlayerTutorial.runTutorial);
         if (instance == null) {
             instance = this;
             Initialization();
@@ -102,7 +100,6 @@ public class GameModel : MonoBehaviour {
 
     void Start() {
         SceneStateController.instance.UnPauseTime();
-        Debug.Log(Time.timeScale);
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
         if (winCondition == WinCondition.Time) {
             scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
@@ -113,9 +110,6 @@ public class GameModel : MonoBehaviour {
         meta = SceneStateController.instance.gameObject;
         if (meta == null) {
             Debug.LogWarning("Meta object is null!!!!");
-        }
-        foreach (var i in PlayerInputManager.instance.devices) {
-            Debug.LogFormat("{0}: {1}", i.Key.SortOrder, i.Value);
         }
 
         // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
@@ -146,9 +140,7 @@ public class GameModel : MonoBehaviour {
     }
 
     void EndGame() {
-        Debug.Log("game over");
         winner = TopTeam();
-        Debug.Log("Calling OnGameOver");
         gameOver = true;
         OnGameOver();
     }
@@ -175,8 +167,6 @@ public class GameModel : MonoBehaviour {
                 goals[i].SetTeam(teams[i]);
             }
         }
-        NextTeamAssignmentIndex = Utility.ModCycle(0, teams.Count);
-        Debug.Log("Teams have been initialized!!!");
     }
 
     void ScoreChanged() {

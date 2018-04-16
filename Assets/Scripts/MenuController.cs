@@ -64,11 +64,9 @@ public class MenuController : MonoBehaviour {
             AudioManager.instance.PauseSound.Play(1.0f);
             StartCoroutine(pauseMenuPanel.FadeIn());
             SceneStateController.instance.PauseTime();
-            Debug.Log("Game paused");
         }
         else {
             SceneStateController.instance.UnPauseTime();
-            Debug.Log("Game un-paused");
             AudioManager.instance.UnPauseSound.Play(2.5f);
             StartCoroutine(pauseMenuPanel.FadeOut());
         }

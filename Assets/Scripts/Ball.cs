@@ -22,7 +22,6 @@ public class Ball : MonoBehaviour {
     float speedOnShoot;
 
     Color neutralColor = Color.white;
-    Color currentColor;
 
     public BallCarrier lastOwner { get; private set; }
 
@@ -111,7 +110,6 @@ public class Ball : MonoBehaviour {
         rigidbody = this.EnsureComponent<Rigidbody2D>();
         goal = GameObject.FindObjectOfType<Goal>();
         ballFill = this.GetComponentInChildren<BallFillColor>();
-        currentColor = Color.white;
         GameModel.instance.nc.CallOnMessage(
             Message.BallIsUnpossessed, () => {
                 if (this == null || !this.enabled) return;

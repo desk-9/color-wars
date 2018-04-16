@@ -7,8 +7,7 @@ using UnityEngine.Video;
 public class UIVideo : MonoBehaviour {
     RawImage image;
     VideoPlayer player;
-    // Use this for initialization
-    bool nextClip = false;
+
     void Start () {
         image = GetComponent<RawImage>();
         player = GetComponent<VideoPlayer>();

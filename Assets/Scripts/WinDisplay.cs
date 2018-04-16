@@ -54,7 +54,6 @@ public class WinDisplay : MonoBehaviour {
             winnerText.text = "Tie!";
             winnerText.color = Color.black;
         } else {
-            var otherTeam = new List<TeamManager>(GameModel.instance.teams).Find(team => team != winner);
             winnerText.text = string.Format("{0} Team won!", winner.teamColor.name);
             winnerText.color = winner.teamColor;
         }

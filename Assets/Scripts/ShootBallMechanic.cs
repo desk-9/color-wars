@@ -25,7 +25,6 @@ public class ShootBallMechanic : MonoBehaviour {
     PlayerMovement playerMovement;
     PlayerStateManager stateManager;
     BallCarrier ballCarrier;
-    TeamManager team;
     Player teamMate;
     Player player;
 
@@ -44,10 +43,7 @@ public class ShootBallMechanic : MonoBehaviour {
         GameModel.instance.nc.CallOnMessageIfSameObject(
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
 
-        var ball = GameObject.FindObjectOfType<Ball>();
-
         player.CallAsSoonAsTeamAssigned((team) => {
-                this.team = team;
                 InitializeCircularIndicators(team);
             });
 
