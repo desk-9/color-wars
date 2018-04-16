@@ -11,12 +11,16 @@ public class TeamSelectionCollider : MonoBehaviour {
     public TeamManager team {get; set;}
     public bool mustDashToSwitch = true;
     Text countText;
-    // Use this for initialization
+    GameObject impactEffectPrefab;
+
     void Start () {
         countText = GetComponentInChildren<Text>();
         if (teamNumber < GameModel.instance.teams.Count) {
             team = GameModel.instance.teams[teamNumber];
         }
+        this.FrameDelayCall(() => {
+                impactEffectPrefab = team.resources.selectTeamImpactEffectPrefab;
+            }, 2);
     }
 
     void OnCollisionStay2D(Collision2D collision) {
@@ -32,9 +36,25 @@ public class TeamSelectionCollider : MonoBehaviour {
             if (player.team != team && team.teamMembers.Count < maxOnTeam) {
                 player.SetTeam(team);
                 AudioManager.instance.Beep.Play();
+                SpawnHitEffect(player.transform.position);
             }
         }
     }
+
+    void SpawnHitEffect(Vector3 playerPosition) {
+        float spawnAngle = Vector3.SignedAngle(
+            playerPosition - transform.position, Vector3.up, Vector3.forward);
+        // These magic-ish numbers depend heavily on the fact that the impact
+        // effect is a hemisphere which rotates to show where the player
+        // impacted the team selection collider
+        var impactEffect = Instantiate(impactEffectPrefab, transform.position,
+                                       Quaternion.Euler(spawnAngle - 90.0f, 90.0f, -90.0f));
+        var ps = impactEffect.GetComponent<ParticleSystem>();
+        if (ps != null) {
+            ps.Play();
+        }
+    }
+    
     int lastCount = 0;
     void FixedUpdate() {
         if (team != null && team.teamMembers.Count != lastCount) {
