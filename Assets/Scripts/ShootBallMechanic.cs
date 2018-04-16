@@ -43,6 +43,9 @@ public class ShootBallMechanic : MonoBehaviour {
         GameModel.instance.nc.CallOnMessageIfSameObject(
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
 
+        var ball = GameObject.FindObjectOfType<Ball>();
+
+        InitializeCircularIndicators(); // This is for team selection screen
         player.CallAsSoonAsTeamAssigned((team) => {
                 InitializeCircularIndicators(team);
             });
@@ -59,19 +62,19 @@ public class ShootBallMechanic : MonoBehaviour {
     // ShotChargeIndicator -- these are the little circular dials that show
     // up when a player possesses the ball, and when a player charges their
     // shot (respectively).
-    void InitializeCircularIndicators(TeamManager team) {
+    void InitializeCircularIndicators(TeamManager team = null) {
         // Need to destroy preexisting objects (e.g. if selecting teams, and
         // then switching team)
         if (shotChargeIndicator != null) {Destroy(shotChargeIndicator);}
         if (circularTimer != null) {Destroy(circularTimer);}
 
         // Circular timer
-        GameObject circularTimerPrefab = team.resources.circularTimerPrefab;
+        GameObject circularTimerPrefab = GameModel.instance.neutralResources.circularTimerPrefab;
         circularTimer = Instantiate(
             circularTimerPrefab, transform).GetComponent<CircularTimer>();
 
         // ShotCharge indicator
-        GameObject shotChargeIndicatorPrefab = team.resources.shotChargeIndicatorPrefab;
+        GameObject shotChargeIndicatorPrefab = GameModel.instance.neutralResources.shotChargeIndicatorPrefab;
         shotChargeIndicator = Instantiate(
             shotChargeIndicatorPrefab, transform).GetComponent<ShotChargeIndicator>();
 
@@ -80,10 +83,6 @@ public class ShootBallMechanic : MonoBehaviour {
         // maxFillAmount like this
         shotChargeIndicator.minFillAmount = baseShotSpeed;
         shotChargeIndicator.maxFillAmount = maxShotSpeed;
-        // Debug.LogFormat("shot charge min fill amount: {1}, max fill amount: {0}",
-        //                 shotChargeIndicator.maxFillAmount,
-        //                 shotChargeIndicator.minFillAmount);
-
     }
 
     void StartTimer() {

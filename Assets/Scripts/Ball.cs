@@ -74,7 +74,8 @@ public class Ball : MonoBehaviour {
     }
 
     Color ColorFromBallCarrier(BallCarrier carrier) {
-        return carrier.EnsureComponent<Player>().team.teamColor.color;
+        var carrierTeam = carrier.EnsureComponent<Player>().team;
+        return carrierTeam != null ? carrierTeam.teamColor.color : Color.white;
     }
 
     void AdjustSpriteToCurrentTeam() {

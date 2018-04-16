@@ -25,6 +25,28 @@ public class LaserGuide : MonoBehaviour {
         lineRenderer.enabled = false;
         rayCastMask = LayerMask.GetMask(new string[]{"Wall", "Goal", "TronWall"});
         goalLayer = LayerMask.NameToLayer("Goal");
+
+        // Default for the team select screen
+        aimLaserGradient = new Gradient();
+        aimLaserGradient.SetKeys(
+            new GradientColorKey[] {
+                new GradientColorKey(Color.white, 0.0f),
+                new GradientColorKey(Color.white, 1.0f) },
+            new GradientAlphaKey[] {
+                new GradientAlphaKey(1.0f, 0.0f),
+                new GradientAlphaKey(1.0f, 0.8f),
+                new GradientAlphaKey(0f, 1.0f) }
+            );
+        aimLaserToGoalGradient = new Gradient();
+        aimLaserToGoalGradient.SetKeys(
+            new GradientColorKey[] {
+                new GradientColorKey(Color.white, 0.0f),
+                new GradientColorKey(Color.white, 1.0f) },
+            new GradientAlphaKey[] {
+                new GradientAlphaKey(1.0f, 0.0f),
+                new GradientAlphaKey(1.0f, 0.8f),
+                new GradientAlphaKey(0f, 1.0f) }
+            );
     }
 
     public void SetLaserGradients() {
@@ -32,9 +54,6 @@ public class LaserGuide : MonoBehaviour {
         if (team != null) {
             aimLaserGradient = team.resources.aimLaserGradient;
             aimLaserToGoalGradient = team.resources.aimLaserToGoalGradient;
-        }
-        else {
-            Debug.LogError("Could not find team!");
         }
     }
 

@@ -64,6 +64,9 @@ public class BallCarrier : MonoBehaviour {
     }
 
     void BlowBackEnemyPlayers() {
+        if (player.team == null) {
+            return;
+        }
         var enemyTeam = GameModel.instance.teams.Find((teamManager) => teamManager != player.team);
         Debug.Assert(enemyTeam != null);
 
