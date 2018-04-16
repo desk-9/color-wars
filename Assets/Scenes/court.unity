@@ -3152,7 +3152,6 @@ GameObject:
   m_Component:
   - component: {fileID: 939587274}
   - component: {fileID: 939587275}
-  - component: {fileID: 939587276}
   m_Layer: 17
   m_Name: CornerCircle3
   m_TagString: Untagged
