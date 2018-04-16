@@ -39,7 +39,6 @@ public class RichText : MonoBehaviour {
         }
 
         set {
-            Utility.Print("Rich text set to", value, LogLevel.Error);
             var old = rawText;
             rawText = value;
             if (rawText != old) {
@@ -132,9 +131,7 @@ public class RichText : MonoBehaviour {
         group.alpha = 0;
         var richElements = ParseRichText(rawText);
         float elementStart = initialSpacing;
-        Utility.Print("Rendering...");
         foreach (var elementContent in richElements) {
-            Utility.Print(elementStart, elementContent.content);
             RectTransform elementTransform;
             if (elementContent.isFilename) {
                 var image = CreateImage(elementContent.content);
@@ -142,7 +139,6 @@ public class RichText : MonoBehaviour {
 
                 float inducedWidth = (rectTransform.rect.height - imageVerticalSpacing * 2) * aspectRatio;
                 elementTransform = image.GetComponent<RectTransform>();
-                Utility.Print(elementTransform.rect.width, LogLevel.Warning);
                 elementTransform.sizeDelta = new Vector2(
                     inducedWidth, elementTransform.sizeDelta.y - imageVerticalSpacing * 2);
                 yield return null;
@@ -150,7 +146,6 @@ public class RichText : MonoBehaviour {
                 var text = CreateText(elementContent.content);
                 elementTransform = text.GetComponent<RectTransform>();
                 yield return null;
-                Utility.Print(elementTransform.rect.width, LogLevel.Warning);
             }
             elementTransform.anchoredPosition = new Vector2(elementStart, 0);
             elementStart += elementTransform.rect.width + elementSpacing;
