@@ -136,8 +136,8 @@ public class PlayerTutorial : MonoBehaviour {
         skipTutorialCheckin.StartListening();
         skipText.text = "Hold <YButton> to skip the tutorial";
         // Start the countdown.
-        var start = Time.time;
-        var diff = Time.time - start;
+        var start = Time.realtimeSinceStartup;
+        var diff = Time.realtimeSinceStartup - start;
         // TODO: if slowmo becomes possible here might wanna use realtime instead
         readyUpText.text = "";
         while (diff < tutorialStartTime
@@ -147,7 +147,7 @@ public class PlayerTutorial : MonoBehaviour {
                 teamSelectionLineTwo.text = String.Format(
                     "Starting tutorial in {0:N0}", Mathf.Ceil(tutorialStartTime - diff));
             }
-            diff = Time.time - start;
+            diff = Time.realtimeSinceStartup - start;
             yield return null;
         }
 
@@ -193,12 +193,12 @@ public class PlayerTutorial : MonoBehaviour {
         readyUpCount.text = "";
 
         // Start the countdown.
-        var start = Time.time;
-        var diff = Time.time - start;
+        var start = Time.realtimeSinceStartup;
+        var diff = Time.realtimeSinceStartup - start;
         // TODO: if slowmo becomes possible here might wanna use realtime instead
         while (diff < gameStartTime && !skipReadyUpCheat) {
             readyUpText.text = String.Format("Starting the game in {0:N0}", Mathf.Ceil(gameStartTime - diff));
-            diff = Time.time - start;
+            diff = Time.realtimeSinceStartup - start;
             yield return null;
         }
 
