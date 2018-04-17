@@ -57,7 +57,7 @@ public class BallCarrier : MonoBehaviour {
                 State.Posession, playerMovement.UnFreezePlayer);
             var actualPlayerMovement = playerMovement as PlayerMovement;
             if (actualPlayerMovement != null) {
-                ballTurnSpeed = actualPlayerMovement.rotationSpeed / 400;
+                ballTurnSpeed = actualPlayerMovement.rotationSpeed / 250;
             }
         }
         laserGuide = this.GetComponent<LaserGuide>();

@@ -48,8 +48,8 @@ public class TutorialLiveClips : MonoBehaviour {
                 {"TOUCH the ball to pick it up", 0},
                 {"SHOOT the ball with <AButton>", 0},
                 {"but you must pass to fill the ball...", 0.3f},
-                "...and you can only score with a filled ball"
-         }},
+                {"...and you can only score with a filled ball", .5f}
+         }, 0, 2f},
         {"2-cant-pass-in-null-zone",
          new List<SubclipInfo>() {
                 "passes don't fill the ball in the null zone",
