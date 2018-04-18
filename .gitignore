@@ -1,13 +1,12 @@
-# Ignore everything by default.
-/*
-/*/
-!.gitignore
-
 # Include deliverables.
-!/Assets/
-!/ProjectSettings/
 
 /Assets/AssetStoreTools*
+/Assets/SampleScenes/*
+Builds/
+Library/
+Packages/
+UnityPackageManager/
+obj/
 
 # Ignore common but unwanted extensions.
 ExportedObj/
@@ -42,9 +41,3 @@ sysinfo.txt
 Icon?
 ethumbs.db
 thumbs.db
-
-# Include top-level meta files (CREDITS.txt, README.txt)
-!CREDITS.txt
-!README.txt
-!GOLD_SPIKE.txt
-!IMPROVEMENTS.txt

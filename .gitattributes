@@ -1,0 +1,5 @@
+Assets/InControl/* linguist-vendored
+Assets/PostProcessing/* linguist-vendored
+*.meta linguist-generated
+*.unity linguist-generated
+*.prefab linguist-generated

@@ -47,3 +47,6 @@ https://gist.github.com/ftvs/5822103
 Asset: Shader for goal indicator particle effect (happens when point is scored)
 https://assetstore.unity.com/packages/vfx/shaders/particle-light-10105
 Author: Nikolaus Kraus
+
+Sound: Pass doesn't power up the ball, due to the null zone
+https://freesound.org/people/Jacco18/sounds/419023/
