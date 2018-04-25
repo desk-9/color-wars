@@ -1,0 +1,4 @@
+[submodule "Assets/InControl"]
+	path = Assets/InControl
+	url = git@github.com:spruceb/paid-incontrol.git
+	branch = master
