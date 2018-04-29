@@ -48,7 +48,6 @@ public class PlayerInputManager : MonoBehaviour {
             if (devices.Count >= 4) {
                 break;
             }
-
             devices.Add(device, false);
         }
 

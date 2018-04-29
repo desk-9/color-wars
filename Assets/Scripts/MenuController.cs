@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using IC = InControl;
 
 public class MenuController : MonoBehaviour {
-    public IC.InputControlType StartButton = IC.InputControlType.Start;
+    IC.InputControlType StartButton = IC.InputControlType.Command;
     public IC.InputControlType ResetButton = IC.InputControlType.DPadDown;
     public IC.InputControlType MainMenuButton = IC.InputControlType.DPadUp;
 
