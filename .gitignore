@@ -41,3 +41,7 @@ sysinfo.txt
 Icon?
 ethumbs.db
 thumbs.db
+
+# Visual Studio things
+.vs/
+Temp/

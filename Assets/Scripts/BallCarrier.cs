@@ -180,8 +180,8 @@ public class BallCarrier : MonoBehaviour {
                 return;
             }
 
-            Vector2? goalVector;
-            Vector2? teammateVector;
+            Vector2? goalVector = null;
+            Vector2? teammateVector = null;
             if (goal != null) {
                 goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
             }
