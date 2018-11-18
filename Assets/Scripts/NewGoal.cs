@@ -41,7 +41,7 @@ public class NewGoal : MonoBehaviour
         if (ball.IsOwnable())
         {
             ball.Ownable = false;
-            GameModel.instance.GoalScoredOnTeam(team);
+            GameManager.instance.GoalScoredOnTeam(team);
             ball.ResetBall();
         }
         else

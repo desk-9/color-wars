@@ -72,8 +72,8 @@ public class SceneStateController : MonoBehaviour
         if (newScene == Scene.Selection)
         {
             PlayerTutorial.runTutorial = newScene == Scene.Selection;
-            GameModel.playerTeamsAlreadySelected = false;
-            GameModel.cheatForcePlayerAssignment = false;
+            GameManager.playerTeamsAlreadySelected = false;
+            GameManager.cheatForcePlayerAssignment = false;
             TeamManager.playerSpritesAlreadySet = false;
             JustInTimeTutorial.alreadySeen = false;
         }

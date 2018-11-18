@@ -23,28 +23,28 @@ public class JustInTimeTutorial : MonoBehaviour
     private void Start()
     {
         canvasPrefab = Resources.Load<GameObject>("ToolTipCanvas");
-        GameModel.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationCenter.CallOnMessageWithSender(
             Message.BallPossessedWhileNeutral, PassToTeammate);
-        GameModel.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationCenter.CallOnMessageWithSender(
             Message.BallPossessedWhileCharged, ShootAtGoal);
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.GoalScored,
             () =>
             {
-                if (!alreadySeen && GameModel.instance.teams.All(
+                if (!alreadySeen && GameManager.instance.teams.All(
                         team => team.score > scoreThreshold))
                 {
                     alreadySeen = true;
                 }
             });
 
-        GameModel.instance.notificationCenter.CallOnStateEnd(State.Posession, Unpossessed);
+        GameManager.instance.notificationCenter.CallOnStateEnd(State.Posession, Unpossessed);
 
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.PlayerReleasedBack,
             () =>
             {
-                scoreThreshold = GameModel.instance.teams.Max(team => team.score);
+                scoreThreshold = GameManager.instance.teams.Max(team => team.score);
                 alreadySeen = false;
             });
         // On possession loss: no text

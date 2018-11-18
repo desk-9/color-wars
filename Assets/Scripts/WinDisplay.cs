@@ -52,7 +52,7 @@ public class WinDisplay : MonoBehaviour
     {
         FindTextObjects();
 
-        TeamManager winner = GameModel.instance.winner;
+        TeamManager winner = GameManager.instance.winner;
         if (winner == null)
         {
             winnerText.text = "Tie!";
@@ -67,9 +67,9 @@ public class WinDisplay : MonoBehaviour
 
     private void StartCountdown()
     {
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedX, () => SceneStateController.instance.ReloadScene());
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedY, () => SceneStateController.instance.Load(Scene.Selection));
         StartCoroutine(ResetCountdown());
     }

@@ -11,13 +11,13 @@ public class PlayerNullZoneEffect : MonoBehaviour
     {
         player = GetComponent<Player>();
         renderer = GetComponent<SpriteRenderer>();
-        GameModel.instance.notificationCenter.CallOnMessage(Message.BallIsPossessed, CheckEffect);
+        GameManager.instance.notificationCenter.CallOnMessage(Message.BallIsPossessed, CheckEffect);
     }
 
     private void CheckEffect()
     {
         NamedColor color = player?.team?.teamColor;
-        Goal goal = GameModel.instance.goal;
+        Goal goal = GameManager.instance.goal;
         if (color != null && renderer != null && player != null
             && goal != null)
         {

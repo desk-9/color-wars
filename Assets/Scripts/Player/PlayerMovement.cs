@@ -135,7 +135,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
             {
                 if (Time.time - startTime > 0.75f)
                 {
-                    GameModel.instance.notificationCenter.NotifyStringEvent("MoveTutorial", this.gameObject);
+                    GameManager.instance.notificationCenter.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
             }
             else
@@ -153,7 +153,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        GameModel.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerStick, playerPair =>
             {
                 Tuple<Vector2, GameObject> pair = playerPair as Tuple<Vector2, GameObject>;

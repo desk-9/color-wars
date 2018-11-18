@@ -69,7 +69,7 @@ public class PlayerTutorial : MonoBehaviour
         inTeamSelection = (tutorialType == TutorialType.TeamSelection
                            && GameObject.Find("TeamSelection") != null);
 
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => { if (!inTeamSelection) { skipReadyUpCheat = true; } });
 
         skipTutorialCheckin = PlayerCheckin.TextCountCheckin(
@@ -94,7 +94,7 @@ public class PlayerTutorial : MonoBehaviour
 
     private List<GameObject> GetPlayers()
     {
-        return (from player in GameModel.instance.GetHumanPlayers()
+        return (from player in GameManager.instance.GetHumanPlayers()
                 select player.gameObject).ToList();
     }
 
@@ -137,12 +137,12 @@ public class PlayerTutorial : MonoBehaviour
 
     private IEnumerator EndTutorial()
     {
-        GameModel.playerTeamsAlreadySelected = true;
-        GameModel.playerTeamAssignments = new Dictionary<int, int>();
-        foreach (Player player in GameModel.instance.GetPlayersWithTeams())
+        GameManager.playerTeamsAlreadySelected = true;
+        GameManager.playerTeamAssignments = new Dictionary<int, int>();
+        foreach (Player player in GameManager.instance.GetPlayersWithTeams())
         {
-            int teamIndex = GameModel.instance.teams.IndexOf(player.team);
-            GameModel.playerTeamAssignments[player.playerNumber] = teamIndex;
+            int teamIndex = GameManager.instance.teams.IndexOf(player.team);
+            GameManager.playerTeamAssignments[player.playerNumber] = teamIndex;
         }
         TeamManager.playerSpritesAlreadySet = true;
 
@@ -188,7 +188,7 @@ public class PlayerTutorial : MonoBehaviour
         yield return new WaitForFixedUpdate();
         while (true)
         {
-            if (inTeamSelection && GameModel.instance.teams.All(team => team.teamMembers.Count == 2))
+            if (inTeamSelection && GameManager.instance.teams.All(team => team.teamMembers.Count == 2))
             {
                 TeamSelectionFinished();
                 yield break;
@@ -205,7 +205,7 @@ public class PlayerTutorial : MonoBehaviour
         readyUpText.text = "TRY LAYING A WALL WITH <BButton>";
 
         ResetCheckin();
-        GameModel.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerReleasedWall, CheckinPlayer
         );
         yield return null;
@@ -214,7 +214,7 @@ public class PlayerTutorial : MonoBehaviour
             yield return null;
         }
         ResetCheckin();
-        GameModel.instance.notificationCenter.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
+        GameManager.instance.notificationCenter.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
         readyUpCount.text = "";
 
         // Start the countdown.

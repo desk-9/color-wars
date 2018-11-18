@@ -70,7 +70,7 @@ public class BallCarrier : MonoBehaviour
         {
             return;
         }
-        TeamManager enemyTeam = GameModel.instance.teams.Find((teamManager) => teamManager != player.team);
+        TeamManager enemyTeam = GameManager.instance.teams.Find((teamManager) => teamManager != player.team);
         Debug.Assert(enemyTeam != null);
 
         {
@@ -123,7 +123,7 @@ public class BallCarrier : MonoBehaviour
         CalculateOffset(ball);
         if (slowMoOnCarry)
         {
-            GameModel.instance.SlowMo();
+            GameManager.instance.SlowMo();
         }
         laserGuide?.DrawLaser();
         carryBallCoroutine = StartCoroutine(CarryBall(ball));
@@ -265,7 +265,7 @@ public class BallCarrier : MonoBehaviour
     {
         if (ball != null)
         {
-            GameModel.instance.ResetSlowMo();
+            GameManager.instance.ResetSlowMo();
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
             snapToObject = null;

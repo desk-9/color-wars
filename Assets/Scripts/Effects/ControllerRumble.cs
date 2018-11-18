@@ -26,7 +26,7 @@ public class ControllerRumble : MonoBehaviour
         stateManager = GetComponent<PlayerStateManager>();
         if (playerControls != null && stateManager != null)
         {
-            NotificationCenter nc = GameModel.instance.notificationCenter;
+            NotificationCenter nc = GameManager.instance.notificationCenter;
             nc.CallOnMessageIfSameObject(Message.StolenFrom, () => StartRumble(duration: stealRumbleDuration), gameObject);
             nc.CallOnMessageIfSameObject(Message.TronWallDestroyed,
                                          () => StartRumble(duration: wallDestroyDuration),

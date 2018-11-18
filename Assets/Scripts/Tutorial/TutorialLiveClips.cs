@@ -110,15 +110,15 @@ public class TutorialLiveClips : MonoBehaviour
 
     private void StartListeningForPlayers()
     {
-        GameModel.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerPressedX, CheckinPlayer);
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 
     private List<GameObject> GetPlayers()
     {
-        return (from player in GameModel.instance.GetHumanPlayers()
+        return (from player in GameManager.instance.GetHumanPlayers()
                 select player.gameObject).ToList();
     }
 
@@ -172,7 +172,7 @@ public class TutorialLiveClips : MonoBehaviour
         currentSubclipIndex = 0;
         SceneManager.LoadScene(clipName, LoadSceneMode.Additive);
         SetCurrentSubclip();
-        foreach (TeamManager team in GameModel.instance.teams)
+        foreach (TeamManager team in GameManager.instance.teams)
         {
             team.ResetScore();
         }
@@ -182,7 +182,7 @@ public class TutorialLiveClips : MonoBehaviour
     {
         runningLiveClips = true;
         StartListeningForPlayers();
-        GameModel.instance.notificationCenter.CallOnMessage(Message.RecordingFinished,
+        GameManager.instance.notificationCenter.CallOnMessage(Message.RecordingFinished,
                                             () =>
                                             {
                                                 if (!clipReloadThisFrame)
@@ -192,7 +192,7 @@ public class TutorialLiveClips : MonoBehaviour
                                                     this.FrameDelayCall(() => clipReloadThisFrame = false, 3);
                                                 }
                                             });
-        GameModel.instance.notificationCenter.CallOnMessage(Message.RecordingInterrupt,
+        GameManager.instance.notificationCenter.CallOnMessage(Message.RecordingInterrupt,
                                             SubclipInterrupt);
         yield return null;
         ySkip.StartListening();

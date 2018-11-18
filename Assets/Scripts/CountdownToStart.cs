@@ -49,7 +49,7 @@ public class CountdownToStart : MonoBehaviour
         textSizeRange = maxTextSize - minTextSize;
 
 
-        GameModel.instance.notificationCenter.CallOnMessage(Message.StartCountdown,
+        GameManager.instance.notificationCenter.CallOnMessage(Message.StartCountdown,
                                             () => StartCountdown());
         if (!PlayerTutorial.runTutorial)
         {
@@ -70,7 +70,7 @@ public class CountdownToStart : MonoBehaviour
 
     public void StartCountdown()
     {
-        if (GameModel.instance.gameOver)
+        if (GameManager.instance.gameOver)
         {
             return;
         }
@@ -102,7 +102,7 @@ public class CountdownToStart : MonoBehaviour
         // Last round ("GO!" + players can start moving)
         // Do some extra stuff (make text bigger, notify players that they can move)
         textSizeRange *= goTextSizeMultiplier;
-        GameModel.instance.notificationCenter.NotifyMessage(Message.CountdownFinished, this);
+        GameManager.instance.notificationCenter.NotifyMessage(Message.CountdownFinished, this);
 
         // Reset vars for the last count
         elapsedTime = progress = 0.0f;

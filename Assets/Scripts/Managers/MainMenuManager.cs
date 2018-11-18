@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using IC = InControl;
 using InputManager = InControl.InputManager;
 
-public class MainMenuController : MonoBehaviour
+public class MainMenuManager : MonoBehaviour
 {
     private IC.InputControlType SelectButton = IC.InputControlType.Action3; // X
     public Color selectedColor;
@@ -43,7 +43,7 @@ public class MainMenuController : MonoBehaviour
             }
             else if (device.GetControl(IC.InputControlType.LeftBumper).WasPressed)
             {
-                GameModel.cheatForcePlayerAssignment = true;
+                GameManager.cheatForcePlayerAssignment = true;
                 AudioManager.instance.CheatCodeSound.Play();
                 this.TimeDelayCall(
                     () => SceneStateController.instance.Load(Scene.Court),

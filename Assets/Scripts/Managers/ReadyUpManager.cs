@@ -25,7 +25,7 @@ public class ReadyUpManager : MonoBehaviour
     private List<PlayerTutorial> players;
     private List<PlayerTutorial> readyPlayers;
     private string mainScene = "court";
-    private MenuController menuController;
+    private MenuManager menuController;
 
     // Singleton
     public static ReadyUpManager instance;
@@ -60,7 +60,7 @@ public class ReadyUpManager : MonoBehaviour
         }
 
         startGameCountdownText.text = "";
-        menuController = GetComponent<MenuController>();
+        menuController = GetComponent<MenuManager>();
         menuController.enabled = false;
     }
 

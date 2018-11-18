@@ -22,7 +22,7 @@ public class ScoreIndicator : MonoBehaviour
     {
 
         // Find team
-        foreach (TeamManager candidateTeam in GameModel.instance.teams)
+        foreach (TeamManager candidateTeam in GameManager.instance.teams)
         {
             if (candidateTeam.teamColor.name == teamName)
             {
@@ -47,7 +47,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Update score indicator when a goal is scored
-        GameModel.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationCenter.CallOnMessageWithSender(
             Message.GoalScored,
             (object scoringTeam) =>
             {
@@ -58,7 +58,7 @@ public class ScoreIndicator : MonoBehaviour
             });
 
         // Reset score indicator when game is restarted
-        GameModel.instance.notificationCenter.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
+        GameManager.instance.notificationCenter.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
 
         foreach (GameObject pointIndicator in pointIndicators)
         {

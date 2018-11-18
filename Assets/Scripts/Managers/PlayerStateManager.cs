@@ -56,7 +56,7 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Start()
     {
-        GameModel.instance.notificationCenter.RegisterPlayer(this);
+        GameManager.instance.notificationCenter.RegisterPlayer(this);
     }
 
     // Schedules a callback whenever information with respect to a certain state

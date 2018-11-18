@@ -38,16 +38,16 @@ public class TeamManager
     public void ResetScore()
     {
         score = 0;
-        GameModel.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
-        GameModel.instance.scoreDisplayer?.UpdateScores();
+        GameManager.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
+        GameManager.instance.scoreDisplayer?.UpdateScores();
     }
 
     public void IncrementScore()
     {
         score += 1;
-        GameModel.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
-        GameModel.instance.notificationCenter.NotifyMessage(Message.GoalScored, this);
-        GameModel.instance.scoreDisplayer?.UpdateScores();
+        GameManager.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
+        GameManager.instance.notificationCenter.NotifyMessage(Message.GoalScored, this);
+        GameManager.instance.scoreDisplayer?.UpdateScores();
     }
 
     private float CalculateRotation(Vector2 position)

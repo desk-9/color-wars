@@ -61,15 +61,15 @@ public class Goal : MonoBehaviour
     private void Start()
     {
         //originalColor = renderer.color;
-        nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Count);
-        GameModel.instance.OnGameOver += StopTeamSwitching;
+        nextTeamIndex = new ModCycle(0, GameManager.instance.teams.Count);
+        GameManager.instance.OnGameOver += StopTeamSwitching;
         ResetNeutral();
         RestartTeamSwitching();
         if (playerPassSwitching)
         {
             RegisterPassSwitching();
         }
-        GameModel.instance.notificationCenter.CallOnStringEventWithSender(
+        GameManager.instance.notificationCenter.CallOnStringEventWithSender(
             GoalSwitchCollider.EventId, ColliderSwitch);
     }
 
@@ -84,9 +84,9 @@ public class Goal : MonoBehaviour
 
     private void RegisterPassSwitching()
     {
-        GameModel.instance.notificationCenter.CallOnStateEnd(
+        GameManager.instance.notificationCenter.CallOnStateEnd(
             State.Posession, (Player player) => lastPlayer = player);
-        GameModel.instance.notificationCenter.CallOnStateStart(
+        GameManager.instance.notificationCenter.CallOnStateStart(
             State.Posession, (Player player) => PlayerBallColorSwitch(player));
     }
 
@@ -107,30 +107,30 @@ public class Goal : MonoBehaviour
         {
             if (!PlayerInNullZone(player))
             {
-                GameModel.instance.notificationCenter.NotifyMessage(Message.BallCharged, player);
+                GameManager.instance.notificationCenter.NotifyMessage(Message.BallCharged, player);
                 SwitchToTeam(player.team);
             }
             else
             {
                 if (currentTeam == null)
                 {
-                    GameModel.instance.notificationCenter.NotifyMessage(Message.NullChargePrevention, player);
+                    GameManager.instance.notificationCenter.NotifyMessage(Message.NullChargePrevention, player);
                     AudioManager.instance.PassToNullZone.Play(.1f);
                 }
             }
         }
         else if (player.team != lastPlayer?.team)
         {
-            GameModel.instance.notificationCenter.NotifyMessage(Message.BallSetNeutral, player);
+            GameManager.instance.notificationCenter.NotifyMessage(Message.BallSetNeutral, player);
             ResetNeutral();
         }
         if (currentTeam == null)
         {
-            GameModel.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileNeutral, player);
+            GameManager.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileNeutral, player);
         }
         else
         {
-            GameModel.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileCharged, player);
+            GameManager.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileCharged, player);
         }
     }
 
@@ -182,12 +182,12 @@ public class Goal : MonoBehaviour
 
     private TeamManager PeekNextTeam()
     {
-        return GameModel.instance.teams[nextTeamIndex.PeekNext()];
+        return GameManager.instance.teams[nextTeamIndex.PeekNext()];
     }
 
     private TeamManager GetNextTeam()
     {
-        return GameModel.instance.teams[nextTeamIndex.Next()];
+        return GameManager.instance.teams[nextTeamIndex.Next()];
     }
 
     public void SwitchToNextTeam(bool playSound = false)
@@ -219,7 +219,7 @@ public class Goal : MonoBehaviour
         {
             if (currentTeam != null)
             {
-                GameModel.instance.GoalScoredForTeam(currentTeam);
+                GameManager.instance.GoalScoredForTeam(currentTeam);
             }
         }
     }

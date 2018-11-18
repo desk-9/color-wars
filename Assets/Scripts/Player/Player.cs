@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
         explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
         ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
-        explosionMain.startLifetime = GameModel.instance.pauseAfterGoalScore;
+        explosionMain.startLifetime = GameManager.instance.pauseAfterGoalScore;
         explosionMain.startColor = team.teamColor.color;
         explosionParticleSystem.Play();
     }
@@ -116,13 +116,13 @@ public class Player : MonoBehaviour
 
         if (teamOverride >= 0)
         {
-            SetTeam(GameModel.instance.teams[teamOverride]);
+            SetTeam(GameManager.instance.teams[teamOverride]);
         }
-        else if ((GameModel.playerTeamsAlreadySelected || GameModel.cheatForcePlayerAssignment)
+        else if ((GameManager.playerTeamsAlreadySelected || GameManager.cheatForcePlayerAssignment)
             && playerNumber >= 0)
         {
             // Dummies have a player number of -1, and shouldn't get a team
-            team = GameModel.instance.GetTeamAssignment(this);
+            team = GameManager.instance.GetTeamAssignment(this);
             if (team != null && isNormalPlayer)
             {
                 SetTeam(team);
@@ -133,7 +133,7 @@ public class Player : MonoBehaviour
             // initialPosition = transform.position;
             // initalRotation = rb2d.rotation;
         }
-        GameModel.instance.players.Add(this);
+        GameManager.instance.players.Add(this);
         // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
     }
 
@@ -143,7 +143,7 @@ public class Player : MonoBehaviour
         {
             this.team.RemoveTeamMember(this);
         }
-        GameModel.instance.players.Remove(this);
+        GameManager.instance.players.Remove(this);
     }
 
 }

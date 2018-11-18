@@ -228,10 +228,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f0490760b830450d87ef1b0e8cf1565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  implosionPrefab: {fileID: 1070085223310474, guid: 0b18c9d735f894333af57d63750d6af3,
-    type: 3}
   renderer: {fileID: 0}
   rigidbody: {fileID: 0}
+  implosionPrefab: {fileID: 1070085223310474, guid: 0b18c9d735f894333af57d63750d6af3,
+    type: 3}
 --- !u!96 &96678130803253634
 TrailRenderer:
   serializedVersion: 2
@@ -379,7 +379,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 1319945778}
-  viewIdField: 2
+  viewIdField: 0
   InstantiationId: 2
   isRuntimeInstantiated: 0
 --- !u!1 &1768583797059612

@@ -129,7 +129,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        notificationCenter = GameModel.instance.notificationCenter;
+        notificationCenter = GameManager.instance.notificationCenter;
         start_location = transform.position;
         trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
@@ -139,7 +139,7 @@ public class Ball : MonoBehaviourPunCallbacks
         ballFill = this.GetComponentInChildren<BallFillColor>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
 
-        GameModel.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationCenter.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
     }

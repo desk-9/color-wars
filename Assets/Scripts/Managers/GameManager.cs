@@ -6,13 +6,13 @@ using System.Linq;
 using UtilityExtensions;
 
 
-public class GameModel : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
 
     public static bool playerTeamsAlreadySelected = false;
     public static Dictionary<int, int> playerTeamAssignments = new Dictionary<int, int>();
     public static bool cheatForcePlayerAssignment = false;
-    public static GameModel instance;
+    public static GameManager instance;
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
     public List<TeamManager> teams { get; set; }
@@ -171,11 +171,11 @@ public class GameModel : MonoBehaviour
 
     public TeamManager GetTeamAssignment(Player caller)
     {
-        if (GameModel.playerTeamsAlreadySelected)
+        if (GameManager.playerTeamsAlreadySelected)
         {
             return teams[playerTeamAssignments[caller.playerNumber]];
         }
-        else if (GameModel.cheatForcePlayerAssignment)
+        else if (GameManager.cheatForcePlayerAssignment)
         {
             return teams[caller.playerNumber % teams.Count];
         }

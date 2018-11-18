@@ -32,7 +32,7 @@ public class PlayerControls : MonoBehaviour
     private void GivenInputDevice(IC.InputDevice device)
     {
         inputDevice = device;
-        GameModel.instance.notificationCenter.NotifyMessage(Message.InputDeviceAssigned, gameObject);
+        GameManager.instance.notificationCenter.NotifyMessage(Message.InputDeviceAssigned, gameObject);
         PlayerPuppet puppet = GetComponent<PlayerPuppet>();
         if (puppet == null || !puppet.doPuppeting)
         {
@@ -122,11 +122,11 @@ public class PlayerControls : MonoBehaviour
     {
         if (pressed && pressedEvent.HasValue)
         {
-            GameModel.instance.notificationCenter.NotifyMessage(pressedEvent.Value, player);
+            GameManager.instance.notificationCenter.NotifyMessage(pressedEvent.Value, player);
         }
         if (released && releasedEvent.HasValue)
         {
-            GameModel.instance.notificationCenter.NotifyMessage(releasedEvent.Value, player);
+            GameManager.instance.notificationCenter.NotifyMessage(releasedEvent.Value, player);
         }
     }
 
@@ -138,7 +138,7 @@ public class PlayerControls : MonoBehaviour
         {
             return;
         }
-        GameModel.instance.notificationCenter.NotifyMessage(
+        GameManager.instance.notificationCenter.NotifyMessage(
             Message.PlayerStick,
             Tuple.Create(new Vector2(stickX, stickY), player));
 

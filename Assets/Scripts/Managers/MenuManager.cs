@@ -3,7 +3,7 @@ using UtilityExtensions;
 
 using IC = InControl;
 
-public class MenuController : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
     private IC.InputControlType StartButton = IC.InputControlType.Command;
     public IC.InputControlType ResetButton = IC.InputControlType.DPadDown;
@@ -20,7 +20,7 @@ public class MenuController : MonoBehaviour
     {
         if (winDisplay != null)
         {
-            GameModel.instance.OnGameOver += () =>
+            GameManager.instance.OnGameOver += () =>
             {
                 this.RealtimeDelayCall(winDisplay.GameOverFunction, pauseBeforeWinDisplay);
             };
@@ -47,7 +47,7 @@ public class MenuController : MonoBehaviour
         }
 
         // note: don't allow pausing if game is over.
-        if (!GameModel.instance.gameOver
+        if (!GameManager.instance.gameOver
             && PlayerInputManager.instance.Any((device)
                             => device.GetControl(StartButton).WasPressed))
         {
@@ -55,7 +55,7 @@ public class MenuController : MonoBehaviour
             return;
         }
 
-        if ((SceneStateController.instance.paused || GameModel.instance.gameOver)
+        if ((SceneStateController.instance.paused || GameManager.instance.gameOver)
             && PlayerInputManager.instance.Any((device)
                             => device.GetControl(MainMenuButton).WasPressed))
         {
