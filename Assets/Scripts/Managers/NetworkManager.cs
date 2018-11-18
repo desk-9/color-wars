@@ -5,7 +5,7 @@ using Photon.Realtime;
 
 namespace Com.MyCompany.MyGame
 {
-    public class Launcher : MonoBehaviourPunCallbacks, IConnectionCallbacks
+    public class NetworkManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
     {
         #region Private Serializable Fields
 

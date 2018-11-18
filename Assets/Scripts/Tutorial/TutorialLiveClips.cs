@@ -229,7 +229,7 @@ public class TutorialLiveClips : MonoBehaviour
         }
         else
         {
-            SceneStateController.instance.Load(Scene.Sandbox);
+            SceneStateManager.instance.Load(Scene.Sandbox);
         }
     }
 

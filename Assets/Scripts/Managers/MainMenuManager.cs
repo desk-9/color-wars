@@ -34,7 +34,7 @@ public class MainMenuManager : MonoBehaviour
                 this.TimeDelayCall(
                                    () =>
                                    {
-                                       SceneStateController.instance.Load(Scene.Selection);
+                                       SceneStateManager.instance.Load(Scene.Selection);
                                    },
                                    AudioManager.instance.ConfirmSelectionSound.Length()
                                    );
@@ -46,7 +46,7 @@ public class MainMenuManager : MonoBehaviour
                 GameManager.cheatForcePlayerAssignment = true;
                 AudioManager.instance.CheatCodeSound.Play();
                 this.TimeDelayCall(
-                    () => SceneStateController.instance.Load(Scene.Court),
+                    () => SceneStateManager.instance.Load(Scene.Court),
                     AudioManager.instance.CheatCodeSound.Length());
             }
         }

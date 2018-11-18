@@ -15,7 +15,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private Goal goal;
     private Vector2 start_location;
     private BallFillColor ballFill;
-    private NotificationCenter notificationCenter;
+    private NotificationManager notificationCenter;
     private TrailRenderer trailRenderer;
     private float speedOnShoot;
     private Color neutralColor = Color.white;

@@ -38,11 +38,11 @@ public class MenuManager : MonoBehaviour
         {
             return;
         }
-        bool paused = SceneStateController.instance?.paused ?? false;
+        bool paused = SceneStateManager.instance?.paused ?? false;
         bool devicePressed = PlayerInputManager.instance.Any((device) => device.GetControl(ResetButton).WasPressed);
         if (paused && devicePressed)
         {
-            SceneStateController.instance.ReloadScene();
+            SceneStateManager.instance.ReloadScene();
             return;
         }
 
@@ -55,11 +55,11 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        if ((SceneStateController.instance.paused || GameManager.instance.gameOver)
+        if ((SceneStateManager.instance.paused || GameManager.instance.gameOver)
             && PlayerInputManager.instance.Any((device)
                             => device.GetControl(MainMenuButton).WasPressed))
         {
-            SceneStateController.instance.Load(Scene.MainMenu);
+            SceneStateManager.instance.Load(Scene.MainMenu);
             return;
         }
     }
@@ -68,15 +68,15 @@ public class MenuManager : MonoBehaviour
     public void TogglePause()
     {
         // Case: not paused now => toggling will pause
-        if (!SceneStateController.instance.paused)
+        if (!SceneStateManager.instance.paused)
         {
             AudioManager.instance.PauseSound.Play(1.0f);
             StartCoroutine(pauseMenuPanel.FadeIn());
-            SceneStateController.instance.PauseTime();
+            SceneStateManager.instance.PauseTime();
         }
         else
         {
-            SceneStateController.instance.UnPauseTime();
+            SceneStateManager.instance.UnPauseTime();
             AudioManager.instance.UnPauseSound.Play(2.5f);
             StartCoroutine(pauseMenuPanel.FadeOut());
         }

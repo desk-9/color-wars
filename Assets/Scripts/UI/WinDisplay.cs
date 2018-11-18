@@ -68,9 +68,9 @@ public class WinDisplay : MonoBehaviour
     private void StartCountdown()
     {
         GameManager.instance.notificationCenter.CallOnMessage(
-            Message.PlayerPressedX, () => SceneStateController.instance.ReloadScene());
+            Message.PlayerPressedX, () => SceneStateManager.instance.ReloadScene());
         GameManager.instance.notificationCenter.CallOnMessage(
-            Message.PlayerPressedY, () => SceneStateController.instance.Load(Scene.Selection));
+            Message.PlayerPressedY, () => SceneStateManager.instance.Load(Scene.Selection));
         StartCoroutine(ResetCountdown());
     }
 
@@ -92,7 +92,7 @@ public class WinDisplay : MonoBehaviour
                     restartCountDuration));
             yield return new WaitForSecondsRealtime(restartCountDuration + epsilon);
         }
-        SceneStateController.instance.Load(Scene.Court);
+        SceneStateManager.instance.Load(Scene.Court);
     }
 
 }

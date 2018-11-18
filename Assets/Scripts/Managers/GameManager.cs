@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public TeamResourceManager neutralResources;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
-    public NotificationCenter notificationCenter;
+    public NotificationManager notificationCenter;
     public bool gameOver { get; private set; } = false;
     public TeamManager winner { get; private set; } = null;
     public GameObject meta;
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
         {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        notificationCenter = new NotificationCenter();
+        notificationCenter = new NotificationManager();
     }
 
     private void BlowBack(Player player)
@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        SceneStateController.instance.UnPauseTime();
+        SceneStateManager.instance.UnPauseTime();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
         if (winCondition == WinCondition.Time)
         {
@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
         // if (pushAwayOtherPlayers) {
         //     nc.CallOnStateStart(State.Posession, BlowBack);
         // }
-        meta = SceneStateController.instance.gameObject;
+        meta = SceneStateManager.instance.gameObject;
         if (meta == null)
         {
             Debug.LogWarning("Meta object is null!!!!");

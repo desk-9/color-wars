@@ -69,7 +69,7 @@ public enum Message
     RecordingFinished,
 };
 
-public class NotificationCenter
+public class NotificationManager
 {
 
     // PlayerState addons
@@ -79,7 +79,7 @@ public class NotificationCenter
         new SortedDictionary<State, PlayerCallback>();
     private PlayerTransitionCallback onAnyChangeSubscribers = delegate { };
 
-    public NotificationCenter()
+    public NotificationManager()
     {
         foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
         {

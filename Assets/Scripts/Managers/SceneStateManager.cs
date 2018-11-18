@@ -11,7 +11,7 @@ public enum Scene
     Sandbox
 };
 
-public class SceneStateController : MonoBehaviour
+public class SceneStateManager : MonoBehaviour
 {
     private Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
         {Scene.Court, "court"},
@@ -30,7 +30,7 @@ public class SceneStateController : MonoBehaviour
     private float sceneTransitionDuration = 0.5f;
     private TransitionUtility.ScreenTransition screenTransition;
 
-    public static SceneStateController instance;
+    public static SceneStateManager instance;
 
     private void Awake()
     {

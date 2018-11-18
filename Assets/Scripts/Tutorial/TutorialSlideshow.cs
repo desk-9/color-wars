@@ -144,6 +144,6 @@ public class TutorialSlideshow : MonoBehaviour
         }
         yield return new WaitForSeconds(0.5f);
         PlayerTutorial.runTutorial = false;
-        SceneStateController.instance.Load(Scene.Court);
+        SceneStateManager.instance.Load(Scene.Court);
     }
 }

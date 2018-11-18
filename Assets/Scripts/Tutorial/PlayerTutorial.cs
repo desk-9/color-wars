@@ -89,7 +89,7 @@ public class PlayerTutorial : MonoBehaviour
     public static void SkipTutorial()
     {
         PlayerTutorial.runTutorial = false;
-        SceneStateController.instance.Load(Scene.Court);
+        SceneStateManager.instance.Load(Scene.Court);
     }
 
     private List<GameObject> GetPlayers()
@@ -178,7 +178,7 @@ public class PlayerTutorial : MonoBehaviour
         }
         else
         {
-            SceneStateController.instance.Load(Scene.Tutorial);
+            SceneStateManager.instance.Load(Scene.Tutorial);
         }
 
     }

@@ -7,6 +7,6 @@ public class SceneLoadTrigger : MonoBehaviour
 
     public void LoadAssociatedScene()
     {
-        SceneStateController.instance.Load(associatedScene);
+        SceneStateManager.instance.Load(associatedScene);
     }
 }
