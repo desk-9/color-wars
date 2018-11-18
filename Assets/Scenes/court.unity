@@ -4258,6 +4258,25 @@ PrefabInstance:
       objectReference: {fileID: 1521912373}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 3}
+--- !u!1 &1229109134 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1217675377384306, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1229109133}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1229109135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229109134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 286d79a4d1ecf4334b11b960d963cbbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPlayersPerRoom: 4
 --- !u!1 &1229941008
 GameObject:
   m_ObjectHideFlags: 0
@@ -4513,6 +4532,49 @@ PolygonCollider2D:
       - {x: 2.0149999, y: -1.115}
       - {x: 2.105, y: -1.095}
       - {x: 2.185, y: -1.0649999}
+--- !u!1 &1319945777 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1302162468020258, guid: f2e7498d38698437d9749dd3a3998fba,
+    type: 3}
+  m_PrefabInstance: {fileID: 991221492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1319945778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319945777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+--- !u!114 &1319945779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1319945777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 0
+  OwnershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 0}
+  viewIdField: 1
+  InstantiationId: 1
+  isRuntimeInstantiated: 0
 --- !u!1 &1335570558
 GameObject:
   m_ObjectHideFlags: 0
