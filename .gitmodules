@@ -2,3 +2,6 @@
 	path = Assets/InControl
 	url = git@github.com:spruceb/paid-incontrol.git
 	branch = master
+[submodule "Assets/Photon"]
+	path = Assets/Photon
+	url = git@github.com:dkonik/Photon.git
