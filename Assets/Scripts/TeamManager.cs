@@ -42,14 +42,14 @@ public class TeamManager {
 
     public void ResetScore() {
         score = 0;
-        GameModel.instance.nc.NotifyMessage(Message.ScoreChanged, this);
+        GameModel.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
         GameModel.instance.scoreDisplayer?.UpdateScores();
     }
 
     public void IncrementScore() {
         score += 1;
-        GameModel.instance.nc.NotifyMessage(Message.ScoreChanged, this);
-        GameModel.instance.nc.NotifyMessage(Message.GoalScored, this);
+        GameModel.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
+        GameModel.instance.notificationCenter.NotifyMessage(Message.GoalScored, this);
         GameModel.instance.scoreDisplayer?.UpdateScores();
     }
 

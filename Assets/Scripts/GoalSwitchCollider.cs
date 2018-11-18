@@ -6,7 +6,7 @@ public class GoalSwitchCollider : MonoBehaviour {
     public static string EventId {get; set;} = Utility.UniqueString();
 
     void GoalSwitch(GameObject thing) {
-        GameModel.instance.nc.NotifyStringEvent(EventId, thing);
+        GameModel.instance.notificationCenter.NotifyStringEvent(EventId, thing);
     }
 
     void OnTriggerEnter2D(Collider2D collider) {

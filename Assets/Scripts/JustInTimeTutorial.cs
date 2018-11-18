@@ -20,11 +20,11 @@ public class JustInTimeTutorial : MonoBehaviour {
 
     void Start () {
         canvasPrefab = Resources.Load<GameObject>("ToolTipCanvas");
-        GameModel.instance.nc.CallOnMessageWithSender(
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.BallPossessedWhileNeutral, PassToTeammate);
-        GameModel.instance.nc.CallOnMessageWithSender(
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.BallPossessedWhileCharged, ShootAtGoal);
-        GameModel.instance.nc.CallOnMessage(
+        GameModel.instance.notificationCenter.CallOnMessage(
             Message.GoalScored,
             () => {
                 if (!alreadySeen && GameModel.instance.teams.All(
@@ -33,9 +33,9 @@ public class JustInTimeTutorial : MonoBehaviour {
                 }
             });
 
-        GameModel.instance.nc.CallOnStateEnd(State.Posession, Unpossessed);
+        GameModel.instance.notificationCenter.CallOnStateEnd(State.Posession, Unpossessed);
 
-        GameModel.instance.nc.CallOnMessage(
+        GameModel.instance.notificationCenter.CallOnMessage(
             Message.PlayerReleasedBack,
             () => {
                 scoreThreshold = GameModel.instance.teams.Max(team => team.score);

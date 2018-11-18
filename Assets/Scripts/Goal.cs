@@ -63,7 +63,7 @@ public class Goal : MonoBehaviour {
         if (playerPassSwitching) {
             RegisterPassSwitching();
         }
-        GameModel.instance.nc.CallOnStringEventWithSender(
+        GameModel.instance.notificationCenter.CallOnStringEventWithSender(
             GoalSwitchCollider.EventId, ColliderSwitch);
     }
 
@@ -77,9 +77,9 @@ public class Goal : MonoBehaviour {
 
 
     void RegisterPassSwitching() {
-        GameModel.instance.nc.CallOnStateEnd(
+        GameModel.instance.notificationCenter.CallOnStateEnd(
             State.Posession, (Player player) => lastPlayer = player);
-        GameModel.instance.nc.CallOnStateStart(
+        GameModel.instance.notificationCenter.CallOnStateStart(
             State.Posession, (Player player) => PlayerBallColorSwitch(player));
     }
 
@@ -95,22 +95,22 @@ public class Goal : MonoBehaviour {
         }
         if (player != lastPlayer && player.team == lastPlayer?.team) {
             if (!PlayerInNullZone(player)) {
-                GameModel.instance.nc.NotifyMessage(Message.BallCharged, player);
+                GameModel.instance.notificationCenter.NotifyMessage(Message.BallCharged, player);
                 SwitchToTeam(player.team);
             } else {
                 if (currentTeam == null) {
-                        GameModel.instance.nc.NotifyMessage(Message.NullChargePrevention, player);
+                        GameModel.instance.notificationCenter.NotifyMessage(Message.NullChargePrevention, player);
                         AudioManager.instance.PassToNullZone.Play(.1f);
                     }
             }
         } else if (player.team != lastPlayer?.team) {
-            GameModel.instance.nc.NotifyMessage(Message.BallSetNeutral, player);
+            GameModel.instance.notificationCenter.NotifyMessage(Message.BallSetNeutral, player);
             ResetNeutral();
         }
         if (currentTeam == null) {
-            GameModel.instance.nc.NotifyMessage(Message.BallPossessedWhileNeutral, player);
+            GameModel.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileNeutral, player);
         } else {
-            GameModel.instance.nc.NotifyMessage(Message.BallPossessedWhileCharged, player);
+            GameModel.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileCharged, player);
         }
     }
 
@@ -174,7 +174,7 @@ public class Goal : MonoBehaviour {
 
     void ScoreGoal(Ball ball) {
         if (!ball.IsOwnable()) {
-            var stateManager = ball.owner?.GetComponent<PlayerStateManager>();
+            var stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
             if (stateManager != null) {
                 stateManager.CurrentStateHasFinished();
             }
@@ -193,7 +193,7 @@ public class Goal : MonoBehaviour {
         // ball enters the goal (even after a goal is scored!) Yikes!
         // Right now (Monday, apr 16 2:35am), the semantics of
         // ball.ownable are seen in Ball.cs functions ResetBall and HandleGoalScore
-        if (ball != null && ball.ownable) {
+        if (ball != null && ball.Ownable) {
             ScoreGoal(ball);
             this.FrameDelayCall(() => AudioManager.instance.ScoreGoalSound.Play(0.75f), 10);
         }

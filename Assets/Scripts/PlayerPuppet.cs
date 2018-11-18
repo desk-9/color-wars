@@ -32,7 +32,7 @@ public class PlayerPuppet : MonoBehaviour {
         if (!doPuppeting) {
             return;
         }
-        GameModel.instance.nc.CallOnMessage(
+        GameModel.instance.notificationCenter.CallOnMessage(
             Message.RecordingFinished,
             () => {
                 recordingFinishedThisFrame = true;
@@ -80,7 +80,7 @@ public class PlayerPuppet : MonoBehaviour {
                 if (frame.Interrupt) {
                     Debug.LogWarning("Interrupt! Text will change");
 
-                        GameModel.instance.nc.NotifyMessage(
+                        GameModel.instance.notificationCenter.NotifyMessage(
                             Message.RecordingInterrupt, this.gameObject);
 
                 }
@@ -88,7 +88,7 @@ public class PlayerPuppet : MonoBehaviour {
 
             }
             if (!recordingFinishedThisFrame) {
-                GameModel.instance.nc.NotifyMessage(
+                GameModel.instance.notificationCenter.NotifyMessage(
                     Message.RecordingFinished, this.gameObject);
             }
             if (!loop) {

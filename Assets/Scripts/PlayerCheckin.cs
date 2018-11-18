@@ -41,9 +41,9 @@ public class PlayerCheckin {
         if (onReset != null) {
             this.onReset = onReset;
         }
-        GameModel.instance.nc.CallOnMessageWithSender(checkinEvent, Checkin);
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(checkinEvent, Checkin);
         if (checkoutEvent.HasValue) {
-            GameModel.instance.nc.CallOnMessageWithSender(checkoutEvent.Value, Checkout);
+            GameModel.instance.notificationCenter.CallOnMessageWithSender(checkoutEvent.Value, Checkout);
         }
     }
 

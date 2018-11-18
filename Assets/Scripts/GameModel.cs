@@ -19,7 +19,7 @@ public class GameModel : MonoBehaviour {
     public TeamResourceManager neutralResources;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
-    public NotificationCenter nc;
+    public NotificationCenter notificationCenter;
     public bool gameOver {get; private set;} = false;
     public TeamManager winner {get; private set;} = null;
     public GameObject meta;
@@ -89,7 +89,7 @@ public class GameModel : MonoBehaviour {
         if (!PlayerTutorial.runTutorial && winCondition == WinCondition.Time) {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        nc = new NotificationCenter();
+        notificationCenter = new NotificationCenter();
     }
 
     void BlowBack(Player player) {
@@ -114,7 +114,7 @@ public class GameModel : MonoBehaviour {
 
         // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
         if (!PlayerTutorial.runTutorial && SceneManager.GetActiveScene().name == "court") {
-            nc.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
+            notificationCenter.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
             this.FrameDelayCall(
                 () => {foreach (var team in teams) {team.ResetTeam();}},
                 3);
@@ -231,7 +231,7 @@ public class GameModel : MonoBehaviour {
             team.ResetTeam();
         }
         ball.ResetBall(pauseAfterReset);
-        nc.NotifyMessage(Message.StartCountdown, this);
+        notificationCenter.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
         foreach(var wall in GameObject.FindObjectsOfType<TronWall>()) {
             wall.KillSelf();
@@ -309,7 +309,7 @@ public class GameModel : MonoBehaviour {
         }
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
-        nc.NotifyMessage(Message.SlowMoEntered, this);
+        notificationCenter.NotifyMessage(Message.SlowMoEntered, this);
         if (!TutorialLiveClips.runningLiveClips) {
             StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
         }
@@ -331,7 +331,7 @@ public class GameModel : MonoBehaviour {
             if (!TutorialLiveClips.runningLiveClips) {
                 StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
             }
-            nc.NotifyMessage(Message.SlowMoExited, this);
+            notificationCenter.NotifyMessage(Message.SlowMoExited, this);
         }
     }
 

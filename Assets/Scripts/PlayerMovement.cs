@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
             // TODO: TUTORIAL
             if (lastDirection.magnitude > 0.1f) {
                 if (Time.time - startTime > 0.75f) {
-                    GameModel.instance.nc.NotifyStringEvent("MoveTutorial", this.gameObject);
+                    GameModel.instance.notificationCenter.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
             } else {
                 startTime = Time.time;
@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement {
     void Start () {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        GameModel.instance.nc.CallOnMessageWithSender(
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerStick, playerPair => {
                 var pair = playerPair as Tuple<Vector2, GameObject>;
                 var player = pair?.Item2;

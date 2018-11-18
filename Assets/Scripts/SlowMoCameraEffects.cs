@@ -10,8 +10,8 @@ public class SlowMoCameraEffects : MonoBehaviour {
 
     void Start() {
         chromaticAberrationController = this.EnsureComponent<ChromaticAberrationController>();
-        GameModel.instance.nc.CallOnMessage(Message.SlowMoEntered, StartSlowMoEffects);
-        GameModel.instance.nc.CallOnMessage(Message.SlowMoExited, StopSlowMoEffects);
+        GameModel.instance.notificationCenter.CallOnMessage(Message.SlowMoEntered, StartSlowMoEffects);
+        GameModel.instance.notificationCenter.CallOnMessage(Message.SlowMoExited, StopSlowMoEffects);
     }
 
     void StartSlowMoEffects() {

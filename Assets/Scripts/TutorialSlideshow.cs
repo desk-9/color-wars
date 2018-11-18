@@ -53,9 +53,9 @@ public class TutorialSlideshow : MonoBehaviour {
     }
 
     void StartListeningForPlayers() {
-        GameModel.instance.nc.CallOnMessageWithSender(
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerReleasedA, CheckinPlayer);
-        GameModel.instance.nc.CallOnMessage(
+        GameModel.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 

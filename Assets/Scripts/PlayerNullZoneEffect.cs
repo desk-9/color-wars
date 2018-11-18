@@ -13,7 +13,7 @@ public class PlayerNullZoneEffect : MonoBehaviour {
     void Start() {
         player = GetComponent<Player>();
         renderer = GetComponent<SpriteRenderer>();
-        GameModel.instance.nc.CallOnMessage(Message.BallIsPossessed, CheckEffect);
+        GameModel.instance.notificationCenter.CallOnMessage(Message.BallIsPossessed, CheckEffect);
     }
 
     void CheckEffect() {

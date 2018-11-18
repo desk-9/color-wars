@@ -209,7 +209,7 @@ public class BallCarrier : MonoBehaviour {
     IEnumerator CarryBall(Ball ball) {
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         this.ball = ball;
-        ball.owner = this;
+        ball.Owner = this;
         snapToObject = null;
 
         while (true) {
@@ -234,7 +234,7 @@ public class BallCarrier : MonoBehaviour {
             snapToObject = null;
 
             // Reset references
-            ball.owner = null;
+            ball.Owner = null;
             ball = null;
 
             laserGuide?.StopDrawingLaser();

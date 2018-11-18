@@ -34,11 +34,11 @@ public class NewGoal : MonoBehaviour {
 
     void ScoreGoal(Ball ball) {
         if (ball.IsOwnable()) {
-            ball.ownable = false;
+            ball.Ownable = false;
             GameModel.instance.GoalScoredOnTeam(team);
             ball.ResetBall();
         } else {
-            var stateManager = ball.owner?.GetComponent<PlayerStateManager>();
+            var stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
             if (stateManager != null) {
                 stateManager.CurrentStateHasFinished();
             }

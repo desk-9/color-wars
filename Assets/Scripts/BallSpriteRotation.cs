@@ -13,8 +13,8 @@ public class BallSpriteRotation : MonoBehaviour {
     // Use this for initialization
     void Start () {
         GetKeepToVector = () => transform.right;
-        GameModel.instance.nc.CallOnMessage(Message.BallIsUnpossessed, BecameUnpossessed);
-        GameModel.instance.nc.CallOnMessageWithSender(Message.BallIsPossessed,
+        GameModel.instance.notificationCenter.CallOnMessage(Message.BallIsUnpossessed, BecameUnpossessed);
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(Message.BallIsPossessed,
                                                       BecamePossessed);
     }
 
@@ -24,8 +24,8 @@ public class BallSpriteRotation : MonoBehaviour {
             return;
         }
 
-        var angleDifference = Vector2.SignedAngle(ball.owner.transform.right, transform.right);
-        GetKeepToVector = () => Utility.RotateVector(ball.owner.transform.right, angleDifference);
+        var angleDifference = Vector2.SignedAngle(ball.Owner.transform.right, transform.right);
+        GetKeepToVector = () => Utility.RotateVector(ball.Owner.transform.right, angleDifference);
     }
 
     void BecameUnpossessed() {

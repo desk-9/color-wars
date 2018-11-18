@@ -67,7 +67,7 @@ public class PlayerTutorial : MonoBehaviour {
         inTeamSelection = (tutorialType == TutorialType.TeamSelection
                            && GameObject.Find("TeamSelection") != null);
 
-        GameModel.instance.nc.CallOnMessage(
+        GameModel.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => {if (!inTeamSelection) {skipReadyUpCheat = true;}});
 
         skipTutorialCheckin = PlayerCheckin.TextCountCheckin(
@@ -181,7 +181,7 @@ public class PlayerTutorial : MonoBehaviour {
         readyUpText.text = "TRY LAYING A WALL WITH <BButton>";
 
         ResetCheckin();
-        GameModel.instance.nc.CallOnMessageWithSender(
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerReleasedWall, CheckinPlayer
         );
         yield return null;
@@ -189,7 +189,7 @@ public class PlayerTutorial : MonoBehaviour {
             yield return null;
         }
         ResetCheckin();
-        GameModel.instance.nc.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
+        GameModel.instance.notificationCenter.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
         readyUpCount.text = "";
 
         // Start the countdown.

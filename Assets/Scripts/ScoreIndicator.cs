@@ -42,7 +42,7 @@ public class ScoreIndicator : MonoBehaviour {
         }
 
         // Update score indicator when a goal is scored
-        GameModel.instance.nc.CallOnMessageWithSender(
+        GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.GoalScored,
             (object scoringTeam) => {
                 if ((TeamManager)scoringTeam == team) {
@@ -51,7 +51,7 @@ public class ScoreIndicator : MonoBehaviour {
             });
 
         // Reset score indicator when game is restarted
-        GameModel.instance.nc.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
+        GameModel.instance.notificationCenter.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
 
         foreach (var pointIndicator in pointIndicators) {
             pointIndicator.GetComponent<SpriteRenderer>().color = team.teamColor.color;

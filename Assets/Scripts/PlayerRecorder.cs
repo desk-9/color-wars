@@ -64,7 +64,7 @@ public class PlayerRecorder : MonoBehaviour {
         controls = this.EnsureComponent<PlayerControls>();
         if (allRecordAtOnce) {
             // Have all players start and stop recordings on same button press
-            GameModel.instance.nc.CallOnMessage(
+            GameModel.instance.notificationCenter.CallOnMessage(
                 Message.PlayerPressedRightBumper, () => {
                     if (recording == null) {
                         recording = StartCoroutine(Record());
