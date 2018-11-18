@@ -3,74 +3,84 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using IC = InControl;
-using UtilityExtensions;
 
-public struct ButtonEventPair {
+public struct ButtonEventPair
+{
     public Message pressedEvent;
     public Message releasedEvent;
-    public ButtonEventPair(Message pressedEvent, Message releasedEvent) {
+    public ButtonEventPair(Message pressedEvent, Message releasedEvent)
+    {
         this.pressedEvent = pressedEvent;
         this.releasedEvent = releasedEvent;
     }
 }
 
-public class PlayerControls : MonoBehaviour {
+public class PlayerControls : MonoBehaviour
+{
+    private IC.InputDevice inputDevice;
+    private Coroutine broadcast;
+    private PlayerStateManager stateManager;
 
-    IC.InputDevice inputDevice;
-    Coroutine broadcast;
-    PlayerStateManager stateManager;
-
-    void Start () {
+    private void Start()
+    {
         PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
                                                     GivenInputDevice,
                                                     InputDeviceDisconnectedCallback);
         stateManager = GetComponent<PlayerStateManager>();
     }
 
-    void GivenInputDevice(IC.InputDevice device) {
+    private void GivenInputDevice(IC.InputDevice device)
+    {
         inputDevice = device;
         GameModel.instance.notificationCenter.NotifyMessage(Message.InputDeviceAssigned, gameObject);
-        var puppet = GetComponent<PlayerPuppet>();
-        if (puppet == null || !puppet.doPuppeting) {
+        PlayerPuppet puppet = GetComponent<PlayerPuppet>();
+        if (puppet == null || !puppet.doPuppeting)
+        {
             broadcast = StartCoroutine(ControlsBroadcast());
         }
     }
 
-    public IC.InputDevice GetInputDevice() {
+    public IC.InputDevice GetInputDevice()
+    {
         return inputDevice;
     }
 
-    void InputDeviceDisconnectedCallback() {
-        var movement = GetComponent<PlayerMovement>();
+    private void InputDeviceDisconnectedCallback()
+    {
+        PlayerMovement movement = GetComponent<PlayerMovement>();
         movement?.StopAllMovement();
 
-        if (broadcast != null) {
+        if (broadcast != null)
+        {
             StopCoroutine(broadcast);
         }
         broadcast = null;
-        stateManager?.AttemptStartState(delegate{}, delegate{});
+        stateManager?.AttemptStartState(delegate { }, delegate { });
         inputDevice = null;
     }
 
+    private Dictionary<IC.InputControlType, ButtonEventPair> buttonEvents =
+        new Dictionary<IC.InputControlType, ButtonEventPair>()
+        {
 
-    Dictionary<IC.InputControlType, ButtonEventPair> buttonEvents =
-        new Dictionary<IC.InputControlType, ButtonEventPair>() {
-
-        [IC.InputControlType.LeftBumper] = new ButtonEventPair(
+            [IC.InputControlType.LeftBumper] = new ButtonEventPair(
             Message.PlayerPressedLeftBumper, Message.PlayerReleasedLeftBumper),
-        [IC.InputControlType.RightBumper] = new ButtonEventPair(
+            [IC.InputControlType.RightBumper] = new ButtonEventPair(
             Message.PlayerPressedRightBumper, Message.PlayerReleasedRightBumper),
-        [IC.InputControlType.Action3] = new ButtonEventPair(
+            [IC.InputControlType.Action3] = new ButtonEventPair(
             Message.PlayerPressedX, Message.PlayerReleasedX),
-        [IC.InputControlType.Action4] = new ButtonEventPair(
+            [IC.InputControlType.Action4] = new ButtonEventPair(
             Message.PlayerPressedY, Message.PlayerReleasedY),
-        [IC.InputControlType.Back] = new ButtonEventPair(
+            [IC.InputControlType.Back] = new ButtonEventPair(
             Message.PlayerPressedBack, Message.PlayerReleasedBack),
-    };
+        };
 
-    IEnumerator ControlsBroadcast() {
-        while (true) {
-            if (inputDevice == null) {
+    private IEnumerator ControlsBroadcast()
+    {
+        while (true)
+        {
+            if (inputDevice == null)
+            {
                 yield return null;
                 continue;
             }
@@ -82,7 +92,8 @@ public class PlayerControls : MonoBehaviour {
                             inputDevice.Action2.WasReleased,
                             this.gameObject);
 
-            foreach (var kvPair in buttonEvents) {
+            foreach (KeyValuePair<IC.InputControlType, ButtonEventPair> kvPair in buttonEvents)
+            {
                 CheckButtonEvents(kvPair.Key, inputDevice, gameObject,
                                   kvPair.Value.pressedEvent, kvPair.Value.releasedEvent);
             }
@@ -94,9 +105,11 @@ public class PlayerControls : MonoBehaviour {
                                          IC.InputDevice device,
                                          GameObject player,
                                          Message? pressedEvent = null,
-                                         Message? releasedEvent = null) {
-        if (device != null) {
-            var button = device.GetControl(type);
+                                         Message? releasedEvent = null)
+    {
+        if (device != null)
+        {
+            IC.InputControl button = device.GetControl(type);
             SendButtonEvent(button.WasPressed, button.WasReleased,
                             player, pressedEvent, releasedEvent);
         }
@@ -105,49 +118,57 @@ public class PlayerControls : MonoBehaviour {
     public static void SendButtonEvent(bool pressed, bool released,
                                        GameObject player,
                                        Message? pressedEvent = null,
-                                       Message? releasedEvent = null) {
-        if (pressed && pressedEvent.HasValue) {
+                                       Message? releasedEvent = null)
+    {
+        if (pressed && pressedEvent.HasValue)
+        {
             GameModel.instance.notificationCenter.NotifyMessage(pressedEvent.Value, player);
         }
-        if (released && releasedEvent.HasValue) {
+        if (released && releasedEvent.HasValue)
+        {
             GameModel.instance.notificationCenter.NotifyMessage(releasedEvent.Value, player);
         }
     }
 
     public static void SendInputEvents(float stickX, float stickY, bool APressed,
                                        bool AReleased, bool BPressed, bool BReleased,
-                                       GameObject player) {
-        if (player == null) {
+                                       GameObject player)
+    {
+        if (player == null)
+        {
             return;
         }
         GameModel.instance.notificationCenter.NotifyMessage(
             Message.PlayerStick,
             Tuple.Create(new Vector2(stickX, stickY), player));
 
-        var AEvents = new List<ButtonEventPair>() {
+        List<ButtonEventPair> AEvents = new List<ButtonEventPair>() {
             new ButtonEventPair(Message.PlayerPressedA, Message.PlayerReleasedA),
             new ButtonEventPair(Message.PlayerPressedDash, Message.PlayerReleasedDash),
             new ButtonEventPair(Message.PlayerPressedShoot, Message.PlayerReleasedShoot),
         };
-        foreach (var events in AEvents) {
+        foreach (ButtonEventPair events in AEvents)
+        {
             SendButtonEvent(APressed, AReleased, player,
                             events.pressedEvent, events.releasedEvent);
         }
-        var BEvents = new List<ButtonEventPair>() {
+        List<ButtonEventPair> BEvents = new List<ButtonEventPair>() {
             new ButtonEventPair(Message.PlayerPressedB, Message.PlayerReleasedB),
             new ButtonEventPair(Message.PlayerPressedWall, Message.PlayerReleasedWall),
         };
-        foreach (var events in BEvents) {
+        foreach (ButtonEventPair events in BEvents)
+        {
             SendButtonEvent(BPressed, BReleased, player,
                             events.pressedEvent, events.releasedEvent);
         }
     }
 
-
-    void OnDestroy() {
-        if (inputDevice != null) {
+    private void OnDestroy()
+    {
+        if (inputDevice != null)
+        {
             PlayerInputManager.instance.devices[inputDevice] = false;
-            PlayerInputManager.instance.actions[inputDevice] = delegate{};
+            PlayerInputManager.instance.actions[inputDevice] = delegate { };
         }
     }
 }

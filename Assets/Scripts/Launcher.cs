@@ -24,7 +24,7 @@ namespace Com.MyCompany.MyGame
         /// <summary>
         /// This client's version number. Users are separated from each other by gameVersion (which allows you to make breaking changes).
         /// </summary>
-        string gameVersion = "1";
+        private string gameVersion = "1";
 
 
         #endregion
@@ -36,7 +36,7 @@ namespace Com.MyCompany.MyGame
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity during early initialization phase.
         /// </summary>
-        void Awake()
+        private void Awake()
         {
             // #Critical
             // this makes sure we can use PhotonNetwork.LoadLevel() on the master client and all clients in the same room sync their level automatically
@@ -47,7 +47,7 @@ namespace Com.MyCompany.MyGame
         /// <summary>
         /// MonoBehaviour method called on GameObject by Unity during initialization phase.
         /// </summary>
-        void Start()
+        private void Start()
         {
             Connect();
         }

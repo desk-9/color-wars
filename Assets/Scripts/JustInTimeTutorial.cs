@@ -1,24 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using System.Linq;
 
-public class JustInTimeTutorial : MonoBehaviour {
+public class JustInTimeTutorial : MonoBehaviour
+{
     public static JustInTimeTutorial instance;
     public static bool alreadySeen = false;
-    int scoreThreshold = 0;
-    GameObject canvasPrefab;
+    private int scoreThreshold = 0;
+    private GameObject canvasPrefab;
 
-    void Awake() {
-        if (instance == null) {
+    private void Awake()
+    {
+        if (instance == null)
+        {
             instance = this;
-        } else {
+        }
+        else
+        {
             Destroy(this);
         }
     }
 
-    void Start () {
+    private void Start()
+    {
         canvasPrefab = Resources.Load<GameObject>("ToolTipCanvas");
         GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.BallPossessedWhileNeutral, PassToTeammate);
@@ -26,9 +29,11 @@ public class JustInTimeTutorial : MonoBehaviour {
             Message.BallPossessedWhileCharged, ShootAtGoal);
         GameModel.instance.notificationCenter.CallOnMessage(
             Message.GoalScored,
-            () => {
+            () =>
+            {
                 if (!alreadySeen && GameModel.instance.teams.All(
-                        team => team.score > scoreThreshold)) {
+                        team => team.score > scoreThreshold))
+                {
                     alreadySeen = true;
                 }
             });
@@ -37,7 +42,8 @@ public class JustInTimeTutorial : MonoBehaviour {
 
         GameModel.instance.notificationCenter.CallOnMessage(
             Message.PlayerReleasedBack,
-            () => {
+            () =>
+            {
                 scoreThreshold = GameModel.instance.teams.Max(team => team.score);
                 alreadySeen = false;
             });
@@ -46,39 +52,51 @@ public class JustInTimeTutorial : MonoBehaviour {
         // On possession with charged: shoot at goal
     }
 
-    void Unpossessed(Player player) {
-        var tooltipCanvas = player.GetComponentInChildren<ToolTipPlacement>();
-        if (tooltipCanvas != null) {
+    private void Unpossessed(Player player)
+    {
+        ToolTipPlacement tooltipCanvas = player.GetComponentInChildren<ToolTipPlacement>();
+        if (tooltipCanvas != null)
+        {
             tooltipCanvas.SetText("");
         }
     }
 
-    ToolTipPlacement CheckMakeCanvas(Player player) {
-        var tooltipCanvas = player?.GetComponentInChildren<ToolTipPlacement>();
-        if (tooltipCanvas == null && player != null) {
+    private ToolTipPlacement CheckMakeCanvas(Player player)
+    {
+        ToolTipPlacement tooltipCanvas = player?.GetComponentInChildren<ToolTipPlacement>();
+        if (tooltipCanvas == null && player != null)
+        {
             tooltipCanvas = Instantiate(canvasPrefab, player.transform).GetComponent<ToolTipPlacement>();
         }
         return tooltipCanvas;
     }
 
-    void PassToTeammate(object sender) {
-        var player = sender as Player;
-        var tooltipCanvas = CheckMakeCanvas(player);
+    private void PassToTeammate(object sender)
+    {
+        Player player = sender as Player;
+        ToolTipPlacement tooltipCanvas = CheckMakeCanvas(player);
         if (!alreadySeen && player != null && player.team != null
-            && player.team.score <= scoreThreshold) {
+            && player.team.score <= scoreThreshold)
+        {
             tooltipCanvas?.SetText("<AButton> Pass to your teammate");
-        } else {
+        }
+        else
+        {
             tooltipCanvas?.SetText("");
         }
     }
 
-    void ShootAtGoal(object sender) {
-        var player = sender as Player;
-        var tooltipCanvas = CheckMakeCanvas(player);
+    private void ShootAtGoal(object sender)
+    {
+        Player player = sender as Player;
+        ToolTipPlacement tooltipCanvas = CheckMakeCanvas(player);
         if (!alreadySeen && player != null && player.team != null
-            && player.team.score <= scoreThreshold) {
+            && player.team.score <= scoreThreshold)
+        {
             tooltipCanvas?.SetText("<AButton> Shoot at the goal");
-        } else {
+        }
+        else
+        {
             tooltipCanvas?.SetText("");
         }
     }

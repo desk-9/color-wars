@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UtilityExtensions;
+﻿using UtilityExtensions;
 
-public class ShotChargeIndicator : CircularIndicator {
-    public override void Start() {
+public class ShotChargeIndicator : CircularIndicator
+{
+    public override void Start()
+    {
         base.Start();
         this.FrameDelayCall(Initialize);
     }
@@ -13,12 +12,14 @@ public class ShotChargeIndicator : CircularIndicator {
     // Use the Player component to set
     // - the image fill color
     // - maxFillAmount == maxShotSpeed
-    void Initialize() {
-        var player = GetComponentInParent(typeof(Player)) as Player;
+    private void Initialize()
+    {
+        Player player = GetComponentInParent(typeof(Player)) as Player;
         player.CallAsSoonAsTeamAssigned(MatchTeamColor);
     }
 
-    public void MatchTeamColor(TeamManager team) {
+    public void MatchTeamColor(TeamManager team)
+    {
         fillColor = team.teamColor.color;
     }
 }

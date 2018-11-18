@@ -1,12 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BallCatcher : MonoBehaviour {
-
-	void OnTriggerEnter2D(Collider2D collider) {
-        var ball = collider.gameObject.GetComponent<Ball>();
-        if (ball != null) {
+public class BallCatcher : MonoBehaviour
+{
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        Ball ball = collider.gameObject.GetComponent<Ball>();
+        if (ball != null)
+        {
             ball.ResetBall();
         }
     }

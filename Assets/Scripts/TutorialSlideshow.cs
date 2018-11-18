@@ -7,12 +7,13 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using UtilityExtensions;
 
-public class TutorialSlideshow : MonoBehaviour {
+public class TutorialSlideshow : MonoBehaviour
+{
     public static TutorialSlideshow instance;
+    private string tutorialVideoDirectory = "TutorialClips";
 
-    string tutorialVideoDirectory = "TutorialClips";
     // Slide pairs are of the form (string for the info text, filename of video)
-    List<Tuple<string, string>> slides = new List<Tuple<string, string>>() {
+    private List<Tuple<string, string>> slides = new List<Tuple<string, string>>() {
         {"TOUCH the ball to pick it up", "01-touch-ball-to-pick-up"},
         {"Press A to SHOOT the ball", "02-press-a-to-shoot-ball"},
         {"PASS to your teammate to CHARGE the ball with your color", "03-pass-to-teammate-to-charge-ball"},
@@ -24,26 +25,31 @@ public class TutorialSlideshow : MonoBehaviour {
         {"Score 3 times to win!", "09-score-3-times-to-win"},
         {"Press A to start the game!", "10-this-is-seriously-just-a-2-second-video-of-eigengrau-oh-god-i-hate-myself"},
     };
+    private Canvas tutorialCanvas;
+    private Text infoText;
+    private Text readyText;
+    private VideoPlayer videoPlayer;
+    private UIVideo updater;
+    private Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
+    private bool nextSlideForceCheat = false;
 
-    Canvas tutorialCanvas;
-    Text infoText;
-    Text readyText;
-    VideoPlayer videoPlayer;
-    UIVideo updater;
-    Dictionary<GameObject, bool> checkin = new Dictionary<GameObject, bool>();
-    bool nextSlideForceCheat = false;
-
-    void Awake() {
-        if (instance == null) {
+    private void Awake()
+    {
+        if (instance == null)
+        {
             instance = this;
-        } else {
+        }
+        else
+        {
             Destroy(this);
         }
     }
 
-    void Start() {
+    private void Start()
+    {
         tutorialCanvas = GameObject.Find("TutorialCanvas").GetComponent<Canvas>();
-        if (tutorialCanvas != null) {
+        if (tutorialCanvas != null)
+        {
             infoText = tutorialCanvas.FindComponent<Text>("Info");
             videoPlayer = tutorialCanvas.FindComponent<VideoPlayer>("TutorialVideo");
             updater = videoPlayer.GetComponent<UIVideo>();
@@ -52,59 +58,73 @@ public class TutorialSlideshow : MonoBehaviour {
         }
     }
 
-    void StartListeningForPlayers() {
+    private void StartListeningForPlayers()
+    {
         GameModel.instance.notificationCenter.CallOnMessageWithSender(
             Message.PlayerReleasedA, CheckinPlayer);
         GameModel.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 
-    List<GameObject> GetPlayers() {
+    private List<GameObject> GetPlayers()
+    {
         return (from player in GameModel.instance.GetAllPlayers()
                 select player.gameObject).ToList();
     }
 
-    void ResetCheckin() {
+    private void ResetCheckin()
+    {
         nextSlideForceCheat = false;
-        foreach (var player in GetPlayers()) {
+        foreach (GameObject player in GetPlayers())
+        {
             checkin[player.gameObject] = false;
         }
         readyText.text = string.Format("Press A to continue ({0}/{1})",
                                        NumberCheckedIn(), GetPlayers().Count);
     }
 
-    void CheckinPlayer(object potentialPlayer) {
-        var player = potentialPlayer as GameObject;
-        if (player != null) {
+    private void CheckinPlayer(object potentialPlayer)
+    {
+        GameObject player = potentialPlayer as GameObject;
+        if (player != null)
+        {
             checkin[player] = true;
         }
         readyText.text = string.Format("Press A to continue ({0}/{1})",
                                        NumberCheckedIn(), GetPlayers().Count);
     }
 
-    int NumberCheckedIn() {
+    private int NumberCheckedIn()
+    {
         return GetPlayers().Count(player => checkin[player]);
     }
 
-    bool AllCheckedIn() {
-        var allPlayers = (from player in GetPlayers() select checkin[player]).All(x => x);
+    private bool AllCheckedIn()
+    {
+        bool allPlayers = (from player in GetPlayers() select checkin[player]).All(x => x);
         return allPlayers || nextSlideForceCheat;
     }
 
-    IEnumerator Slideshow() {
+    private IEnumerator Slideshow()
+    {
         StartListeningForPlayers();
         yield return null;
 
-        foreach (var slide in slides) {
+        foreach (Tuple<string, string> slide in slides)
+        {
             ResetCheckin();
-            var slideText = slide.Item1;
+            string slideText = slide.Item1;
             VideoClip slideVideo;
-            if (slide.Item2 == null) {
+            if (slide.Item2 == null)
+            {
                 slideVideo = null;
-            } else {
-                var slideVideoPath = string.Format("{0}/{1}", tutorialVideoDirectory, slide.Item2);
+            }
+            else
+            {
+                string slideVideoPath = string.Format("{0}/{1}", tutorialVideoDirectory, slide.Item2);
                 slideVideo = Resources.Load<VideoClip>(slideVideoPath);
-                if (slideVideo == null) {
+                if (slideVideo == null)
+                {
                     Debug.LogError("Video clip not found!");
                     continue;
                 }
@@ -112,7 +132,8 @@ public class TutorialSlideshow : MonoBehaviour {
             infoText.text = slideText;
             videoPlayer.clip = slideVideo;
             updater.StartVideoUpdate();
-            while (!AllCheckedIn()) {
+            while (!AllCheckedIn())
+            {
                 yield return null;
             }
             videoPlayer.Stop();

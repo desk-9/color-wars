@@ -1,21 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UtilityExtensions;
 
-public class SelfDestruct : MonoBehaviour {
-
-    ParticleSystem ps;
+public class SelfDestruct : MonoBehaviour
+{
+    private ParticleSystem ps;
     public bool withChildren = true;
 
     // Use this for initialization
-    void Start () {
+    private void Start()
+    {
         ps = this.EnsureComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
-    void Update () {
-        if (!ps.IsAlive(withChildren)) {
+    private void Update()
+    {
+        if (!ps.IsAlive(withChildren))
+        {
             Destroy(gameObject);
         }
     }

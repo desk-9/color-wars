@@ -1,27 +1,27 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
-public class WinDisplay : MonoBehaviour {
-    Text winnerText = null;
-    Text restartText = null;
-    Text restartCount = null;
-    Text mainMenuInstructions = null;
+public class WinDisplay : MonoBehaviour
+{
+    private Text winnerText = null;
+    private Text restartText = null;
+    private Text restartCount = null;
+    private Text mainMenuInstructions = null;
 
     public AnimationCurve restartCountSize;
     public int SecondsBeforeReset = 10;
-    float minRestartCountSize = 40;
-    float maxRestartCountSize = 125;
-    float restartCountDuration = 1.0f;
-    float epsilon = 0.05f;
+    private float minRestartCountSize = 40;
+    private float maxRestartCountSize = 125;
+    private float restartCountDuration = 1.0f;
+    private float epsilon = 0.05f;
+    private TransitionUtility.Panel winDisplayPanel;
+    private float gameOverTransitionDuration = 1.0f;
+    private float delayBeforeResetCountdown = 0.25f;
 
-    TransitionUtility.Panel winDisplayPanel;
-    float gameOverTransitionDuration = 1.0f;
-    float delayBeforeResetCountdown = 0.25f;
-
-    void Awake () {
+    private void Awake()
+    {
         FindTextObjects();
 
         winDisplayPanel = new TransitionUtility.Panel(
@@ -29,7 +29,8 @@ public class WinDisplay : MonoBehaviour {
         winDisplayPanel.MakeTransparent();
     }
 
-    void FindTextObjects() {
+    private void FindTextObjects()
+    {
         winnerText = winnerText ?? transform.FindComponent<Text>("WinnerText");
         restartText = restartText ?? transform.FindComponent<Text>("RestartText");
         restartCount = restartCount ?? transform.FindComponent<Text>("RestartCount");
@@ -37,7 +38,8 @@ public class WinDisplay : MonoBehaviour {
             transform.FindComponent<Text>("MainMenuInstructions");
     }
 
-    public void GameOverFunction() {
+    public void GameOverFunction()
+    {
         this.gameObject.SetActive(true);
         SetGameOverText();
         StartCoroutine(CoroutineUtility.RunThenCallback(
@@ -46,20 +48,25 @@ public class WinDisplay : MonoBehaviour {
                                StartCountdown, delayBeforeResetCountdown)));
     }
 
-    void SetGameOverText() {
+    private void SetGameOverText()
+    {
         FindTextObjects();
 
-        var winner = GameModel.instance.winner;
-        if (winner == null) {
+        TeamManager winner = GameModel.instance.winner;
+        if (winner == null)
+        {
             winnerText.text = "Tie!";
             winnerText.color = Color.black;
-        } else {
+        }
+        else
+        {
             winnerText.text = string.Format("{0} Team won!", winner.teamColor.name);
             winnerText.color = winner.teamColor;
         }
     }
 
-    void StartCountdown() {
+    private void StartCountdown()
+    {
         GameModel.instance.notificationCenter.CallOnMessage(
             Message.PlayerPressedX, () => SceneStateController.instance.ReloadScene());
         GameModel.instance.notificationCenter.CallOnMessage(
@@ -67,15 +74,18 @@ public class WinDisplay : MonoBehaviour {
         StartCoroutine(ResetCountdown());
     }
 
-    IEnumerator ResetCountdown() {
+    private IEnumerator ResetCountdown()
+    {
         restartText.text = "Resetting in: ";
-        for (int i = SecondsBeforeReset; i > 0; --i) {
+        for (int i = SecondsBeforeReset; i > 0; --i)
+        {
             restartCount.text = i.ToString();
             StartCoroutine(
                 TransitionUtility.LerpFloat(
-                    (float value) => {
+                    (float value) =>
+                    {
                         float scaledProgress = restartCountSize.Evaluate(value);
-                        restartCount.fontSize = (int) Mathf.Lerp(
+                        restartCount.fontSize = (int)Mathf.Lerp(
                             minRestartCountSize, maxRestartCountSize, scaledProgress);
                     },
                     0.0f, 1.0f,

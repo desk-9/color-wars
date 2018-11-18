@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
-public class BreathingText : MonoBehaviour {
+public class BreathingText : MonoBehaviour
+{
 
     public float period = 1.0f;
 
@@ -20,12 +19,12 @@ public class BreathingText : MonoBehaviour {
     public Color startColor;
     public Color endColor;
     public AnimationCurve colorCurve;
+    private Text text;
+    private RichText richText;
+    private RectTransform rect;
 
-    Text text;
-    RichText richText;
-    RectTransform rect;
-
-    public void Start() {
+    public void Start()
+    {
 
         rect = this.EnsureComponent<RectTransform>();
 
@@ -34,18 +33,22 @@ public class BreathingText : MonoBehaviour {
         richText = GetComponent<RichText>();
         InitializeTextElement();
 
-        if (lerpColor) {
+        if (lerpColor)
+        {
             LerpColor();
         }
 
-        if (lerpFontSize) {
+        if (lerpFontSize)
+        {
             LerpFontSize();
         }
 
     }
 
-    void InitializeTextElement() {
-        if (text != null) {
+    private void InitializeTextElement()
+    {
+        if (text != null)
+        {
             // Makes the text lerping stay "centered" in place
             text.alignByGeometry = true;
 
@@ -61,13 +64,18 @@ public class BreathingText : MonoBehaviour {
         }
     }
 
-    void LerpColor() {
+    private void LerpColor()
+    {
         StartCoroutine(
             TransitionUtility.PingPongColor(
-                (value) => {
-                    if (text != null) {
+                (value) =>
+                {
+                    if (text != null)
+                    {
                         text.color = value;
-                    } else if (richText != null) {
+                    }
+                    else if (richText != null)
+                    {
                         richText.color = value;
                     }
                 },
@@ -75,7 +83,8 @@ public class BreathingText : MonoBehaviour {
                 useGameTime: false, animationCurve: colorCurve));
     }
 
-    void LerpFontSize() {
+    private void LerpFontSize()
+    {
         StartCoroutine(
             TransitionUtility.PingPongFloat(
                 (newScale) => rect.localScale = new Vector3(newScale, newScale, 1.0f),

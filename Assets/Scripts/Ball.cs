@@ -6,7 +6,7 @@ using UtilityExtensions;
 public class Ball : MonoBehaviourPunCallbacks
 {
     public bool Ownable { get; set; } = true;
-    new public SpriteRenderer renderer;
+    public new SpriteRenderer renderer;
     public new Rigidbody2D rigidbody;
     [SerializeField]
     private GameObject implosionPrefab;

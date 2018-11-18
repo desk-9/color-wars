@@ -1,12 +1,10 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using UtilityExtensions;
 
-public class TransitionUtility : MonoBehaviour {
+public class TransitionUtility : MonoBehaviour
+{
     // Class for utility functions involving screen transitions, color lerping
 
     // ASSUMPTION: All animation curves for this file have values in the range
@@ -14,10 +12,14 @@ public class TransitionUtility : MonoBehaviour {
     // to any lerpy functions
     public static TransitionUtility instance;
 
-    void Awake() {
-        if (instance == null) {
+    private void Awake()
+    {
+        if (instance == null)
+        {
             instance = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
         }
     }
@@ -25,18 +27,20 @@ public class TransitionUtility : MonoBehaviour {
 
     public static IEnumerator PingPongFloat(FloatSetter floatSetter,
                                             float minValue, float maxValue,
-                                            float period, bool useGameTime=false,
-                                            AnimationCurve animationCurve = null) {
+                                            float period, bool useGameTime = false,
+                                            AnimationCurve animationCurve = null)
+    {
 
-        animationCurve = animationCurve?? AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
+        animationCurve = animationCurve ?? AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
         animationCurve.preWrapMode = WrapMode.PingPong;
         animationCurve.postWrapMode = WrapMode.PingPong;
         float startTime = Time.realtimeSinceStartup;
         float timeElapsed = 0.0f;
         float progress = 0.0f;
         floatSetter(minValue);
-        float duration = period/2;
-        while (true) {
+        float duration = period / 2;
+        while (true)
+        {
             timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
             progress = timeElapsed / duration;
             float scaledProgress = ScaleProgress(
@@ -47,18 +51,20 @@ public class TransitionUtility : MonoBehaviour {
     }
     public static IEnumerator PingPongColor(ColorSetter colorSetter,
                                             Color startValue, Color endValue,
-                                            float period, bool useGameTime=false,
-                                            AnimationCurve animationCurve = null) {
+                                            float period, bool useGameTime = false,
+                                            AnimationCurve animationCurve = null)
+    {
 
-        animationCurve = animationCurve?? AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
+        animationCurve = animationCurve ?? AnimationCurve.Linear(0.0f, 0.0f, 1.0f, 1.0f);
         animationCurve.preWrapMode = WrapMode.PingPong;
         animationCurve.postWrapMode = WrapMode.PingPong;
         float startTime = Time.realtimeSinceStartup;
         float timeElapsed = 0.0f;
         float progress = 0.0f;
         colorSetter(startValue);
-        float duration = period/2;
-        while (true) {
+        float duration = period / 2;
+        while (true)
+        {
             timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
             progress = timeElapsed / duration;
             float scaledProgress = ScaleProgress(progress, 0.0f, 1.0f, animationCurve);
@@ -68,22 +74,25 @@ public class TransitionUtility : MonoBehaviour {
         }
     }
 
-    static float UpdateTimeElapsed(float timeElapsed, float startTime,
-                                   bool useGameTime=false) {
-        if (useGameTime) {return timeElapsed + Time.deltaTime;}
+    private static float UpdateTimeElapsed(float timeElapsed, float startTime,
+                                   bool useGameTime = false)
+    {
+        if (useGameTime) { return timeElapsed + Time.deltaTime; }
         return Time.realtimeSinceStartup - startTime;
     }
 
     public static IEnumerator LerpFloat(FloatSetter floatSetter,
                                         float startValue, float endValue,
-                                        float duration, bool useGameTime=false,
-                                        AnimationCurve animationCurve = null) {
+                                        float duration, bool useGameTime = false,
+                                        AnimationCurve animationCurve = null)
+    {
 
         float startTime = Time.realtimeSinceStartup;
         float timeElapsed = 0.0f;
         float progress = 0.0f;
         floatSetter(startValue);
-        while (timeElapsed < duration) {
+        while (timeElapsed < duration)
+        {
             timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
             progress = timeElapsed / duration;
             float scaledProgress = ScaleProgress(
@@ -95,13 +104,16 @@ public class TransitionUtility : MonoBehaviour {
     }
 
     public static float ScaleProgress(float progress, float startValue, float endValue,
-                                      AnimationCurve animationCurve = null) {
+                                      AnimationCurve animationCurve = null)
+    {
         float scaledProgress = progress;
-        if (animationCurve != null) {
+        if (animationCurve != null)
+        {
             float delta = endValue - startValue;
-            scaledProgress = startValue + delta*animationCurve.Evaluate(progress);
+            scaledProgress = startValue + delta * animationCurve.Evaluate(progress);
         }
-        else {
+        else
+        {
             scaledProgress = Mathf.Lerp(startValue, endValue, progress);
         }
         return scaledProgress;
@@ -109,13 +121,15 @@ public class TransitionUtility : MonoBehaviour {
 
     public static IEnumerator LerpColor(ColorSetter colorSetter,
                                         Color startColor, Color endColor,
-                                        float duration, bool useGameTime=false) {
+                                        float duration, bool useGameTime = false)
+    {
 
         float startTime = Time.realtimeSinceStartup;
         float timeElapsed = 0.0f;
         float progress = 0.0f;
         colorSetter(startColor);
-        while (timeElapsed < duration) {
+        while (timeElapsed < duration)
+        {
             timeElapsed = UpdateTimeElapsed(timeElapsed, startTime, useGameTime);
             progress = timeElapsed / duration;
             Color newColor = Color.Lerp(startColor, endColor, progress);
@@ -127,11 +141,13 @@ public class TransitionUtility : MonoBehaviour {
 
     public static IEnumerator LerpColorSequence(ColorSetter colorSetter,
                                                 List<Color> stops,
-                                                List<float> durations) {
+                                                List<float> durations)
+    {
         int i = 0;
-        while (i < stops.Count - 1) {
+        while (i < stops.Count - 1)
+        {
             Color startColor = stops[i];
-            Color endColor = stops[i+1];
+            Color endColor = stops[i + 1];
             float duration = durations[i];
             yield return TransitionUtility.instance.StartCoroutine(
                 LerpColor(colorSetter, startColor, endColor, duration));
@@ -141,27 +157,31 @@ public class TransitionUtility : MonoBehaviour {
 
     public static IEnumerator LerpAlpha(ColorSetter colorSetter,
                                         float startOpacity, float endOpacity,
-                                        float duration, bool useGameTime=false,
-                                        Color? maybeTint=null) {
-        Color tint = maybeTint?? Color.black;
+                                        float duration, bool useGameTime = false,
+                                        Color? maybeTint = null)
+    {
+        Color tint = maybeTint ?? Color.black;
         Color startColor = new Color(tint.r, tint.g, tint.b, startOpacity);
         Color endColor = new Color(tint.r, tint.g, tint.b, endOpacity);
         yield return TransitionUtility.instance.StartCoroutine(
             LerpColor(colorSetter, startColor, endColor, duration, useGameTime));
     }
 
-    public class Panel {
+    public class Panel
+    {
         public GameObject panel;
         public Image image;
         public Color tint;
         public float duration;
         public float epsilon = 0.05f;
-        public Color color {
-            get {return (image != null) ? image.color : Color.clear;}
-            set {image.color = value;}
+        public Color color
+        {
+            get { return (image != null) ? image.color : Color.clear; }
+            set { image.color = value; }
         }
 
-        public Panel(GameObject panel, float duration=1.0f) {
+        public Panel(GameObject panel, float duration = 1.0f)
+        {
             this.panel = panel;
             this.image = panel.GetComponent<Image>();
             this.tint = this.color;
@@ -169,23 +189,26 @@ public class TransitionUtility : MonoBehaviour {
             Hide();
         }
 
-        public static implicit operator Panel(Color color) {
-            var newPanel = CreateCanvasPanel();
+        public static implicit operator Panel(Color color)
+        {
+            GameObject newPanel = CreateCanvasPanel();
             newPanel.AddComponent<Image>();
             Panel panel = new Panel(newPanel);
             panel.color = color;
             return panel;
         }
 
-        public void Hide() {panel.SetActive(false);}
-        public void MakeTransparent() {
+        public void Hide() { panel.SetActive(false); }
+        public void MakeTransparent()
+        {
             Show();
             color = Color.clear;
         }
-        public void Show() {panel.SetActive(true);}
+        public void Show() { panel.SetActive(true); }
 
-        static GameObject CreateCanvasPanel() {
-            var newCanvasObj = new GameObject("Canvas");
+        private static GameObject CreateCanvasPanel()
+        {
+            GameObject newCanvasObj = new GameObject("Canvas");
             Canvas newCanvas = newCanvasObj.AddComponent<Canvas>();
             newCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             newCanvasObj.AddComponent<CanvasScaler>();
@@ -193,34 +216,38 @@ public class TransitionUtility : MonoBehaviour {
             GameObject panel = new GameObject("Panel");
             panel.AddComponent<CanvasRenderer>();
             panel.transform.SetParent(newCanvasObj.transform, false);
-            var rectTransform = panel.AddComponent<RectTransform>();
+            RectTransform rectTransform = panel.AddComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;
             rectTransform.sizeDelta = Vector2.zero;
             return panel;
         }
 
-        public IEnumerator FadeIn() {
+        public IEnumerator FadeIn()
+        {
             panel.SetActive(true);
-            yield return LerpAlpha((Color newColor) => color=newColor,
+            yield return LerpAlpha((Color newColor) => color = newColor,
                                    0.0f, tint.a, duration, false, tint);
         }
 
-        public IEnumerator FadeOut() {
+        public IEnumerator FadeOut()
+        {
             panel.SetActive(true);
             yield return CoroutineUtility.RunThenCallback(
-                LerpAlpha((Color newColor) => this.color=newColor,
+                LerpAlpha((Color newColor) => this.color = newColor,
                           tint.a, 0.0f, duration, false, tint),
                 Hide);
         }
 
     }
 
-    public class ScreenTransition {
+    public class ScreenTransition
+    {
         public Panel panel;
 
-        public ScreenTransition(float duration=1.0f, Color? maybeColor = null) {
-            Color color = maybeColor?? Color.black;
+        public ScreenTransition(float duration = 1.0f, Color? maybeColor = null)
+        {
+            Color color = maybeColor ?? Color.black;
             panel = color;
             panel.tint = color;
             panel.duration = duration;
@@ -233,15 +260,16 @@ public class TransitionUtility : MonoBehaviour {
         //
         // For screen transitions, "fade IN" is actually implemented as making a
         // black panel, and then making the black panel fade *OUT*
-        public IEnumerator FadeIn() {yield return panel.FadeOut();}
-        public IEnumerator FadeOut() {yield return panel.FadeIn();}
+        public IEnumerator FadeIn() { yield return panel.FadeOut(); }
+        public IEnumerator FadeOut() { yield return panel.FadeIn(); }
     }
 
     public static void OneShotFadeTransition(float totalDuration,
-                                             float blackScreenPauseDuration = 0.0f) {
+                                             float blackScreenPauseDuration = 0.0f)
+    {
         float fadeDuration = totalDuration * 0.5f;
-        var screenTransition = new ScreenTransition(fadeDuration);
-        var coroutineSequence = CoroutineUtility.RunSequentially(
+        ScreenTransition screenTransition = new ScreenTransition(fadeDuration);
+        IEnumerator coroutineSequence = CoroutineUtility.RunSequentially(
                 screenTransition.FadeOut(),
                 CoroutineUtility.WaitForRealtimeSeconds(blackScreenPauseDuration),
                 screenTransition.FadeIn()

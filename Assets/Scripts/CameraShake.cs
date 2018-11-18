@@ -1,6 +1,5 @@
 ﻿// All credit for this script goes to: https://gist.github.com/ftvs
 using UnityEngine;
-using System.Collections;
 
 public class CameraShake : MonoBehaviour
 {
@@ -14,10 +13,9 @@ public class CameraShake : MonoBehaviour
     // Amplitude of the shake. A larger value shakes the camera harder.
     public float shakeAmount = 0.7f;
     public float decreaseFactor = 1.0f;
+    private Vector3 originalPos;
 
-    Vector3 originalPos;
-
-    void Awake()
+    private void Awake()
     {
         if (camTransform == null)
         {
@@ -25,12 +23,12 @@ public class CameraShake : MonoBehaviour
         }
     }
 
-    void OnEnable()
+    private void OnEnable()
     {
         originalPos = camTransform.localPosition;
     }
 
-    void Update()
+    private void Update()
     {
         if (shakeDuration > 0)
         {

@@ -1,40 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UtilityExtensions;
+﻿using UnityEngine;
 
-delegate Vector2 VectorCallback();
+internal delegate Vector2 VectorCallback();
 
-public class BallSpriteRotation : MonoBehaviour {
-
-    Coroutine rotationCoroutine;
-    VectorCallback GetKeepToVector;
+public class BallSpriteRotation : MonoBehaviour
+{
+    private Coroutine rotationCoroutine;
+    private VectorCallback GetKeepToVector;
 
     // Use this for initialization
-    void Start () {
+    private void Start()
+    {
         GetKeepToVector = () => transform.right;
         GameModel.instance.notificationCenter.CallOnMessage(Message.BallIsUnpossessed, BecameUnpossessed);
         GameModel.instance.notificationCenter.CallOnMessageWithSender(Message.BallIsPossessed,
                                                       BecamePossessed);
     }
 
-    void BecamePossessed(object ballObj) {
-        var ball = ballObj as Ball;
-        if (ball == null) {
+    private void BecamePossessed(object ballObj)
+    {
+        Ball ball = ballObj as Ball;
+        if (ball == null)
+        {
             return;
         }
 
-        var angleDifference = Vector2.SignedAngle(ball.Owner.transform.right, transform.right);
+        float angleDifference = Vector2.SignedAngle(ball.Owner.transform.right, transform.right);
         GetKeepToVector = () => Utility.RotateVector(ball.Owner.transform.right, angleDifference);
     }
 
-    void BecameUnpossessed() {
-        var right = transform.right;
+    private void BecameUnpossessed()
+    {
+        Vector3 right = transform.right;
         GetKeepToVector = () => right;
     }
 
     // Update is called once per frame
-    void Update () {
+    private void Update()
+    {
         transform.right = GetKeepToVector();
     }
 }

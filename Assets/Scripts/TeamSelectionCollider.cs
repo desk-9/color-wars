@@ -1,39 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
-public class TeamSelectionCollider : MonoBehaviour {
+public class TeamSelectionCollider : MonoBehaviour
+{
 
     public int teamNumber;
-    int maxOnTeam = 2;
-    public TeamManager team {get; set;}
+    private int maxOnTeam = 2;
+    public TeamManager team { get; set; }
     public bool mustDashToSwitch = true;
-    Text countText;
-    GameObject impactEffectPrefab;
+    private Text countText;
+    private GameObject impactEffectPrefab;
 
-    void Start () {
+    private void Start()
+    {
         countText = GetComponentInChildren<Text>();
-        if (teamNumber < GameModel.instance.teams.Count) {
+        if (teamNumber < GameModel.instance.teams.Count)
+        {
             team = GameModel.instance.teams[teamNumber];
         }
-        this.FrameDelayCall(() => {
-                impactEffectPrefab = team.resources.selectTeamImpactEffectPrefab;
-            }, 2);
+        this.FrameDelayCall(() =>
+        {
+            impactEffectPrefab = team.resources.selectTeamImpactEffectPrefab;
+        }, 2);
     }
 
-    void OnCollisionStay2D(Collision2D collision) {
-        var player = collision.gameObject.GetComponent<Player>();
-        if (player != null && team != null && player.team != team) {
-            var stateManager = player.GetComponent<PlayerStateManager>();
-            if (stateManager != null) {
-                if (mustDashToSwitch && !stateManager.IsInState(State.Dash)) {
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        Player player = collision.gameObject.GetComponent<Player>();
+        if (player != null && team != null && player.team != team)
+        {
+            PlayerStateManager stateManager = player.GetComponent<PlayerStateManager>();
+            if (stateManager != null)
+            {
+                if (mustDashToSwitch && !stateManager.IsInState(State.Dash))
+                {
                     // Only switch if dashing
                     return;
                 }
             }
-            if (player.team != team && team.teamMembers.Count < maxOnTeam) {
+            if (player.team != team && team.teamMembers.Count < maxOnTeam)
+            {
                 player.SetTeam(team);
                 AudioManager.instance.Ching.Play();
                 SpawnHitEffect(player.transform.position);
@@ -41,33 +48,43 @@ public class TeamSelectionCollider : MonoBehaviour {
         }
     }
 
-    void SpawnHitEffect(Vector3 playerPosition) {
+    private void SpawnHitEffect(Vector3 playerPosition)
+    {
         float spawnAngle = Vector3.SignedAngle(
             playerPosition - transform.position, Vector3.up, Vector3.forward);
         // These magic-ish numbers depend heavily on the fact that the impact
         // effect is a hemisphere which rotates to show where the player
         // impacted the team selection collider
-        var impactEffect = Instantiate(impactEffectPrefab, playerPosition,
+        GameObject impactEffect = Instantiate(impactEffectPrefab, playerPosition,
                                        Quaternion.Euler(spawnAngle - 90.0f, 90.0f, -90.0f));
-        var ps = impactEffect.GetComponent<ParticleSystem>();
-        if (ps != null) {
+        ParticleSystem ps = impactEffect.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
             ps.Play();
         }
     }
 
-    int lastCount = 0;
-    void FixedUpdate() {
-        if (team != null && team.teamMembers.Count != lastCount) {
-            if (countText != null) {
+    private int lastCount = 0;
+
+    private void FixedUpdate()
+    {
+        if (team != null && team.teamMembers.Count != lastCount)
+        {
+            if (countText != null)
+            {
                 countText.text = string.Format("{0}/{1}", team.teamMembers.Count, 2);
             }
-            var renderer = GetComponent<SpriteRenderer>();
-            if (team.teamMembers.Count >= maxOnTeam) {
-                this.TimeDelayCall(() => {
-                        AudioManager.instance.GoalSwitch.Play();
-                        renderer.color = 0.85f * team.teamColor.color;
-                    }, 0.3f);
-            } else {
+            SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+            if (team.teamMembers.Count >= maxOnTeam)
+            {
+                this.TimeDelayCall(() =>
+                {
+                    AudioManager.instance.GoalSwitch.Play();
+                    renderer.color = 0.85f * team.teamColor.color;
+                }, 0.3f);
+            }
+            else
+            {
                 renderer.color = team.teamColor;
             }
             lastCount = team.teamMembers.Count;

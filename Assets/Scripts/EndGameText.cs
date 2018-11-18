@@ -1,34 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
-public class EndGameText : MonoBehaviour {
-
-    Text endText;
+public class EndGameText : MonoBehaviour
+{
+    private Text endText;
     public AnimationCurve textSize;
     public float minTextSize = 75;
     public float maxTextSize = 200;
     public float textLerpDuration;
     public string endTextContent = "Game!";
-    
-    void Start() {
+
+    private void Start()
+    {
         endText = transform.FindComponent<Text>("EndText");
         endText.text = "";
         GameModel.instance.OnGameOver += () => GameOverFunction();
     }
 
-    public void GameOverFunction() {
+    public void GameOverFunction()
+    {
         endText.color = GameModel.instance.winner.teamColor.color;
         endText.text = endTextContent;
 
         // Start "Game!" text lerp
         StartCoroutine(
             TransitionUtility.LerpFloat(
-                (float value) => {
+                (float value) =>
+                {
                     float scaledProgress = textSize.Evaluate(value);
-                    endText.fontSize = (int) Mathf.Lerp(
+                    endText.fontSize = (int)Mathf.Lerp(
                         minTextSize, maxTextSize, scaledProgress);
                 },
                 0.0f, 1.0f,

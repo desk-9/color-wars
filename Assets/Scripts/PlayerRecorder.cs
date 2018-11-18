@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +8,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 [System.Serializable]
-public struct InputFrame {
+public struct InputFrame
+{
     public float leftStickX, leftStickY;
     public float positionX, positionY;
     public float rotation;
@@ -21,7 +21,8 @@ public struct InputFrame {
     public float waitTime;
     public InputFrame(float stickX, float stickY, float positionX, float positionY, float rotation = -1f, bool APressed = false, bool AReleased = false,
                       bool BPressed = false, bool BReleased = false, bool Interrupt = false,
-                      float waitTime = 0) {
+                      float waitTime = 0)
+    {
         this.leftStickX = stickX;
         this.leftStickY = stickY;
         this.positionX = positionX;
@@ -37,13 +38,15 @@ public struct InputFrame {
 }
 
 [System.Serializable]
-public struct InputRecording {
+public struct InputRecording
+{
     public float startX;
     public float startY;
     public float startRotation;
     public List<InputFrame> recording;
     public InputRecording(float startX, float startY, float startRotation,
-                          List<InputFrame> recording) {
+                          List<InputFrame> recording)
+    {
         this.startX = startX;
         this.startY = startY;
         this.startRotation = startRotation;
@@ -51,45 +54,59 @@ public struct InputRecording {
     }
 }
 
-public class PlayerRecorder : MonoBehaviour {
+public class PlayerRecorder : MonoBehaviour
+{
     public static bool isRecording = false;
     public bool respondToRecordings = true;
     public bool allRecordAtOnce = false;
-    new Rigidbody2D rigidbody;
-    PlayerControls controls;
-    Coroutine recording;
-    bool endRecording = false;
-    void Start() {
+    private new Rigidbody2D rigidbody;
+    private PlayerControls controls;
+    private Coroutine recording;
+    private bool endRecording = false;
+
+    private void Start()
+    {
         rigidbody = GetComponent<Rigidbody2D>();
         controls = this.EnsureComponent<PlayerControls>();
-        if (allRecordAtOnce) {
+        if (allRecordAtOnce)
+        {
             // Have all players start and stop recordings on same button press
             GameModel.instance.notificationCenter.CallOnMessage(
-                Message.PlayerPressedRightBumper, () => {
-                    if (recording == null) {
+                Message.PlayerPressedRightBumper, () =>
+                {
+                    if (recording == null)
+                    {
                         recording = StartCoroutine(Record());
-                    } else {
+                    }
+                    else
+                    {
                         endRecording = true;
                     }
                 });
-        } else {
+        }
+        else
+        {
             // Each player recording state is individual
             StartCoroutine(RecordCheck());
         }
         Directory.CreateDirectory(recordingFolder);
     }
 
-    IEnumerator RecordCheck() {
-        while (true) {
-            var input = controls.GetInputDevice();
-            if (input != null && respondToRecordings && input.RightBumper.WasPressed) {
+    private IEnumerator RecordCheck()
+    {
+        while (true)
+        {
+            InputDevice input = controls.GetInputDevice();
+            if (input != null && respondToRecordings && input.RightBumper.WasPressed)
+            {
                 yield return Record();
             }
             yield return null;
         }
     }
 
-    IEnumerator Record() {
+    private IEnumerator Record()
+    {
         isRecording = true;
         Debug.Log("Recording started");
         yield return null;
@@ -98,21 +115,25 @@ public class PlayerRecorder : MonoBehaviour {
                                transform.position.y,
                                this.EnsureComponent<Rigidbody2D>().rotation,
                                new List<InputFrame>());
-        var lastTime = Time.realtimeSinceStartup;
-        while (true) {
-            var input = controls.GetInputDevice();
-            if (input != null) {
-                if (endRecording) {
+        float lastTime = Time.realtimeSinceStartup;
+        while (true)
+        {
+            InputDevice input = controls.GetInputDevice();
+            if (input != null)
+            {
+                if (endRecording)
+                {
                     SaveRecording(record);
                     endRecording = false;
                     recording = null;
                     isRecording = false;
                     yield break;
                 }
-                if (input.LeftBumper.WasPressed) {
+                if (input.LeftBumper.WasPressed)
+                {
                     Debug.Log("Recording interrupt");
                 }
-                var delta = Time.realtimeSinceStartup - lastTime;
+                float delta = Time.realtimeSinceStartup - lastTime;
                 lastTime = Time.realtimeSinceStartup;
                 record.recording.Add(
                     new InputFrame(
@@ -125,61 +146,76 @@ public class PlayerRecorder : MonoBehaviour {
                         input.Action2.WasReleased,
                         input.LeftBumper.WasPressed,
                         delta));
-            } else {
+            }
+            else
+            {
                 record.recording.Add(new InputFrame(0, 0, rigidbody.position.x, rigidbody.position.y, rigidbody.rotation));
             }
             yield return null;
         }
     }
 
-    string recordingFolder {
-        get {
+    private string recordingFolder
+    {
+        get
+        {
             return string.Format("{0}/recordings", Application.persistentDataPath);
         }
     }
 
-    const string extension = "inputRecord";
+    private const string extension = "inputRecord";
 
-    string GetPlayerName() {
+    private string GetPlayerName()
+    {
         return gameObject.name;
     }
 
-    List<string> RecordingsForPlayer() {
-        var pattern = string.Format("{0}*.{1}", GetPlayerName(), extension);
+    private List<string> RecordingsForPlayer()
+    {
+        string pattern = string.Format("{0}*.{1}", GetPlayerName(), extension);
         return (from path in Directory.GetFiles(recordingFolder, pattern)
                 select Path.GetFileName(path)).ToList();
     }
 
-    string filePattern {
-        get {
+    private string filePattern
+    {
+        get
+        {
             return string.Format("{0}-recording-{{0}}.{1}", GetPlayerName(), extension);
         }
     }
 
-    int NextRecordingNumber() {
-        var result = RecordingsForPlayer().Select<string, int?>((string filename) => {
-                var prefixLength = string.Format("{0}-recording-", GetPlayerName()).Length;
-                var num = Path.GetFileNameWithoutExtension(filename).Substring(prefixLength);
-                int possibleInt;
-                bool worked = int.TryParse(num, out possibleInt);
-                if (worked) {
-                    return possibleInt;
-                } else {
-                    return null;
-                }
-            }).Where(x => x != null).OfType<int>().DefaultIfEmpty(0).Max();
+    private int NextRecordingNumber()
+    {
+        int result = RecordingsForPlayer().Select<string, int?>((string filename) =>
+        {
+            int prefixLength = string.Format("{0}-recording-", GetPlayerName()).Length;
+            string num = Path.GetFileNameWithoutExtension(filename).Substring(prefixLength);
+            int possibleInt;
+            bool worked = int.TryParse(num, out possibleInt);
+            if (worked)
+            {
+                return possibleInt;
+            }
+            else
+            {
+                return null;
+            }
+        }).Where(x => x != null).OfType<int>().DefaultIfEmpty(0).Max();
         return result + 1;
     }
 
-    void SaveRecording(InputRecording record) {
-        var name = string.Format(filePattern, NextRecordingNumber());
+    private void SaveRecording(InputRecording record)
+    {
+        string name = string.Format(filePattern, NextRecordingNumber());
         WriteRecording(record, name);
     }
 
-    void WriteRecording(InputRecording record, string name) {
+    private void WriteRecording(InputRecording record, string name)
+    {
         BinaryFormatter formatter = new BinaryFormatter();
         Directory.CreateDirectory(recordingFolder);
-        var path = string.Format("{0}/recordings/{1}",
+        string path = string.Format("{0}/recordings/{1}",
                                  Application.persistentDataPath, name);
         Debug.LogFormat("Recording finished, saving to {0}", path);
         FileStream file = File.Create(path);

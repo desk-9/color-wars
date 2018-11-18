@@ -1,16 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-using UtilityExtensions;
-using UnityEngine.UI;
+public class CircularTimer : CircularIndicator
+{
+    private Callback endTimerCallback = delegate { };
+    private Coroutine timer;
 
-public class CircularTimer : CircularIndicator {
-    Callback endTimerCallback = delegate{};
-    Coroutine timer;
-
-    public void StartTimer(float secondsUntilTimeout, Callback endTimerCallback) {
-        if (this == null) {
+    public void StartTimer(float secondsUntilTimeout, Callback endTimerCallback)
+    {
+        if (this == null)
+        {
             return;
         }
         base.Show();
@@ -19,8 +18,10 @@ public class CircularTimer : CircularIndicator {
         this.endTimerCallback = endTimerCallback;
     }
 
-    public void StopTimer() {
-        if (timer != null) {
+    public void StopTimer()
+    {
+        if (timer != null)
+        {
             StopCoroutine(timer);
             timer = null;
         }
@@ -28,11 +29,13 @@ public class CircularTimer : CircularIndicator {
         base.Hide();
     }
 
-    IEnumerator Timer(float secondsUntilTimeout) {
+    private IEnumerator Timer(float secondsUntilTimeout)
+    {
         float elapsedTime = 0.0f;
-        while (elapsedTime < secondsUntilTimeout) {
+        while (elapsedTime < secondsUntilTimeout)
+        {
             elapsedTime += Time.deltaTime;
-            FillAmount = elapsedTime/secondsUntilTimeout;
+            FillAmount = elapsedTime / secondsUntilTimeout;
             yield return null;
         }
         StopTimer();

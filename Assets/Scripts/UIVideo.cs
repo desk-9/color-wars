@@ -1,35 +1,41 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 
-public class UIVideo : MonoBehaviour {
-    RawImage image;
-    VideoPlayer player;
+public class UIVideo : MonoBehaviour
+{
+    private RawImage image;
+    private VideoPlayer player;
 
-    void Start () {
+    private void Start()
+    {
         image = GetComponent<RawImage>();
         player = GetComponent<VideoPlayer>();
     }
 
-    public void StartVideoUpdate() {
+    public void StartVideoUpdate()
+    {
         StartCoroutine(VideoUpdate());
     }
 
-    IEnumerator VideoUpdate() {
+    private IEnumerator VideoUpdate()
+    {
         image.texture = null;
-        if (player.clip == null) {
+        if (player.clip == null)
+        {
             yield break;
         }
         player.Prepare();
-        while (!player.isPrepared) {
+        while (!player.isPrepared)
+        {
             yield return null;
         }
         image.texture = player.texture;
         player.Play();
 
-        while (player.isPlaying) {
+        while (player.isPlaying)
+        {
             yield return null;
         }
     }

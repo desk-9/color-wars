@@ -1,42 +1,49 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PostProcessing;
 
 [RequireComponent(typeof(PostProcessingProfile))]
-public class ChromaticAberrationController : MonoBehaviour {
-    PostProcessingProfile profile;
-    Coroutine smoothTransition;
+public class ChromaticAberrationController : MonoBehaviour
+{
+    private PostProcessingProfile profile;
+    private Coroutine smoothTransition;
 
-    void Awake() {
+    private void Awake()
+    {
         profile = GetComponent<PostProcessingBehaviour>().profile;
     }
 
-    void OnDestroy() {
+    private void OnDestroy()
+    {
         SetIntensity(0.0f);
     }
 
-    public float GetIntensity() {
+    public float GetIntensity()
+    {
         return profile.chromaticAberration.settings.intensity;
     }
 
-    public void SetIntensity(float intensity) {
-        var settings = profile.chromaticAberration.settings;
+    public void SetIntensity(float intensity)
+    {
+        ChromaticAberrationModel.Settings settings = profile.chromaticAberration.settings;
         settings.intensity = intensity;
         profile.chromaticAberration.settings = settings;
     }
 
-    public void SetIntensitySmooth(float target, float time) {
+    public void SetIntensitySmooth(float target, float time)
+    {
         if (smoothTransition != null) StopCoroutine(smoothTransition);
 
         smoothTransition = StartCoroutine(SmoothTransition(target, time));
     }
 
-    IEnumerator SmoothTransition(float target, float time) {
-        var chromeStart  = GetIntensity();
-        var t            = 0.0f;
+    private IEnumerator SmoothTransition(float target, float time)
+    {
+        float chromeStart = GetIntensity();
+        float t = 0.0f;
 
-        while (GetIntensity() != target && t <= time) {
+        while (GetIntensity() != target && t <= time)
+        {
             SetIntensity(Mathf.SmoothStep(chromeStart, target, t / time));
 
             t += Time.deltaTime;

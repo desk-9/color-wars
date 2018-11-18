@@ -1,45 +1,54 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UtilityExtensions;
+﻿using UnityEngine;
 
-public class NewGoal : MonoBehaviour {
+public class NewGoal : MonoBehaviour
+{
 
-    public TeamManager team {get; private set;}
+    public TeamManager team { get; private set; }
 
-    new SpriteRenderer renderer;
+    private new SpriteRenderer renderer;
 
-    public void SetTeam(TeamManager team) {
+    public void SetTeam(TeamManager team)
+    {
         this.team = team;
-        if (renderer == null) {
+        if (renderer == null)
+        {
             renderer = GetComponent<SpriteRenderer>();
         }
         renderer.color = team.teamColor;
     }
 
-    void OnTriggerEnter2D(Collider2D collider) {
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
         BallCheck(collider);
     }
 
-    void OnTriggerStay2D(Collider2D collider) {
+    private void OnTriggerStay2D(Collider2D collider)
+    {
         BallCheck(collider);
     }
 
-    void BallCheck(Collider2D collider) {
-        var ball = collider.gameObject.GetComponent<Ball>();
-        if (ball != null) {
+    private void BallCheck(Collider2D collider)
+    {
+        Ball ball = collider.gameObject.GetComponent<Ball>();
+        if (ball != null)
+        {
             ScoreGoal(ball);
         }
     }
 
-    void ScoreGoal(Ball ball) {
-        if (ball.IsOwnable()) {
+    private void ScoreGoal(Ball ball)
+    {
+        if (ball.IsOwnable())
+        {
             ball.Ownable = false;
             GameModel.instance.GoalScoredOnTeam(team);
             ball.ResetBall();
-        } else {
-            var stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
-            if (stateManager != null) {
+        }
+        else
+        {
+            PlayerStateManager stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
+            if (stateManager != null)
+            {
                 stateManager.CurrentStateHasFinished();
             }
         }

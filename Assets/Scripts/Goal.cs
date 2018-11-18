@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
+﻿using UnityEngine;
 using UtilityExtensions;
 using UnityEngine.UI;
 
-public class Goal : MonoBehaviour {
+public class Goal : MonoBehaviour
+{
 
     public TeamManager currentTeam;
     public float goalSwitchInterval = 10;
@@ -17,57 +15,66 @@ public class Goal : MonoBehaviour {
     public bool resetTimerOnSwitchToSameTeam = false;
 
     public const float playerNullZoneRadius = 0.1f;
+    private ModCycle nextTeamIndex;
+    private SpriteRenderer fillRenderer;
+    private Text goalSwitchText;
+    private Coroutine teamSwitching;
+    private Player lastPlayer = null;
+    private Color originalColor;
 
-    ModCycle nextTeamIndex;
-    SpriteRenderer fillRenderer;
-    Text goalSwitchText;
-    Coroutine teamSwitching;
-    Player lastPlayer = null;
-    Color originalColor;
-
-    GameObject GetPlayerBlocker() {
+    private GameObject GetPlayerBlocker()
+    {
         return transform.Find("PlayerBlocker").gameObject;
     }
 
-    void BlockBalls() {
+    private void BlockBalls()
+    {
         GetPlayerBlocker().layer = LayerMask.NameToLayer("Wall");
     }
 
-    void OnlyBlockPlayers() {
+    private void OnlyBlockPlayers()
+    {
         GetPlayerBlocker().layer = LayerMask.NameToLayer("PlayerBlocker");
     }
 
-    void Awake() {
+    private void Awake()
+    {
         fillRenderer = transform.FindComponent<SpriteRenderer>("GoalBackground");
-        if (fillRenderer != null) {
+        if (fillRenderer != null)
+        {
             originalColor = fillRenderer.color;
         }
     }
 
-    public void ResetNeutral() {
+    public void ResetNeutral()
+    {
         SwitchToNextTeam(false);
         currentTeam = null;
         lastPlayer = null;
         BlockBalls();
-        if (fillRenderer != null) {
+        if (fillRenderer != null)
+        {
             fillRenderer.color = originalColor;
         }
     }
 
-    void Start () {
+    private void Start()
+    {
         //originalColor = renderer.color;
         nextTeamIndex = new ModCycle(0, GameModel.instance.teams.Count);
         GameModel.instance.OnGameOver += StopTeamSwitching;
         ResetNeutral();
         RestartTeamSwitching();
-        if (playerPassSwitching) {
+        if (playerPassSwitching)
+        {
             RegisterPassSwitching();
         }
         GameModel.instance.notificationCenter.CallOnStringEventWithSender(
             GoalSwitchCollider.EventId, ColliderSwitch);
     }
 
-    public void RestartTeamSwitching() {
+    public void RestartTeamSwitching()
+    {
         // if (teamSwitching != null) {
         //     SetNotificationText("");
         //     StopCoroutine(teamSwitching);
@@ -75,75 +82,97 @@ public class Goal : MonoBehaviour {
         // teamSwitching = StartCoroutine(TeamSwitching());
     }
 
-
-    void RegisterPassSwitching() {
+    private void RegisterPassSwitching()
+    {
         GameModel.instance.notificationCenter.CallOnStateEnd(
             State.Posession, (Player player) => lastPlayer = player);
         GameModel.instance.notificationCenter.CallOnStateStart(
             State.Posession, (Player player) => PlayerBallColorSwitch(player));
     }
 
-    bool PlayerInNullZone(Player player, float radius = playerNullZoneRadius) {
-        var collider = Physics2D.OverlapCircle(
+    private bool PlayerInNullZone(Player player, float radius = playerNullZoneRadius)
+    {
+        Collider2D collider = Physics2D.OverlapCircle(
             player.transform.position, radius, LayerMask.GetMask("NullZone"));
         return collider != null;
     }
 
-    void PlayerBallColorSwitch(Player player) {
-        if (this == null) {
+    private void PlayerBallColorSwitch(Player player)
+    {
+        if (this == null)
+        {
             return;
         }
-        if (player != lastPlayer && player.team == lastPlayer?.team) {
-            if (!PlayerInNullZone(player)) {
+        if (player != lastPlayer && player.team == lastPlayer?.team)
+        {
+            if (!PlayerInNullZone(player))
+            {
                 GameModel.instance.notificationCenter.NotifyMessage(Message.BallCharged, player);
                 SwitchToTeam(player.team);
-            } else {
-                if (currentTeam == null) {
-                        GameModel.instance.notificationCenter.NotifyMessage(Message.NullChargePrevention, player);
-                        AudioManager.instance.PassToNullZone.Play(.1f);
-                    }
             }
-        } else if (player.team != lastPlayer?.team) {
+            else
+            {
+                if (currentTeam == null)
+                {
+                    GameModel.instance.notificationCenter.NotifyMessage(Message.NullChargePrevention, player);
+                    AudioManager.instance.PassToNullZone.Play(.1f);
+                }
+            }
+        }
+        else if (player.team != lastPlayer?.team)
+        {
             GameModel.instance.notificationCenter.NotifyMessage(Message.BallSetNeutral, player);
             ResetNeutral();
         }
-        if (currentTeam == null) {
+        if (currentTeam == null)
+        {
             GameModel.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileNeutral, player);
-        } else {
+        }
+        else
+        {
             GameModel.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileCharged, player);
         }
     }
 
-    void SwitchToTeam(TeamManager team) {
-        if (team == null) {
+    private void SwitchToTeam(TeamManager team)
+    {
+        if (team == null)
+        {
             Debug.LogWarning("Team in SwitchToTeam is null");
             return;
         }
-        if (resetTimerOnSwitchToSameTeam && team == currentTeam) {
+        if (resetTimerOnSwitchToSameTeam && team == currentTeam)
+        {
             RestartTeamSwitching();
         }
-        if (currentTeam != team) {
+        if (currentTeam != team)
+        {
             AudioManager.instance.GoalSwitch.Play();
         }
-        while (currentTeam != team) {
+        while (currentTeam != team)
+        {
             SwitchToNextTeam();
         }
     }
 
-    void ColliderSwitch(object thing) {
-        if (!respondToSwitchColliders) {
+    private void ColliderSwitch(object thing)
+    {
+        if (!respondToSwitchColliders)
+        {
             return;
         }
-        var gameThing = (GameObject) thing;
-        var ball = gameThing.GetComponent<Ball>();
-        if (ball != null) {
+        GameObject gameThing = (GameObject)thing;
+        Ball ball = gameThing.GetComponent<Ball>();
+        if (ball != null)
+        {
             // Utility.TutEvent("Backboard", ball.lastOwner);
-            var ballTeam = ball.lastOwner?.GetComponent<Player>()?.team;
+            TeamManager ballTeam = ball.lastOwner?.GetComponent<Player>()?.team;
             SwitchToTeam(ballTeam);
         }
     }
 
-    public void StopTeamSwitching() {
+    public void StopTeamSwitching()
+    {
         // if (teamSwitching != null) {
         //     StopCoroutine(teamSwitching);
         //     teamSwitching = null;
@@ -151,55 +180,67 @@ public class Goal : MonoBehaviour {
         // }
     }
 
-
-    TeamManager PeekNextTeam() {
+    private TeamManager PeekNextTeam()
+    {
         return GameModel.instance.teams[nextTeamIndex.PeekNext()];
     }
 
-    TeamManager GetNextTeam() {
+    private TeamManager GetNextTeam()
+    {
         return GameModel.instance.teams[nextTeamIndex.Next()];
     }
 
-    public void SwitchToNextTeam(bool playSound = false) {
-        if (playSound) {
+    public void SwitchToNextTeam(bool playSound = false)
+    {
+        if (playSound)
+        {
             AudioManager.instance.GoalSwitch.Play();
         }
         currentTeam = GetNextTeam();
         OnlyBlockPlayers();
-        if (fillRenderer != null) {
+        if (fillRenderer != null)
+        {
             fillRenderer.color = currentTeam.teamColor;
         }
         RestartTeamSwitching();
     }
 
-    void ScoreGoal(Ball ball) {
-        if (!ball.IsOwnable()) {
-            var stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
-            if (stateManager != null) {
+    private void ScoreGoal(Ball ball)
+    {
+        if (!ball.IsOwnable())
+        {
+            PlayerStateManager stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
+            if (stateManager != null)
+            {
                 stateManager.CurrentStateHasFinished();
             }
         }
-        if (ball.IsOwnable()) {
-            if (currentTeam != null) {
+        if (ball.IsOwnable())
+        {
+            if (currentTeam != null)
+            {
                 GameModel.instance.GoalScoredForTeam(currentTeam);
             }
         }
     }
 
-    void BallCheck(GameObject thing) {
-        var ball = thing.gameObject.GetComponent<Ball>();
+    private void BallCheck(GameObject thing)
+    {
+        Ball ball = thing.gameObject.GetComponent<Ball>();
         // Need to check that ball.ownable (*not* ball.IsOwnable) here
         // Otherwise, the body of this if statement is executed every time the
         // ball enters the goal (even after a goal is scored!) Yikes!
         // Right now (Monday, apr 16 2:35am), the semantics of
         // ball.ownable are seen in Ball.cs functions ResetBall and HandleGoalScore
-        if (ball != null && ball.Ownable) {
+        if (ball != null && ball.Ownable)
+        {
             ScoreGoal(ball);
             this.FrameDelayCall(() => AudioManager.instance.ScoreGoalSound.Play(0.75f), 10);
         }
     }
 
-    void OnTriggerEnter2D(Collider2D collider) {
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
         BallCheck(collider.gameObject);
     }
 }

@@ -1,47 +1,56 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
 
-public class DummyMovement : MonoBehaviour, IPlayerMovement {
+public class DummyMovement : MonoBehaviour, IPlayerMovement
+{
+    private PlayerStateManager stateManager;
+    private new Rigidbody2D rigidbody;
+    private Coroutine stayingStill;
 
-    PlayerStateManager stateManager;
-    new Rigidbody2D rigidbody;
-    Coroutine stayingStill;
     // Use this for initialization
-    void Start () {
+    private void Start()
+    {
         rigidbody = GetComponent<Rigidbody2D>();
         stateManager = GetComponent<PlayerStateManager>();
-        this.FrameDelayCall(() => {
-                stateManager.AttemptNormalMovement(StartStayStill, EndStayStill);
-            }, 1);
+        this.FrameDelayCall(() =>
+        {
+            stateManager.AttemptNormalMovement(StartStayStill, EndStayStill);
+        }, 1);
     }
 
-    void StartStayStill() {
+    private void StartStayStill()
+    {
         stayingStill = StartCoroutine(StayStill());
     }
 
-    void EndStayStill() {
+    private void EndStayStill()
+    {
         StopCoroutine(stayingStill);
         stayingStill = null;
     }
 
-    IEnumerator StayStill() {
-        while (true) {
+    private IEnumerator StayStill()
+    {
+        while (true)
+        {
             rigidbody.velocity = Vector2.zero;
             yield return new WaitForFixedUpdate();
         }
     }
 
-    public void RotatePlayer() {
+    public void RotatePlayer()
+    {
         rigidbody.rotation = Mathf.Repeat(rigidbody.rotation + 1f, 360);
     }
 
-    public void FreezePlayer() {
+    public void FreezePlayer()
+    {
         rigidbody.isKinematic = true;
     }
 
-    public void UnFreezePlayer() {
+    public void UnFreezePlayer()
+    {
         rigidbody.isKinematic = false;
     }
 }

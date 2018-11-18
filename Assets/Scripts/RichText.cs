@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
-public class RichText : MonoBehaviour {
+public class RichText : MonoBehaviour
+{
 
     public int fontSize = 10;
     public float initialSpacing = 0;
@@ -12,10 +12,14 @@ public class RichText : MonoBehaviour {
     public float imageVerticalSpacing = 5;
     public bool center = true;
     public Color textColor = Color.black;
-    public Color color {
-        get {
+    public Color color
+    {
+        get
+        {
             return textColor;
-        } set {
+        }
+        set
+        {
             textColor = value;
             SetColors();
         }
@@ -25,67 +29,81 @@ public class RichText : MonoBehaviour {
     public string imagePrefabName = "RichTextPrefabs/RichElementImage";
 
     public string initialContent = "";
-
-    GameObject textPrefab;
-    GameObject imagePrefab;
-    RectTransform rectTransform;
-
-    string rawText = "";
-    public string text {
-        get {
+    private GameObject textPrefab;
+    private GameObject imagePrefab;
+    private RectTransform rectTransform;
+    private string rawText = "";
+    public string text
+    {
+        get
+        {
             return rawText;
         }
 
-        set {
-            var old = rawText;
+        set
+        {
+            string old = rawText;
             rawText = value;
-            if (rawText != old) {
+            if (rawText != old)
+            {
                 RenderText();
             }
         }
     }
 
-    void Awake() {
+    private void Awake()
+    {
         textPrefab = Resources.Load<GameObject>(textPrefabName);
         imagePrefab = Resources.Load<GameObject>(imagePrefabName);
         rectTransform = this.EnsureComponent<RectTransform>();
     }
 
     // Use this for initialization
-    void Start () {
-        if (initialContent != "") {
+    private void Start()
+    {
+        if (initialContent != "")
+        {
             text = initialContent;
         }
     }
 
-    void OnEnable() {
+    private void OnEnable()
+    {
         RenderText();
     }
 
-    void SetColors() {
-        foreach (Transform element in transform) {
-            var text = element.gameObject?.GetComponent<Text>();
-            var image = element.gameObject?.GetComponent<Image>();
-            if (text != null) {
+    private void SetColors()
+    {
+        foreach (Transform element in transform)
+        {
+            Text text = element.gameObject?.GetComponent<Text>();
+            Image image = element.gameObject?.GetComponent<Image>();
+            if (text != null)
+            {
                 text.color = textColor;
-            } else if (image != null) {
-                var imageColor = image.color;
+            }
+            else if (image != null)
+            {
+                Color imageColor = image.color;
                 imageColor.a = textColor.a;
                 image.color = imageColor;
             }
         }
     }
 
-    public class RichTextElement {
+    public class RichTextElement
+    {
         public bool isFilename = false;
         public string content;
-        public RichTextElement(string content, bool isFilename) {
+        public RichTextElement(string content, bool isFilename)
+        {
             this.content = content;
             this.isFilename = isFilename;
         }
     }
 
-    public List<RichTextElement> ParseRichText(string text) {
+    public List<RichTextElement> ParseRichText(string text)
+    {
         // Rich text format specification:
         //
         // A = name-of-existing-image-file
@@ -95,37 +113,49 @@ public class RichText : MonoBehaviour {
         // L = D*
         //
         // So any amount of alphanumeric characters excluding [<>]
-        var result = new List<RichTextElement>();
+        List<RichTextElement> result = new List<RichTextElement>();
         string currentContent = "";
-        foreach (char c in text) {
-            if (c == '<') {
-                if (currentContent != "") {
+        foreach (char c in text)
+        {
+            if (c == '<')
+            {
+                if (currentContent != "")
+                {
                     result.Add(new RichTextElement(currentContent, false));
                 }
                 currentContent = "";
-            } else if (c == '>') {
+            }
+            else if (c == '>')
+            {
                 result.Add(new RichTextElement(currentContent, true));
                 currentContent = "";
-            } else {
+            }
+            else
+            {
                 currentContent += c.ToString();
             }
         }
-        if (currentContent != "") {
+        if (currentContent != "")
+        {
             result.Add(new RichTextElement(currentContent, false));
         }
         return result;
     }
 
-    public void RenderText() {
-        foreach (Transform element in transform) {
+    public void RenderText()
+    {
+        foreach (Transform element in transform)
+        {
             Destroy(element.gameObject);
         }
-        var richElements = ParseRichText(rawText);
+        List<RichTextElement> richElements = ParseRichText(rawText);
         float elementStart = initialSpacing;
-        foreach (var elementContent in richElements) {
+        foreach (RichTextElement elementContent in richElements)
+        {
             RectTransform elementTransform;
-            if (elementContent.isFilename) {
-                var image = CreateImage(elementContent.content);
+            if (elementContent.isFilename)
+            {
+                Image image = CreateImage(elementContent.content);
                 float aspectRatio = image.sprite.rect.width / image.sprite.rect.height;
 
                 float inducedWidth = (rectTransform.rect.height - imageVerticalSpacing * 2) * aspectRatio;
@@ -133,29 +163,35 @@ public class RichText : MonoBehaviour {
                 elementTransform.sizeDelta = new Vector2(
                     inducedWidth, elementTransform.sizeDelta.y - imageVerticalSpacing * 2);
                 Canvas.ForceUpdateCanvases();
-            } else {
-                var text = CreateText(elementContent.content);
+            }
+            else
+            {
+                Text text = CreateText(elementContent.content);
                 elementTransform = text.GetComponent<RectTransform>();
                 Canvas.ForceUpdateCanvases();
             }
             elementTransform.anchoredPosition = new Vector2(elementStart, 0);
             elementStart += elementTransform.rect.width + elementSpacing;
         }
-        if (center) {
+        if (center)
+        {
             rectTransform.sizeDelta = new Vector2(elementStart, rectTransform.sizeDelta.y);
         }
     }
 
-    Sprite LoadSprite(string name) {
-        var result = Resources.Load<Sprite>(name);
-        if (result == null) {
+    private Sprite LoadSprite(string name)
+    {
+        Sprite result = Resources.Load<Sprite>(name);
+        if (result == null)
+        {
             Utility.Print("No such sprite as", name, "exists!", LogLevel.Error);
         }
         return result;
     }
 
-    Text CreateText(string content){
-        var element = Instantiate(textPrefab, transform);
+    private Text CreateText(string content)
+    {
+        GameObject element = Instantiate(textPrefab, transform);
         Text textComponent = element.EnsureComponent<Text>();
         textComponent.text = content;
         textComponent.fontSize = fontSize;
@@ -163,15 +199,17 @@ public class RichText : MonoBehaviour {
         return textComponent;
     }
 
-    Image CreateImage(string content) {
-        var element = Instantiate(imagePrefab, transform);
+    private Image CreateImage(string content)
+    {
+        GameObject element = Instantiate(imagePrefab, transform);
         Image imageComponent = element.EnsureComponent<Image>();
         imageComponent.sprite = LoadSprite(content);
         return imageComponent;
     }
 
     // Update is called once per frame
-    void Update () {
+    private void Update()
+    {
 
     }
 }

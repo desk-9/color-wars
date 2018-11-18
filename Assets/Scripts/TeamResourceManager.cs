@@ -1,51 +1,54 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.Linq;
 
-public class TeamResourceManager {
+public class TeamResourceManager
+{
 
-    public GameObject dashEffectPrefab {get; private set;}
-    public GameObject dashChargeEffectPrefab {get; private set;}
-    public GameObject scoreGoalEffectPrefab {get; private set;}
-    public GameObject selectTeamImpactEffectPrefab {get; private set;}
-    public GameObject circularTimerPrefab {get; private set;}
-    public GameObject shotChargeIndicatorPrefab {get; private set;}
-    
-    public Sprite mainPlayerSprite {get; private set;}
-    public Sprite altPlayerSprite {get; private set;}
-    public Material wallMaterial {get; private set;}
-    public GameObject dashAimerPrefab {get; private set;}
-    public Sprite ballSprite {get; private set;}
-    public GameObject explosionPrefab {get; private set;}
-    public GameObject tronWallDestroyedPrefab {get; private set;}
-    public GameObject tronWallSuicidePrefab {get; private set;}
-    public Sprite background {get; private set;}
-    public Sprite scoreIndicatorEmptySprite {get; private set;}
-    public Sprite scoreIndicatorFullSprite {get; private set;}
+    public GameObject dashEffectPrefab { get; private set; }
+    public GameObject dashChargeEffectPrefab { get; private set; }
+    public GameObject scoreGoalEffectPrefab { get; private set; }
+    public GameObject selectTeamImpactEffectPrefab { get; private set; }
+    public GameObject circularTimerPrefab { get; private set; }
+    public GameObject shotChargeIndicatorPrefab { get; private set; }
+
+    public Sprite mainPlayerSprite { get; private set; }
+    public Sprite altPlayerSprite { get; private set; }
+    public Material wallMaterial { get; private set; }
+    public GameObject dashAimerPrefab { get; private set; }
+    public Sprite ballSprite { get; private set; }
+    public GameObject explosionPrefab { get; private set; }
+    public GameObject tronWallDestroyedPrefab { get; private set; }
+    public GameObject tronWallSuicidePrefab { get; private set; }
+    public Sprite background { get; private set; }
+    public Sprite scoreIndicatorEmptySprite { get; private set; }
+    public Sprite scoreIndicatorFullSprite { get; private set; }
 
     public Color teamColor = Color.white;
     public Gradient aimLaserGradient = null;
     public Gradient aimLaserToGoalGradient = null;
+    private TeamManager team;
+    private string teamDirectory = "Teams/Neutral";
 
-    TeamManager team;
-    string teamDirectory = "Teams/Neutral";
     // The directory for resources all teams use
-    const string allTeamDirectory = "Teams/All";
-    public TeamResourceManager(TeamManager team) {
+    private const string allTeamDirectory = "Teams/All";
+    public TeamResourceManager(TeamManager team)
+    {
         this.team = team;
-        if (team != null) {
+        if (team != null)
+        {
             teamDirectory = string.Format("Teams/{0}", team.teamColor.name);
         }
         SetupResources();
     }
 
-    T LoadTeamResource<T>(string name, string teamDirectory) where T : UnityEngine.Object {
-        var path = string.Format("{0}/{1}", teamDirectory, name);
-        var resource = Resources.Load<T>(path);
-        if (resource == null) {
+    private T LoadTeamResource<T>(string name, string teamDirectory) where T : UnityEngine.Object
+    {
+        string path = string.Format("{0}/{1}", teamDirectory, name);
+        T resource = Resources.Load<T>(path);
+        if (resource == null)
+        {
             throw new ArgumentException(
                 string.Format("No resource of type {0} at {1}",
                               typeof(T), path));
@@ -53,22 +56,26 @@ public class TeamResourceManager {
         return resource;
     }
 
-    T MakeTeamResource<T>(string name) where T : UnityEngine.Object {
+    private T MakeTeamResource<T>(string name) where T : UnityEngine.Object
+    {
         // For making resources specific to this team
         return LoadTeamResource<T>(name, teamDirectory);
     }
 
-    List<T> MakeTeamResourceGroup<T>(params string[] names) where T : UnityEngine.Object {
+    private List<T> MakeTeamResourceGroup<T>(params string[] names) where T : UnityEngine.Object
+    {
         return (from name in names
                 select LoadTeamResource<T>(name, teamDirectory)).ToList();
     }
 
-    T MakeAllTeamResource<T>(string name) where T : UnityEngine.Object {
+    private T MakeAllTeamResource<T>(string name) where T : UnityEngine.Object
+    {
         // For making resources shared by all teams
         return LoadTeamResource<T>(name, allTeamDirectory);
     }
 
-    void SetupResources() {
+    private void SetupResources()
+    {
         // Pass in teamDirectory as the second argument for team-specific
         // resources, and allTeamDirectory for resources shared by all teams
         dashEffectPrefab = MakeTeamResource<GameObject>("DashEffect");
@@ -95,18 +102,19 @@ public class TeamResourceManager {
         scoreIndicatorEmptySprite = MakeAllTeamResource<Sprite>("ScoreIndicatorEmpty");
         scoreIndicatorFullSprite = MakeAllTeamResource<Sprite>("ScoreIndicatorFull");
 
-        teamColor = (team == null)? Color.white : this.team.teamColor.color;
+        teamColor = (team == null) ? Color.white : this.team.teamColor.color;
 
-        aimLaserGradient = aimLaserGradient != null?
+        aimLaserGradient = aimLaserGradient != null ?
             aimLaserGradient : TeamAimLaserGradient();
-        
-        aimLaserToGoalGradient = aimLaserToGoalGradient != null?
+
+        aimLaserToGoalGradient = aimLaserToGoalGradient != null ?
             aimLaserToGoalGradient : TeamAimLaserGradient(false);
     }
 
-    Gradient TeamAimLaserGradient(bool fade = true) {
-        float alpha = fade? 0.0f : 1.0f;
-        var gradient = new Gradient();
+    private Gradient TeamAimLaserGradient(bool fade = true)
+    {
+        float alpha = fade ? 0.0f : 1.0f;
+        Gradient gradient = new Gradient();
         gradient.SetKeys(
             new GradientColorKey[] {
                 new GradientColorKey(teamColor, 0.0f),
@@ -118,5 +126,5 @@ public class TeamResourceManager {
             );
         return gradient;
     }
-    
+
 }

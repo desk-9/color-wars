@@ -1,57 +1,62 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UtilityExtensions;
-using IC = InControl;
 
-public class Player : MonoBehaviour {
-    public TeamManager team {get; private set;}
+public class Player : MonoBehaviour
+{
+    public delegate void OnTeamAssignedCallback(TeamManager team);
+    public OnTeamAssignedCallback OnTeamAssigned = delegate { };
+
+    public TeamManager team { get; private set; }
     public int playerNumber;
     // teamOverride sets which team a given player will join, overriding all
     // other methods of setting the team if it's non-negative
     public int teamOverride = -1;
-
-    bool isNormalPlayer = true;
-    new SpriteRenderer renderer;
-    PlayerStateManager stateManager;
     public Vector2 initialPosition;
     public float initialRotation;
-    Rigidbody2D rb2d;
-    new Collider2D collider;
-    GameObject explosionEffect;
 
-    public delegate void OnTeamAssignedCallback(TeamManager team);
-    public OnTeamAssignedCallback OnTeamAssigned = delegate{};
-    public void CallAsSoonAsTeamAssigned(OnTeamAssignedCallback callback) {
-        if (team != null) {
+    private bool isNormalPlayer = true;
+    private new SpriteRenderer renderer;
+    private PlayerStateManager stateManager;
+    private Rigidbody2D rb2d;
+    private new Collider2D collider;
+    private GameObject explosionEffect;
+
+    public void CallAsSoonAsTeamAssigned(OnTeamAssignedCallback callback)
+    {
+        if (team != null)
+        {
             callback(team);
         }
         OnTeamAssigned += callback;
     }
 
-    public void MakeInvisibleAfterGoal() {
-        if (isNormalPlayer) {
+    public void MakeInvisibleAfterGoal()
+    {
+        if (isNormalPlayer)
+        {
             renderer.enabled = false;
             collider.enabled = false;
 
             stateManager.AttemptFrozenAfterGoal(
-                GetComponent<PlayerMovement>().StartRotateOnly, delegate{}
+                GetComponent<PlayerMovement>().StartRotateOnly, delegate { }
             );
         }
 
         explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
-        var explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
-        var explosionMain = explosionParticleSystem.main;
+        ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
+        ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
         explosionMain.startLifetime = GameModel.instance.pauseAfterGoalScore;
         explosionMain.startColor = team.teamColor.color;
         explosionParticleSystem.Play();
     }
 
-    public void ResetPlayerPosition() {
-        if (isNormalPlayer) {
+    public void ResetPlayerPosition()
+    {
+        if (isNormalPlayer)
+        {
 
             stateManager.AttemptFrozenAfterGoal(
-                GetComponent<PlayerMovement>().StartRotateOnly, delegate{}
+                GetComponent<PlayerMovement>().StartRotateOnly, delegate { }
             );
 
             transform.position = initialPosition;
@@ -60,37 +65,45 @@ public class Player : MonoBehaviour {
             collider.enabled = true;
             rb2d.velocity = Vector2.zero;
         }
-        if (explosionEffect != null) {
+        if (explosionEffect != null)
+        {
             Destroy(explosionEffect);
             explosionEffect = null;
         }
     }
 
-    public void BeginPlayerMovement() {
+    public void BeginPlayerMovement()
+    {
         stateManager.CurrentStateHasFinished();
     }
 
-    public void TrySetTeam(TeamManager team) {
-        if (this.team == null) {
+    public void TrySetTeam(TeamManager team)
+    {
+        if (this.team == null)
+        {
             SetTeam(team);
         }
     }
 
-    public void SetTeam(TeamManager team) {
-        if (this.team != null) {
+    public void SetTeam(TeamManager team)
+    {
+        if (this.team != null)
+        {
             this.team.RemoveTeamMember(this);
         }
         this.team = team;
         team.AddTeamMember(this);
-        this.FrameDelayCall(() => {
-                GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
-                GetComponent<LaserGuide>()?.SetLaserGradients();
-            }, 2);
+        this.FrameDelayCall(() =>
+        {
+            GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
+            GetComponent<LaserGuide>()?.SetLaserGradients();
+        }, 2);
         this.FrameDelayCall(() => OnTeamAssigned(team), 2);
     }
 
     // Use this for initialization
-    void Start () {
+    private void Start()
+    {
         renderer = GetComponent<SpriteRenderer>();
         rb2d = GetComponent<Rigidbody2D>();
         stateManager = GetComponent<PlayerStateManager>();
@@ -101,17 +114,22 @@ public class Player : MonoBehaviour {
         isNormalPlayer = renderer != null && rb2d != null
             && stateManager != null && collider != null;
 
-        if (teamOverride >= 0) {
+        if (teamOverride >= 0)
+        {
             SetTeam(GameModel.instance.teams[teamOverride]);
-        } else if ((GameModel.playerTeamsAlreadySelected || GameModel.cheatForcePlayerAssignment)
-              && playerNumber >= 0) {
+        }
+        else if ((GameModel.playerTeamsAlreadySelected || GameModel.cheatForcePlayerAssignment)
+            && playerNumber >= 0)
+        {
             // Dummies have a player number of -1, and shouldn't get a team
             team = GameModel.instance.GetTeamAssignment(this);
-            if (team != null && isNormalPlayer) {
+            if (team != null && isNormalPlayer)
+            {
                 SetTeam(team);
             }
         }
-        if (isNormalPlayer) {
+        if (isNormalPlayer)
+        {
             // initialPosition = transform.position;
             // initalRotation = rb2d.rotation;
         }
@@ -119,8 +137,10 @@ public class Player : MonoBehaviour {
         // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
     }
 
-    void OnDestroy() {
-        if (this.team != null) {
+    private void OnDestroy()
+    {
+        if (this.team != null)
+        {
             this.team.RemoveTeamMember(this);
         }
         GameModel.instance.players.Remove(this);

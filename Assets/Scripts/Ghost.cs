@@ -1,21 +1,25 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
 
-public class Ghost : MonoBehaviour {
+public class Ghost : MonoBehaviour
+{
 
-    public void Initialize(SpriteRenderer rendererIn, float lifeLength, float startingAlpha) {
+    public void Initialize(SpriteRenderer rendererIn, float lifeLength, float startingAlpha)
+    {
         StartCoroutine(DimOverLifetime(rendererIn, lifeLength, startingAlpha));
     }
 
-    IEnumerator DimOverLifetime(SpriteRenderer rendererIn, float lifeLength, float startingAlpha) {;
-        var ghostRenderer = this.EnsureComponent<SpriteRenderer>();
-        var dimmedColor = rendererIn.color;
+    private IEnumerator DimOverLifetime(SpriteRenderer rendererIn, float lifeLength, float startingAlpha)
+    {
+        ;
+        SpriteRenderer ghostRenderer = this.EnsureComponent<SpriteRenderer>();
+        Color dimmedColor = rendererIn.color;
         ghostRenderer.sprite = rendererIn.sprite;
 
         float elapsedTime = 0f;
-        while(elapsedTime < lifeLength) {
+        while (elapsedTime < lifeLength)
+        {
             dimmedColor.a = Mathf.Lerp(startingAlpha, 0f, elapsedTime / lifeLength);
             ghostRenderer.color = dimmedColor;
             elapsedTime += Time.deltaTime;

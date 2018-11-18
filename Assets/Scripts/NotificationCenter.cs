@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UtilityExtensions;
 
 // This is a class that deals with global events, where the subscribers can't
 // necessarily get access to all the actual publisher object. Events that are
@@ -16,7 +14,8 @@ public delegate void GameObjectCallback(GameObject thing);
 
 public delegate bool EventPredicate(object sender);
 
-public enum Message {
+public enum Message
+{
     BallIsPossessed,
     BallIsUnpossessed,
     StartCountdown,
@@ -70,29 +69,35 @@ public enum Message {
     RecordingFinished,
 };
 
-public class NotificationCenter {
+public class NotificationCenter
+{
 
     // PlayerState addons
-    SortedDictionary<State, PlayerCallback> onAnyPlayerStartSubscribers =
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerStartSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    SortedDictionary<State, PlayerCallback> onAnyPlayerEndSubscribers =
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerEndSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    PlayerTransitionCallback onAnyChangeSubscribers = delegate{};
+    private PlayerTransitionCallback onAnyChangeSubscribers = delegate { };
 
-    public NotificationCenter() {
-        foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
-            onAnyPlayerStartSubscribers[state] = delegate{};
-            onAnyPlayerEndSubscribers[state] = delegate{};
+    public NotificationCenter()
+    {
+        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
+        {
+            onAnyPlayerStartSubscribers[state] = delegate { };
+            onAnyPlayerEndSubscribers[state] = delegate { };
         }
 
-        foreach (var event_type in (Message[]) System.Enum.GetValues(typeof(Message))) {
-            onMessage[event_type] = delegate{};
+        foreach (Message event_type in (Message[])System.Enum.GetValues(typeof(Message)))
+        {
+            onMessage[event_type] = delegate { };
         }
     }
 
-    public void RegisterPlayer(PlayerStateManager player) {
-        var playerComponent = player.GetComponent<Player>();
-        foreach (var state in (State[]) System.Enum.GetValues(typeof(State))) {
+    public void RegisterPlayer(PlayerStateManager player)
+    {
+        Player playerComponent = player.GetComponent<Player>();
+        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
+        {
             player.CallOnStateEnter(
                 state, () => onAnyPlayerStartSubscribers[state](playerComponent));
             player.CallOnStateExit(
@@ -102,15 +107,18 @@ public class NotificationCenter {
         }
     }
 
-    public void CallOnStateStart(State state, PlayerCallback callback) {
+    public void CallOnStateStart(State state, PlayerCallback callback)
+    {
         onAnyPlayerStartSubscribers[state] += callback;
     }
 
-    public void CallOnStateEnd(State state, PlayerCallback callback) {
+    public void CallOnStateEnd(State state, PlayerCallback callback)
+    {
         onAnyPlayerEndSubscribers[state] += callback;
     }
 
-    public void CallOnStateTransition(PlayerTransitionCallback callback) {
+    public void CallOnStateTransition(PlayerTransitionCallback callback)
+    {
         onAnyChangeSubscribers += callback;
     }
 
@@ -119,35 +127,43 @@ public class NotificationCenter {
     // Useful for publishing "system-wide" events that are meant to stick around
     // for a while/be maintainable. You must add a new event name to the Message
     // enum, then ensure something is calling NotifyMessage appropriately.
-    SortedDictionary<Message, EventCallback> onMessage =
+    private SortedDictionary<Message, EventCallback> onMessage =
         new SortedDictionary<Message, EventCallback>();
 
-    public void CallOnMessageWithSender(Message event_type, EventCallback callback) {
+    public void CallOnMessageWithSender(Message event_type, EventCallback callback)
+    {
         onMessage[event_type] += callback;
     }
 
-    public void CallOnMessage(Message event_type, Callback callback) {
+    public void CallOnMessage(Message event_type, Callback callback)
+    {
         onMessage[event_type] += (object o) => callback();
     }
 
     public void CallOnMessageIf(Message event_type, EventCallback callback,
-                                EventPredicate predicate) {
-        onMessage[event_type] += (object o) => {
-            if (predicate(o)) {
+                                EventPredicate predicate)
+    {
+        onMessage[event_type] += (object o) =>
+        {
+            if (predicate(o))
+            {
                 callback(o);
             }
         };
     }
 
-    public void CallOnMessageIfSameObject(Message event_type, Callback callback, GameObject thing) {
+    public void CallOnMessageIfSameObject(Message event_type, Callback callback, GameObject thing)
+    {
         CallOnMessageIf(event_type, o => callback(), o => (o as GameObject) == thing);
     }
 
-    public void NotifyMessage(Message event_type, object sender) {
+    public void NotifyMessage(Message event_type, object sender)
+    {
         onMessage[event_type](sender);
     }
 
-    public void UnsubscribeMessage(Message event_type, EventCallback callback) {
+    public void UnsubscribeMessage(Message event_type, EventCallback callback)
+    {
         onMessage[event_type] -= callback;
     }
 
@@ -160,25 +176,31 @@ public class NotificationCenter {
     // where you're really pretty sure only one pair of producer/consumer needs
     // this an a whole new enum value would be over the top. Think carefully
     // before using this system.
-    SortedDictionary<string, EventCallback> stringEvents =
+    private SortedDictionary<string, EventCallback> stringEvents =
         new SortedDictionary<string, EventCallback>();
 
-    public void CallOnStringEventWithSender(string identifier, EventCallback callback) {
-        if (!stringEvents.ContainsKey(identifier)) {
-            stringEvents[identifier] = delegate{};
+    public void CallOnStringEventWithSender(string identifier, EventCallback callback)
+    {
+        if (!stringEvents.ContainsKey(identifier))
+        {
+            stringEvents[identifier] = delegate { };
         }
         stringEvents[identifier] += callback;
     }
 
-    public void CallOnStringEvent(string identifier, Callback callback) {
-        if (!stringEvents.ContainsKey(identifier)) {
-            stringEvents[identifier] = delegate{};
+    public void CallOnStringEvent(string identifier, Callback callback)
+    {
+        if (!stringEvents.ContainsKey(identifier))
+        {
+            stringEvents[identifier] = delegate { };
         }
         stringEvents[identifier] += (object o) => callback();
     }
 
-    public void NotifyStringEvent(string identifier, object sender) {
-        if (stringEvents.ContainsKey(identifier)) {
+    public void NotifyStringEvent(string identifier, object sender)
+    {
+        if (stringEvents.ContainsKey(identifier))
+        {
             stringEvents[identifier](sender);
         }
     }

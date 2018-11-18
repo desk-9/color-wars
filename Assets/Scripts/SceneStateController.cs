@@ -1,11 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using UtilityExtensions;
 
-public enum Scene {
+public enum Scene
+{
     Court,
     MainMenu,
     Tutorial,
@@ -13,36 +11,42 @@ public enum Scene {
     Sandbox
 };
 
-public class SceneStateController : MonoBehaviour {
-
-    Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
+public class SceneStateController : MonoBehaviour
+{
+    private Dictionary<Scene, string> scenes = new Dictionary<Scene, string> {
         {Scene.Court, "court"},
         {Scene.MainMenu, "main-menu"},
         {Scene.Selection, "court-team-selection"},
         {Scene.Tutorial, "court-tutorial"},
         {Scene.Sandbox, "court-sandbox"},
     };
-    public Scene currentScene {get; private set;}
+    public Scene currentScene { get; private set; }
 
     public Dictionary<Scene, Callback> OnExit = new Dictionary<Scene, Callback>();
     public Dictionary<Scene, Callback> OnEnter = new Dictionary<Scene, Callback>();
 
-    public bool paused {get; private set;} = false;
-    float sceneTransitionDuration = 0.5f;
-    TransitionUtility.ScreenTransition screenTransition;
+    public bool paused { get; private set; } = false;
+
+    private float sceneTransitionDuration = 0.5f;
+    private TransitionUtility.ScreenTransition screenTransition;
 
     public static SceneStateController instance;
-    void Awake() {
-        if (instance == null) {
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
             instance = this;
             InitializeCallbacks();
         }
-        else {
+        else
+        {
             Destroy(gameObject);
         }
     }
 
-    void Start() {
+    private void Start()
+    {
         screenTransition = new TransitionUtility.ScreenTransition(
             sceneTransitionDuration);
         StartCoroutine(screenTransition.FadeIn());
@@ -52,17 +56,21 @@ public class SceneStateController : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void InitializeCallbacks() {
-        foreach (Scene scene in System.Enum.GetValues(typeof(Scene))) {
-            OnEnter[scene] = delegate{};
-            OnExit[scene] = delegate{};
+    private void InitializeCallbacks()
+    {
+        foreach (Scene scene in System.Enum.GetValues(typeof(Scene)))
+        {
+            OnEnter[scene] = delegate { };
+            OnExit[scene] = delegate { };
         }
     }
 
-    void LoadHelper(Scene newScene) {
+    private void LoadHelper(Scene newScene)
+    {
         OnExit[currentScene]();
         currentScene = newScene;
-        if (newScene == Scene.Selection) {
+        if (newScene == Scene.Selection)
+        {
             PlayerTutorial.runTutorial = newScene == Scene.Selection;
             GameModel.playerTeamsAlreadySelected = false;
             GameModel.cheatForcePlayerAssignment = false;
@@ -76,48 +84,58 @@ public class SceneStateController : MonoBehaviour {
         UnPauseTime();
     }
 
-    public void Load(Scene newScene) {
+    public void Load(Scene newScene)
+    {
         StartCoroutine(CoroutineUtility.RunThenCallback(
             screenTransition.FadeOut(),
             () => LoadHelper(newScene)));
     }
 
-    public void ReloadScene() {
+    public void ReloadScene()
+    {
         StartCoroutine(CoroutineUtility.RunThenCallback(
             screenTransition.FadeOut(),
             () => SceneManager.LoadScene(SceneManager.GetActiveScene().name)));
     }
 
-    public void AdjustTime(Scene newScene) {
-        switch (newScene) {
-        case Scene.Court:
-            UnPauseTime();
-            break;
-        case Scene.MainMenu:
-            PauseTime();
-            break;
-        case Scene.Tutorial:
-            UnPauseTime();
-            break;
-        default:
-            break;
+    public void AdjustTime(Scene newScene)
+    {
+        switch (newScene)
+        {
+            case Scene.Court:
+                UnPauseTime();
+                break;
+            case Scene.MainMenu:
+                PauseTime();
+                break;
+            case Scene.Tutorial:
+                UnPauseTime();
+                break;
+            default:
+                break;
         }
     }
 
-    public void TogglePauseTime() {
-        if (paused) {
+    public void TogglePauseTime()
+    {
+        if (paused)
+        {
             UnPauseTime();
-        } else {
+        }
+        else
+        {
             PauseTime();
         }
     }
 
-    public void PauseTime() {
+    public void PauseTime()
+    {
         Time.timeScale = 0.0f;
         paused = true;
     }
 
-    public void UnPauseTime() {
+    public void UnPauseTime()
+    {
         Time.timeScale = 1.0f;
         paused = false;
     }

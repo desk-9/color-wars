@@ -1,12 +1,12 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using IC = InControl;
 using UtilityExtensions;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerMovement))]
-public class PlayerDashBehavior : MonoBehaviour {
+public class PlayerDashBehavior : MonoBehaviour
+{
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
     public IC.InputControlType dashButton = IC.InputControlType.Action2;
@@ -22,26 +22,26 @@ public class PlayerDashBehavior : MonoBehaviour {
     public float stealKnockbackAmount = 100f;
     public float stealKnockbackLength = .5f;
     public float wallHitStunTime = 0.05f;
+    private PlayerStateManager stateManager;
+    private PlayerMovement playerMovement;
+    private Player player;
+    private Rigidbody2D rb;
+    private Coroutine chargeCoroutine;
+    private Coroutine dashCoroutine;
+    private PlayerTronMechanic tronMechanic;
+    private BallCarrier carrier;
+    private GameObject dashEffect;
+    private GameObject dashAimer;
+    private float lastDashTime;
+    private CameraShake cameraShake;
+    private float chargeAmount = 0;
 
-    PlayerStateManager stateManager;
-    PlayerMovement playerMovement;
-    Player player;
-    Rigidbody2D        rb;
-    Coroutine          chargeCoroutine;
-    Coroutine          dashCoroutine;
-    PlayerTronMechanic tronMechanic;
-    BallCarrier carrier;
-    GameObject dashEffect;
-    GameObject dashAimer;
-    float lastDashTime;
-    CameraShake cameraShake;
-    float chargeAmount = 0;
-
-    void Start() {
+    private void Start()
+    {
         playerMovement = this.EnsureComponent<PlayerMovement>();
-        rb             = this.EnsureComponent<Rigidbody2D>();
-        stateManager   = this.EnsureComponent<PlayerStateManager>();
-        carrier        = this.EnsureComponent<BallCarrier>();
+        rb = this.EnsureComponent<Rigidbody2D>();
+        stateManager = this.EnsureComponent<PlayerStateManager>();
+        carrier = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
 
@@ -51,26 +51,32 @@ public class PlayerDashBehavior : MonoBehaviour {
             Message.PlayerReleasedDash, ChargeReleased, this.gameObject);
     }
 
-    void Awake() {
+    private void Awake()
+    {
         player = this.EnsureComponent<Player>();
     }
 
-    public void SetPrefabColors() {
-        if (player.team != null) {
-            var chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
+    public void SetPrefabColors()
+    {
+        if (player.team != null)
+        {
+            EffectSpawner chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
             dashEffectPrefab = player.team.resources.dashEffectPrefab;
             chargeEffectSpawner.effectPrefab = player.team.resources.dashChargeEffectPrefab;
             dashAimerPrefab = player.team.resources.dashAimerPrefab;
         }
     }
 
-    void DashPressed() {
-        if (Time.time - lastDashTime >= cooldown) {
+    private void DashPressed()
+    {
+        if (Time.time - lastDashTime >= cooldown)
+        {
             stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
     }
 
-    void StartChargeDash() {
+    private void StartChargeDash()
+    {
         chargeCoroutine = StartCoroutine(Charge());
 
         // Lock Player at current position when charging.
@@ -79,8 +85,10 @@ public class PlayerDashBehavior : MonoBehaviour {
         dashAimer = Instantiate(dashAimerPrefab, transform.position, transform.rotation, transform);
     }
 
-    void StopChargeDash() {
-        if (chargeCoroutine != null) {
+    private void StopChargeDash()
+    {
+        if (chargeCoroutine != null)
+        {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
             playerMovement.UnFreezePlayer();
@@ -89,18 +97,21 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
-
-    void ChargeReleased() {
-        if (stateManager.IsInState(State.ChargeDash)) {
+    private void ChargeReleased()
+    {
+        if (stateManager.IsInState(State.ChargeDash))
+        {
             stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
         }
     }
 
-    IEnumerator Charge() {
-        var startChargeTime = Time.time;
-        chargeAmount    = 0.0f;
+    private IEnumerator Charge()
+    {
+        float startChargeTime = Time.time;
+        chargeAmount = 0.0f;
 
-        while (true) {
+        while (true)
+        {
             chargeAmount += chargeRate * Time.deltaTime;
 
             // Continue updating direction to indicate charge direction.
@@ -110,61 +121,73 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
-    void StartDash(float chargeAmount) {
+    private void StartDash(float chargeAmount)
+    {
         dashCoroutine = StartCoroutine(Dash(chargeAmount));
         lastDashTime = Time.time;
-        if (tronMechanic.layWallOnDash) {
+        if (tronMechanic.layWallOnDash)
+        {
             tronMechanic.PlaceWallAnchor();
         }
     }
 
-    void StopDash() {
-        if (dashCoroutine != null) {
+    private void StopDash()
+    {
+        if (dashCoroutine != null)
+        {
             StopCoroutine(dashCoroutine);
             dashCoroutine = null;
             Destroy(dashEffect, 1.0f);
         }
     }
 
-    IEnumerator Dash(float chargeAmount) {
-        var dashDuration = Mathf.Min(chargeAmount, 0.5f);
+    private IEnumerator Dash(float chargeAmount)
+    {
+        float dashDuration = Mathf.Min(chargeAmount, 0.5f);
         AudioManager.instance.DashSound.Play();
 
 
         // Set duration of particle system for each dash trail.
         dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
 
-        foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
+        foreach (ParticleSystem ps in dashEffect.GetComponentsInChildren<ParticleSystem>())
+        {
             ps.Stop();
-            var main = ps.main;
+            ParticleSystem.MainModule main = ps.main;
             main.duration = dashDuration;
             ps.Play();
         }
 
-        var direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
-        var startTime = Time.time;
+        Vector2 direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
+        float startTime = Time.time;
 
-        while (Time.time - startTime <= dashDuration) {
+        while (Time.time - startTime <= dashDuration)
+        {
             rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
 
             yield return null;
         }
 
-        foreach (var ps in dashEffect.GetComponentsInChildren<ParticleSystem>()) {
+        foreach (ParticleSystem ps in dashEffect.GetComponentsInChildren<ParticleSystem>())
+        {
             ps.Stop();
         }
 
         stateManager.CurrentStateHasFinished();
     }
 
-    Ball TrySteal(Player otherPlayer) {
-        var otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
+    private Ball TrySteal(Player otherPlayer)
+    {
+        BallCarrier otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
         return otherCarrier?.ball;
     }
-    void Stun(Player otherPlayer) {
-        var otherStun = otherPlayer.GetComponent<PlayerStun>();
-        var otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
-        if (otherStun != null && otherStateManager != null) {
+
+    private void Stun(Player otherPlayer)
+    {
+        PlayerStun otherStun = otherPlayer.GetComponent<PlayerStun>();
+        PlayerStateManager otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
+        if (otherStun != null && otherStateManager != null)
+        {
             cameraShake.shakeAmount = stealShakeAmount;
             cameraShake.shakeDuration = stealShakeDuration;
             otherStateManager.AttemptStun(
@@ -173,20 +196,24 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
-    void StunAndSteal(GameObject otherGameObject) {
+    private void StunAndSteal(GameObject otherGameObject)
+    {
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
-        var otherPlayer = GetAssociatedPlayer(otherGameObject);
+        Player otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
             (otherPlayer.team?.teamColor != player.team?.teamColor
-             || otherPlayer.team == null || player.team == null) ) {
-            var ball = TrySteal(otherPlayer);
+             || otherPlayer.team == null || player.team == null))
+        {
+            Ball ball = TrySteal(otherPlayer);
 
             bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);
-            if (shouldSteal || (ball == null && !onlyStunBallCarriers)) {
+            if (shouldSteal || (ball == null && !onlyStunBallCarriers))
+            {
                 Stun(otherPlayer);
             }
 
-            if (shouldSteal) {
+            if (shouldSteal)
+            {
                 GameModel.instance.notificationCenter.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
                 AudioManager.instance.StealSound.Play(.5f);
                 stateManager.AttemptPossession(
@@ -195,45 +222,58 @@ public class PlayerDashBehavior : MonoBehaviour {
         }
     }
 
-    Player GetAssociatedPlayer(GameObject gameObject) {
-        var ball = gameObject.GetComponent<Ball>();
-        if (ball != null) {
+    private Player GetAssociatedPlayer(GameObject gameObject)
+    {
+        Ball ball = gameObject.GetComponent<Ball>();
+        if (ball != null)
+        {
             return (ball.Owner == null) ? null : ball.Owner.GetComponent<Player>();
         }
         return gameObject.GetComponent<Player>();
     }
 
-    public void OnTriggerEnter2D(Collider2D collider) {
+    public void OnTriggerEnter2D(Collider2D collider)
+    {
         StunAndSteal(collider.gameObject);
     }
 
-    public void OnTriggerStay2D(Collider2D collider) {
+    public void OnTriggerStay2D(Collider2D collider)
+    {
         StunAndSteal(collider.gameObject);
     }
 
-    void HandleCollision(GameObject other) {
-        if (!stateManager.IsInState(State.Dash)) {
+    private void HandleCollision(GameObject other)
+    {
+        if (!stateManager.IsInState(State.Dash))
+        {
             return;
         }
 
-        var layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
-        if (layerMask == (layerMask | 1 << other.layer)) {
-            this.TimeDelayCall(() => {
-                    if (stateManager.IsInState(State.Dash)) {
-                        stateManager.CurrentStateHasFinished();
-                    }
-                }, 0.1f);
-        } else {
+        int layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
+        if (layerMask == (layerMask | 1 << other.layer))
+        {
+            this.TimeDelayCall(() =>
+            {
+                if (stateManager.IsInState(State.Dash))
+                {
+                    stateManager.CurrentStateHasFinished();
+                }
+            }, 0.1f);
+        }
+        else
+        {
             StunAndSteal(other);
         }
 
     }
 
-    public void OnCollisionEnter2D(Collision2D collision) {
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
         HandleCollision(collision.gameObject);
     }
 
-    public void OnCollisionStay2D(Collision2D collision) {
+    public void OnCollisionStay2D(Collision2D collision)
+    {
         HandleCollision(collision.gameObject);
     }
 

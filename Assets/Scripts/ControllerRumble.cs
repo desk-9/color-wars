@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using InControl;
 using UtilityExtensions;
 
-public class ControllerRumble : MonoBehaviour {
+public class ControllerRumble : MonoBehaviour
+{
 
     public bool rumbleEnabled = true;
     public float stealRumbleDuration = .3f;
@@ -12,52 +11,60 @@ public class ControllerRumble : MonoBehaviour {
     public float gameWinRumbleDuration = 1f;
     public float layingWallStunDuration = .5f;
     public float ballPossessionRumbleDuration = .2f;
-
-    PlayerControls playerControls;
-    PlayerStateManager stateManager;
-    int levelsOfRumble;
+    private PlayerControls playerControls;
+    private PlayerStateManager stateManager;
+    private int levelsOfRumble;
 
     // Use this for initialization
-    void Start () {
-        if (!rumbleEnabled) {
+    private void Start()
+    {
+        if (!rumbleEnabled)
+        {
             return;
         }
         playerControls = this.GetComponent<PlayerControls>();
         stateManager = GetComponent<PlayerStateManager>();
-        if (playerControls != null && stateManager != null) {
-            var nc = GameModel.instance.notificationCenter;
-            nc.CallOnMessageIfSameObject(Message.StolenFrom, () => StartRumble(duration : stealRumbleDuration), gameObject);
+        if (playerControls != null && stateManager != null)
+        {
+            NotificationCenter nc = GameModel.instance.notificationCenter;
+            nc.CallOnMessageIfSameObject(Message.StolenFrom, () => StartRumble(duration: stealRumbleDuration), gameObject);
             nc.CallOnMessageIfSameObject(Message.TronWallDestroyed,
-                                         () => StartRumble(duration : wallDestroyDuration),
+                                         () => StartRumble(duration: wallDestroyDuration),
                                          gameObject);
-            nc.CallOnMessage(Message.GoalScored, () => StartRumble(duration : gameWinRumbleDuration));
-            nc.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration : layingWallStunDuration), gameObject);
-            stateManager.CallOnStateEnter(State.Posession, () => StartRumble(duration : ballPossessionRumbleDuration));
+            nc.CallOnMessage(Message.GoalScored, () => StartRumble(duration: gameWinRumbleDuration));
+            nc.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration: layingWallStunDuration), gameObject);
+            stateManager.CallOnStateEnter(State.Posession, () => StartRumble(duration: ballPossessionRumbleDuration));
         }
     }
 
-    void StartRumble(float intensity = 1f, float? duration = null) {
+    private void StartRumble(float intensity = 1f, float? duration = null)
+    {
         // If duration is null, this will rumble until StopRumble is called
-        var inputDevice = playerControls?.GetInputDevice();
-        if (inputDevice == null) {
+        InputDevice inputDevice = playerControls?.GetInputDevice();
+        if (inputDevice == null)
+        {
             return;
         }
         levelsOfRumble += 1;
         inputDevice.Vibrate(intensity);
-        if (duration.HasValue) {
+        if (duration.HasValue)
+        {
             this.RealtimeDelayCall(StopRumble, duration.Value);
         }
     }
 
-    void StopRumble() {
-        var inputDevice = playerControls?.GetInputDevice();
+    private void StopRumble()
+    {
+        InputDevice inputDevice = playerControls?.GetInputDevice();
         levelsOfRumble -= 1;
-        if (levelsOfRumble == 0 && inputDevice != null) {
+        if (levelsOfRumble == 0 && inputDevice != null)
+        {
             inputDevice.Vibrate(0f);
         }
     }
 
-    void OnDestroy() {
+    private void OnDestroy()
+    {
         StopRumble();
     }
 }
