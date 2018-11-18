@@ -45,3 +45,5 @@ thumbs.db
 # Visual Studio things
 .vs/
 Temp/
+Logs/*
+Logs/
