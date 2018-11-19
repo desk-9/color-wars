@@ -4,7 +4,6 @@ using UtilityExtensions;
 
 public class ShootBallMechanic : MonoBehaviour
 {
-
     // These control how the charging progresses
     public AnimationCurve chargeShotCurve;
     public float baseShotSpeed = 1.0f;
@@ -151,7 +150,7 @@ public class ShootBallMechanic : MonoBehaviour
     public void Shoot()
     {
         AudioManager.instance.ShootBallSound.Play(.5f);
-        Ball ball = ballCarrier.ball;
+        Ball ball = ballCarrier.Ball;
         if (ball != null)
         {
             Vector3 shotDirection = ball.transform.position - transform.position;

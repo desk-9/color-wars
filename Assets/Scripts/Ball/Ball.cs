@@ -5,7 +5,6 @@ using UtilityExtensions;
 
 public class Ball : MonoBehaviourPunCallbacks
 {
-    public bool Ownable { get; set; } = true;
     public new SpriteRenderer renderer;
     public new Rigidbody2D rigidbody;
     [SerializeField]
@@ -21,8 +20,21 @@ public class Ball : MonoBehaviourPunCallbacks
     private Color neutralColor = Color.white;
     private int relevantCollisionLayers;
 
-    public BallCarrier lastOwner { get; private set; }
+    /// <summary>
+    /// The owner before the current one, or just the last owner if there is no
+    /// current owner
+    /// </summary>
+    public BallCarrier LastOwner { get; private set; }
 
+    /// <summary>
+    /// In certain situations (like after a goal is scored, or while the ball
+    /// position is being reset), the ball is not ownable. This represents that
+    /// </summary>
+    public bool Ownable { get; set; } = true;
+
+    /// <summary>
+    /// The current owner of the ball if there is one, null otherwise
+    /// </summary>
     private BallCarrier owner_;
     public BallCarrier Owner
     {
@@ -31,7 +43,7 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             if (owner_ != null)
             {
-                lastOwner = owner_;
+                LastOwner = owner_;
             }
             owner_ = value;
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
@@ -102,8 +114,8 @@ public class Ball : MonoBehaviourPunCallbacks
         // Happens if player shoots a frame after pickup
         if (Owner == null)
         {
-            Debug.Assert(lastOwner != null);
-            Color lastOwnerColor = ColorFromBallCarrier(lastOwner);
+            Debug.Assert(LastOwner != null);
+            Color lastOwnerColor = ColorFromBallCarrier(LastOwner);
             bool fill = goal?.currentTeam != null && goal?.currentTeam.teamColor == lastOwnerColor;
             SetColor(lastOwnerColor, fill);
             return;
@@ -120,11 +132,6 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             SetColor(currentOwnerColor, false);
         }
-    }
-
-    public bool IsOwnable()
-    {
-        return Owner == null && Ownable;
     }
 
     private void Start()
@@ -173,7 +180,7 @@ public class Ball : MonoBehaviourPunCallbacks
         Ownable = true;
         rigidbody.velocity = Vector2.zero;
         Owner = null;
-        lastOwner = null;
+        LastOwner = null;
 
         // Start Spawn effect
         if (lengthOfEffect != null)

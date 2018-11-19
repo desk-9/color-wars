@@ -4,10 +4,9 @@ using UtilityExtensions;
 
 public class BallCarrier : MonoBehaviour
 {
-
     public GameObject blowbackEffectPrefab;
     public float coolDownTime = .1f;
-    public Ball ball { private set; get; }
+    public Ball Ball { private set; get; }
 
     private float ballTurnSpeed = 10f;
     public bool slowMoOnCarry = true;
@@ -36,10 +35,7 @@ public class BallCarrier : MonoBehaviour
     private Vector2 stickAngleWhenSnapped;
     private const float ballOffsetMultiplier = 0.98f;
 
-    public bool IsCarryingBall()
-    {
-        return ball != null;
-    }
+    public bool IsCarryingBall { get; private set; } = false;
 
     private void Start()
     {
@@ -62,6 +58,9 @@ public class BallCarrier : MonoBehaviour
         }
         laserGuide = this.GetComponent<LaserGuide>();
         this.FrameDelayCall(() => { GetGoal(); GetTeammate(); }, 2);
+
+        NotificationManager notificationManager = GameManager.instance.notificationManager;
+        notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
     }
 
     private void BlowBackEnemyPlayers()
@@ -218,7 +217,7 @@ public class BallCarrier : MonoBehaviour
 
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                ball.renderer.color == player.team.teamColor.color)
+                Ball.renderer.color == player.team.teamColor.color)
             {
                 snapToObject = goal;
                 stickAngleWhenSnapped = stickDirection;
@@ -241,7 +240,8 @@ public class BallCarrier : MonoBehaviour
     private IEnumerator CarryBall(Ball ball)
     {
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        this.ball = ball;
+        IsCarryingBall = true;
+        this.Ball = ball;
         ball.Owner = this;
         snapToObject = null;
 
@@ -263,7 +263,7 @@ public class BallCarrier : MonoBehaviour
 
     public void DropBall()
     {
-        if (ball != null)
+        if (Ball != null)
         {
             GameManager.instance.ResetSlowMo();
             StopCoroutine(carryBallCoroutine);
@@ -271,8 +271,8 @@ public class BallCarrier : MonoBehaviour
             snapToObject = null;
 
             // Reset references
-            ball.Owner = null;
-            ball = null;
+            Ball.Owner = null;
+            Ball = null;
 
             laserGuide?.StopDrawingLaser();
             if (this.isActiveAndEnabled)
@@ -280,6 +280,7 @@ public class BallCarrier : MonoBehaviour
                 StartCoroutine(CoolDownTimer());
             }
         }
+        IsCarryingBall = false;
     }
 
     private Vector2 NosePosition(Ball ball)
@@ -290,11 +291,11 @@ public class BallCarrier : MonoBehaviour
 
     private void PlaceBallAtNose()
     {
-        if (ball != null)
+        if (Ball != null)
         {
-            Rigidbody2D rigidbody = ball.GetComponent<Rigidbody2D>();
+            Rigidbody2D rigidbody = Ball.GetComponent<Rigidbody2D>();
             Vector2 newPosition =
-                CircularLerp(ball.transform.position, NosePosition(ball), transform.position,
+                CircularLerp(Ball.transform.position, NosePosition(Ball), transform.position,
                              ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
             rigidbody.MovePosition(newPosition);
         }
@@ -317,16 +318,26 @@ public class BallCarrier : MonoBehaviour
         return (Vector2)centeredResult + center;
     }
 
+    #region EventHandlers
+    private void HandleGoalScored()
+    {
+        // When a goal is scored, we want to let go of the ball
+        if (IsCarryingBall)
+        {
+            stateManager?.CurrentStateHasFinished();
+        }
+    }
+
     private void HandleCollision(GameObject thing)
     {
         Ball ball = thing.GetComponent<Ball>();
-        if (ball == null || !ball.IsOwnable() || isCoolingDown)
+        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown)
         {
             return;
         }
         if (stateManager != null)
         {
-            TeamManager last_team = ball.lastOwner?.GetComponent<Player>().team;
+            TeamManager last_team = ball.LastOwner?.GetComponent<Player>().team;
             TeamManager this_team = GetComponent<Player>().team;
             stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
         }
@@ -358,4 +369,5 @@ public class BallCarrier : MonoBehaviour
     {
         DropBall();
     }
+    #endregion
 }

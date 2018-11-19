@@ -98,10 +98,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
                 }
                 finalRotation = Mathf.Repeat(finalRotation, 360);
                 BallCarrier ballCarrier = GetComponent<BallCarrier>();
-                if (ballCarrier != null && ballCarrier.ball != null
+                if (ballCarrier != null && ballCarrier.Ball != null
                     && (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime)
                 {
-                    Ball ball = ballCarrier.ball;
+                    Ball ball = ballCarrier.Ball;
                     Vector3 ballDirection = (ball.transform.position - transform.position).normalized;
                     Vector3 unitFinal = Quaternion.AngleAxis(finalRotation, Vector3.forward) * Vector2.right;
                     float angleDifference = Vector2.SignedAngle(ballDirection, unitFinal);

@@ -166,7 +166,7 @@ public class Goal : MonoBehaviour
         if (ball != null)
         {
             // Utility.TutEvent("Backboard", ball.lastOwner);
-            TeamManager ballTeam = ball.lastOwner?.GetComponent<Player>()?.team;
+            TeamManager ballTeam = ball.LastOwner?.GetComponent<Player>()?.team;
             SwitchToTeam(ballTeam);
         }
     }
@@ -207,25 +207,18 @@ public class Goal : MonoBehaviour
 
     private void ScoreGoal(Ball ball)
     {
-        if (!ball.IsOwnable())
+        if (currentTeam != null)
         {
-            PlayerStateManager stateManager = ball.Owner?.GetComponent<PlayerStateManager>();
-            if (stateManager != null)
-            {
-                stateManager.CurrentStateHasFinished();
-            }
-        }
-        if (ball.IsOwnable())
-        {
-            if (currentTeam != null)
-            {
-                GameManager.instance.GoalScoredForTeam(currentTeam);
-            }
+            GameManager.instance.GoalScoredForTeam(currentTeam);
         }
     }
 
     private void BallCheck(GameObject thing)
     {
+        // TODO dkonik: We realllllly shouldn't be relying on the ball to know whether or not
+        // a goal is allowed to be scored. There should be some check in GameManager
+        // that designates that, based on the current state of the game.
+
         Ball ball = thing.gameObject.GetComponent<Ball>();
         // Need to check that ball.ownable (*not* ball.IsOwnable) here
         // Otherwise, the body of this if statement is executed every time the
