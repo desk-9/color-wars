@@ -25,24 +25,13 @@ public class GameManager : MonoBehaviour
     public GameObject meta;
     public float pauseAfterGoalScore = 3f;
     public float pauseAfterReset = 2f;
-    public bool staticGoals = false;
     public List<Player> players = new List<Player>();
 
-    public bool pushAwayOtherPlayers = false;
-    public float blowbackRadius = 3f;
-    public float blowbackSpeed = 10f;
-    public float blowbackStunTime = 0.1f;
+    [SerializeField]
+    private GameSettings gameSettings;
+    public GameSettings Settings { get { return gameSettings; } }
+
     public GameObject blowbackPrefab;
-    public float slowMoFactor = 0.4f;
-    public float PitchShiftTime = 0.3f;
-    public float SlowedPitch = 0.5f;
-    public float goalShakeAmount = 1.5f;
-    public float goalShakeDuration = .4f;
-
-    public bool respectSoundEffectSlowMo = true;
-
-    public int winningScore = 5;
-    public int requiredWinMargin = 2;
 
     public enum WinCondition
     {
@@ -106,8 +95,9 @@ public class GameManager : MonoBehaviour
 
     private void BlowBack(Player player)
     {
-        Utility.BlowbackFromPlayer(player.gameObject, blowbackRadius, blowbackSpeed, false,
-                                   blowbackStunTime);
+        // TODO dkonik: This shouldn't be instantiated every time, it should be reused
+        Utility.BlowbackFromPlayer(player.gameObject, Settings.BlowbackRadius, Settings.BlowbackSpeed, false,
+                                   Settings.BlowbackStunTime);
         GameObject.Instantiate(blowbackPrefab, player.transform.position, player.transform.rotation);
     }
 
@@ -186,16 +176,11 @@ public class GameManager : MonoBehaviour
     {
         teams = new List<TeamManager>();
         neutralResources = new TeamResourceManager(null);
-        NewGoal[] goals = FindObjectsOfType<NewGoal>();
 
         for (int i = 0; i < teamColors.Length; ++i)
         {
             // Add 1 so we get Team 1 and Team 2
             teams.Add(new TeamManager(i + 1, teamColors[i]));
-            if (staticGoals)
-            {
-                goals[i].SetTeam(teams[i]);
-            }
         }
     }
 
@@ -210,7 +195,7 @@ public class GameManager : MonoBehaviour
     private void CheckForWinner()
     {
         TeamManager topTeam = TopTeam();
-        if (topTeam != null && topTeam.score >= winningScore)
+        if (topTeam != null && topTeam.score >= Settings.WinningScore)
         {
             if (winCondition == WinCondition.TennisRules)
             {
@@ -218,7 +203,7 @@ public class GameManager : MonoBehaviour
                     (from team in teams
                      where team != topTeam
                      select team.score).Max();
-                if (Mathf.Abs(secondBestScore - topTeam.score) >= requiredWinMargin)
+                if (Mathf.Abs(secondBestScore - topTeam.score) >= Settings.RequiredWinMargin)
                 {
                     EndGame();
                 }
@@ -267,8 +252,8 @@ public class GameManager : MonoBehaviour
             UtilityExtensionsContainer.TimeDelayCall(
                 this, ResetGameAfterGoal, pauseAfterGoalScore);
         }
-        cameraShake.shakeAmount = goalShakeAmount;
-        cameraShake.shakeDuration = goalShakeDuration;
+        cameraShake.shakeAmount = Settings.GoalShakeAmount;
+        cameraShake.shakeDuration = Settings.GoalShakeDuration;
     }
 
     private void ResetGameAfterGoal()
@@ -293,7 +278,7 @@ public class GameManager : MonoBehaviour
         goal?.ResetNeutral();
 
         // Reset music.
-        StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+        StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
     }
 
     private void StartGameAfterBallAnimation()
@@ -365,7 +350,7 @@ public class GameManager : MonoBehaviour
     private int slowMoCount = 0;
     public void SlowMo()
     {
-        Utility.ChangeTimeScale(slowMoFactor);
+        Utility.ChangeTimeScale(Settings.SlowMoFactor);
         foreach (Player player in GetAllPlayers())
         {
             PlayerMovement movement = player.GetComponent<PlayerMovement>();
@@ -379,7 +364,7 @@ public class GameManager : MonoBehaviour
         notificationManager.NotifyMessage(Message.SlowMoEntered, this);
         if (!TutorialLiveClips.runningLiveClips)
         {
-            StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
+            StartCoroutine(PitchShifter(Settings.SlowedPitch, Settings.PitchShiftTime));
         }
     }
 
@@ -401,7 +386,7 @@ public class GameManager : MonoBehaviour
             // Pitch-shift BGM back to normal.
             if (!TutorialLiveClips.runningLiveClips)
             {
-                StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
+                StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
             }
             notificationManager.NotifyMessage(Message.SlowMoExited, this);
         }

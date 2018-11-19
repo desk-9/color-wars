@@ -91,11 +91,11 @@ public class AudioManager : MonoBehaviour
     public void PlayClip(AudioClip asset, float volume, bool shouldSlowMo = false)
     {
         if (shouldSlowMo && GameManager.instance != null
-            && GameManager.instance.respectSoundEffectSlowMo
+            && GameManager.instance.Settings.RespectSoundEffectSlowMo
             && GameManager.instance.IsSlowMo())
         {
 
-            source.pitch = GameManager.instance.SlowedPitch;
+            source.pitch = GameManager.instance.Settings.SlowedPitch;
             source.PlayOneShot(asset, volume);
             this.RealtimeDelayCall(() => source.pitch = 1, asset.length);
         }
