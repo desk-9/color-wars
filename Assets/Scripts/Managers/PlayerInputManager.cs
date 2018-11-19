@@ -102,6 +102,7 @@ public class PlayerInputManager : MonoBehaviour
     public void AddToInputQueue(int priority, InputDeviceCallback callback, Action action)
     {
         inputRequests.Add(priority, Tuple.Create(callback, action));
+        HandoutDevices();
     }
 
     private void HandoutDevices()

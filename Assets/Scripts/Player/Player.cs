@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UtilityExtensions;
+using Photon.Realtime;
+using Photon.Pun;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPunCallbacks
 {
     public delegate void OnTeamAssignedCallback(TeamManager team);
     public OnTeamAssignedCallback OnTeamAssigned = delegate { };
@@ -135,6 +137,18 @@ public class Player : MonoBehaviour
         }
         GameManager.instance.players.Add(this);
         // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
+    }
+
+    public void HandleOwnership() {
+        // Deal with state changes due to being owned (or not owned) by the
+        // local network player
+        if (NetworkPlayerManager.instance.LocalOwnsPlayer(playerNumber))
+        {
+            var view = GetComponent<PhotonView>();
+            view.TransferOwnership(PhotonNetwork.LocalPlayer);
+            var controls = GetComponent<PlayerControls>();
+            controls.AskForDevice();
+        }
     }
 
     private void OnDestroy()
