@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using UtilityExtensions;
+using Photon.Realtime;
+using Photon.Pun;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPunCallbacks
 {
     public delegate void OnTeamAssignedCallback(TeamManager team);
     public OnTeamAssignedCallback OnTeamAssigned = delegate { };
@@ -135,6 +137,17 @@ public class Player : MonoBehaviour
         }
         GameManager.instance.players.Add(this);
         // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
+    }
+
+    public override void OnJoinedRoom() {
+        // Making a bad assumption: that the number of players in a room updates
+        // deterministically, i.e. no two players will see the room as having
+        // the same number of players at the time they join.
+        Utility.Print(playerNumber, PhotonNetwork.CurrentRoom.PlayerCount, LogLevel.Error);
+        if (playerNumber == PhotonNetwork.CurrentRoom.PlayerCount) {
+            var view = GetComponent<PhotonView>();
+            view.TransferOwnership(PhotonNetwork.LocalPlayer);
+        }
     }
 
     private void OnDestroy()
