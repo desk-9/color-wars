@@ -5,6 +5,7 @@ using UtilityExtensions;
 
 public class Ball : MonoBehaviourPun, IPunObservable
 {
+    public bool Ownable { get; set; } = true;
     public new SpriteRenderer renderer;
     public new Rigidbody2D rigidbody;
     [SerializeField]
@@ -19,6 +20,10 @@ public class Ball : MonoBehaviourPun, IPunObservable
     private float speedOnShoot;
     private Color neutralColor = Color.white;
     private int relevantCollisionLayers;
+    private new Rigidbody2D rigidbody;
+    private new SpriteRenderer renderer;
+
+    public BallCarrier lastOwner { get; private set; }
 
     /// <summary>
     /// The owner before the current one, or just the last owner if there is no
@@ -46,6 +51,14 @@ public class Ball : MonoBehaviourPun, IPunObservable
         get
         {
             return rigidbody.position;
+        }
+    }
+
+    public Color CurrentColor
+    {
+        get
+        {
+            return renderer.color;
         }
     }
 

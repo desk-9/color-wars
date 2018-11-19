@@ -215,7 +215,7 @@ public class BallCarrier : MonoBehaviour
 
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                Ball.renderer.color == player.team.teamColor.color)
+                ball.CurrentColor == player.team.teamColor.color)
             {
                 snapToObject = goal;
                 stickAngleWhenSnapped = stickDirection;
