@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
 
-public class Ball : MonoBehaviourPunCallbacks
+public class Ball : MonoBehaviourPun, IPunObservable
 {
     public new SpriteRenderer renderer;
     public new Rigidbody2D rigidbody;
@@ -26,6 +26,29 @@ public class Ball : MonoBehaviourPunCallbacks
     /// </summary>
     public BallCarrier LastOwner { get; private set; }
 
+    #region NetworkingAndPhysics
+
+    private struct NetworkedInformation
+    {
+        public bool isDirty;
+        public Vector2 position;
+        public float rotation;
+        public Vector2 velocity;
+        public double timestampOfMessage;
+    }
+
+    private NetworkedInformation networkedInformation = new NetworkedInformation();
+    private bool stopBallForLocalPossession = false;
+    #endregion
+
+    public Vector2 CurrentPosition
+    {
+        get
+        {
+            return rigidbody.position;
+        }
+    }
+
     /// <summary>
     /// In certain situations (like after a goal is scored, or while the ball
     /// position is being reset), the ball is not ownable. This represents that
@@ -43,17 +66,20 @@ public class Ball : MonoBehaviourPunCallbacks
         {
             if (owner_ != null)
             {
-                LastOwner = owner_;
+                lastOwner = owner_;
+                stopBallForLocalPossession = true;
             }
             owner_ = value;
-            rigidbody.mass = owner_ == null ? 0.1f : 1000;
+
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
-            rigidbody.angularVelocity = 0f;
-            notificationManager.NotifyMessage(message, gameObject);
+
+            notificatonManager.NotifyMessage(message, gameObject);
+
             if (!this.isActiveAndEnabled)
             {
                 return;
             }
+
             if (owner_ != null)
             {
                 this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
@@ -136,7 +162,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        notificationManager = GameManager.instance.notificationManager;
+        notificatonManager = GameManager.instance.notificationCenter;
         start_location = transform.position;
         trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
@@ -208,11 +234,6 @@ public class Ball : MonoBehaviourPunCallbacks
         }
     }
 
-    private void FixedUpdate()
-    {
-        rigidbody.rotation = Utility.NormalizeDegree(rigidbody.rotation);
-    }
-
     public void OnCollisionEnter2D(Collision2D collision)
     {
         if (relevantCollisionLayers == (relevantCollisionLayers | 1 << collision.gameObject.layer))
@@ -227,6 +248,68 @@ public class Ball : MonoBehaviourPunCallbacks
                     }
                 }
                 );
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(this.rigidbody.position);
+            stream.SendNext(this.rigidbody.rotation);
+            stream.SendNext(this.rigidbody.velocity);
+        }
+        else
+        {
+            networkedInformation.isDirty = true;
+            networkedInformation.position = (Vector2)stream.ReceiveNext();
+            networkedInformation.rotation = (float)stream.ReceiveNext();
+            networkedInformation.velocity = (Vector2)stream.ReceiveNext();
+            networkedInformation.timestampOfMessage = info.timestamp;
+        }
+    }
+
+    /// <summary>
+    /// Moves the ball to the new position if the ball is owned by the local user.
+    /// Should only be called on FixedUpdate
+    /// </summary>
+    /// <param name="newPosition"></param>
+    public void RequestMoveToPosition(Vector2 newPosition)
+    {
+        if (photonView.IsMine)
+        {
+            rigidbody.MovePosition(newPosition);
+        }
+    }
+
+    public void FixedUpdate()
+    {
+        rigidbody.rotation = Utility.NormalizeDegree(rigidbody.rotation);
+
+        if (photonView.IsMine)
+        {
+            if (stopBallForLocalPossession)
+            {
+                rigidbody.angularVelocity = 0f;
+                rigidbody.velocity = Vector2.zero;
+                stopBallForLocalPossession = false;
+            }
+        } else
+        {
+            if (networkedInformation.isDirty)
+            {
+                // TODO dkonik: Take into account bouncing off a wall
+                rigidbody.velocity = networkedInformation.velocity;
+                rigidbody.rotation = networkedInformation.rotation;
+
+                // New position based on velocity
+                Vector2 newPosition = networkedInformation.position;
+                float lag = Mathf.Abs((float)(PhotonNetwork.Time - networkedInformation.timestampOfMessage));
+                newPosition += (rigidbody.velocity * lag);
+                rigidbody.MovePosition(newPosition);
+
+                networkedInformation.isDirty = false;
+            }
         }
     }
 }

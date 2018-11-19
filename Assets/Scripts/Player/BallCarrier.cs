@@ -29,7 +29,7 @@ public class BallCarrier : MonoBehaviour
     private GameObject teammate;
     private Player player;
     private GameObject goal;
-    private Rigidbody2D rb2d;
+    private Rigidbody2D rigidbody;
     private GameObject snapToObject;
     private float snapDelay = 0f;
     private Vector2 stickAngleWhenSnapped;
@@ -43,7 +43,7 @@ public class BallCarrier : MonoBehaviour
         player = GetComponent<Player>();
         playerMovement = GetComponent<IPlayerMovement>();
         stateManager = GetComponent<PlayerStateManager>();
-        rb2d = GetComponent<Rigidbody2D>();
+        rigidbody = GetComponent<Rigidbody2D>();
         if (playerMovement != null && stateManager != null)
         {
             stateManager.CallOnStateEnter(
@@ -117,8 +117,6 @@ public class BallCarrier : MonoBehaviour
     {
         BlowBackEnemyPlayers();
         timeCarryStarted = Time.time;
-        ball.rigidbody.velocity = Vector2.zero;
-        ball.rigidbody.angularVelocity = 0;
         CalculateOffset(ball);
         if (slowMoOnCarry)
         {
@@ -163,7 +161,7 @@ public class BallCarrier : MonoBehaviour
     private void SnapToGameObject()
     {
         Vector3 vector = (snapToObject.transform.position - transform.position).normalized;
-        rb2d.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(transform.right, vector, snapLerpStrength));
+        rigidbody.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(transform.right, vector, snapLerpStrength));
     }
 
     private void SnapAimTowardsTargets()
@@ -293,11 +291,11 @@ public class BallCarrier : MonoBehaviour
     {
         if (Ball != null)
         {
-            Rigidbody2D rigidbody = Ball.GetComponent<Rigidbody2D>();
+            Rigidbody2D rigidbody = ball.GetComponent<Rigidbody2D>();
             Vector2 newPosition =
-                CircularLerp(Ball.transform.position, NosePosition(Ball), transform.position,
+                CircularLerp(ball.CurrentPosition, NosePosition(ball), transform.position,
                              ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
-            rigidbody.MovePosition(newPosition);
+            ball.RequestMoveToPosition(newPosition);
         }
     }
 
@@ -337,8 +335,8 @@ public class BallCarrier : MonoBehaviour
         }
         if (stateManager != null)
         {
-            TeamManager last_team = ball.LastOwner?.GetComponent<Player>().team;
-            TeamManager this_team = GetComponent<Player>().team;
+            TeamManager lastTeam = ball.lastOwner?.GetComponent<Player>().team;
+            TeamManager thisTeam = player.team;
             stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
         }
         else

@@ -376,11 +376,11 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 1319945778}
-  viewIdField: 0
-  InstantiationId: 2
+  viewIdField: 6
+  InstantiationId: 6
   isRuntimeInstantiated: 0
 --- !u!1 &1768583797059612
 GameObject:
