@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using IC = InControl;
 
+using UtilityExtensions;
+using Photon.Realtime;
+using Photon.Pun;
+
 public struct ButtonEventPair
 {
     public Message pressedEvent;
@@ -15,7 +19,7 @@ public struct ButtonEventPair
     }
 }
 
-public class PlayerControls : MonoBehaviour
+public class PlayerControls : MonoBehaviourPunCallbacks
 {
     private IC.InputDevice inputDevice;
     private Coroutine broadcast;
@@ -23,10 +27,19 @@ public class PlayerControls : MonoBehaviour
 
     private void Start()
     {
-        PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
-                                                    GivenInputDevice,
-                                                    InputDeviceDisconnectedCallback);
         stateManager = GetComponent<PlayerStateManager>();
+
+    }
+
+    public void AskForDevice() {
+        var player = GetComponent<Player>();
+        var photonView = GetComponent<PhotonView>();
+        Utility.Print("Checking if should control", player.playerNumber, "Ownership:", photonView.IsMine, LogLevel.Error);
+        if (photonView.IsMine) {
+            PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
+                                                        GivenInputDevice,
+                                                        InputDeviceDisconnectedCallback);
+        }
     }
 
     private void GivenInputDevice(IC.InputDevice device)

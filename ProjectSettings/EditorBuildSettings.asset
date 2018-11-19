@@ -6,11 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/main-menu.unity
-    guid: 725f05ea899f44605801cc8c2edaf12f
-  - enabled: 1
     path: Assets/Scenes/court.unity
     guid: ca110f435d769440d8595f6864cbc517
+  - enabled: 1
+    path: Assets/Scenes/main-menu.unity
+    guid: 725f05ea899f44605801cc8c2edaf12f
   - enabled: 1
     path: Assets/Scenes/court-tutorial.unity
     guid: e4951deb6f61d4f6481db6ebf2cd6218
@@ -32,3 +32,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/live-clips/4-walls.unity
     guid: 6fb41ef989ecd406d803d158765946e9
+  m_configObjects: {}
