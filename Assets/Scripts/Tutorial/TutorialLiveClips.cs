@@ -110,9 +110,9 @@ public class TutorialLiveClips : MonoBehaviour
 
     private void StartListeningForPlayers()
     {
-        GameManager.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationManager.CallOnMessageWithSender(
             Message.PlayerPressedX, CheckinPlayer);
-        GameManager.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationManager.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 
@@ -182,7 +182,7 @@ public class TutorialLiveClips : MonoBehaviour
     {
         runningLiveClips = true;
         StartListeningForPlayers();
-        GameManager.instance.notificationCenter.CallOnMessage(Message.RecordingFinished,
+        GameManager.instance.notificationManager.CallOnMessage(Message.RecordingFinished,
                                             () =>
                                             {
                                                 if (!clipReloadThisFrame)
@@ -192,7 +192,7 @@ public class TutorialLiveClips : MonoBehaviour
                                                     this.FrameDelayCall(() => clipReloadThisFrame = false, 3);
                                                 }
                                             });
-        GameManager.instance.notificationCenter.CallOnMessage(Message.RecordingInterrupt,
+        GameManager.instance.notificationManager.CallOnMessage(Message.RecordingInterrupt,
                                             SubclipInterrupt);
         yield return null;
         ySkip.StartListening();

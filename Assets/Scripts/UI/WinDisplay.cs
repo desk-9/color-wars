@@ -67,9 +67,9 @@ public class WinDisplay : MonoBehaviour
 
     private void StartCountdown()
     {
-        GameManager.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationManager.CallOnMessage(
             Message.PlayerPressedX, () => SceneStateManager.instance.ReloadScene());
-        GameManager.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationManager.CallOnMessage(
             Message.PlayerPressedY, () => SceneStateManager.instance.Load(Scene.Selection));
         StartCoroutine(ResetCountdown());
     }

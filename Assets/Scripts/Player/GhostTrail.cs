@@ -20,9 +20,9 @@ public class GhostTrail : MonoBehaviour
             return;
         }
         renderer = this.EnsureComponent<SpriteRenderer>();
-        NotificationManager nc = GameManager.instance.notificationCenter;
-        nc.CallOnMessage(Message.BallIsPossessed, StartGhost);
-        nc.CallOnMessage(Message.BallIsUnpossessed, StopGhost);
+        NotificationManager notificationManager = GameManager.instance.notificationManager;
+        notificationManager.CallOnMessage(Message.BallIsPossessed, StartGhost);
+        notificationManager.CallOnMessage(Message.BallIsUnpossessed, StopGhost);
     }
 
     private void StartGhost()

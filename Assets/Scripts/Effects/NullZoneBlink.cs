@@ -12,7 +12,7 @@ public class NullZoneBlink : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-        GameManager.instance.notificationCenter.CallOnMessage(Message.NullChargePrevention, FlashNullZone);
+        GameManager.instance.notificationManager.CallOnMessage(Message.NullChargePrevention, FlashNullZone);
     }
 
     private void FlashNullZone()

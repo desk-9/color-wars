@@ -23,11 +23,11 @@ public class JustInTimeTutorial : MonoBehaviour
     private void Start()
     {
         canvasPrefab = Resources.Load<GameObject>("ToolTipCanvas");
-        GameManager.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationManager.CallOnMessageWithSender(
             Message.BallPossessedWhileNeutral, PassToTeammate);
-        GameManager.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationManager.CallOnMessageWithSender(
             Message.BallPossessedWhileCharged, ShootAtGoal);
-        GameManager.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationManager.CallOnMessage(
             Message.GoalScored,
             () =>
             {
@@ -38,9 +38,9 @@ public class JustInTimeTutorial : MonoBehaviour
                 }
             });
 
-        GameManager.instance.notificationCenter.CallOnStateEnd(State.Posession, Unpossessed);
+        GameManager.instance.notificationManager.CallOnStateEnd(State.Posession, Unpossessed);
 
-        GameManager.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationManager.CallOnMessage(
             Message.PlayerReleasedBack,
             () =>
             {

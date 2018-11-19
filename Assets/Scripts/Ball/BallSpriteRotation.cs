@@ -11,8 +11,8 @@ public class BallSpriteRotation : MonoBehaviour
     private void Start()
     {
         GetKeepToVector = () => transform.right;
-        GameManager.instance.notificationCenter.CallOnMessage(Message.BallIsUnpossessed, BecameUnpossessed);
-        GameManager.instance.notificationCenter.CallOnMessageWithSender(Message.BallIsPossessed,
+        GameManager.instance.notificationManager.CallOnMessage(Message.BallIsUnpossessed, BecameUnpossessed);
+        GameManager.instance.notificationManager.CallOnMessageWithSender(Message.BallIsPossessed,
                                                       BecamePossessed);
     }
 

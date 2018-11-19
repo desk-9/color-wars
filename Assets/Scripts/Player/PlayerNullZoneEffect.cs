@@ -11,7 +11,7 @@ public class PlayerNullZoneEffect : MonoBehaviour
     {
         player = GetComponent<Player>();
         renderer = GetComponent<SpriteRenderer>();
-        GameManager.instance.notificationCenter.CallOnMessage(Message.BallIsPossessed, CheckEffect);
+        GameManager.instance.notificationManager.CallOnMessage(Message.BallIsPossessed, CheckEffect);
     }
 
     private void CheckEffect()

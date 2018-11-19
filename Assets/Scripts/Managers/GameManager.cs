@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public TeamResourceManager neutralResources;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
-    public NotificationManager notificationCenter;
+    public NotificationManager notificationManager;
     public bool gameOver { get; private set; } = false;
     public TeamManager winner { get; private set; } = null;
     public GameObject meta;
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
         {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        notificationCenter = new NotificationManager();
+        notificationManager = new NotificationManager();
     }
 
     private void BlowBack(Player player)
@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
         // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
         if (!PlayerTutorial.runTutorial && SceneManager.GetActiveScene().name == "court")
         {
-            notificationCenter.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
+            notificationManager.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
             this.FrameDelayCall(
                 () => { foreach (TeamManager team in teams) { team.ResetTeam(); } },
                 3);
@@ -282,7 +282,7 @@ public class GameManager : MonoBehaviour
             team.ResetTeam();
         }
         ball.ResetBall(pauseAfterReset);
-        notificationCenter.NotifyMessage(Message.StartCountdown, this);
+        notificationManager.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
         foreach (TronWall wall in GameObject.FindObjectsOfType<TronWall>())
         {
@@ -376,7 +376,7 @@ public class GameManager : MonoBehaviour
         }
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
-        notificationCenter.NotifyMessage(Message.SlowMoEntered, this);
+        notificationManager.NotifyMessage(Message.SlowMoEntered, this);
         if (!TutorialLiveClips.runningLiveClips)
         {
             StartCoroutine(PitchShifter(SlowedPitch, PitchShiftTime));
@@ -403,7 +403,7 @@ public class GameManager : MonoBehaviour
             {
                 StartCoroutine(PitchShifter(1.0f, PitchShiftTime));
             }
-            notificationCenter.NotifyMessage(Message.SlowMoExited, this);
+            notificationManager.NotifyMessage(Message.SlowMoExited, this);
         }
     }
 

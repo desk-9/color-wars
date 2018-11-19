@@ -38,15 +38,15 @@ public class TeamManager
     public void ResetScore()
     {
         score = 0;
-        GameManager.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
+        GameManager.instance.notificationManager.NotifyMessage(Message.ScoreChanged, this);
         GameManager.instance.scoreDisplayer?.UpdateScores();
     }
 
     public void IncrementScore()
     {
         score += 1;
-        GameManager.instance.notificationCenter.NotifyMessage(Message.ScoreChanged, this);
-        GameManager.instance.notificationCenter.NotifyMessage(Message.GoalScored, this);
+        GameManager.instance.notificationManager.NotifyMessage(Message.ScoreChanged, this);
+        GameManager.instance.notificationManager.NotifyMessage(Message.GoalScored, this);
         GameManager.instance.scoreDisplayer?.UpdateScores();
     }
 

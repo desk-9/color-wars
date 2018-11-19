@@ -45,9 +45,9 @@ public class PlayerDashBehavior : MonoBehaviour
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
 
-        GameManager.instance.notificationCenter.CallOnMessageIfSameObject(
+        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedDash, DashPressed, this.gameObject);
-        GameManager.instance.notificationCenter.CallOnMessageIfSameObject(
+        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedDash, ChargeReleased, this.gameObject);
     }
 
@@ -214,7 +214,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
             if (shouldSteal)
             {
-                GameManager.instance.notificationCenter.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
+                GameManager.instance.notificationManager.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
                 AudioManager.instance.StealSound.Play(.5f);
                 stateManager.AttemptPossession(
                     () => carrier.StartCarryingBall(ball), carrier.DropBall);

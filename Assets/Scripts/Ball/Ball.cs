@@ -15,7 +15,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private Goal goal;
     private Vector2 start_location;
     private BallFillColor ballFill;
-    private NotificationManager notificationCenter;
+    private NotificationManager notificationManager;
     private TrailRenderer trailRenderer;
     private float speedOnShoot;
     private Color neutralColor = Color.white;
@@ -37,7 +37,7 @@ public class Ball : MonoBehaviourPunCallbacks
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             rigidbody.angularVelocity = 0f;
-            notificationCenter.NotifyMessage(message, gameObject);
+            notificationManager.NotifyMessage(message, gameObject);
             if (!this.isActiveAndEnabled)
             {
                 return;
@@ -129,7 +129,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        notificationCenter = GameManager.instance.notificationCenter;
+        notificationManager = GameManager.instance.notificationManager;
         start_location = transform.position;
         trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
@@ -139,7 +139,7 @@ public class Ball : MonoBehaviourPunCallbacks
         ballFill = this.GetComponentInChildren<BallFillColor>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
 
-        GameManager.instance.notificationCenter.CallOnMessage(
+        GameManager.instance.notificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
     }

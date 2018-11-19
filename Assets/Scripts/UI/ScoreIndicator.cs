@@ -47,7 +47,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Update score indicator when a goal is scored
-        GameManager.instance.notificationCenter.CallOnMessageWithSender(
+        GameManager.instance.notificationManager.CallOnMessageWithSender(
             Message.GoalScored,
             (object scoringTeam) =>
             {
@@ -58,7 +58,7 @@ public class ScoreIndicator : MonoBehaviour
             });
 
         // Reset score indicator when game is restarted
-        GameManager.instance.notificationCenter.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
+        GameManager.instance.notificationManager.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
 
         foreach (GameObject pointIndicator in pointIndicators)
         {

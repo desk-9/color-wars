@@ -69,7 +69,7 @@ public class Goal : MonoBehaviour
         {
             RegisterPassSwitching();
         }
-        GameManager.instance.notificationCenter.CallOnStringEventWithSender(
+        GameManager.instance.notificationManager.CallOnStringEventWithSender(
             GoalSwitchCollider.EventId, ColliderSwitch);
     }
 
@@ -84,9 +84,9 @@ public class Goal : MonoBehaviour
 
     private void RegisterPassSwitching()
     {
-        GameManager.instance.notificationCenter.CallOnStateEnd(
+        GameManager.instance.notificationManager.CallOnStateEnd(
             State.Posession, (Player player) => lastPlayer = player);
-        GameManager.instance.notificationCenter.CallOnStateStart(
+        GameManager.instance.notificationManager.CallOnStateStart(
             State.Posession, (Player player) => PlayerBallColorSwitch(player));
     }
 
@@ -107,30 +107,30 @@ public class Goal : MonoBehaviour
         {
             if (!PlayerInNullZone(player))
             {
-                GameManager.instance.notificationCenter.NotifyMessage(Message.BallCharged, player);
+                GameManager.instance.notificationManager.NotifyMessage(Message.BallCharged, player);
                 SwitchToTeam(player.team);
             }
             else
             {
                 if (currentTeam == null)
                 {
-                    GameManager.instance.notificationCenter.NotifyMessage(Message.NullChargePrevention, player);
+                    GameManager.instance.notificationManager.NotifyMessage(Message.NullChargePrevention, player);
                     AudioManager.instance.PassToNullZone.Play(.1f);
                 }
             }
         }
         else if (player.team != lastPlayer?.team)
         {
-            GameManager.instance.notificationCenter.NotifyMessage(Message.BallSetNeutral, player);
+            GameManager.instance.notificationManager.NotifyMessage(Message.BallSetNeutral, player);
             ResetNeutral();
         }
         if (currentTeam == null)
         {
-            GameManager.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileNeutral, player);
+            GameManager.instance.notificationManager.NotifyMessage(Message.BallPossessedWhileNeutral, player);
         }
         else
         {
-            GameManager.instance.notificationCenter.NotifyMessage(Message.BallPossessedWhileCharged, player);
+            GameManager.instance.notificationManager.NotifyMessage(Message.BallPossessedWhileCharged, player);
         }
     }
 
