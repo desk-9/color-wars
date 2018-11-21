@@ -29,7 +29,7 @@ public class BallCarrier : MonoBehaviour
     private GameObject teammate;
     private Player player;
     private GameObject goal;
-    private Rigidbody2D rigidbody;
+    private new Rigidbody2D rigidbody;
     private GameObject snapToObject;
     private float snapDelay = 0f;
     private Vector2 stickAngleWhenSnapped;
@@ -215,7 +215,7 @@ public class BallCarrier : MonoBehaviour
 
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                ball.CurrentColor == player.team.teamColor.color)
+                Ball.CurrentColor == player.team.teamColor.color)
             {
                 snapToObject = goal;
                 stickAngleWhenSnapped = stickDirection;
@@ -291,11 +291,11 @@ public class BallCarrier : MonoBehaviour
     {
         if (Ball != null)
         {
-            Rigidbody2D rigidbody = ball.GetComponent<Rigidbody2D>();
+            Rigidbody2D rigidbody = Ball.GetComponent<Rigidbody2D>();
             Vector2 newPosition =
-                CircularLerp(ball.CurrentPosition, NosePosition(ball), transform.position,
+                CircularLerp(Ball.CurrentPosition, NosePosition(Ball), transform.position,
                              ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
-            ball.RequestMoveToPosition(newPosition);
+            Ball.RequestMoveToPosition(newPosition);
         }
     }
 

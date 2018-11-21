@@ -5,9 +5,6 @@ using UtilityExtensions;
 
 public class Ball : MonoBehaviourPun, IPunObservable
 {
-    public bool Ownable { get; set; } = true;
-    public new SpriteRenderer renderer;
-    public new Rigidbody2D rigidbody;
     [SerializeField]
     private GameObject implosionPrefab;
 
@@ -86,7 +83,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
 
-            notificatonManager.NotifyMessage(message, gameObject);
+            notificationManager.NotifyMessage(message, gameObject);
 
             if (!this.isActiveAndEnabled)
             {
@@ -175,7 +172,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
-        notificatonManager = GameManager.instance.notificationCenter;
+        notificationManager = GameManager.instance.notificationManager;
         start_location = transform.position;
         trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
