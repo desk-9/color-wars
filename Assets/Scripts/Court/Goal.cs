@@ -225,7 +225,7 @@ public class Goal : MonoBehaviour
         // ball enters the goal (even after a goal is scored!) Yikes!
         // Right now (Monday, apr 16 2:35am), the semantics of
         // ball.ownable are seen in Ball.cs functions ResetBall and HandleGoalScore
-        if (ball != null && ball.Ownable)
+        if (ball != null && ball.IsOwnable)
         {
             ScoreGoal(ball);
             this.FrameDelayCall(() => AudioManager.instance.ScoreGoalSound.Play(0.75f), 10);

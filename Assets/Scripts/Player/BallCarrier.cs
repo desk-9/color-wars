@@ -59,6 +59,7 @@ public class BallCarrier : MonoBehaviour
         laserGuide = this.GetComponent<LaserGuide>();
         this.FrameDelayCall(() => { GetGoal(); GetTeammate(); }, 2);
 
+        // Subscribe to relevant events
         NotificationManager notificationManager = GameManager.instance.notificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
     }
@@ -295,7 +296,7 @@ public class BallCarrier : MonoBehaviour
             Vector2 newPosition =
                 CircularLerp(Ball.CurrentPosition, NosePosition(Ball), transform.position,
                              ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
-            Ball.RequestMoveToPosition(newPosition);
+            Ball.NetworkedMoveToPosition(newPosition);
         }
     }
 
@@ -329,13 +330,15 @@ public class BallCarrier : MonoBehaviour
     private void HandleCollision(GameObject thing)
     {
         Ball ball = thing.GetComponent<Ball>();
-        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown)
+        if (ball == null || !ball.IsOwnable || ball.Owner != null || isCoolingDown)
         {
+            // If the ball is currently owned, we cannot possess it simply by running into it
             return;
         }
+
         if (stateManager != null)
         {
-            TeamManager lastTeam = ball.lastOwner?.GetComponent<Player>().team;
+            TeamManager lastTeam = ball.LastOwner?.GetComponent<Player>().team;
             TeamManager thisTeam = player.team;
             stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
         }

@@ -2,6 +2,8 @@
 using UnityEngine;
 using UtilityExtensions;
 
+// TODO dkonik: This should probably be merged with BallCarrier.
+
 public class ShootBallMechanic : MonoBehaviour
 {
     // These control how the charging progresses
@@ -154,8 +156,7 @@ public class ShootBallMechanic : MonoBehaviour
         if (ball != null)
         {
             Vector3 shotDirection = ball.transform.position - transform.position;
-            Rigidbody2D ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
-            ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
+            ball.NetworkedSetVelocity(shotDirection.normalized * shotSpeed);
         }
         StopShootBallCoroutines();
         stateManager.CurrentStateHasFinished();

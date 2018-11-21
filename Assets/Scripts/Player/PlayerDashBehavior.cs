@@ -176,12 +176,6 @@ public class PlayerDashBehavior : MonoBehaviour
         stateManager.CurrentStateHasFinished();
     }
 
-    private Ball TrySteal(Player otherPlayer)
-    {
-        BallCarrier otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
-        return otherCarrier?.Ball;
-    }
-
     private void Stun(Player otherPlayer)
     {
         PlayerStun otherStun = otherPlayer.GetComponent<PlayerStun>();
@@ -204,7 +198,7 @@ public class PlayerDashBehavior : MonoBehaviour
             (otherPlayer.team?.teamColor != player.team?.teamColor
              || otherPlayer.team == null || player.team == null))
         {
-            Ball ball = TrySteal(otherPlayer);
+            Ball ball = otherPlayer.gameObject.GetComponent<BallCarrier>()?.Ball;
 
             bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);
             if (shouldSteal || (ball == null && !onlyStunBallCarriers))

@@ -1,4 +1,4 @@
-﻿using Photon.Pun;
+using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
@@ -20,13 +20,18 @@ public class Ball : MonoBehaviourPun, IPunObservable
     private new Rigidbody2D rigidbody;
     private new SpriteRenderer renderer;
 
-    public BallCarrier lastOwner { get; private set; }
-
     /// <summary>
-    /// The owner before the current one, or just the last owner if there is no
-    /// current owner
+    /// The owner before the current owner. If the ball is not currently possessed, then
+    /// this is just the last owner. If the ball is possessed, then this will be the owner
+    /// before the current one.
     /// </summary>
     public BallCarrier LastOwner { get; private set; }
+
+    /// <summary>
+    /// The ball may not be ownable in certain states, for example
+    /// after a goal is scored, or while it is being reset after a goal.
+    /// </summary>
+    public bool IsOwnable { get; set; } = true;
 
     #region NetworkingAndPhysics
 
@@ -34,15 +39,43 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         public bool isDirty;
         public Vector2 position;
-        public float rotation;
         public Vector2 velocity;
+        public float rotation;
+        public float angularVelocity;
         public double timestampOfMessage;
     }
 
+    // TODO dkonik: This is ugly, but just testing to get it working
+    private Vector2 requestedVelocity;
+    private bool velocityWasRequested = false;
+
     private NetworkedInformation networkedInformation = new NetworkedInformation();
     private bool stopBallForLocalPossession = false;
+
+    /// <summary>
+    /// Moves the ball to the new position if the ball is owned by the local user.
+    /// Should only be called on FixedUpdate
+    /// </summary>
+    /// <param name="newPosition"></param>
+    public void NetworkedMoveToPosition(Vector2 newPosition)
+    {
+        if (photonView.IsMine)
+        {
+            rigidbody.MovePosition(newPosition);
+        }
+    }
+
+    public void NetworkedSetVelocity(Vector2 velocity)
+    {
+        if (photonView.IsMine)
+        {
+            velocityWasRequested = true;
+            requestedVelocity = velocity;
+        }
+    }
     #endregion
 
+    #region StateInformationGetters
     public Vector2 CurrentPosition
     {
         get
@@ -58,6 +91,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
             return renderer.color;
         }
     }
+    #endregion
 
     /// <summary>
     /// In certain situations (like after a goal is scored, or while the ball
@@ -76,7 +110,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         {
             if (owner_ != null)
             {
-                lastOwner = owner_;
+                LastOwner = owner_;
                 stopBallForLocalPossession = true;
             }
             owner_ = value;
@@ -202,7 +236,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
     {
         TrailRenderer trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.enabled = false;
-        Ownable = false;
+        IsOwnable = false;
     }
 
     public void ResetBall(float? lengthOfEffect = null)
@@ -213,7 +247,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
         SetSpriteToNeutral();
         transform.position = start_location;
         trailRenderer.enabled = false;
-        Ownable = true;
+        IsOwnable = true;
         rigidbody.velocity = Vector2.zero;
         Owner = null;
         LastOwner = null;
@@ -244,65 +278,62 @@ public class Ball : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (relevantCollisionLayers == (relevantCollisionLayers | 1 << collision.gameObject.layer))
-        {
-            this.FrameDelayCall(
-                () =>
-                {
-                    if (rigidbody.velocity.magnitude > speedOnShoot)
-                    {
-                        Debug.LogWarning("Prevented ball from speeding up after wall");
-                        rigidbody.velocity = rigidbody.velocity.normalized * speedOnShoot;
-                    }
-                }
-                );
-        }
-    }
+    // TODO dkonik: This was here to fix an issue where the ball would sometimes randomly 
+    // bounce off a wall super fast, but we can no longer just set the velocity willy nilly like this.
+    // Maybe this is fixed in the newer unity. If not, actually figure out why.
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (relevantCollisionLayers == (relevantCollisionLayers | 1 << collision.gameObject.layer))
+    //    {
+    //        this.FrameDelayCall(
+    //            () =>
+    //            {
+    //                if (rigidbody.velocity.magnitude > speedOnShoot)
+    //                {
+    //                    Debug.LogWarning("Prevented ball from speeding up after wall");
+    //                    rigidbody.velocity = rigidbody.velocity.normalized * speedOnShoot;
+    //                }
+    //            }
+    //            );
+    //    }
+    //}
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
             stream.SendNext(this.rigidbody.position);
-            stream.SendNext(this.rigidbody.rotation);
             stream.SendNext(this.rigidbody.velocity);
+            stream.SendNext(this.rigidbody.rotation);
+            stream.SendNext(this.rigidbody.angularVelocity);
         }
         else
         {
+            // We may or may not get this information on a physics frame, so just
+            // mark as dirty and update the position in FixedUpdate
             networkedInformation.isDirty = true;
             networkedInformation.position = (Vector2)stream.ReceiveNext();
-            networkedInformation.rotation = (float)stream.ReceiveNext();
             networkedInformation.velocity = (Vector2)stream.ReceiveNext();
+            networkedInformation.rotation = (float)stream.ReceiveNext();
+            networkedInformation.angularVelocity = (float)stream.ReceiveNext();
             networkedInformation.timestampOfMessage = info.timestamp;
         }
     }
 
-    /// <summary>
-    /// Moves the ball to the new position if the ball is owned by the local user.
-    /// Should only be called on FixedUpdate
-    /// </summary>
-    /// <param name="newPosition"></param>
-    public void RequestMoveToPosition(Vector2 newPosition)
+    private void FixedUpdate()
     {
         if (photonView.IsMine)
         {
-            rigidbody.MovePosition(newPosition);
-        }
-    }
-
-    public void FixedUpdate()
-    {
-        rigidbody.rotation = Utility.NormalizeDegree(rigidbody.rotation);
-
-        if (photonView.IsMine)
-        {
+            rigidbody.rotation = Utility.NormalizeDegree(rigidbody.rotation);
             if (stopBallForLocalPossession)
             {
                 rigidbody.angularVelocity = 0f;
                 rigidbody.velocity = Vector2.zero;
                 stopBallForLocalPossession = false;
+            } else if (velocityWasRequested)
+            {
+                velocityWasRequested = false;
+                rigidbody.velocity = requestedVelocity;
             }
         } else
         {
@@ -311,6 +342,7 @@ public class Ball : MonoBehaviourPun, IPunObservable
                 // TODO dkonik: Take into account bouncing off a wall
                 rigidbody.velocity = networkedInformation.velocity;
                 rigidbody.rotation = networkedInformation.rotation;
+                rigidbody.angularVelocity = networkedInformation.angularVelocity;
 
                 // New position based on velocity
                 Vector2 newPosition = networkedInformation.position;
