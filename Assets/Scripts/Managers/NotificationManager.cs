@@ -84,10 +84,8 @@ public class NotificationManager
         Message.PlayerStick,
         Message.StartCountdown,
         Message.CountdownFinished,
-        Message.SlowMoEntered,
-        Message.SlowMoExited,
-        Message.BallIsPossessed,
-        Message.BallIsUnpossessed
+        Message.GoalScored,
+        Message.ScoreChanged
     };
     // PlayerState addons
     private SortedDictionary<State, PlayerCallback> onAnyPlayerStartSubscribers =
@@ -211,6 +209,13 @@ public class NotificationManager
 
     public void NotifyMessage(Message event_type, object sender)
     {
+        NotifyMessage_Internal(event_type, sender);
+        SendNetworkedMessageEvent(event_type, sender);
+    }
+
+    public void NotifyMessageWithoutSender(Message event_type)
+    {
+        object sender = (object) 0;
         NotifyMessage_Internal(event_type, sender);
         SendNetworkedMessageEvent(event_type, sender);
     }

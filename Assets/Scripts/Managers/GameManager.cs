@@ -361,7 +361,7 @@ public class GameManager : MonoBehaviour
         }
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
-        notificationManager.NotifyMessage(Message.SlowMoEntered, this);
+        notificationManager.NotifyMessageWithoutSender(Message.SlowMoEntered);
         if (!TutorialLiveClips.runningLiveClips)
         {
             StartCoroutine(PitchShifter(Settings.SlowedPitch, Settings.PitchShiftTime));
@@ -388,7 +388,7 @@ public class GameManager : MonoBehaviour
             {
                 StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
             }
-            notificationManager.NotifyMessage(Message.SlowMoExited, this);
+            notificationManager.NotifyMessageWithoutSender(Message.SlowMoExited);
         }
     }
 

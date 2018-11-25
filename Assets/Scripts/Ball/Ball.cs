@@ -49,7 +49,7 @@ public class Ball : MonoBehaviourPunCallbacks
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             rigidbody.angularVelocity = 0f;
-            notificationManager.NotifyMessage(message, gameObject);
+            notificationManager.NotifyMessageWithoutSender(message);
             if (!this.isActiveAndEnabled)
             {
                 return;
@@ -171,7 +171,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     public void ResetBall(float? lengthOfEffect = null)
     {
-        // Reset values 
+        // Reset values
         circleCollider.enabled = true;
         renderer.enabled = true;
         SetSpriteToNeutral();
