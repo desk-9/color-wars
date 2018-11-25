@@ -107,30 +107,30 @@ public class Goal : MonoBehaviour
         {
             if (!PlayerInNullZone(player))
             {
-                GameManager.instance.notificationManager.NotifyMessage(Message.BallCharged, player);
+                GameManager.instance.notificationManager.NotifyMessagePlayer(Message.BallCharged, player);
                 SwitchToTeam(player.team);
             }
             else
             {
                 if (currentTeam == null)
                 {
-                    GameManager.instance.notificationManager.NotifyMessage(Message.NullChargePrevention, player);
+                    GameManager.instance.notificationManager.NotifyMessagePlayer(Message.NullChargePrevention, player);
                     AudioManager.instance.PassToNullZone.Play(.1f);
                 }
             }
         }
         else if (player.team != lastPlayer?.team)
         {
-            GameManager.instance.notificationManager.NotifyMessage(Message.BallSetNeutral, player);
+            GameManager.instance.notificationManager.NotifyMessagePlayer(Message.BallSetNeutral, player);
             ResetNeutral();
         }
         if (currentTeam == null)
         {
-            GameManager.instance.notificationManager.NotifyMessage(Message.BallPossessedWhileNeutral, player);
+            GameManager.instance.notificationManager.NotifyMessagePlayer(Message.BallPossessedWhileNeutral, player);
         }
         else
         {
-            GameManager.instance.notificationManager.NotifyMessage(Message.BallPossessedWhileCharged, player);
+            GameManager.instance.notificationManager.NotifyMessagePlayer(Message.BallPossessedWhileCharged, player);
         }
     }
 

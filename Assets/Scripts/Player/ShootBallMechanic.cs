@@ -36,9 +36,9 @@ public class ShootBallMechanic : MonoBehaviour
         stateManager.CallOnStateExit(
             State.Posession, () => StopShootBallCoroutines());
 
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.instance.notificationManager.CallOnMessageIfSamePlayer(
             Message.PlayerPressedShoot, OnShootPressed, gameObject);
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.instance.notificationManager.CallOnMessageIfSamePlayer(
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
 
         Ball ball = GameObject.FindObjectOfType<Ball>();

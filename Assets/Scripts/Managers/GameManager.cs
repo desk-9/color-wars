@@ -392,6 +392,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Player GetPlayerFromNumber(int playerNumber) {
+        return players.Where(p => p.playerNumber == playerNumber).First();
+    }
+
     public void FlashScreen(float flashLength = 0.1f, Color? flashColor = null)
     {
         if (flashColor == null)

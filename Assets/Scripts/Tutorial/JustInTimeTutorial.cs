@@ -23,9 +23,9 @@ public class JustInTimeTutorial : MonoBehaviour
     private void Start()
     {
         canvasPrefab = Resources.Load<GameObject>("ToolTipCanvas");
-        GameManager.instance.notificationManager.CallOnMessageWithSender(
+        GameManager.instance.notificationManager.CallOnMessageWithPlayerObject(
             Message.BallPossessedWhileNeutral, PassToTeammate);
-        GameManager.instance.notificationManager.CallOnMessageWithSender(
+        GameManager.instance.notificationManager.CallOnMessageWithPlayerObject(
             Message.BallPossessedWhileCharged, ShootAtGoal);
         GameManager.instance.notificationManager.CallOnMessage(
             Message.GoalScored,

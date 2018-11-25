@@ -2,7 +2,8 @@
 
 public class GoalSwitchCollider : MonoBehaviour
 {
-    public static string EventId { get; set; } = Utility.UniqueString();
+    // Can't use Utility.UniqueString since it's not deterministic
+    public static string EventId { get; set; } = "$__GOAL_SWITCH_COLLIDER_UNIQUE_EVENT_ID__$";
 
     private void GoalSwitch(GameObject thing)
     {

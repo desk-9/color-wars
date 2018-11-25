@@ -27,12 +27,12 @@ public class ControllerRumble : MonoBehaviour
         if (playerControls != null && stateManager != null)
         {
             NotificationManager notificationManager = GameManager.instance.notificationManager;
-            notificationManager.CallOnMessageIfSameObject(Message.StolenFrom, () => StartRumble(duration: stealRumbleDuration), gameObject);
-            notificationManager.CallOnMessageIfSameObject(Message.TronWallDestroyed,
+            notificationManager.CallOnMessageIfSamePlayer(Message.StolenFrom, () => StartRumble(duration: stealRumbleDuration), gameObject);
+            notificationManager.CallOnMessageIfSamePlayer(Message.TronWallDestroyed,
                                          () => StartRumble(duration: wallDestroyDuration),
                                          gameObject);
             notificationManager.CallOnMessage(Message.GoalScored, () => StartRumble(duration: gameWinRumbleDuration));
-            notificationManager.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration: layingWallStunDuration), gameObject);
+            notificationManager.CallOnMessageIfSamePlayer(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration: layingWallStunDuration), gameObject);
             stateManager.CallOnStateEnter(State.Posession, () => StartRumble(duration: ballPossessionRumbleDuration));
         }
     }
