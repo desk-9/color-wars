@@ -104,7 +104,9 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// <param name="state"></param>
     public void TransitionToState(State state)
     {
+        State oldState = CurrentState;
         CurrentState = state;
+        OnStateChange?.Invoke(oldState, CurrentState);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
