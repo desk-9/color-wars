@@ -10,18 +10,13 @@ public class BallCarrier : MonoBehaviour
 
     private float ballTurnSpeed = 10f;
     public bool slowMoOnCarry = true;
-    public float aimAssistThreshold = 20f;
-    public float aimAssistLerpAmount = .5f;
-    public float goalAimAssistOffset = 1f;
-    public float delayBetweenSnaps = .2f;
-    public float snapEpsilon = 5f;
-    public float snapLerpStrength = .5f;
+    
     public float timeCarryStarted { get; private set; }
     public float blowbackRadius = 3f;
     public float blowbackForce = 5f;
     public float blowbackStunTime = 0.1f;
     private float ballOffsetFromCenter = .5f;
-    private IPlayerMovement playerMovement;
+    private PlayerMovement playerMovement;
     private PlayerStateManager stateManager;
     private Coroutine carryBallCoroutine;
     private bool isCoolingDown = false;
@@ -30,26 +25,20 @@ public class BallCarrier : MonoBehaviour
     private Player player;
     private GameObject goal;
     private Rigidbody2D rb2d;
-    private GameObject snapToObject;
-    private float snapDelay = 0f;
-    private Vector2 stickAngleWhenSnapped;
+
+    
     private const float ballOffsetMultiplier = 0.98f;
 
     public bool IsCarryingBall { get; private set; } = false;
 
     private void Start()
     {
-        snapToObject = null;
         player = GetComponent<Player>();
-        playerMovement = GetComponent<IPlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
         stateManager = GetComponent<PlayerStateManager>();
         rb2d = GetComponent<Rigidbody2D>();
         if (playerMovement != null && stateManager != null)
         {
-            stateManager.CallOnStateEnter(
-                State.Posession, playerMovement.FreezePlayer);
-            stateManager.CallOnStateExit(
-                State.Posession, playerMovement.UnFreezePlayer);
             PlayerMovement actualPlayerMovement = playerMovement as PlayerMovement;
             if (actualPlayerMovement != null)
             {
@@ -57,7 +46,6 @@ public class BallCarrier : MonoBehaviour
             }
         }
         laserGuide = this.GetComponent<LaserGuide>();
-        this.FrameDelayCall(() => { GetGoal(); GetTeammate(); }, 2);
 
         NotificationManager notificationManager = GameManager.instance.notificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
@@ -139,103 +127,7 @@ public class BallCarrier : MonoBehaviour
         }
     }
 
-    private void GetTeammate()
-    {
-        TeamManager team = player.team;
-        if (team == null)
-        {
-            return;
-        }
-        foreach (Player teammate in team.teamMembers)
-        {
-            if (teammate != player)
-            {
-                this.teammate = teammate.gameObject;
-            }
-        }
-    }
 
-    private void GetGoal()
-    {
-        goal = GameObject.FindObjectOfType<GoalAimPoint>()?.gameObject;
-    }
-
-    private void SnapToGameObject()
-    {
-        Vector3 vector = (snapToObject.transform.position - transform.position).normalized;
-        rb2d.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(transform.right, vector, snapLerpStrength));
-    }
-
-    private void SnapAimTowardsTargets()
-    {
-        if (playerMovement == null
-            || player == null)
-        {
-            return;
-        }
-        if (snapDelay > 0f)
-        {// || TutorialLiveClips.runningLiveClips || PlayerRecorder.isRecording) {
-            playerMovement?.RotatePlayer();
-            return;
-        }
-        PlayerMovement pm = (PlayerMovement)playerMovement;
-        Vector2 stickDirection = pm.lastDirection;
-        if (snapToObject != null)
-        {
-            Vector3 vector = (snapToObject.transform.position - transform.position).normalized;
-            if (stickDirection == Vector2.zero ||
-                Mathf.Abs(Vector2.Angle(vector, stickDirection)) < aimAssistThreshold ||
-                Mathf.Abs(Vector2.Angle(stickAngleWhenSnapped, stickDirection)) < snapEpsilon)
-            {
-                SnapToGameObject();
-            }
-            else
-            {
-                snapDelay = delayBetweenSnaps;
-                snapToObject = null;
-                playerMovement?.RotatePlayer();
-            }
-        }
-        else
-        {
-            if (stickDirection == Vector2.zero)
-            {
-                playerMovement?.RotatePlayer();
-                return;
-            }
-
-            Vector2? goalVector = null;
-            Vector2? teammateVector = null;
-            if (goal != null)
-            {
-                goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
-            }
-            if (teammate != null)
-            {
-                teammateVector = (teammate.transform.position - transform.position).normalized;
-            }
-
-            if (goalVector.HasValue &&
-                    Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                Ball.renderer.color == player.team.teamColor.color)
-            {
-                snapToObject = goal;
-                stickAngleWhenSnapped = stickDirection;
-                SnapToGameObject();
-            }
-            else if (teammateVector.HasValue &&
-                         Mathf.Abs(Vector2.Angle(transform.right, teammateVector.Value)) < aimAssistThreshold)
-            {
-                snapToObject = teammate;
-                stickAngleWhenSnapped = stickDirection;
-                SnapToGameObject();
-            }
-            else
-            {
-                playerMovement?.RotatePlayer();
-            }
-        }
-    }
 
     private IEnumerator CarryBall(Ball ball)
     {
@@ -243,13 +135,10 @@ public class BallCarrier : MonoBehaviour
         IsCarryingBall = true;
         this.Ball = ball;
         ball.Owner = this;
-        snapToObject = null;
 
         while (true)
         {
-            SnapAimTowardsTargets();
             PlaceBallAtNose();
-            snapDelay -= Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
     }
@@ -268,7 +157,6 @@ public class BallCarrier : MonoBehaviour
             GameManager.instance.ResetSlowMo();
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
-            snapToObject = null;
 
             // Reset references
             Ball.Owner = null;
@@ -359,7 +247,7 @@ public class BallCarrier : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (stateManager != null && stateManager.IsInState(State.Dash))
+        if (stateManager != null && stateManager.IsInState(OldState.Dash))
         {
             HandleCollision(other.gameObject);
         }

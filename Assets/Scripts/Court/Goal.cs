@@ -85,9 +85,9 @@ public class Goal : MonoBehaviour
     private void RegisterPassSwitching()
     {
         GameManager.instance.notificationManager.CallOnStateEnd(
-            State.Posession, (Player player) => lastPlayer = player);
+            OldState.Posession, (Player player) => lastPlayer = player);
         GameManager.instance.notificationManager.CallOnStateStart(
-            State.Posession, (Player player) => PlayerBallColorSwitch(player));
+            OldState.Posession, (Player player) => PlayerBallColorSwitch(player));
     }
 
     private bool PlayerInNullZone(Player player, float radius = playerNullZoneRadius)

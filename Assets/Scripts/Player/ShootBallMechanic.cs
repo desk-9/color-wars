@@ -32,10 +32,6 @@ public class ShootBallMechanic : MonoBehaviour
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
 
-        stateManager.CallOnStateEnter(State.Posession, StartTimer);
-        stateManager.CallOnStateExit(
-            State.Posession, () => StopShootBallCoroutines());
-
         GameManager.instance.notificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedShoot, OnShootPressed, gameObject);
         GameManager.instance.notificationManager.CallOnMessageIfSameObject(
@@ -51,6 +47,18 @@ public class ShootBallMechanic : MonoBehaviour
         if (maxChargeShotTime <= 0.0f)
         {
             maxChargeShotTime = forcedShotTime;
+        }
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        if (newState == State.Possession)
+        {
+            StartTimer();
+        }
+        if (oldState == State.Possession)
+        {
+            StopShootBallCoroutines();
         }
     }
 
@@ -93,7 +101,7 @@ public class ShootBallMechanic : MonoBehaviour
         bool shootTimerRunning = shootTimer != null;
         bool alreadyChargingShot = chargeShot != null;
         if (shootTimerRunning || alreadyChargingShot ||
-            !stateManager.IsInState(State.Posession))
+            !stateManager.IsInState(OldState.Posession))
         {
             return;
         }
@@ -120,7 +128,7 @@ public class ShootBallMechanic : MonoBehaviour
     {
         bool shootTimerRunning = shootTimer != null;
         bool alreadyChargingShot = chargeShot != null;
-        if (stateManager.IsInState(State.Posession)
+        if (stateManager.IsInState(OldState.Posession)
             && shootTimerRunning && !alreadyChargingShot)
         {
 

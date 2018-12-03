@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Photon.Pun;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-// To add a state, do the following:
-// 1) Add a state to the enum
-// 2) Add an Attempt[YourState] method
-// 3) Be sure to add any valid exit transitions to the other AttemptState methods
-//    i.e. if it is valid to transition from your new state to ChargeDash, add that in
-//    AttemptChargeDash
-
-public enum State
+public enum OldState
 {
     StartupState,
     NormalMovement,
@@ -21,32 +16,145 @@ public enum State
     LayTronWall
 };
 
-public delegate void ToggleCallback(bool isEnteringState);
-public delegate void TransitionCallback(State start, State end);
-
-public class PlayerStateManager : MonoBehaviour
+/// <summary>
+/// Represents all of the possible states a player can be in. Micro states, or
+/// states that transition to another state automatically are designated with the 
+/// "_micro" suffix. 
+/// NOTE: If you add a state, you should add it the state to the [PlayerStateManager.states]
+/// </summary>
+public enum State : byte
 {
-    private SortedDictionary<State, ToggleCallback> onToggleState =
-        new SortedDictionary<State, ToggleCallback>();
-    private SortedDictionary<State, Callback> onStartState =
-        new SortedDictionary<State, Callback>();
-    private SortedDictionary<State, Callback> onEndState =
-        new SortedDictionary<State, Callback>();
+    // Initial state
+    StartupState = 0, 
+    NormalMovement = 1,
+    ChargeDash = 2,
+    Dash = 3, 
+    Possession = 4,
+    ChargeShot = 5,
+    ShootBall_micro = 6, // Transitions to normal
+    Stun = 7,
+    FrozenAfterGoal = 8,
+    LayTronWall = 9,
+    Steal_micro = 10, // Transitions to possession
+    StartOfMatch = 11,
+    ControllerDisconnected = 12,
+}
+
+public delegate void ToggleCallback(bool isEnteringState);
+public delegate void TransitionCallback(OldState start, OldState end);
+
+public class PlayerStateManager : MonoBehaviourPun, IPunObservable
+{
+    public State CurrentState { private set; get; } = State.StartupState;
+
+    /// <summary>
+    /// An event that gets fired whenever the player changes state. It provides the old
+    /// and the new state, respectively.
+    /// </summary>
+    public event Action<State, State> OnStateChange;
+
+    /// <summary>
+    /// Dictionary of information objects that states can use. Not every state needs this,
+    /// so for any given state this may be null
+    /// </summary>
+    private Dictionary<State, PlayerStateInformation> stateInfos = new Dictionary<State, PlayerStateInformation>()
+    {
+        { State.StartupState,      null },
+        { State.NormalMovement,    null },
+        { State.ChargeDash,        null },
+        { State.Dash,              new DashInformation() },
+        { State.Possession,        null },
+        { State.ChargeShot,        null },
+        { State.ShootBall_micro,   new ShootBallInformation() },
+        { State.Stun,              new StunInformation() },
+        { State.FrozenAfterGoal,   null },
+        { State.LayTronWall,       null },
+        { State.Steal_micro,       new StealBallInformation() },
+    };
+
+    /// <summary>
+    /// Current state information.
+    /// NOTE: This may be null if the state does not have any relevant information
+    /// </summary>
+    public PlayerStateInformation StateTransitionInformation => stateInfos[CurrentState];
+
+    /// <summary>
+    /// To reduce garbage collection and not allocate everytime a state change is made, we reuse the same
+    /// StateTransitionInformation objects, this is the method that allows another component to get the
+    /// information object for writing
+    /// </summary>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    public PlayerStateInformation GetStateInformationForWriting(State state)
+    {
+        if (state == CurrentState)
+        {
+            // TODO: I am totally on the fence on whether we should be treating these state informations as
+            // transition information, or as legitimate information used throughout the life of the state...
+            // figure that out
+            throw new System.Exception("PlayerStateManager: Should not be modifying current state information");
+        }
+        return stateInfos[state];
+    }
+
+    /// <summary>
+    /// Networked transition to state. 
+    /// NOTE: If this state requires PlayerStateTransitionInformation, it should be set before calling this
+    /// </summary>
+    /// <param name="state"></param>
+    public void TransitionToState(State state)
+    {
+        CurrentState = state;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(CurrentState);
+            if (stateInfos[CurrentState] != null)
+            {
+                stateInfos[CurrentState].Serialize(stream, info);
+            }
+        } else
+        {
+            State oldState = CurrentState;
+            CurrentState = (State)stream.ReceiveNext();
+
+            if (stateInfos[CurrentState] != null)
+            {
+                stateInfos[CurrentState].Deserialize(stream, info);
+            }
+
+            if (oldState != CurrentState)
+            {
+                OnStateChange?.Invoke(oldState, CurrentState);
+            }
+        }
+    }
+
+
+    private SortedDictionary<OldState, ToggleCallback> onToggleState =
+        new SortedDictionary<OldState, ToggleCallback>();
+    private SortedDictionary<OldState, Callback> onStartState =
+        new SortedDictionary<OldState, Callback>();
+    private SortedDictionary<OldState, Callback> onEndState =
+        new SortedDictionary<OldState, Callback>();
     private TransitionCallback onAnyChange = delegate { };
-    public State currentState { get; private set; }
+    public OldState currentState { get; private set; }
 
     private Callback stopCurrentState;
-    private State defaultState = State.NormalMovement;
+    private OldState defaultState = OldState.NormalMovement;
     private Callback startDefaultState;
     private Callback stopDefaultState;
 
     private void Awake()
     {
-        currentState = State.StartupState;
+        currentState = OldState.StartupState;
         stopCurrentState = delegate { };
         startDefaultState = delegate { };
         stopDefaultState = delegate { };
-        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
+        foreach (OldState state in (OldState[])System.Enum.GetValues(typeof(OldState)))
         {
             onToggleState[state] = delegate { };
             onStartState[state] = delegate { };
@@ -61,7 +169,7 @@ public class PlayerStateManager : MonoBehaviour
 
     // Schedules a callback whenever information with respect to a certain state
     // changes
-    public void CallOnSpecficStateChange(State state, ToggleCallback callback)
+    public void CallOnSpecficStateChange(OldState state, ToggleCallback callback)
     {
         onToggleState[state] += callback;
     }
@@ -71,12 +179,7 @@ public class PlayerStateManager : MonoBehaviour
         onAnyChange += callback;
     }
 
-    public void CallOnStateEnter(State state, Callback callback)
-    {
-        onStartState[state] += callback;
-    }
-
-    public void CallOnStateExit(State state, Callback callback)
+    public void CallOnStateExit(OldState state, Callback callback)
     {
         onEndState[state] += callback;
     }
@@ -90,9 +193,9 @@ public class PlayerStateManager : MonoBehaviour
 
     public void AttemptNormalMovement(Callback start, Callback stop)
     {
-        if (IsInState(State.StartupState, State.NormalMovement))
+        if (IsInState(OldState.StartupState, OldState.NormalMovement))
         {
-            currentState = State.NormalMovement;
+            currentState = OldState.NormalMovement;
             startDefaultState = start;
             stopDefaultState = stop;
             stopCurrentState = stop;
@@ -106,55 +209,55 @@ public class PlayerStateManager : MonoBehaviour
 
     public void AttemptDashCharge(Callback start, Callback stop)
     {
-        if (IsInState(State.NormalMovement))
+        if (IsInState(OldState.NormalMovement))
         {
-            SwitchToState(State.ChargeDash, start, stop);
+            SwitchToState(OldState.ChargeDash, start, stop);
         }
     }
 
     public void AttemptPossession(Callback start, Callback stop)
     {
-        if (IsInState(State.NormalMovement, State.Dash, State.ChargeDash, State.LayTronWall))
+        if (IsInState(OldState.NormalMovement, OldState.Dash, OldState.ChargeDash, OldState.LayTronWall))
         {
-            SwitchToState(State.Posession, start, stop);
+            SwitchToState(OldState.Posession, start, stop);
         }
     }
 
     public void AttemptDash(Callback start, Callback stop)
     {
-        if (IsInState(State.ChargeDash))
+        if (IsInState(OldState.ChargeDash))
         {
-            SwitchToState(State.Dash, start, stop);
+            SwitchToState(OldState.Dash, start, stop);
         }
     }
 
     public void AttemptStun(Callback start, Callback stop)
     {
-        if (IsInState(State.NormalMovement, State.Posession, State.LayTronWall, State.Dash))
+        if (IsInState(OldState.NormalMovement, OldState.Posession, OldState.LayTronWall, OldState.Dash))
         {
-            SwitchToState(State.Stun, start, stop);
+            SwitchToState(OldState.Stun, start, stop);
         }
     }
 
     public void AttemptLayTronWall(Callback start, Callback stop)
     {
-        if (IsInState(State.NormalMovement))
+        if (IsInState(OldState.NormalMovement))
         {
-            SwitchToState(State.LayTronWall, start, stop);
+            SwitchToState(OldState.LayTronWall, start, stop);
         }
     }
 
     public void AttemptFrozenAfterGoal(Callback start, Callback stop)
     {
-        SwitchToState(State.FrozenAfterGoal, start, stop);
+        SwitchToState(OldState.FrozenAfterGoal, start, stop);
     }
 
     public void AttemptStartState(Callback start, Callback stop)
     {
-        SwitchToState(State.StartupState, start, stop);
+        SwitchToState(OldState.StartupState, start, stop);
     }
 
-    private void SwitchToState(State state, Callback start, Callback stop)
+    private void SwitchToState(OldState state, Callback start, Callback stop)
     {
         Utility.Print("Switching from", currentState, "to", state);
         stopCurrentState();
@@ -166,7 +269,7 @@ public class PlayerStateManager : MonoBehaviour
         AlertSubscribers(state, true);
     }
 
-    private void AlertSubscribers(State state, bool isEnteringState, State? nextState = null)
+    private void AlertSubscribers(OldState state, bool isEnteringState, OldState? nextState = null)
     {
         onToggleState[state](isEnteringState);
         if (isEnteringState)
@@ -184,9 +287,9 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    public bool IsInState(params State[] states)
+    public bool IsInState(params OldState[] states)
     {
-        foreach (State state in states)
+        foreach (OldState state in states)
         {
             if (currentState == state)
             {
@@ -195,5 +298,4 @@ public class PlayerStateManager : MonoBehaviour
         }
         return false;
     }
-
 }

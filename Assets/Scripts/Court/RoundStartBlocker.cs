@@ -93,7 +93,7 @@ public class RoundStartBlocker : MonoBehaviour
         }
 
         if ((player != null) && (stateManager != null) &&
-            (stateManager.currentState == State.Dash))
+            (stateManager.currentState == OldState.Dash))
         {
             DisableSelf();
             other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;

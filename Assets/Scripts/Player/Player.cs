@@ -39,9 +39,7 @@ public class Player : MonoBehaviourPunCallbacks
             renderer.enabled = false;
             collider.enabled = false;
 
-            stateManager.AttemptFrozenAfterGoal(
-                GetComponent<PlayerMovement>().StartRotateOnly, delegate { }
-            );
+            stateManager.TransitionToState(State.FrozenAfterGoal);
         }
 
         explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
@@ -56,10 +54,7 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (isNormalPlayer)
         {
-
-            stateManager.AttemptFrozenAfterGoal(
-                GetComponent<PlayerMovement>().StartRotateOnly, delegate { }
-            );
+            stateManager.TransitionToState(State.StartOfMatch);
 
             transform.position = initialPosition;
             rb2d.rotation = initialRotation;

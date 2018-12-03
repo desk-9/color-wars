@@ -82,7 +82,7 @@ public class PlayerTronMechanic : MonoBehaviour
 
     private void WallEnd()
     {
-        if (stateManager.IsInState(State.LayTronWall))
+        if (stateManager.IsInState(OldState.LayTronWall))
         {
             if (layWallCoroutine != null)
             {

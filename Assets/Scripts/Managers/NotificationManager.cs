@@ -6,7 +6,7 @@ using UnityEngine;
 // tied to individual, non-singleton objects shouldn't go here.
 
 public delegate void PlayerCallback(Player player);
-public delegate void PlayerTransitionCallback(Player player, State start, State end);
+public delegate void PlayerTransitionCallback(Player player, OldState start, OldState end);
 // Replacement for EventHandler without the EventArgs
 public delegate void EventCallback(object sender);
 public delegate void GameObjectCallback(GameObject thing);
@@ -73,15 +73,15 @@ public class NotificationManager
 {
 
     // PlayerState addons
-    private SortedDictionary<State, PlayerCallback> onAnyPlayerStartSubscribers =
-        new SortedDictionary<State, PlayerCallback>();
-    private SortedDictionary<State, PlayerCallback> onAnyPlayerEndSubscribers =
-        new SortedDictionary<State, PlayerCallback>();
+    private SortedDictionary<OldState, PlayerCallback> onAnyPlayerStartSubscribers =
+        new SortedDictionary<OldState, PlayerCallback>();
+    private SortedDictionary<OldState, PlayerCallback> onAnyPlayerEndSubscribers =
+        new SortedDictionary<OldState, PlayerCallback>();
     private PlayerTransitionCallback onAnyChangeSubscribers = delegate { };
 
     public NotificationManager()
     {
-        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
+        foreach (OldState state in (OldState[])System.Enum.GetValues(typeof(OldState)))
         {
             onAnyPlayerStartSubscribers[state] = delegate { };
             onAnyPlayerEndSubscribers[state] = delegate { };
@@ -96,23 +96,21 @@ public class NotificationManager
     public void RegisterPlayer(PlayerStateManager player)
     {
         Player playerComponent = player.GetComponent<Player>();
-        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
+
+        player.OnStateChange += (oldState, newState) =>
         {
-            player.CallOnStateEnter(
-                state, () => onAnyPlayerStartSubscribers[state](playerComponent));
-            player.CallOnStateExit(
-                state, () => onAnyPlayerEndSubscribers[state](playerComponent));
-            player.CallOnAnyStateChange(
-                (State start, State end) => onAnyChangeSubscribers(playerComponent, start, end));
-        }
+            onAnyPlayerStartSubscribers[newState](playerComponent);
+            onAnyPlayerEndSubscribers[oldState](playerComponent);
+            onAnyChangeSubscribers(playerComponent, oldState, newState);
+        };
     }
 
-    public void CallOnStateStart(State state, PlayerCallback callback)
+    public void CallOnStateStart(OldState state, PlayerCallback callback)
     {
         onAnyPlayerStartSubscribers[state] += callback;
     }
 
-    public void CallOnStateEnd(State state, PlayerCallback callback)
+    public void CallOnStateEnd(OldState state, PlayerCallback callback)
     {
         onAnyPlayerEndSubscribers[state] += callback;
     }

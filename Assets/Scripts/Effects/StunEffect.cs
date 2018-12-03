@@ -10,9 +10,18 @@ public class StunEffect : MonoBehaviour
     private void Start()
     {
         PlayerStateManager stateManager = this.EnsureComponent<PlayerStateManager>();
-        stateManager.CallOnStateEnter(
-            State.Stun, () => StartCoroutine(StunEffectRoutine()));
-        stateManager.CallOnStateExit(State.Stun, () => stopEffect = true);
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        if (newState == State.Stun)
+        {
+            StartCoroutine(StunEffectRoutine());
+        }
+        if (oldState == State.Stun)
+        {
+            stopEffect = true;
+        }
     }
 
     private IEnumerator StunEffectRoutine()

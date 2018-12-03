@@ -78,10 +78,6 @@ public class PlayerDashBehavior : MonoBehaviour
     private void StartChargeDash()
     {
         chargeCoroutine = StartCoroutine(Charge());
-
-        // Lock Player at current position when charging.
-        playerMovement.FreezePlayer();
-
         dashAimer = Instantiate(dashAimerPrefab, transform.position, transform.rotation, transform);
     }
 
@@ -91,15 +87,13 @@ public class PlayerDashBehavior : MonoBehaviour
         {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
-            playerMovement.UnFreezePlayer();
-
             Destroy(dashAimer);
         }
     }
 
     private void ChargeReleased()
     {
-        if (stateManager.IsInState(State.ChargeDash))
+        if (stateManager.IsInState(OldState.ChargeDash))
         {
             stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
         }
@@ -113,10 +107,6 @@ public class PlayerDashBehavior : MonoBehaviour
         while (true)
         {
             chargeAmount += chargeRate * Time.deltaTime;
-
-            // Continue updating direction to indicate charge direction.
-            playerMovement.RotatePlayer();
-
             yield return null;
         }
     }
@@ -244,7 +234,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void HandleCollision(GameObject other)
     {
-        if (!stateManager.IsInState(State.Dash))
+        if (!stateManager.IsInState(OldState.Dash))
         {
             return;
         }
@@ -254,7 +244,7 @@ public class PlayerDashBehavior : MonoBehaviour
         {
             this.TimeDelayCall(() =>
             {
-                if (stateManager.IsInState(State.Dash))
+                if (stateManager.IsInState(OldState.Dash))
                 {
                     stateManager.CurrentStateHasFinished();
                 }

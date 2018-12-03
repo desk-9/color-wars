@@ -140,7 +140,7 @@ public class TronWall : MonoBehaviour
             KillSelf();
         }
         else if ((player != null) && (stateManager != null) &&
-                                   (stateManager.currentState == State.Dash))
+                                   (stateManager.currentState == OldState.Dash))
         {
             KillSelf();
             PlayerStun playerStun = other.EnsureComponent<PlayerStun>();

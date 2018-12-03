@@ -1,11 +1,46 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
 
 
-public class PlayerMovement : MonoBehaviour, IPlayerMovement
+public class PlayerMovement : MonoBehaviour
 {
+    /// <summary>
+    /// There are some states where we don't want other players to be able to push around the
+    /// local player, so we make them kinematic for those states
+    /// </summary>
+    private HashSet<State> kinematicStates = new HashSet<State>
+    {
+        // TODO dkonik: It kind of seems like there are a few more states that would want this,
+        // like charge ChargeShot, maybe actual Dash? But they didn't at the time, so I didn't add them.
+        // However, if it makes sense, add them
+        State.ChargeDash,
+        State.Possession
+    };
+
+    /// <summary>
+    /// States where the player is only able to rotate
+    /// </summary>
+    private HashSet<State> rotateOnlyStates = new HashSet<State>
+    {
+        State.ChargeDash,
+        State.Possession,
+        State.ChargeShot,
+        State.StartOfMatch
+    };
+
+    /// <summary>
+    /// States where the position/movement of the player is not controlled by the controller,
+    /// but momentarily controlled by something else
+    /// </summary>
+    private HashSet<State> externalControlStates = new HashSet<State>
+    {
+        State.Dash,
+        State.Stun,
+        State.LayTronWall,
+    };
 
     public float movementSpeed;
     public float rotationSpeed = 1080;
@@ -17,12 +52,31 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     private Rigidbody2D rb2d;
     private Coroutine playerMovementCoroutine = null;
     private PlayerStateManager stateManager;
+    private float aimAssistCooldownRemaining = 0f;
+    private GameObject aimAssistTarget;
+    private Vector2 lastDirection = Vector2.zero;
+    private Vector2 stickAngleWhenSnapped;
+    private GameObject goal;
+    private GameObject teammate;
+    private Ball ball;
+    private Player player;
 
-    public Vector2 lastDirection = Vector2.zero;
+    [SerializeField]
+    private float aimAssistThreshold = 20f;
+    [SerializeField]
+    private float aimAssistLerpAmount = .5f;
+    [SerializeField]
+    private float goalAimAssistOffset = 1f;
+    [SerializeField]
+    private float delayBetweenSnaps = .2f;
+    [SerializeField]
+    private float aimAssistEpsilon = 3.5f;
+    [SerializeField]
+    private float aimAssistLerpStrength = .2f;
 
     public const float minBallForceRotationTime = 0.1f;
 
-    private void StartPlayerMovement()
+    private void StartNormalMovement()
     {
         if (playerMovementCoroutine != null)
         {
@@ -32,45 +86,46 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
         playerMovementCoroutine = StartCoroutine(Move());
     }
 
-    private IEnumerator RotateOnly()
+    private IEnumerator RotateOnly(bool snapToGameObjects)
     {
+        aimAssistTarget = null;
         while (true)
         {
-            RotatePlayer();
+            if (snapToGameObjects)
+            {
+                RotateWithAimAssist();
+            } else
+            {
+                RotatePlayer();
+            }
             yield return null;
         }
     }
 
-    public void StartRotateOnly()
+    private void StartRotateOnly(bool snapToGameObjects)
     {
         if (playerMovementCoroutine != null)
         {
             StopCoroutine(playerMovementCoroutine);
         }
 
-        playerMovementCoroutine = StartCoroutine(RotateOnly());
+        playerMovementCoroutine = StartCoroutine(RotateOnly(snapToGameObjects));
     }
 
-    public void StopAllMovement()
+    private void StopAllMovement(bool zeroOutVelocity = false)
     {
         if (playerMovementCoroutine != null)
         {
             StopCoroutine(playerMovementCoroutine);
-            rb2d.velocity = Vector2.zero;
+
+            if (zeroOutVelocity)
+            {
+                rb2d.velocity = Vector2.zero;
+            }
         }
     }
 
-    public void FreezePlayer()
-    {
-        rb2d.isKinematic = true;
-    }
-
-    public void UnFreezePlayer()
-    {
-        rb2d.isKinematic = false;
-    }
-
-    public void RotatePlayer()
+    private void RotatePlayer()
     {
         if (freezeRotation)
         {
@@ -122,6 +177,82 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
         }
     }
 
+    private void AimAssistTowardsTarget()
+    {
+        Vector3 vector = (aimAssistTarget.transform.position - transform.position).normalized;
+        rb2d.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(transform.right, vector, aimAssistLerpStrength));
+    }
+
+    /// <summary>
+    /// Tries to snap to the goal or teammate if it can, otherwise just rotates
+    /// </summary>
+    private void RotateWithAimAssist()
+    {
+        // If we are cooling down still, dont snap
+        if (aimAssistCooldownRemaining > 0f)
+        {
+            RotatePlayer();
+            return;
+        }
+
+        if (aimAssistTarget != null)
+        {
+            Vector3 vector = (aimAssistTarget.transform.position - transform.position).normalized;
+            if (lastDirection == Vector2.zero ||
+                Mathf.Abs(Vector2.Angle(vector, lastDirection)) < aimAssistThreshold ||
+                Mathf.Abs(Vector2.Angle(stickAngleWhenSnapped, lastDirection)) < aimAssistEpsilon)
+            {
+                AimAssistTowardsTarget();
+            }
+            else
+            {
+                aimAssistCooldownRemaining = delayBetweenSnaps;
+                aimAssistTarget = null;
+                RotatePlayer();
+            }
+        }
+        else
+        {
+            if (lastDirection == Vector2.zero)
+            {
+                RotatePlayer();
+                return;
+            }
+
+            Vector2? goalVector = null;
+            Vector2? teammateVector = null;
+            if (goal != null)
+            {
+                goalVector = ((goal.transform.position + Vector3.up) - transform.position).normalized;
+            }
+            if (teammate != null)
+            {
+                teammateVector = (teammate.transform.position - transform.position).normalized;
+            }
+
+            // TODO dkonik: Ugly to be directly checking the balls color like this
+            if (goalVector.HasValue &&
+                    Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
+                ball.renderer.color == player.team.teamColor.color)
+            {
+                aimAssistTarget = goal;
+                stickAngleWhenSnapped = lastDirection;
+                AimAssistTowardsTarget();
+            }
+            else if (teammateVector.HasValue &&
+                         Mathf.Abs(Vector2.Angle(transform.right, teammateVector.Value)) < aimAssistThreshold)
+            {
+                aimAssistTarget = teammate;
+                stickAngleWhenSnapped = lastDirection;
+                AimAssistTowardsTarget();
+            }
+            else
+            {
+                RotatePlayer();
+            }
+        }
+    }
+
     private IEnumerator Move()
     {
         float startTime = Time.time;
@@ -130,7 +261,8 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
         while (true)
         {
             rb2d.velocity = movementSpeed * lastDirection;
-            // TODO: TUTORIAL
+
+            // TODO dkonik: Remove this code. This is for the tutorial.
             if (lastDirection.magnitude > 0.1f)
             {
                 if (Time.time - startTime > 0.75f)
@@ -163,6 +295,59 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
                     lastDirection = pair.Item1;
                 }
             });
-        stateManager.AttemptNormalMovement(StartPlayerMovement, StopAllMovement);
+        stateManager.OnStateChange += HandleNewPlayerState;
+
+        // TODO dkonik: This may need to be pushed a frame back, to provide other components the
+        // ability to subscribe to this...though I doubt anything is waiting on the
+        // StartOfMatch state
+        stateManager.TransitionToState(State.StartOfMatch);
+        player = this.EnsureComponent<Player>();
+        goal = GameObject.FindObjectOfType<GoalAimPoint>()?.gameObject;
+        ball = GameObject.FindObjectOfType<Ball>();
+        this.FrameDelayCall(() => 
+        {
+            TeamManager team = player.team;
+
+            if (team == null)
+            {
+                return;
+            }
+            foreach (Player teammate in team.teamMembers)
+            {
+                if (teammate != player)
+                {
+                    this.teammate = teammate.gameObject;
+                }
+            }
+        }, 2);
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        if (kinematicStates.Contains(newState))
+        {
+            // For some states, we don't want other players being able to push the player around
+            // so we make them kinematic
+            rb2d.isKinematic = true;
+        } else if (kinematicStates.Contains(oldState))
+        {
+            // If we were kinematic last state, make not kinematic
+            rb2d.isKinematic = false;
+        }
+
+        if (newState == State.NormalMovement)
+        {
+            StartNormalMovement();
+        } else if (rotateOnlyStates.Contains(newState))
+        {
+            // Only snap on possession states
+            StartRotateOnly(newState == State.Possession || newState == State.ChargeShot);
+        } else if (newState == State.FrozenAfterGoal)
+        {
+            StopAllMovement(true);
+        } else if (externalControlStates.Contains(newState))
+        {
+            StopAllMovement(false);
+        }
     }
 }

@@ -33,7 +33,7 @@ public class TeamSelectionCollider : MonoBehaviour
             PlayerStateManager stateManager = player.GetComponent<PlayerStateManager>();
             if (stateManager != null)
             {
-                if (mustDashToSwitch && !stateManager.IsInState(State.Dash))
+                if (mustDashToSwitch && !stateManager.IsInState(OldState.Dash))
                 {
                     // Only switch if dashing
                     return;

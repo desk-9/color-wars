@@ -33,7 +33,15 @@ public class ControllerRumble : MonoBehaviour
                                          gameObject);
             notificationManager.CallOnMessage(Message.GoalScored, () => StartRumble(duration: gameWinRumbleDuration));
             notificationManager.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration: layingWallStunDuration), gameObject);
-            stateManager.CallOnStateEnter(State.Posession, () => StartRumble(duration: ballPossessionRumbleDuration));
+            stateManager.OnStateChange += HandleNewPlayerState;
+        }
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        if (newState == State.Possession)
+        {
+            StartRumble(duration: ballPossessionRumbleDuration);
         }
     }
 

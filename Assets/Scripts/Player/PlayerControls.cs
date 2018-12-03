@@ -60,8 +60,10 @@ public class PlayerControls : MonoBehaviourPunCallbacks
 
     private void InputDeviceDisconnectedCallback()
     {
-        PlayerMovement movement = GetComponent<PlayerMovement>();
-        movement?.StopAllMovement();
+        // TODO dkonik: Since we are making a public game now, we need to do more on
+        // controller disconnect than just stopping movement and stuff.
+        //PlayerMovement movement = GetComponent<PlayerMovement>();
+        //movement?.StopAllMovement();
 
         if (broadcast != null)
         {
