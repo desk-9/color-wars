@@ -25,7 +25,7 @@ public class TeamResourceManager
     public Sprite scoreIndicatorEmptySprite { get; private set; }
     public Sprite scoreIndicatorFullSprite { get; private set; }
 
-    public Color teamColor = Color.white;
+    public Color color = Color.white;
     public Gradient aimLaserGradient = null;
     public Gradient aimLaserToGoalGradient = null;
     private TeamManager team;
@@ -38,7 +38,7 @@ public class TeamResourceManager
         this.team = team;
         if (team != null)
         {
-            teamDirectory = string.Format("Teams/{0}", team.teamColor.name);
+            teamDirectory = string.Format("Teams/{0}", team.color.name);
         }
         SetupResources();
     }
@@ -102,7 +102,7 @@ public class TeamResourceManager
         scoreIndicatorEmptySprite = MakeAllTeamResource<Sprite>("ScoreIndicatorEmpty");
         scoreIndicatorFullSprite = MakeAllTeamResource<Sprite>("ScoreIndicatorFull");
 
-        teamColor = (team == null) ? Color.white : this.team.teamColor.color;
+        color = (team == null) ? Color.white : this.team.color.color;
 
         aimLaserGradient = aimLaserGradient != null ?
             aimLaserGradient : TeamAimLaserGradient();
@@ -117,8 +117,8 @@ public class TeamResourceManager
         Gradient gradient = new Gradient();
         gradient.SetKeys(
             new GradientColorKey[] {
-                new GradientColorKey(teamColor, 0.0f),
-                new GradientColorKey(teamColor, 1.0f) },
+                new GradientColorKey(color, 0.0f),
+                new GradientColorKey(color, 1.0f) },
             new GradientAlphaKey[] {
                 new GradientAlphaKey(1.0f, 0.0f),
                 new GradientAlphaKey(1.0f, 0.8f),

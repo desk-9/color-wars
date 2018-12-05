@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UtilityExtensions;
 
-
+using EM = EventsManager;
 public class PlayerMovement : MonoBehaviour
 {
     /// <summary>
@@ -153,10 +153,10 @@ public class PlayerMovement : MonoBehaviour
                 }
                 finalRotation = Mathf.Repeat(finalRotation, 360);
                 BallCarrier ballCarrier = GetComponent<BallCarrier>();
-                if (ballCarrier != null && ballCarrier.Ball != null
+                if (ballCarrier != null && ballCarrier.ownedBall != null
                     && (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime)
                 {
-                    Ball ball = ballCarrier.Ball;
+                    Ball ball = ballCarrier.ownedBall;
                     Vector3 ballDirection = (ball.transform.position - transform.position).normalized;
                     Vector3 unitFinal = Quaternion.AngleAxis(finalRotation, Vector3.forward) * Vector2.right;
                     float angleDifference = Vector2.SignedAngle(ballDirection, unitFinal);
@@ -232,15 +232,15 @@ public class PlayerMovement : MonoBehaviour
 
             // TODO dkonik: Ugly to be directly checking the balls color like this
             if (goalVector.HasValue &&
-                    Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                ball.renderer.color == player.team.teamColor.color)
+                Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
+                ball.renderer.color == player.team.color.color)
             {
                 aimAssistTarget = goal;
                 stickAngleWhenSnapped = lastDirection;
                 AimAssistTowardsTarget();
             }
             else if (teammateVector.HasValue &&
-                         Mathf.Abs(Vector2.Angle(transform.right, teammateVector.Value)) < aimAssistThreshold)
+                     Mathf.Abs(Vector2.Angle(transform.right, teammateVector.Value)) < aimAssistThreshold)
             {
                 aimAssistTarget = teammate;
                 stickAngleWhenSnapped = lastDirection;
@@ -312,7 +312,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 return;
             }
-            foreach (Player teammate in team.teamMembers)
+            foreach (Player teammate in team.members)
             {
                 if (teammate != player)
                 {
@@ -320,6 +320,22 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }, 2);
+
+        // Register event handlers
+        EM.PlayerStunned += this.StopAllMovementHandler;
+        EM.PlayerStunned += this.StopAllMovementHandler;
+        EM.PlayerUnstunned += this.ResumeNormalMovementHandler;
+    }
+
+    private void StopAllMovementHandler(Player sender, EM.PlayerArgs args)
+    {
+        if (sender != this.player) {return;}
+        this.StopAllMovement(false);
+    }
+    private void ResumeNormalMovementHandler(Player sender, EM.PlayerArgs args)
+    {
+        if (sender != this.player) {return;}
+        this.StartNormalMovement();
     }
 
     private void HandleNewPlayerState(State oldState, State newState)

@@ -2,10 +2,18 @@ using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
 
+using EM = EventsManager;
 public class PlayerStun : MonoBehaviour
 {
-    public float stunTime = 5f;
+    private const float defaultStunTime = 5.0f;
+    public float stunTime;
     private Coroutine stunned;
+    private Player player;
+
+    void Start() {
+        player = GetComponent<Player>();
+        stunTime = defaultStunTime;
+    }
 
     public void StartStun(Vector2? knockbackVelocity = null, float? length = null)
     {
@@ -18,6 +26,7 @@ public class PlayerStun : MonoBehaviour
             }
         }
         stunned = StartCoroutine(Stun(length));
+        EM.RaiseOnPlayerStunned(player, new EM.PlayerArgs{});
     }
 
     private IEnumerator Stun(float? length = null)
@@ -31,7 +40,7 @@ public class PlayerStun : MonoBehaviour
         {
             yield return null;
         }
-        this.GetComponent<PlayerStateManager>()?.CurrentStateHasFinished();
+        this.StopStunned();
     }
 
     public void StopStunned()
@@ -41,5 +50,6 @@ public class PlayerStun : MonoBehaviour
             StopCoroutine(stunned);
             stunned = null;
         }
+        EM.RaiseOnPlayerUnstunned(player, new EM.PlayerArgs{});
     }
 }

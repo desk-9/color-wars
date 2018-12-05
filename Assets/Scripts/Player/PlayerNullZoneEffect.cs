@@ -16,7 +16,7 @@ public class PlayerNullZoneEffect : MonoBehaviour
 
     private void CheckEffect()
     {
-        NamedColor color = player?.team?.teamColor;
+        NamedColor color = player?.team?.color;
         Goal goal = GameManager.instance.goal;
         if (color != null && renderer != null && player != null
             && goal != null)
@@ -37,7 +37,7 @@ public class PlayerNullZoneEffect : MonoBehaviour
 
     private void DisableEffect()
     {
-        NamedColor color = player?.team?.teamColor;
+        NamedColor color = player?.team?.color;
         if (color != null && renderer != null)
         {
             effectEnabled = false;

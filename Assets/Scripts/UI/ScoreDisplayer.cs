@@ -58,8 +58,8 @@ public class ScoreDisplayer : MonoBehaviour
         {
             Text text = teams[i];
             TeamManager team = GameManager.instance.teams[i];
-            text.text = string.Format("{0} Team: {1}", team.teamColor.name, team.score);
-            text.color = team.teamColor;
+            text.text = string.Format("{0} Team: {1}", team.color.name, team.score);
+            text.color = team.color;
         }
     }
 }

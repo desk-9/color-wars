@@ -24,7 +24,7 @@ public class ScoreIndicator : MonoBehaviour
         // Find team
         foreach (TeamManager candidateTeam in GameManager.instance.teams)
         {
-            if (candidateTeam.teamColor.name == teamName)
+            if (candidateTeam.color.name == teamName)
             {
                 team = candidateTeam;
                 break;
@@ -37,7 +37,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Set last lerp color to the team color
-        stops[stops.Count - 1] = team.teamColor.color;
+        stops[stops.Count - 1] = team.color.color;
 
         // Find references to child indicator GameObjects
         foreach (Transform childIndicator in
@@ -62,7 +62,7 @@ public class ScoreIndicator : MonoBehaviour
 
         foreach (GameObject pointIndicator in pointIndicators)
         {
-            pointIndicator.GetComponent<SpriteRenderer>().color = team.teamColor.color;
+            pointIndicator.GetComponent<SpriteRenderer>().color = team.color.color;
         }
     }
 
@@ -74,7 +74,7 @@ public class ScoreIndicator : MonoBehaviour
             renderer.sprite = (i < team.score) ?
                 team.resources.scoreIndicatorFullSprite :
                 team.resources.scoreIndicatorEmptySprite;
-            renderer.color = team.teamColor.color;
+            renderer.color = team.color.color;
         }
     }
 
@@ -102,7 +102,7 @@ public class ScoreIndicator : MonoBehaviour
             pointIndicator.gameObject.transform.rotation);
         ParticleSystem scoreGoalParticleSystem = scoreGoalEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule scoreGoalMain = scoreGoalParticleSystem.main;
-        scoreGoalMain.startColor = team.teamColor.color;
+        scoreGoalMain.startColor = team.color.color;
         scoreGoalParticleSystem.Play();
         this.TimeDelayCall(() => Destroy(scoreGoalEffect), scoreGoalMain.duration);
     }

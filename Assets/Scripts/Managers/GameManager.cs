@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
     public NotificationManager notificationManager;
+    public EventsManager eventsManager;
     public bool gameOver { get; private set; } = false;
     public TeamManager winner { get; private set; } = null;
     public GameObject meta;
@@ -91,6 +92,7 @@ public class GameManager : MonoBehaviour
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
         notificationManager = new NotificationManager();
+        eventsManager = new EventsManager();
     }
 
     private void BlowBack(Player player)
@@ -224,11 +226,13 @@ public class GameManager : MonoBehaviour
 
     public void GoalScoredForTeam(TeamManager scored)
     {
-        ball.HandleGoalScore(scored.teamColor);
-        goal?.StopTeamSwitching();
+        // TODO: switch this to an event
+        ball.HandleGoalScore();
+
+        // goal?.StopTeamSwitching();
         foreach (TeamManager team in teams)
         {
-            if ((Color)team.teamColor == scored.teamColor)
+            if ((Color)team.color == scored.color)
             {
                 team.IncrementScore();
                 TeamManager winningTeam = TopTeam();
@@ -266,7 +270,8 @@ public class GameManager : MonoBehaviour
         {
             team.ResetTeam();
         }
-        ball.ResetBall(pauseAfterReset);
+        ball.ResetBall();
+        // ball.ResetBall(pauseAfterReset); // TODO: fix this
         notificationManager.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
         foreach (TronWall wall in GameObject.FindObjectsOfType<TronWall>())
@@ -274,7 +279,7 @@ public class GameManager : MonoBehaviour
             wall.KillSelf();
         }
 
-        goal?.SwitchToNextTeam(false);
+        // goal?.SwitchToNextTeam(false);
         goal?.ResetNeutral();
 
         // Reset music.
@@ -295,7 +300,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (TeamManager team in teams)
         {
-            if ((Color)team.teamColor != scoredOn.teamColor)
+            if ((Color)team.color != scoredOn.color)
             {
                 team.IncrementScore();
                 ScoreChanged();
@@ -308,7 +313,7 @@ public class GameManager : MonoBehaviour
         List<Player> result = new List<Player>();
         foreach (TeamManager team in teams)
         {
-            result.AddRange(team.teamMembers);
+            result.AddRange(team.members);
         }
         return result;
     }

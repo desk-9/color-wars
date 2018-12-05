@@ -59,10 +59,10 @@ public class LaserGuide : MonoBehaviour
     }
 
 
-    public void DrawLaser()
+    public void StartDrawingLaser()
     {
         lineRenderer.enabled = true;
-        laserCoroutine = StartCoroutine(DrawAimingLaser());
+        laserCoroutine = StartCoroutine(DrawLaser());
     }
 
     public void StopDrawingLaser()
@@ -76,7 +76,7 @@ public class LaserGuide : MonoBehaviour
     }
 
     // Returns true if the laser was reflected, false otherwise
-    private IEnumerator DrawAimingLaser()
+    private IEnumerator DrawLaser()
     {
         yield return null;
         yield return null;
@@ -88,15 +88,18 @@ public class LaserGuide : MonoBehaviour
             Vector3 laserDirection = transform.right;
             float drawDistanceRemaining = drawDistanceAfterCollision;
 
-            RaycastHit2D raycastHit = Physics2D.Raycast(laserStart + laserDirection * epsilon,
-                                               laserDirection,
-                                               RAYCAST_LIMIT,
-                                               rayCastMask);
+            RaycastHit2D raycastHit = Physics2D.Raycast(
+                laserStart + laserDirection * epsilon,
+                laserDirection,
+                RAYCAST_LIMIT,
+                rayCastMask);
 
             Debug.Assert(raycastHit.collider != null, "Make RAYCAST_LIMIT larger");
             points.Add(raycastHit.point);
 
             lineRenderer.colorGradient = aimLaserGradient;
+
+            // terminate laser if it hits the goal on the first reflection
             if (raycastHit.transform.gameObject.layer != goalLayer)
             {
                 laserStart = raycastHit.point;
@@ -104,13 +107,17 @@ public class LaserGuide : MonoBehaviour
 
                 while (drawDistanceRemaining > 0f)
                 {
-                    raycastHit = Physics2D.Raycast(laserStart + laserDirection * epsilon,
-                                                   laserDirection,
-                                                   drawDistanceRemaining,
-                                                   rayCastMask);
+                    // try getting another ricochet point
+                    raycastHit = Physics2D.Raycast(
+                        laserStart + laserDirection * epsilon,
+                        laserDirection,
+                        drawDistanceRemaining,
+                        rayCastMask);
 
+                    // Case: raycast hit something
                     if (raycastHit.collider != null)
                     {
+                        // Add the line segment to ricochet point
                         points.Add(raycastHit.point);
                         if (raycastHit.transform.gameObject.layer == goalLayer)
                         {
@@ -120,8 +127,11 @@ public class LaserGuide : MonoBehaviour
                         laserStart = raycastHit.point;
                         laserDirection = Vector3.Reflect(laserDirection, raycastHit.normal);
                     }
+                    // Case: raycast didn't hit anything
+                    // (probably not enough `drawDistanceRemaining`)
                     else
                     {
+                        // Use up the `drawDistanceRemaining` in the right direction
                         points.Add(laserStart + laserDirection * drawDistanceRemaining);
                         drawDistanceRemaining = 0f;
                     }

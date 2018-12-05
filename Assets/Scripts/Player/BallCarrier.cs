@@ -2,195 +2,277 @@
 using UnityEngine;
 using UtilityExtensions;
 
+using EM = EventsManager;
+// TODO: make PlayerMovemnt freeze on possession, unfreeze when ball unpossessed
+// TODO: register callbacks in laserGuide
 public class BallCarrier : MonoBehaviour
 {
-    public GameObject blowbackEffectPrefab;
+    // tweakables
     public float coolDownTime = .1f;
-    public Ball Ball { private set; get; }
-
-    private float ballTurnSpeed = 10f;
-    public bool slowMoOnCarry = true;
-    
-    public float timeCarryStarted { get; private set; }
-    public float blowbackRadius = 3f;
-    public float blowbackForce = 5f;
-    public float blowbackStunTime = 0.1f;
+    public float timeCarryStarted {get; private set;}
+    private float ballTurnSpeed; // = 10f;
     private float ballOffsetFromCenter = .5f;
-    private PlayerMovement playerMovement;
-    private PlayerStateManager stateManager;
-    private Coroutine carryBallCoroutine;
-    private bool isCoolingDown = false;
-    private LaserGuide laserGuide;
-    private GameObject teammate;
-    private Player player;
-    private GameObject goal;
-    private Rigidbody2D rb2d;
-
-    
     private const float ballOffsetMultiplier = 0.98f;
+    // ball-charging tweakables
+    public AnimationCurve chargeShotCurve;
+    private float baseShotSpeed = 1.0f;
+    private float maxShotSpeed = 56.0f;
+    private float maxChargeShotTime = 1.5f;
+    private float forcedShotTime = 3.75f;
+    // Player null zone tweakables
+    public const float playerNullZoneRadius = 0.1f;
 
-    public bool IsCarryingBall { get; private set; } = false;
+
+    // references to other components
+    public Ball ownedBall {get; private set;} = null;
+    public TeamManager team;
+
+    // TODO: figure out where to put this
+    private ShotChargeIndicator shotChargeIndicator;
+
+    // private data
+    private Rigidbody2D ballRigidbody;
+    private bool allowedToCarryBall = true;
+    private bool isCarryingBall = false;
+    private bool isChargingBall = false;
+    public float shotSpeed {get; private set;} = 0.0f;
+
+    // coroutines
+    private Coroutine keepBallAtNose;
+    private Coroutine forcedShotTimer;
+    private Coroutine chargeShot;
 
     private void Start()
     {
-        player = GetComponent<Player>();
-        playerMovement = GetComponent<PlayerMovement>();
-        stateManager = GetComponent<PlayerStateManager>();
-        rb2d = GetComponent<Rigidbody2D>();
-        if (playerMovement != null && stateManager != null)
-        {
-            PlayerMovement actualPlayerMovement = playerMovement as PlayerMovement;
-            if (actualPlayerMovement != null)
-            {
-                ballTurnSpeed = actualPlayerMovement.rotationSpeed / 250;
-            }
-        }
-        laserGuide = this.GetComponent<LaserGuide>();
-
-        NotificationManager notificationManager = GameManager.instance.notificationManager;
-        notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        var player = GetComponent<Player>();
+        team = player.team;
+        var playerMovement = GetComponent<PlayerMovement>();
+        ballTurnSpeed = playerMovement.rotationSpeed / 250;
     }
 
-    private void BlowBackEnemyPlayers()
+    public bool IsInNullZone()
     {
-        if (player.team == null)
+        Collider2D collider = Physics2D.OverlapCircle(
+            transform.position, playerNullZoneRadius, LayerMask.GetMask("NullZone"));
+        return collider != null;
+    }
+
+    public bool CanCarry(Ball ball)
+    {
+        return ball.CanBeCarriedBy(this) && this.allowedToCarryBall;
+    }
+    public void Carry(Ball ball)
+    {
+        ball.SetOwner(this);
+        StartCarrying(ball);
+    }
+
+    public bool CanSteal(Ball ball)
+    {
+        return ball.CanBeStolenBy(this) && this.allowedToCarryBall;
+    }
+    public void Steal(Ball ball)
+    {
+        // Do the "steal"
+        BallCarrier oldOwner = ball.GetOwner();
+        oldOwner.StopCarrying();
+        Carry(ball);
+
+        // Fire onBallStolen event
+        EM.RaiseOnBallStolen(
+            new EM.onBallStolenArgs
+            {
+                oldOwner = oldOwner,
+                newOwner = this,
+                ball = ball
+            });
+    }
+
+    public void Drop()
+    {
+        ownedBall.SetOwner(null);
+        SetShootVelocity(ownedBall);
+        Ball ball = StopCarrying();
+        EM.RaiseOnBallDropped(
+            new EM.onBallDroppedArgs{ballCarrier = this, ball = ball});
+    }
+
+    public void Shoot()
+    {
+        ownedBall.SetOwner(null);
+        SetShootVelocity(ownedBall);
+        Ball ball = StopCarrying();
+        EM.RaiseOnBallShot(
+            new EM.onBallShotArgs{ballCarrier = this, ball = ball});
+    }
+    private void SetShootVelocity(Ball ball)
+    {
+        Vector3 shotDirection = ball.transform.position - transform.position;
+        ballRigidbody.velocity = shotDirection.normalized * shotSpeed;
+    }
+
+    private IEnumerator ForcedShotTimer()
+    {
+        float elapsedTime = 0.0f;
+        while (elapsedTime < forcedShotTime)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        if (!isChargingBall)
+        {
+            Drop();
+        }
+        else
+        {
+            Shoot();
+        }
+    }
+
+    private void StartCarrying(Ball ball)
+    {
+        // Initialize data members -- very first thing to do!!!
+        this.timeCarryStarted = Time.time;
+        this.ownedBall = ball;
+        this.ballRigidbody = ball.GetComponent<Rigidbody2D>();
+        this.isCarryingBall = true;
+        this.isChargingBall = false;
+        this.shotSpeed = baseShotSpeed;
+
+        // Initialize coroutines
+        keepBallAtNose = this.StartCoroutine(KeepBallAtNose());
+        forcedShotTimer = this.StartCoroutine(ForcedShotTimer());
+        chargeShot = CoroutineUtility.ForceStopCoroutine(chargeShot);
+
+        // Fire onStartedCarryingBall
+        EM.RaiseOnStartedCarryingBall(
+            new EM.onStartedCarryingBallArgs{ballCarrier = this, ball = ball});
+    }
+
+    private Ball StopCarrying()
+    {
+        Ball ball = this.ownedBall; // save for return value
+
+        // Clean up coroutines
+        keepBallAtNose = CoroutineUtility.ForceStopCoroutine(keepBallAtNose);
+        forcedShotTimer = CoroutineUtility.ForceStopCoroutine(forcedShotTimer);
+
+        // Deal with shot charging
+        if (this.isChargingBall)
+        {
+            StopCharging(ball);
+        }
+
+        // Fire onStoppedCarryingBall
+        EM.RaiseOnStoppedCarryingBall(
+            new EM.onStoppedCarryingBallArgs{ballCarrier = this, ball = ball});
+
+        // Clean up data members -- very last thing to do!!!
+        this.ownedBall = null;
+        this.ballRigidbody = null;
+        this.isCarryingBall = false;
+        // NOTE: this should already be set by StopCharging(). but doesn't hurt
+        // to set it here also (makes the code more symmetric with
+        // StartCarrying)
+        this.isChargingBall = false;
+        this.shotSpeed = baseShotSpeed;
+
+        // Return ball (allows caller to fire Event with a valid reference to
+        // the ball)
+        return ball;
+    }
+
+    // NOTE: This cannot be called until *after* StartCarrying has run
+    // Should probably be called with OnShootPressed
+    public void StartCharging()
+    {
+        if (!isCarryingBall)
+        {
+            Debug.LogWarning("Warning: StartCharging was called but !isCarryingBall!");
+            return;
+        }
+        if (isChargingBall)
         {
             return;
         }
-        TeamManager enemyTeam = GameManager.instance.teams.Find((teamManager) => teamManager != player.team);
-        Debug.Assert(enemyTeam != null);
+        isChargingBall = true;
+        chargeShot = StartCoroutine(
+            TransitionUtility.LerpFloat(
+                floatSetter: this.SetShotSpeed,
+                startValue: baseShotSpeed,
+                endValue: maxShotSpeed,
+                duration: maxChargeShotTime,
+                useGameTime: true,
+                animationCurve: chargeShotCurve));
 
-        {
-            // Because C# doesn't have lvalue references. FML.
-            GameObject effect = Instantiate(blowbackEffectPrefab, transform.position, transform.rotation);
-            ParticleSystem ps = effect.GetComponent<ParticleSystem>();
-            ParticleSystem.ColorOverLifetimeModule col = ps.colorOverLifetime;
+        // TODO: figure out where to put this
+        shotChargeIndicator.Show();
 
-            col.enabled = true;
-
-            Gradient grad = new Gradient();
-            grad.SetKeys(
-                new GradientColorKey[] {
-                    new GradientColorKey(player.team.teamColor, 0.0f)
-                },
-                new GradientAlphaKey[] {
-                    new GradientAlphaKey(1.0f,  0.0f),
-                    new GradientAlphaKey(0.25f, 0.75f),
-                    new GradientAlphaKey(0.0f,  1.0f)
-                }
-            );
-            col.color = grad;
-
-            Destroy(effect, 1.0f);
-        }
-
-        foreach (Player enemyPlayer in enemyTeam.teamMembers)
-        {
-            Vector3 blowBackVector = enemyPlayer.transform.position - transform.position;
-            if (blowBackVector.magnitude < blowbackRadius)
-            {
-                PlayerStun otherStun = enemyPlayer.GetComponent<PlayerStun>();
-                PlayerStateManager otherStateManager = enemyPlayer.GetComponent<PlayerStateManager>();
-                if (otherStun != null && otherStateManager != null)
-                {
-                    otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
-                }
-            }
-        }
+        EM.RaiseOnStartedChargingBall(
+            new EM.onStartedChargingBallArgs{ballCarrier = this, ball = ownedBall});
+    }
+    private void SetShotSpeed(float value)
+    {
+        this.shotSpeed = value;
+        shotChargeIndicator.FillAmount = value;
     }
 
-    // This function is called when the BallCarrier initially gains possession
-    // of the ball
-    public void StartCarryingBall(Ball ball)
+    // NOTE: This should only be called from StopCarrying
+    // Should probably be called with OnShootReleased
+    private void StopCharging(Ball ball)
     {
-        BlowBackEnemyPlayers();
-        timeCarryStarted = Time.time;
-        ball.rigidbody.velocity = Vector2.zero;
-        ball.rigidbody.angularVelocity = 0;
-        CalculateOffset(ball);
-        if (slowMoOnCarry)
+        if (!isCarryingBall)
         {
-            GameManager.instance.SlowMo();
+            Debug.LogWarning("Warning: StopCharging was called but !isCarryingBall!");
+            return;
         }
-        laserGuide?.DrawLaser();
-        carryBallCoroutine = StartCoroutine(CarryBall(ball));
-    }
-
-    private void CalculateOffset(Ball ball)
-    {
-        float? ballRadius = ball.GetComponent<CircleCollider2D>()?.bounds.extents.x;
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        if (renderer != null && ballRadius != null)
+        if (!isChargingBall)
         {
-            float spriteExtents = renderer.sprite.bounds.extents.x * transform.localScale.x;
-            ballOffsetFromCenter = ballOffsetMultiplier * (spriteExtents + ballRadius.Value);
+            return;
         }
+        if (chargeShot != null)
+        {
+            EM.RaiseOnStoppedChargingBall(
+                new EM.onStoppedChargingBallArgs{ballCarrier = this, ball = ball});
+            this.StopCoroutine(chargeShot);
+            chargeShot = null;
+        }
+        isChargingBall = false;
     }
 
 
-
-    private IEnumerator CarryBall(Ball ball)
+    // +----------------------------------+
+    // | COROUTINES                       |
+    // +----------------------------------+
+    private IEnumerator CoolDownTimer()
     {
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        IsCarryingBall = true;
-        this.Ball = ball;
-        ball.Owner = this;
+        allowedToCarryBall = false;
+        yield return new WaitForSeconds(coolDownTime);
+        allowedToCarryBall = true;
+    }
 
+    private IEnumerator KeepBallAtNose()
+    {
         while (true)
         {
             PlaceBallAtNose();
             yield return new WaitForFixedUpdate();
         }
     }
-
-    private IEnumerator CoolDownTimer()
-    {
-        isCoolingDown = true;
-        yield return new WaitForSeconds(coolDownTime);
-        isCoolingDown = false;
-    }
-
-    public void DropBall()
-    {
-        if (Ball != null)
-        {
-            GameManager.instance.ResetSlowMo();
-            StopCoroutine(carryBallCoroutine);
-            carryBallCoroutine = null;
-
-            // Reset references
-            Ball.Owner = null;
-            Ball = null;
-
-            laserGuide?.StopDrawingLaser();
-            if (this.isActiveAndEnabled)
-            {
-                StartCoroutine(CoolDownTimer());
-            }
-        }
-        IsCarryingBall = false;
-    }
-
-    private Vector2 NosePosition(Ball ball)
-    {
-        Vector3 newPosition = transform.position + transform.right * ballOffsetFromCenter;
-        return newPosition;
-    }
-
     private void PlaceBallAtNose()
     {
-        if (Ball != null)
-        {
-            Rigidbody2D rigidbody = Ball.GetComponent<Rigidbody2D>();
-            Vector2 newPosition =
-                CircularLerp(Ball.transform.position, NosePosition(Ball), transform.position,
-                             ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
-            rigidbody.MovePosition(newPosition);
-        }
+        Debug.Assert(ownedBall != null);
+        Vector2 nosePosition = (transform.position
+                                + transform.right * ballOffsetFromCenter);
+        Vector2 newPosition = CircularLerp(
+            ownedBall.transform.position, nosePosition,
+            transform.position, ballOffsetFromCenter,
+            Time.deltaTime, ballTurnSpeed);
+        ballRigidbody.MovePosition(newPosition);
     }
-
-    private Vector2 CircularLerp(Vector2 start, Vector2 end, Vector2 center, float radius,
-                         float timeDelta, float speed)
+    private Vector2 CircularLerp(Vector2 start, Vector2 end,
+                                 Vector2 center, float radius,
+                                 float timeDelta, float speed)
     {
         float angleMax = timeDelta * speed;
         Vector2 centeredStart = start - center;
@@ -206,32 +288,16 @@ public class BallCarrier : MonoBehaviour
         return (Vector2)centeredResult + center;
     }
 
-    #region EventHandlers
-    private void HandleGoalScored()
-    {
-        // When a goal is scored, we want to let go of the ball
-        if (IsCarryingBall)
-        {
-            stateManager?.CurrentStateHasFinished();
-        }
-    }
-
     private void HandleCollision(GameObject thing)
     {
         Ball ball = thing.GetComponent<Ball>();
-        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown)
+        if (ball == null)
         {
             return;
         }
-        if (stateManager != null)
+        if (this.CanCarry(ball))
         {
-            TeamManager last_team = ball.LastOwner?.GetComponent<Player>().team;
-            TeamManager this_team = GetComponent<Player>().team;
-            stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
-        }
-        else
-        {
-            StartCoroutine(CoroutineUtility.RunThenCallback(CarryBall(ball), DropBall));
+            this.Carry(ball);
         }
     }
 
@@ -239,23 +305,18 @@ public class BallCarrier : MonoBehaviour
     {
         HandleCollision(collision.gameObject);
     }
-
     public void OnCollisionStay2D(Collision2D collision)
     {
         HandleCollision(collision.gameObject);
     }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (stateManager != null && stateManager.IsInState(OldState.Dash))
-        {
-            HandleCollision(other.gameObject);
-        }
+        HandleCollision(other.gameObject);
     }
 
     private void OnDestroy()
     {
-        DropBall();
+        StopCarrying();
     }
-    #endregion
+
 }

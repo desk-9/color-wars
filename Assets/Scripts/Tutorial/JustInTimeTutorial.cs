@@ -38,7 +38,7 @@ public class JustInTimeTutorial : MonoBehaviour
                 }
             });
 
-        GameManager.instance.notificationManager.CallOnStateEnd(OldState.Posession, Unpossessed);
+        GameManager.instance.notificationManager.CallOnStateEnd(DEPRECATED_State.Posession, Unpossessed);
 
         GameManager.instance.notificationManager.CallOnMessage(
             Message.PlayerReleasedBack,

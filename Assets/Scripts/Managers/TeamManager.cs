@@ -6,10 +6,10 @@ public class TeamManager
     public static bool playerSpritesAlreadySet = false;
     private static Dictionary<int, Sprite> playerSpriteUsages = new Dictionary<int, Sprite>();
     public int teamNumber { get; set; }
-    public NamedColor teamColor { get; set; }
+    public NamedColor color { get; set; }
 
     public int score { get; private set; }
-    public List<Player> teamMembers = new List<Player>();
+    public List<Player> members = new List<Player>();
     public TeamResourceManager resources;
     private List<Sprite> memberSprites;
     private Dictionary<Player, Sprite> spriteUsage = new Dictionary<Player, Sprite>();
@@ -22,10 +22,10 @@ public class TeamManager
     };
     private Stack<float> unusedYs;
 
-    public TeamManager(int teamNumber, NamedColor teamColor)
+    public TeamManager(int teamNumber, NamedColor color)
     {
         this.teamNumber = teamNumber;
-        this.teamColor = teamColor;
+        this.color = color;
         resources = new TeamResourceManager(this);
         memberSprites = new List<Sprite>() {
             resources.mainPlayerSprite, resources.altPlayerSprite
@@ -74,7 +74,7 @@ public class TeamManager
 
     public void AddTeamMember(Player newMember)
     {
-        teamMembers.Add(newMember);
+        members.Add(newMember);
         Utility.Print(teamNumber);
         if (unusedYs.Count > 0)
         {
@@ -91,7 +91,7 @@ public class TeamManager
         Sprite sprite = unusedSprites.Peek();
         if (renderer != null && sprite != null)
         {
-            renderer.color = teamColor;
+            renderer.color = color;
             if (!playerSpritesAlreadySet)
             {
                 renderer.sprite = sprite;
@@ -111,7 +111,7 @@ public class TeamManager
 
     public void RemoveTeamMember(Player member)
     {
-        if (teamMembers.Contains(member))
+        if (members.Contains(member))
         {
             unusedYs.Push(member.initialPosition.y);
             if (spriteUsage.ContainsKey(member))
@@ -119,7 +119,7 @@ public class TeamManager
                 unusedSprites.Push(spriteUsage[member]);
                 spriteUsage.Remove(member);
             }
-            teamMembers.Remove(member);
+            members.Remove(member);
             if (!playerSpritesAlreadySet)
             {
                 playerSpriteUsages.Remove(member.playerNumber);
@@ -129,7 +129,7 @@ public class TeamManager
 
     public void MakeInvisibleAfterGoal()
     {
-        foreach (Player teamMember in teamMembers)
+        foreach (Player teamMember in members)
         {
             teamMember.MakeInvisibleAfterGoal();
         }
@@ -137,7 +137,7 @@ public class TeamManager
 
     public void ResetTeam()
     {
-        foreach (Player teamMember in teamMembers)
+        foreach (Player teamMember in members)
         {
             teamMember.ResetPlayerPosition();
         }
@@ -145,7 +145,7 @@ public class TeamManager
 
     public void BeginMovement()
     {
-        foreach (Player teamMember in teamMembers)
+        foreach (Player teamMember in members)
         {
             teamMember.BeginPlayerMovement();
         }

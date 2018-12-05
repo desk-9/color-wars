@@ -60,8 +60,8 @@ public class WinDisplay : MonoBehaviour
         }
         else
         {
-            winnerText.text = string.Format("{0} Team won!", winner.teamColor.name);
-            winnerText.color = winner.teamColor;
+            winnerText.text = string.Format("{0} Team won!", winner.color.name);
+            winnerText.color = winner.color;
         }
     }
 

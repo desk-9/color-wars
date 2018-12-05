@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
 
+using EM = EventsManager;
 public class StunEffect : MonoBehaviour
 {
     public float flashInterval = 0.1f;
@@ -9,20 +10,32 @@ public class StunEffect : MonoBehaviour
 
     private void Start()
     {
-        PlayerStateManager stateManager = this.EnsureComponent<PlayerStateManager>();
+        // PlayerStateManager stateManager = this.EnsureComponent<PlayerStateManager>();
+        EM.onPlayerStunned += (EM.onPlayerStunnedArgs args) => {
+            Player player = args.player;
+            if (player.gameObject == this.gameObject) {
+                StartCoroutine(StunEffectRoutine());
+            }
+        };
+        EM.onPlayerUnstunned += (EM.onPlayerUnstunnedArgs args) => {
+            Player player = args.player;
+            if (player.gameObject == this.gameObject) {
+                stopEffect = true;
+            }
+        };
     }
 
-    private void HandleNewPlayerState(State oldState, State newState)
-    {
-        if (newState == State.Stun)
-        {
-            StartCoroutine(StunEffectRoutine());
-        }
-        if (oldState == State.Stun)
-        {
-            stopEffect = true;
-        }
-    }
+    // private void HandleNewPlayerState(State oldState, State newState)
+    // {
+    //     if (newState == State.Stun)
+    //     {
+    //         StartCoroutine(StunEffectRoutine());
+    //     }
+    //     if (oldState == State.Stun)
+    //     {
+    //         stopEffect = true;
+    //     }
+    // }
 
     private IEnumerator StunEffectRoutine()
     {

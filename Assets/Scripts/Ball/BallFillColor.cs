@@ -6,7 +6,7 @@ public class BallFillColor : MonoBehaviour
     private new SpriteRenderer renderer;
 
     // Use this for initialization
-    private void Start()
+    void Start()
     {
         renderer = this.EnsureComponent<SpriteRenderer>();
     }

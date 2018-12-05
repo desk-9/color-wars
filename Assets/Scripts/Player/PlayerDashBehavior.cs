@@ -9,7 +9,7 @@ public class PlayerDashBehavior : MonoBehaviour
 {
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
-    public IC.InputControlType dashButton = IC.InputControlType.Action2;
+    // public IC.InputControlType dashButton = IC.InputControlType.Action2;
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
@@ -29,7 +29,7 @@ public class PlayerDashBehavior : MonoBehaviour
     private Coroutine chargeCoroutine;
     private Coroutine dashCoroutine;
     private PlayerTronMechanic tronMechanic;
-    private BallCarrier carrier;
+    private BallCarrier ballCarrier;
     private GameObject dashEffect;
     private GameObject dashAimer;
     private float lastDashTime;
@@ -38,10 +38,11 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void Start()
     {
+
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        carrier = this.EnsureComponent<BallCarrier>();
+        ballCarrier = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
 
@@ -93,7 +94,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void ChargeReleased()
     {
-        if (stateManager.IsInState(OldState.ChargeDash))
+        if (stateManager.IsInState(DEPRECATED_State.ChargeDash))
         {
             stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
         }
@@ -166,11 +167,14 @@ public class PlayerDashBehavior : MonoBehaviour
         stateManager.CurrentStateHasFinished();
     }
 
-    private Ball TrySteal(Player otherPlayer)
-    {
-        BallCarrier otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
-        return otherCarrier?.Ball;
-    }
+    // private Ball TrySteal(Player otherPlayer)
+    // {
+
+    //     // TODO:
+
+    //     // BallCarrier otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
+    //     // return otherCarrier?.Ball;
+    // }
 
     private void Stun(Player otherPlayer)
     {
@@ -188,36 +192,34 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void StunAndSteal(GameObject otherGameObject)
     {
-        bool hitBall = otherGameObject.GetComponent<Ball>() != null;
+        Ball ball = otherGameObject.GetComponent<Ball>();
+        bool hitBall = ball != null;
         Player otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
-            (otherPlayer.team?.teamColor != player.team?.teamColor
+            (otherPlayer.team?.color != player.team?.color
              || otherPlayer.team == null || player.team == null))
         {
-            Ball ball = TrySteal(otherPlayer);
+            // TODO: put this elsewhere...
+            // if (shouldSteal || (ball == null && !onlyStunBallCarriers))
+            // {
+            //     Stun(otherPlayer);
+            // }
 
-            bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);
-            if (shouldSteal || (ball == null && !onlyStunBallCarriers))
+            if (this.ballCarrier.CanSteal(ball))
             {
-                Stun(otherPlayer);
-            }
-
-            if (shouldSteal)
-            {
-                GameManager.instance.notificationManager.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
-                AudioManager.instance.StealSound.Play(.5f);
-                stateManager.AttemptPossession(
-                    () => carrier.StartCarryingBall(ball), carrier.DropBall);
+                ballCarrier.Steal(ball);
             }
         }
     }
 
+    // TODO: fix -- this is NOT the right place to handle stuff like this!
     private Player GetAssociatedPlayer(GameObject gameObject)
     {
         Ball ball = gameObject.GetComponent<Ball>();
         if (ball != null)
         {
-            return (ball.Owner == null) ? null : ball.Owner.GetComponent<Player>();
+            BallCarrier owner = ball.GetOwner();
+            return (owner == null) ? null : owner.GetComponent<Player>();
         }
         return gameObject.GetComponent<Player>();
     }
@@ -234,7 +236,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void HandleCollision(GameObject other)
     {
-        if (!stateManager.IsInState(OldState.Dash))
+        if (!stateManager.IsInState(DEPRECATED_State.Dash))
         {
             return;
         }
@@ -244,7 +246,7 @@ public class PlayerDashBehavior : MonoBehaviour
         {
             this.TimeDelayCall(() =>
             {
-                if (stateManager.IsInState(OldState.Dash))
+                if (stateManager.IsInState(DEPRECATED_State.Dash))
                 {
                     stateManager.CurrentStateHasFinished();
                 }

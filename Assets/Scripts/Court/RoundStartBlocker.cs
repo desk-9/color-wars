@@ -2,6 +2,7 @@
 using UnityEngine;
 using UtilityExtensions;
 
+// TODO: Port to use TronWall -- it'd be nice to remove the special case / duplicated code here
 public class RoundStartBlocker : MonoBehaviour
 {
     public float lifeLength = 5f;
@@ -82,6 +83,7 @@ public class RoundStartBlocker : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
+        // TODO: move this logic into the dash component
         GameObject other = collision.gameObject;
         Player player = other.GetComponent<Player>();
         PlayerStateManager stateManager = other.GetComponent<PlayerStateManager>();
@@ -93,11 +95,11 @@ public class RoundStartBlocker : MonoBehaviour
         }
 
         if ((player != null) && (stateManager != null) &&
-            (stateManager.currentState == OldState.Dash))
+            (stateManager.currentState == DEPRECATED_State.Dash))
         {
             DisableSelf();
             other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
-            stateManager.CurrentStateHasFinished();
+            // stateManager.CurrentStateHasFinished();
         }
     }
 }

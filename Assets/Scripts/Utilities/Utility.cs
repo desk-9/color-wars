@@ -166,6 +166,7 @@ namespace UtilityExtensions
                 return defaultValue;
             }
         }
+
     }
 }
 
@@ -325,7 +326,7 @@ public static class Utility
         if (player.GetComponent<Player>().team != null)
         {
             ignoreSet = new HashSet<GameObject>(
-                player.GetComponent<Player>().team.teamMembers.Select(p => p.gameObject)
+                player.GetComponent<Player>().team.members.Select(p => p.gameObject)
                 );
         }
         BlowbackPlayers(player.transform.position, radius,
@@ -474,6 +475,15 @@ public class CoroutineUtility : MonoBehaviour
     public static IEnumerator WaitForRealtimeSeconds(float seconds)
     {
         yield return new WaitForSecondsRealtime(seconds);
+    }
+
+    public static Coroutine ForceStopCoroutine(Coroutine coroutine)
+    {
+        if (coroutine != null) {
+            instance.StopCoroutine(coroutine);
+            coroutine = null;
+        }
+        return coroutine;
     }
 
 }

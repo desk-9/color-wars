@@ -101,7 +101,7 @@ public class TronWall : MonoBehaviour
                                                   (linePoints[1] + linePoints[0]) / 2, transform.rotation);
         ParticleSystem ps = instantiated.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule main = ps.main;
-        main.startColor = team.teamColor.color;
+        main.startColor = team.color.color;
         ParticleSystem.ShapeModule shape = ps.shape;
         shape.radius = magnitude * .65f;
         ParticleSystem.EmissionModule emission = ps.emission;
@@ -122,7 +122,7 @@ public class TronWall : MonoBehaviour
             // Check if it was your teammate
             Player otherPlayer = other.GetComponent<Player>();
             if (otherPlayer != null &&
-                otherPlayer.team.teamColor == team.teamColor)
+                otherPlayer.team.color == team.color)
             {
                 return;
             }
@@ -140,7 +140,7 @@ public class TronWall : MonoBehaviour
             KillSelf();
         }
         else if ((player != null) && (stateManager != null) &&
-                                   (stateManager.currentState == OldState.Dash))
+                                   (stateManager.currentState == DEPRECATED_State.Dash))
         {
             KillSelf();
             PlayerStun playerStun = other.EnsureComponent<PlayerStun>();

@@ -33,13 +33,13 @@ public class TeamSelectionCollider : MonoBehaviour
             PlayerStateManager stateManager = player.GetComponent<PlayerStateManager>();
             if (stateManager != null)
             {
-                if (mustDashToSwitch && !stateManager.IsInState(OldState.Dash))
+                if (mustDashToSwitch && !stateManager.IsInState(DEPRECATED_State.Dash))
                 {
                     // Only switch if dashing
                     return;
                 }
             }
-            if (player.team != team && team.teamMembers.Count < maxOnTeam)
+            if (player.team != team && team.members.Count < maxOnTeam)
             {
                 player.SetTeam(team);
                 AudioManager.instance.Ching.Play();
@@ -68,26 +68,26 @@ public class TeamSelectionCollider : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (team != null && team.teamMembers.Count != lastCount)
+        if (team != null && team.members.Count != lastCount)
         {
             if (countText != null)
             {
-                countText.text = string.Format("{0}/{1}", team.teamMembers.Count, 2);
+                countText.text = string.Format("{0}/{1}", team.members.Count, 2);
             }
             SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-            if (team.teamMembers.Count >= maxOnTeam)
+            if (team.members.Count >= maxOnTeam)
             {
                 this.TimeDelayCall(() =>
                 {
                     AudioManager.instance.GoalSwitch.Play();
-                    renderer.color = 0.85f * team.teamColor.color;
+                    renderer.color = 0.85f * team.color.color;
                 }, 0.3f);
             }
             else
             {
-                renderer.color = team.teamColor;
+                renderer.color = team.color;
             }
-            lastCount = team.teamMembers.Count;
+            lastCount = team.members.Count;
         }
     }
 }

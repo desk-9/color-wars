@@ -3,8 +3,10 @@ using UtilityExtensions;
 using Photon.Realtime;
 using Photon.Pun;
 
-public class Player : MonoBehaviourPunCallbacks
+// public class Player : MonoBehaviourPunCallbacks
+public class Player : MonoBehaviour
 {
+    // private PlayerStateManager stateManager;
     public delegate void OnTeamAssignedCallback(TeamManager team);
     public OnTeamAssignedCallback OnTeamAssigned = delegate { };
 
@@ -18,7 +20,6 @@ public class Player : MonoBehaviourPunCallbacks
 
     private bool isNormalPlayer = true;
     private new SpriteRenderer renderer;
-    private PlayerStateManager stateManager;
     private Rigidbody2D rb2d;
     private new Collider2D collider;
     private GameObject explosionEffect;
@@ -46,7 +47,7 @@ public class Player : MonoBehaviourPunCallbacks
         ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
         explosionMain.startLifetime = GameManager.instance.pauseAfterGoalScore;
-        explosionMain.startColor = team.teamColor.color;
+        explosionMain.startColor = team.color.color;
         explosionParticleSystem.Play();
     }
 

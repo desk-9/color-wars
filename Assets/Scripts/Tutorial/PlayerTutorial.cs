@@ -188,7 +188,7 @@ public class PlayerTutorial : MonoBehaviour
         yield return new WaitForFixedUpdate();
         while (true)
         {
-            if (inTeamSelection && GameManager.instance.teams.All(team => team.teamMembers.Count == 2))
+            if (inTeamSelection && GameManager.instance.teams.All(team => team.members.Count == 2))
             {
                 TeamSelectionFinished();
                 yield break;
