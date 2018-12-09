@@ -151,6 +151,7 @@ public class PlayerDashBehavior : MonoBehaviour
         Vector2 direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         float startTime = Time.time;
 
+        // TODO dkonik: Make sure to handle this properly with respect to PlayerMovement component
         while (Time.time - startTime <= dashDuration)
         {
             rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
@@ -163,7 +164,7 @@ public class PlayerDashBehavior : MonoBehaviour
             ps.Stop();
         }
 
-        stateManager.CurrentStateHasFinished();
+        stateManager.TransitionToState(State.NormalMovement);
     }
 
     private Ball TrySteal(Player otherPlayer)
@@ -234,7 +235,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void HandleCollision(GameObject other)
     {
-        if (!stateManager.IsInState(OldState.Dash))
+        if (stateManager.CurrentState != State.Dash)
         {
             return;
         }
@@ -242,13 +243,9 @@ public class PlayerDashBehavior : MonoBehaviour
         int layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
         if (layerMask == (layerMask | 1 << other.layer))
         {
-            this.TimeDelayCall(() =>
-            {
-                if (stateManager.IsInState(OldState.Dash))
-                {
-                    stateManager.CurrentStateHasFinished();
-                }
-            }, 0.1f);
+            // TODO dkonik: We used to have a TimeDelayCall here...I'm not sure why
+            // but make sure this works without it
+            stateManager.TransitionToState(State.NormalMovement);
         }
         else
         {

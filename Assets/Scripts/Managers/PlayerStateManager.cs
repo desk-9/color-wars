@@ -178,13 +178,6 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         GameManager.instance.notificationManager.RegisterPlayer(this);
     }
 
-    // This method should be called if a state exits without being forced, such as
-    // the end of a dash, or after giving away possession of ball.
-    public void CurrentStateHasFinished()
-    {
-        SwitchToState(defaultState, startDefaultState, stopDefaultState);
-    }
-
     public void AttemptNormalMovement(Callback start, Callback stop)
     {
         if (IsInState(OldState.StartupState, OldState.NormalMovement))
