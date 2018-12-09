@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
 
-public class Ball : MonoBehaviourPunCallbacks
+public class Ball : MonoBehaviour
 {
     public new SpriteRenderer renderer;
     public new Rigidbody2D rigidbody;

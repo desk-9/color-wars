@@ -14,6 +14,8 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
     public bool instantRotation { get; set; } = true;
 
+    bool eventSent = false;
+
     private Rigidbody2D rb2d;
     private Coroutine playerMovementCoroutine = null;
     private PlayerStateManager stateManager;
@@ -129,7 +131,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
         while (true)
         {
-            rb2d.velocity = movementSpeed * lastDirection;
+            if (eventSent) {
+                rb2d.velocity = movementSpeed * lastDirection;
+                eventSent = false;
+            }
             // TODO: TUTORIAL
             if (lastDirection.magnitude > 0.1f)
             {
@@ -160,6 +165,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
                 GameObject player = pair?.Item2;
                 if (pair != null && this != null && player == this.gameObject)
                 {
+                    eventSent = true;
                     lastDirection = pair.Item1;
                 }
             });

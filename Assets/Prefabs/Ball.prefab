@@ -106,8 +106,8 @@ GameObject:
   - component: {fileID: 58959865703537910}
   - component: {fileID: 114284750926977716}
   - component: {fileID: 96678130803253634}
-  - component: {fileID: 1319945778}
   - component: {fileID: 1319945779}
+  - component: {fileID: 354871521998331840}
   m_Layer: 10
   m_Name: Ball
   m_TagString: Untagged
@@ -345,21 +345,6 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!114 &1319945778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302162468020258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!114 &1319945779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,12 +361,24 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
-  - {fileID: 1319945778}
+  - {fileID: 354871521998331840}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 7
   isRuntimeInstantiated: 0
+--- !u!114 &354871521998331840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302162468020258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de7bba237874e410ca8c66c72682aa51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1768583797059612
 GameObject:
   m_ObjectHideFlags: 0
