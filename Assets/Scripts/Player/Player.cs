@@ -8,6 +8,8 @@ public class Player : MonoBehaviourPunCallbacks
     public delegate void OnTeamAssignedCallback(TeamManager team);
     public OnTeamAssignedCallback OnTeamAssigned = delegate { };
 
+    public PlayerStateManager StateManager { get; private set; }
+
     public TeamManager team { get; private set; }
     public int playerNumber;
     // teamOverride sets which team a given player will join, overriding all
@@ -18,7 +20,6 @@ public class Player : MonoBehaviourPunCallbacks
 
     private bool isNormalPlayer = true;
     private new SpriteRenderer renderer;
-    private PlayerStateManager stateManager;
     private Rigidbody2D rb2d;
     private new Collider2D collider;
     private GameObject explosionEffect;
@@ -39,7 +40,7 @@ public class Player : MonoBehaviourPunCallbacks
             renderer.enabled = false;
             collider.enabled = false;
 
-            stateManager.TransitionToState(State.FrozenAfterGoal);
+            StateManager.TransitionToState(State.FrozenAfterGoal);
         }
 
         explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
@@ -54,7 +55,7 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (isNormalPlayer)
         {
-            stateManager.TransitionToState(State.StartOfMatch);
+            StateManager.TransitionToState(State.StartOfMatch);
 
             transform.position = initialPosition;
             rb2d.rotation = initialRotation;
@@ -71,7 +72,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void BeginPlayerMovement()
     {
-        stateManager.CurrentStateHasFinished();
+        StateManager.TransitionToState(State.NormalMovement);
     }
 
     public void TrySetTeam(TeamManager team)
@@ -103,13 +104,13 @@ public class Player : MonoBehaviourPunCallbacks
     {
         renderer = GetComponent<SpriteRenderer>();
         rb2d = GetComponent<Rigidbody2D>();
-        stateManager = GetComponent<PlayerStateManager>();
+        StateManager = GetComponent<PlayerStateManager>();
         collider = GetComponent<Collider2D>();
 
         // Whether this is a "hidden" player that doesn't actually show up/move
         // (i.e. purely sends input events and owns a controller)
         isNormalPlayer = renderer != null && rb2d != null
-            && stateManager != null && collider != null;
+            && StateManager != null && collider != null;
 
         if (teamOverride >= 0)
         {

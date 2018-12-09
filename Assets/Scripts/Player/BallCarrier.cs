@@ -212,7 +212,7 @@ public class BallCarrier : MonoBehaviour
         // When a goal is scored, we want to let go of the ball
         if (IsCarryingBall)
         {
-            stateManager?.CurrentStateHasFinished();
+            stateManager.TransitionToState(State.NormalMovement);
         }
     }
 

@@ -7,8 +7,20 @@ using UnityEngine;
 /// </summary>
 public abstract class PlayerStateInformation
 {
-    public abstract void Deserialize(PhotonStream stream, PhotonMessageInfo info);
-    public abstract void Serialize(PhotonStream stream, PhotonMessageInfo info);
+    /// <summary>
+    /// This is the photon time that the original event happened
+    /// </summary>
+    public double EventTimeStamp { get; set; }
+
+    public virtual void Deserialize(PhotonStream stream, PhotonMessageInfo info)
+    {
+        EventTimeStamp = (double)stream.ReceiveNext();
+    }
+
+    public virtual void Serialize(PhotonStream stream, PhotonMessageInfo info)
+    {
+        stream.SendNext(EventTimeStamp);
+    }
 }
 
 public class DashInformation : PlayerStateInformation
@@ -19,6 +31,7 @@ public class DashInformation : PlayerStateInformation
 
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
+        base.Deserialize(stream, info);
         StartPosition = (Vector3)stream.ReceiveNext();
         Direction = (Vector3)stream.ReceiveNext();
         Strength = (float)stream.ReceiveNext();
@@ -26,6 +39,7 @@ public class DashInformation : PlayerStateInformation
 
     public override void Serialize(PhotonStream stream, PhotonMessageInfo info)
     {
+        base.Serialize(stream, info);
         stream.SendNext(StartPosition);
         stream.SendNext(Direction);
         stream.SendNext(Strength);

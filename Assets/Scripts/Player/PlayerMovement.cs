@@ -324,6 +324,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleNewPlayerState(State oldState, State newState)
     {
+        // Handle enabling/disabling kinematic on the player
         if (kinematicStates.Contains(newState))
         {
             // For some states, we don't want other players being able to push the player around
@@ -335,6 +336,7 @@ public class PlayerMovement : MonoBehaviour
             rb2d.isKinematic = false;
         }
 
+        // Handle starting proper coroutines
         if (newState == State.NormalMovement)
         {
             StartNormalMovement();

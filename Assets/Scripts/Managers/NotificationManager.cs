@@ -73,18 +73,17 @@ public class NotificationManager
 {
 
     // PlayerState addons
-    private SortedDictionary<OldState, PlayerCallback> onAnyPlayerStartSubscribers =
-        new SortedDictionary<OldState, PlayerCallback>();
-    private SortedDictionary<OldState, PlayerCallback> onAnyPlayerEndSubscribers =
-        new SortedDictionary<OldState, PlayerCallback>();
-    private PlayerTransitionCallback onAnyChangeSubscribers = delegate { };
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerEnterStateSubscribers =
+        new SortedDictionary<State, PlayerCallback>();
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerExitStateSubscribers =
+        new SortedDictionary<State, PlayerCallback>();
 
     public NotificationManager()
     {
-        foreach (OldState state in (OldState[])System.Enum.GetValues(typeof(OldState)))
+        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
         {
-            onAnyPlayerStartSubscribers[state] = delegate { };
-            onAnyPlayerEndSubscribers[state] = delegate { };
+            onAnyPlayerEnterStateSubscribers[state] = delegate { };
+            onAnyPlayerExitStateSubscribers[state] = delegate { };
         }
 
         foreach (Message event_type in (Message[])System.Enum.GetValues(typeof(Message)))
@@ -99,25 +98,19 @@ public class NotificationManager
 
         player.OnStateChange += (oldState, newState) =>
         {
-            onAnyPlayerStartSubscribers[newState](playerComponent);
-            onAnyPlayerEndSubscribers[oldState](playerComponent);
-            onAnyChangeSubscribers(playerComponent, oldState, newState);
+            onAnyPlayerEnterStateSubscribers[newState](playerComponent);
+            onAnyPlayerExitStateSubscribers[oldState](playerComponent);
         };
     }
 
-    public void CallOnStateStart(OldState state, PlayerCallback callback)
+    public void CallOnStateStart(State state, PlayerCallback callback)
     {
-        onAnyPlayerStartSubscribers[state] += callback;
+        onAnyPlayerEnterStateSubscribers[state] += callback;
     }
 
-    public void CallOnStateEnd(OldState state, PlayerCallback callback)
+    public void CallOnStateEnd(State state, PlayerCallback callback)
     {
-        onAnyPlayerEndSubscribers[state] += callback;
-    }
-
-    public void CallOnStateTransition(PlayerTransitionCallback callback)
-    {
-        onAnyChangeSubscribers += callback;
+        onAnyPlayerExitStateSubscribers[state] += callback;
     }
 
     // Enum-based callback system

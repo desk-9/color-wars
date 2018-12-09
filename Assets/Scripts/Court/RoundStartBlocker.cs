@@ -93,11 +93,15 @@ public class RoundStartBlocker : MonoBehaviour
         }
 
         if ((player != null) && (stateManager != null) &&
-            (stateManager.currentState == OldState.Dash))
+            (stateManager.CurrentState == State.Dash))
         {
             DisableSelf();
-            other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
-            stateManager.CurrentStateHasFinished();
+
+            // TODO dkonik: We may need to add some information to the normal
+            // movement state that includes a bool saying "zero out the velocity"
+            // since we were doing that before but are not any longer. First, need to test.
+            // This may just work the way it is.
+            stateManager.TransitionToState(State.NormalMovement);
         }
     }
 }

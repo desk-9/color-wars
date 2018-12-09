@@ -283,7 +283,6 @@ public class GameManager : MonoBehaviour
 
     private void StartGameAfterBallAnimation()
     {
-        // goal?.RestartTeamSwitching(); // <-- (Empty function body)
         foreach (TeamManager team in teams)
         {
             team.BeginMovement();

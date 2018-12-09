@@ -90,7 +90,12 @@ public class PlayerTronMechanic : MonoBehaviour
             }
             layWallCoroutine = null;
             PlaceCurrentWall();
-            stateManager.CurrentStateHasFinished();
+            // TODO dkonik: If another player destroys the tron wall that this player is laying,
+            // this player may ignore that message if this fires before that destruction gets to their
+            // client. So, that message should include the photon timestamp so that the player can check,
+            // and even if they have transitioned to a new state (normal movement, or they even started charging
+            // a dash or whatever, they'll properly transition to stun state.
+            stateManager.TransitionToState(State.NormalMovement);
         }
     }
 
@@ -148,12 +153,12 @@ public class PlayerTronMechanic : MonoBehaviour
             return;
         }
         TronWall currentWall = walls.Last(); // This shouldn't ever be null
-        int layerMask = LayerMask.GetMask("Wall", "TronWall", "PlayerBlocker", "Goal", "PlayerBlocker");
+        int layerMask = LayerMask.GetMask("Wall", "TronWall", "PlayerBlocker", "Goal");
         if (collision.gameObject != currentWall &&
             layerMask == (layerMask | (1 << collision.gameObject.layer)))
         {
             StopLayingWall();
-            stateManager.CurrentStateHasFinished();
+            stateManager.TransitionToState(State.NormalMovement);
         }
     }
 

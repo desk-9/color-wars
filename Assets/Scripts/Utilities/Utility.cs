@@ -23,6 +23,42 @@ namespace UtilityExtensions
 
     public static class UtilityExtensionsContainer
     {
+        // TODO dkonik: Does this actually fucking work? lol static dynamic
+        public static dynamic ThrowIfNull(this Component component, string exceptionMessage = null)
+        {
+            if (component == null)
+            {
+                if (exceptionMessage != null)
+                {
+                    throw new Exception(exceptionMessage);
+                } else
+                {
+                    throw new Exception();
+                }
+            } else
+            {
+                return component;
+            }
+        }
+
+        public static dynamic ThrowIfNull(this GameObject gameObject, string exceptionMessage = null)
+        {
+            if (gameObject == null)
+            {
+                if (exceptionMessage != null)
+                {
+                    throw new Exception(exceptionMessage);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            else
+            {
+                return gameObject;
+            }
+        }
 
         public static T EnsureComponent<T>(this GameObject game_object) where T : Component
         {

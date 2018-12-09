@@ -6,6 +6,12 @@ public class PlayerStun : MonoBehaviour
 {
     public float stunTime = 5f;
     private Coroutine stunned;
+    private PlayerStateManager playerStateManager;
+
+    private void Start()
+    {
+        playerStateManager = this.EnsureComponent<PlayerStateManager>();
+    }
 
     public void StartStun(Vector2? knockbackVelocity = null, float? length = null)
     {
@@ -31,7 +37,7 @@ public class PlayerStun : MonoBehaviour
         {
             yield return null;
         }
-        this.GetComponent<PlayerStateManager>()?.CurrentStateHasFinished();
+        playerStateManager.TransitionToState(State.NormalMovement);
     }
 
     public void StopStunned()

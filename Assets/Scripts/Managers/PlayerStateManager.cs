@@ -76,7 +76,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// Current state information.
     /// NOTE: This may be null if the state does not have any relevant information
     /// </summary>
-    public PlayerStateInformation StateTransitionInformation => stateInfos[CurrentState];
+    public PlayerStateInformation CurrentStateInformation => stateInfos[CurrentState];
 
     /// <summary>
     /// To reduce garbage collection and not allocate everytime a state change is made, we reuse the same
@@ -85,7 +85,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// </summary>
     /// <param name="state"></param>
     /// <returns></returns>
-    public PlayerStateInformation GetStateInformationForWriting(State state)
+    public T GetStateInformationForWriting<T>(State state) where T : PlayerStateInformation
     {
         if (state == CurrentState)
         {
@@ -94,7 +94,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
             // figure that out
             throw new System.Exception("PlayerStateManager: Should not be modifying current state information");
         }
-        return stateInfos[state];
+        return stateInfos[state] as T;
     }
 
     /// <summary>
@@ -106,6 +106,13 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     {
         State oldState = CurrentState;
         CurrentState = state;
+
+        // Set the time of the event
+        if (stateInfos[CurrentState] != null)
+        {
+            stateInfos[CurrentState].EventTimeStamp = PhotonNetwork.Time;
+        }
+
         OnStateChange?.Invoke(oldState, CurrentState);
     }
 
@@ -123,11 +130,13 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
             State oldState = CurrentState;
             CurrentState = (State)stream.ReceiveNext();
 
+            // If this state has information in it, read it
             if (stateInfos[CurrentState] != null)
             {
                 stateInfos[CurrentState].Deserialize(stream, info);
             }
 
+            // Fire the event
             if (oldState != CurrentState)
             {
                 OnStateChange?.Invoke(oldState, CurrentState);
@@ -167,23 +176,6 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         GameManager.instance.notificationManager.RegisterPlayer(this);
-    }
-
-    // Schedules a callback whenever information with respect to a certain state
-    // changes
-    public void CallOnSpecficStateChange(OldState state, ToggleCallback callback)
-    {
-        onToggleState[state] += callback;
-    }
-
-    public void CallOnAnyStateChange(TransitionCallback callback)
-    {
-        onAnyChange += callback;
-    }
-
-    public void CallOnStateExit(OldState state, Callback callback)
-    {
-        onEndState[state] += callback;
     }
 
     // This method should be called if a state exits without being forced, such as

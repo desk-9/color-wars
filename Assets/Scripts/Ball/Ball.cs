@@ -32,6 +32,11 @@ public class Ball : MonoBehaviourPunCallbacks
     /// </summary>
     public bool Ownable { get; set; } = true;
 
+    public Vector2 CurrentPosition
+    {
+        get { return transform.position; }
+    }
+
     /// <summary>
     /// The current owner of the ball if there is one, null otherwise
     /// </summary>
@@ -50,6 +55,7 @@ public class Ball : MonoBehaviourPunCallbacks
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             rigidbody.angularVelocity = 0f;
             notificationManager.NotifyMessage(message, gameObject);
+            notificationManager.CallOnStateStart(State.ShootBall_micro, HandlePlayerShotBall);
             if (!this.isActiveAndEnabled)
             {
                 return;
@@ -63,6 +69,24 @@ public class Ball : MonoBehaviourPunCallbacks
                 trailRenderer.enabled = false;
             }
         }
+    }
+
+    private void HandlePlayerShotBall(Player player)
+    {
+        AudioManager.instance.ShootBallSound.Play(.5f);
+
+        // TODO spruceb: This is where we could do something like handling turning off of the 
+        // photon transform view component, since we know which way the ball will be heading for
+        // a little bit.
+        ShootBallInformation information = player.StateManager.CurrentStateInformation as ShootBallInformation;
+
+        // What we should (could?) do here is interpolate, based off of information.EventTimeStamp,
+        // the current position of the ball
+
+        // This was the old code 
+        //Vector3 shotDirection = information.Direction;
+        //Rigidbody2D ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
+        //ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
     }
 
     private void SetColor(Color to_, bool fill)

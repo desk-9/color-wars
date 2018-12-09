@@ -157,16 +157,16 @@ public class ShootBallMechanic : MonoBehaviour
 
     public void Shoot()
     {
-        AudioManager.instance.ShootBallSound.Play(.5f);
-        Ball ball = ballCarrier.Ball;
-        if (ball != null)
-        {
-            Vector3 shotDirection = ball.transform.position - transform.position;
-            Rigidbody2D ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
-            ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
-        }
+        // Set the information
+        Ball ball = ballCarrier.Ball.ThrowIfNull("Tried to shoot ball while [ballCarrier.Ball] is null");
+        ShootBallInformation shootBallInfo = stateManager.GetStateInformationForWriting<ShootBallInformation>(State.ShootBall_micro);
+        shootBallInfo.BallStartPosition = ball.CurrentPosition;
+        shootBallInfo.Direction = ball.CurrentPosition - (Vector2)transform.position;
+        shootBallInfo.Strength = shotSpeed;
+
+        // Cleanup and transition states
         StopShootBallCoroutines();
-        stateManager.CurrentStateHasFinished();
+        stateManager.TransitionToState(State.ShootBall_micro);
     }
 
     private void StopShootBallCoroutines()
