@@ -47,6 +47,17 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 {
     public State CurrentState { private set; get; } = State.StartupState;
 
+    // TODO dkonik: I can potentially see an ordering issue with this being one event. This may need to be split
+    // up into two events (OnStateEnded and OnStateEntered) which are always called latter after the former. 
+    // We may not need to do this, but the situation I am thinking of is something like the following:
+    // let's say we add two states which both change the color of the player. One changes to color to orange and the 
+    // other to green. If we transition from the orange state to the green state, if we are not careful, we can get something
+    // like the Green state first handles the OnStateChange event, which changes the players color to green. Then, the 
+    // Orange state handles it, and if we are not careful, it might change the player's color back to regular. There are
+    // obviously multiple ways to handle this, one being that the orange state would check if the new state also changes the color
+    // and not change it back to regular in that case (not great because of coupling between the two). The better one would be to have
+    // a PlayerColor component which is responsible for all player color changes, based on the state. That way, that component can change
+    // the color however it likes and not worry about it being changed elsewhere.
     /// <summary>
     /// An event that gets fired whenever the player changes state. It provides the old
     /// and the new state, respectively.
@@ -152,7 +163,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     private SortedDictionary<OldState, Callback> onEndState =
         new SortedDictionary<OldState, Callback>();
     private TransitionCallback onAnyChange = delegate { };
-    public OldState currentState { get; private set; }
+    public OldState oldState { get; private set; }
 
     private Callback stopCurrentState;
     private OldState defaultState = OldState.NormalMovement;
@@ -161,7 +172,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 
     private void Awake()
     {
-        currentState = OldState.StartupState;
+        oldState = OldState.StartupState;
         stopCurrentState = delegate { };
         startDefaultState = delegate { };
         stopDefaultState = delegate { };
@@ -178,43 +189,11 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         GameManager.instance.notificationManager.RegisterPlayer(this);
     }
 
-    public void AttemptNormalMovement(Callback start, Callback stop)
-    {
-        if (IsInState(OldState.StartupState, OldState.NormalMovement))
-        {
-            currentState = OldState.NormalMovement;
-            startDefaultState = start;
-            stopDefaultState = stop;
-            stopCurrentState = stop;
-            start();
-        }
-        else
-        {
-            Debug.LogErrorFormat("Tried to start NormalMovementState while in {0}", currentState);
-        }
-    }
-
-    public void AttemptDashCharge(Callback start, Callback stop)
-    {
-        if (IsInState(OldState.NormalMovement))
-        {
-            SwitchToState(OldState.ChargeDash, start, stop);
-        }
-    }
-
     public void AttemptPossession(Callback start, Callback stop)
     {
         if (IsInState(OldState.NormalMovement, OldState.Dash, OldState.ChargeDash, OldState.LayTronWall))
         {
             SwitchToState(OldState.Posession, start, stop);
-        }
-    }
-
-    public void AttemptDash(Callback start, Callback stop)
-    {
-        if (IsInState(OldState.ChargeDash))
-        {
-            SwitchToState(OldState.Dash, start, stop);
         }
     }
 
@@ -246,11 +225,11 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 
     private void SwitchToState(OldState state, Callback start, Callback stop)
     {
-        Utility.Print("Switching from", currentState, "to", state);
+        Utility.Print("Switching from", oldState, "to", state);
         stopCurrentState();
-        AlertSubscribers(currentState, false, state);
+        AlertSubscribers(oldState, false, state);
 
-        currentState = state;
+        oldState = state;
         start();
         stopCurrentState = stop;
         AlertSubscribers(state, true);
@@ -278,7 +257,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     {
         foreach (OldState state in states)
         {
-            if (currentState == state)
+            if (oldState == state)
             {
                 return true;
             }

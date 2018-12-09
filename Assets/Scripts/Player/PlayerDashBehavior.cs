@@ -45,10 +45,37 @@ public class PlayerDashBehavior : MonoBehaviour
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
         cameraShake = GameObject.FindObjectOfType<CameraShake>();
 
+        stateManager.OnStateChange += HandleNewPlayerState;
+
         GameManager.instance.notificationManager.CallOnMessageIfSameObject(
-            Message.PlayerPressedDash, DashPressed, this.gameObject);
+            Message.PlayerPressedDash, DashButtonPressed, this.gameObject);
         GameManager.instance.notificationManager.CallOnMessageIfSameObject(
-            Message.PlayerReleasedDash, ChargeReleased, this.gameObject);
+            Message.PlayerReleasedDash, DeshButtonReleased, this.gameObject);
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        // Cleanup for old state
+        if (oldState == State.ChargeDash)
+        {
+            StopChargeDash();
+        } else if (oldState == State.Dash)
+        {
+            StopDash();
+        }
+
+        // Handle new state
+        if (newState == State.Dash)
+        {
+            if (oldState != State.ChargeDash)
+            {
+                Debug.LogError("Entered Dash state but previous state was not ChargeDash. How?!");
+            }
+            StartDash();
+        } else if (newState == State.ChargeDash)
+        {
+            StartChargeDash();
+        }
     }
 
     private void Awake()
@@ -64,14 +91,6 @@ public class PlayerDashBehavior : MonoBehaviour
             dashEffectPrefab = player.team.resources.dashEffectPrefab;
             chargeEffectSpawner.effectPrefab = player.team.resources.dashChargeEffectPrefab;
             dashAimerPrefab = player.team.resources.dashAimerPrefab;
-        }
-    }
-
-    private void DashPressed()
-    {
-        if (Time.time - lastDashTime >= cooldown)
-        {
-            stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
         }
     }
 
@@ -91,11 +110,23 @@ public class PlayerDashBehavior : MonoBehaviour
         }
     }
 
-    private void ChargeReleased()
+    private void DashButtonPressed()
     {
-        if (stateManager.IsInState(OldState.ChargeDash))
+        if (Time.time - lastDashTime >= cooldown && stateManager.CurrentState == State.NormalMovement)
         {
-            stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
+            stateManager.TransitionToState(State.ChargeDash);
+        }
+    }
+
+    private void DeshButtonReleased()
+    {
+        if (stateManager.CurrentState == State.ChargeDash)
+        {
+            DashInformation info = stateManager.GetStateInformationForWriting<DashInformation>(State.Dash);
+            info.StartPosition = playerMovement.CurrentPosition;
+            info.Direction = (Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
+            info.Strength = chargeAmount;
+            stateManager.TransitionToState(State.Dash);
         }
     }
 
@@ -111,10 +142,12 @@ public class PlayerDashBehavior : MonoBehaviour
         }
     }
 
-    private void StartDash(float chargeAmount)
+    private void StartDash()
     {
-        dashCoroutine = StartCoroutine(Dash(chargeAmount));
+        dashCoroutine = StartCoroutine(Dash());
         lastDashTime = Time.time;
+
+        // TODO dkonik: This should not be here, this should be in tronmechanic
         if (tronMechanic.layWallOnDash)
         {
             tronMechanic.PlaceWallAnchor();
@@ -131,9 +164,15 @@ public class PlayerDashBehavior : MonoBehaviour
         }
     }
 
-    private IEnumerator Dash(float chargeAmount)
+    private IEnumerator Dash()
     {
-        float dashDuration = Mathf.Min(chargeAmount, 0.5f);
+        // TODO anyone: This is where we could do something like handling turning off of the 
+        // photon transform view component, since we know which way the ball will be heading for
+        // a little bit.
+        // TODO dkonik: Handle this stuff
+
+        DashInformation information = stateManager.CurrentStateInformation as DashInformation;
+        float dashDuration = Mathf.Min(information.Strength, 0.5f);
         AudioManager.instance.DashSound.Play();
 
 

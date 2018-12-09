@@ -42,6 +42,11 @@ public class PlayerMovement : MonoBehaviour
         State.LayTronWall,
     };
 
+    public Vector2 CurrentPosition
+    {
+        get { return transform.position; }
+    }
+
     public float movementSpeed;
     public float rotationSpeed = 1080;
     public bool freezeRotation = false;

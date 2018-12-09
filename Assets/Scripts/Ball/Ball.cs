@@ -75,7 +75,7 @@ public class Ball : MonoBehaviourPunCallbacks
     {
         AudioManager.instance.ShootBallSound.Play(.5f);
 
-        // TODO spruceb: This is where we could do something like handling turning off of the 
+        // TODO anyone: This is where we could do something like handling turning off of the 
         // photon transform view component, since we know which way the ball will be heading for
         // a little bit.
         ShootBallInformation information = player.StateManager.CurrentStateInformation as ShootBallInformation;
