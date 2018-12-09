@@ -8,35 +8,28 @@ public class NullZoneBlink : MonoBehaviour
     public float stayedFlashDuration = 0f;
     public float flashTransitionDuration = .1f;
     public Color flashColor;
+    new SpriteRenderer renderer;
+    Color startingColor;
 
     // Use this for initialization
     private void Start()
     {
+        renderer = this.EnsureComponent<SpriteRenderer>();
+        startingColor = renderer.color;
         GameManager.instance.notificationManager.CallOnMessage(Message.NullChargePrevention, FlashNullZone);
     }
 
     private void FlashNullZone()
     {
-        if (this == null)
-        {
-            return;
-        }
-        SpriteRenderer renderer = this.EnsureComponent<SpriteRenderer>();
-        Color startingColor = renderer.color;
+        AudioManager.instance.PassToNullZone.Play(.1f);
+        
         StartCoroutine(TransitionUtility.LerpColor(color => renderer.color = color,
                                                    renderer.color, flashColor, flashTransitionDuration));
-        this.RealtimeDelayCall(() => FlashBackToNormal(startingColor), stayedFlashDuration + flashTransitionDuration);
+        this.RealtimeDelayCall(() => FlashBackToNormal(), stayedFlashDuration + flashTransitionDuration);
     }
 
-    private void FlashBackToNormal(Color startingColor)
+    private void FlashBackToNormal()
     {
-        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        if (renderer == null)
-        {
-            return;
-        }
-
         StartCoroutine(TransitionUtility.LerpColor(color => renderer.color = color, renderer.color, startingColor, flashTransitionDuration));
-
     }
 }

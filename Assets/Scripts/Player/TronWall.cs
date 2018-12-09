@@ -122,7 +122,7 @@ public class TronWall : MonoBehaviour
             // Check if it was your teammate
             Player otherPlayer = other.GetComponent<Player>();
             if (otherPlayer != null &&
-                otherPlayer.team.teamColor == team.teamColor)
+                otherPlayer.Team.teamColor == team.teamColor)
             {
                 return;
             }

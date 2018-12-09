@@ -47,7 +47,7 @@ public class PlayerTronMechanic : MonoBehaviour
 
     private void WallPressed()
     {
-        if (player.team != null)
+        if (player.Team != null)
         {
             stateManager.AttemptLayTronWall(
                 () => layWallCoroutine = StartCoroutine(LayTronWall()), StopLayingWall);
@@ -72,7 +72,7 @@ public class PlayerTronMechanic : MonoBehaviour
         TronWall tronWallComponent = newWall.EnsureComponent<TronWall>();
         walls.Add(tronWallComponent);
         tronWallComponent.Initialize(this, wallLifeLength,
-                                     player.team, tronWallOffset);
+                                     player.Team, tronWallOffset);
     }
 
     public void PlaceCurrentWall()

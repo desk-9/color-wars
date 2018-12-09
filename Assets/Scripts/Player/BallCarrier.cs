@@ -33,10 +33,11 @@ public class BallCarrier : MonoBehaviour
 
     private void Start()
     {
-        player = GetComponent<Player>();
-        playerMovement = GetComponent<PlayerMovement>();
-        stateManager = GetComponent<PlayerStateManager>();
+        player = this.EnsureComponent<Player>();
+        playerMovement = this.EnsureComponent<PlayerMovement>();
+        stateManager = this.EnsureComponent<PlayerStateManager>();
         rb2d = GetComponent<Rigidbody2D>();
+        Ball = FindObjectOfType<Ball>().ThrowIfNull("Could not find ball");
         if (playerMovement != null && stateManager != null)
         {
             PlayerMovement actualPlayerMovement = playerMovement as PlayerMovement;
@@ -49,15 +50,26 @@ public class BallCarrier : MonoBehaviour
 
         NotificationManager notificationManager = GameManager.instance.notificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        stateManager.OnStateChange += HandleNewPlayerState;
     }
 
-    private void BlowBackEnemyPlayers()
+    private void HandleNewPlayerState(State oldState, State newState)
     {
-        if (player.team == null)
+        if (newState == State.Possession)
+        {
+            StartCarryingBall();
+        }
+        // TODO dkonik: Finish this up, got distracted
+        stateManager.AttemptPossession(() => StartCarryingBall(), DropBall);
+    }
+
+        private void BlowBackEnemyPlayers()
+    {
+        if (player.Team == null)
         {
             return;
         }
-        TeamManager enemyTeam = GameManager.instance.teams.Find((teamManager) => teamManager != player.team);
+        TeamManager enemyTeam = GameManager.instance.teams.Find((teamManager) => teamManager != player.Team);
         Debug.Assert(enemyTeam != null);
 
         {
@@ -71,7 +83,7 @@ public class BallCarrier : MonoBehaviour
             Gradient grad = new Gradient();
             grad.SetKeys(
                 new GradientColorKey[] {
-                    new GradientColorKey(player.team.teamColor, 0.0f)
+                    new GradientColorKey(player.Team.teamColor, 0.0f)
                 },
                 new GradientAlphaKey[] {
                     new GradientAlphaKey(1.0f,  0.0f),
@@ -101,19 +113,21 @@ public class BallCarrier : MonoBehaviour
 
     // This function is called when the BallCarrier initially gains possession
     // of the ball
-    public void StartCarryingBall(Ball ball)
+    public void StartCarryingBall()
     {
-        BlowBackEnemyPlayers();
-        timeCarryStarted = Time.time;
-        ball.rigidbody.velocity = Vector2.zero;
-        ball.rigidbody.angularVelocity = 0;
-        CalculateOffset(ball);
-        if (slowMoOnCarry)
-        {
-            GameManager.instance.SlowMo();
-        }
-        laserGuide?.DrawLaser();
-        carryBallCoroutine = StartCoroutine(CarryBall(ball));
+        // TODO dkonik: Commented this out to make it compile. Fix this
+
+        //BlowBackEnemyPlayers();
+        //timeCarryStarted = Time.time;
+        //ball.rigidbody.velocity = Vector2.zero;
+        //ball.rigidbody.angularVelocity = 0;
+        //CalculateOffset(ball);
+        //if (slowMoOnCarry)
+        //{
+        //    GameManager.instance.SlowMo();
+        //}
+        //laserGuide?.DrawLaser();
+        //carryBallCoroutine = StartCoroutine(CarryBall(ball));
     }
 
     private void CalculateOffset(Ball ball)
@@ -129,12 +143,11 @@ public class BallCarrier : MonoBehaviour
 
 
 
-    private IEnumerator CarryBall(Ball ball)
+    private IEnumerator CarryBall()
     {
         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         IsCarryingBall = true;
-        this.Ball = ball;
-        ball.Owner = this;
+        //ball.Owner = this;
 
         while (true)
         {
@@ -160,7 +173,6 @@ public class BallCarrier : MonoBehaviour
 
             // Reset references
             Ball.Owner = null;
-            Ball = null;
 
             laserGuide?.StopDrawingLaser();
             if (this.isActiveAndEnabled)
@@ -219,19 +231,17 @@ public class BallCarrier : MonoBehaviour
     private void HandleCollision(GameObject thing)
     {
         Ball ball = thing.GetComponent<Ball>();
-        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown)
+        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown || ball.Owner == this)
         {
             return;
         }
-        if (stateManager != null)
+
+        if (stateManager.CurrentState == State.NormalMovement ||
+            stateManager.CurrentState == State.Dash ||
+            stateManager.CurrentState == State.ChargeDash ||
+            stateManager.CurrentState == State.LayTronWall)
         {
-            TeamManager last_team = ball.LastOwner?.GetComponent<Player>().team;
-            TeamManager this_team = GetComponent<Player>().team;
-            stateManager.AttemptPossession(() => StartCarryingBall(ball), DropBall);
-        }
-        else
-        {
-            StartCoroutine(CoroutineUtility.RunThenCallback(CarryBall(ball), DropBall));
+            stateManager.TransitionToState(State.Possession);
         }
     }
 

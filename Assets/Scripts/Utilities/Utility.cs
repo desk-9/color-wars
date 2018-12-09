@@ -358,10 +358,10 @@ public static class Utility
     {
 
         HashSet<GameObject> ignoreSet = new HashSet<GameObject>() { player.gameObject };
-        if (player.GetComponent<Player>().team != null)
+        if (player.GetComponent<Player>().Team != null)
         {
             ignoreSet = new HashSet<GameObject>(
-                player.GetComponent<Player>().team.teamMembers.Select(p => p.gameObject)
+                player.GetComponent<Player>().Team.teamMembers.Select(p => p.gameObject)
                 );
         }
         BlowbackPlayers(player.transform.position, radius,

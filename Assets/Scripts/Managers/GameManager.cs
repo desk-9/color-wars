@@ -8,6 +8,10 @@ using UtilityExtensions;
 
 public class GameManager : MonoBehaviour
 {
+    #region Managers
+    public NotificationManager notificationManager;
+    public PossessionManager PossessionManager { get; set; }
+    #endregion
 
     public static bool playerTeamsAlreadySelected = false;
     public static Dictionary<int, int> playerTeamAssignments = new Dictionary<int, int>();
@@ -19,7 +23,7 @@ public class GameManager : MonoBehaviour
     public TeamResourceManager neutralResources;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
-    public NotificationManager notificationManager;
+    
     public bool gameOver { get; private set; } = false;
     public TeamManager winner { get; private set; } = null;
     public GameObject meta;
@@ -91,6 +95,7 @@ public class GameManager : MonoBehaviour
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
         notificationManager = new NotificationManager();
+        PossessionManager = GetComponent<PossessionManager>();
     }
 
     private void BlowBack(Player player)
@@ -224,8 +229,6 @@ public class GameManager : MonoBehaviour
 
     public void GoalScoredForTeam(TeamManager scored)
     {
-        ball.HandleGoalScore(scored.teamColor);
-        goal?.StopTeamSwitching();
         foreach (TeamManager team in teams)
         {
             if ((Color)team.teamColor == scored.teamColor)
@@ -258,10 +261,13 @@ public class GameManager : MonoBehaviour
 
     private void ResetGameAfterGoal()
     {
+        // TODO dkonik: This should just fire the event and everything else should
+        // take care of that
         if (gameOver)
         {
             return;
         }
+        notificationManager.NotifyMessage(Message.Reset, this);
         foreach (TeamManager team in teams)
         {
             team.ResetTeam();
@@ -274,8 +280,6 @@ public class GameManager : MonoBehaviour
             wall.KillSelf();
         }
 
-        goal?.SwitchToNextTeam(false);
-        goal?.ResetNeutral();
 
         // Reset music.
         StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));

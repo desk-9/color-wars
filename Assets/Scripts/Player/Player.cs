@@ -10,7 +10,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     public PlayerStateManager StateManager { get; private set; }
 
-    public TeamManager team { get; private set; }
+    public TeamManager Team { get; private set; }
     public int playerNumber;
     // teamOverride sets which team a given player will join, overriding all
     // other methods of setting the team if it's non-negative
@@ -26,9 +26,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void CallAsSoonAsTeamAssigned(OnTeamAssignedCallback callback)
     {
-        if (team != null)
+        if (Team != null)
         {
-            callback(team);
+            callback(Team);
         }
         OnTeamAssigned += callback;
     }
@@ -43,11 +43,11 @@ public class Player : MonoBehaviourPunCallbacks
             StateManager.TransitionToState(State.FrozenAfterGoal);
         }
 
-        explosionEffect = GameObject.Instantiate(team.resources.explosionPrefab, transform.position, transform.rotation);
+        explosionEffect = GameObject.Instantiate(Team.resources.explosionPrefab, transform.position, transform.rotation);
         ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
         explosionMain.startLifetime = GameManager.instance.pauseAfterGoalScore;
-        explosionMain.startColor = team.teamColor.color;
+        explosionMain.startColor = Team.teamColor.color;
         explosionParticleSystem.Play();
     }
 
@@ -77,7 +77,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void TrySetTeam(TeamManager team)
     {
-        if (this.team == null)
+        if (this.Team == null)
         {
             SetTeam(team);
         }
@@ -85,11 +85,11 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void SetTeam(TeamManager team)
     {
-        if (this.team != null)
+        if (this.Team != null)
         {
-            this.team.RemoveTeamMember(this);
+            this.Team.RemoveTeamMember(this);
         }
-        this.team = team;
+        this.Team = team;
         team.AddTeamMember(this);
         this.FrameDelayCall(() =>
         {
@@ -120,10 +120,10 @@ public class Player : MonoBehaviourPunCallbacks
             && playerNumber >= 0)
         {
             // Dummies have a player number of -1, and shouldn't get a team
-            team = GameManager.instance.GetTeamAssignment(this);
-            if (team != null && isNormalPlayer)
+            Team = GameManager.instance.GetTeamAssignment(this);
+            if (Team != null && isNormalPlayer)
             {
-                SetTeam(team);
+                SetTeam(Team);
             }
         }
         if (isNormalPlayer)
@@ -149,9 +149,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     private void OnDestroy()
     {
-        if (this.team != null)
+        if (this.Team != null)
         {
-            this.team.RemoveTeamMember(this);
+            this.Team.RemoveTeamMember(this);
         }
         GameManager.instance.players.Remove(this);
     }

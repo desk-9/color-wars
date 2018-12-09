@@ -85,12 +85,12 @@ public class PlayerDashBehavior : MonoBehaviour
 
     public void SetPrefabColors()
     {
-        if (player.team != null)
+        if (player.Team != null)
         {
             EffectSpawner chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-            dashEffectPrefab = player.team.resources.dashEffectPrefab;
-            chargeEffectSpawner.effectPrefab = player.team.resources.dashChargeEffectPrefab;
-            dashAimerPrefab = player.team.resources.dashAimerPrefab;
+            dashEffectPrefab = player.Team.resources.dashEffectPrefab;
+            chargeEffectSpawner.effectPrefab = player.Team.resources.dashChargeEffectPrefab;
+            dashAimerPrefab = player.Team.resources.dashAimerPrefab;
         }
     }
 
@@ -231,8 +231,8 @@ public class PlayerDashBehavior : MonoBehaviour
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
         Player otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
-            (otherPlayer.team?.teamColor != player.team?.teamColor
-             || otherPlayer.team == null || player.team == null))
+            (otherPlayer.Team?.teamColor != player.Team?.teamColor
+             || otherPlayer.Team == null || player.Team == null))
         {
             Ball ball = TrySteal(otherPlayer);
 
@@ -244,10 +244,12 @@ public class PlayerDashBehavior : MonoBehaviour
 
             if (shouldSteal)
             {
-                GameManager.instance.notificationManager.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
-                AudioManager.instance.StealSound.Play(.5f);
-                stateManager.AttemptPossession(
-                    () => carrier.StartCarryingBall(ball), carrier.DropBall);
+                // TODO dkonik: This stuff. COmmented out to make it compile
+                //GameManager.instance.notificationManager.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
+                //AudioManager.instance.StealSound.Play(.5f);
+                //StealBallInformation info = stateManager.GetStateInformationForWriting<StealBallInformation>();
+                //stateManager.AttemptPossession(
+                //    () => carrier.StartCarryingBall(ball), carrier.DropBall);
             }
         }
     }

@@ -238,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
             // TODO dkonik: Ugly to be directly checking the balls color like this
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                ball.renderer.color == player.team.teamColor.color)
+                ball.renderer.color == player.Team.teamColor.color)
             {
                 aimAssistTarget = goal;
                 stickAngleWhenSnapped = lastDirection;
@@ -311,7 +311,7 @@ public class PlayerMovement : MonoBehaviour
         ball = GameObject.FindObjectOfType<Ball>();
         this.FrameDelayCall(() => 
         {
-            TeamManager team = player.team;
+            TeamManager team = player.Team;
 
             if (team == null)
             {

@@ -24,10 +24,6 @@ public enum Message
     ScoreChanged,
     SlowMoEntered,
     SlowMoExited,
-    BallSetNeutral,
-    BallPossessedWhileNeutral,
-    BallCharged,
-    BallPossessedWhileCharged,
     NullChargePrevention,
     StolenFrom,
     TronWallDestroyed,
@@ -67,6 +63,9 @@ public enum Message
 
     RecordingInterrupt,
     RecordingFinished,
+
+    ChargeChanged,
+    Reset,
 };
 
 public class NotificationManager
@@ -78,12 +77,22 @@ public class NotificationManager
     private SortedDictionary<State, PlayerCallback> onAnyPlayerExitStateSubscribers =
         new SortedDictionary<State, PlayerCallback>();
 
+    // The following to callbacks are ones that get called early. This may be useful
+    // for things like managers, etc. which may need to set their state so that later
+    // components that have subscribed to the same event can get the correct state
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerEnterStateSubscribers_early =
+    new SortedDictionary<State, PlayerCallback>();
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerExitStateSubscribers_early =
+        new SortedDictionary<State, PlayerCallback>();
+
     public NotificationManager()
     {
         foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
         {
             onAnyPlayerEnterStateSubscribers[state] = delegate { };
             onAnyPlayerExitStateSubscribers[state] = delegate { };
+            onAnyPlayerEnterStateSubscribers_early[state] = delegate { };
+            onAnyPlayerExitStateSubscribers_early[state] = delegate { };
         }
 
         foreach (Message event_type in (Message[])System.Enum.GetValues(typeof(Message)))
@@ -98,19 +107,35 @@ public class NotificationManager
 
         player.OnStateChange += (oldState, newState) =>
         {
+            onAnyPlayerEnterStateSubscribers_early[newState](playerComponent);
+            onAnyPlayerExitStateSubscribers_early[oldState](playerComponent);
             onAnyPlayerEnterStateSubscribers[newState](playerComponent);
             onAnyPlayerExitStateSubscribers[oldState](playerComponent);
         };
     }
 
-    public void CallOnStateStart(State state, PlayerCallback callback)
+    public void CallOnStateStart(State state, PlayerCallback callback, bool early = false)
     {
-        onAnyPlayerEnterStateSubscribers[state] += callback;
+        if (early)
+        {
+            onAnyPlayerEnterStateSubscribers_early[state] += callback;
+        } else
+        {
+            onAnyPlayerEnterStateSubscribers[state] += callback;
+        }
     }
 
-    public void CallOnStateEnd(State state, PlayerCallback callback)
+    public void CallOnStateEnd(State state, PlayerCallback callback, bool early = false)
     {
-        onAnyPlayerExitStateSubscribers[state] += callback;
+        if (early)
+        {
+            onAnyPlayerExitStateSubscribers_early[state] += callback;
+        }
+        else
+        {
+            onAnyPlayerExitStateSubscribers[state] += callback;
+        }
+        
     }
 
     // Enum-based callback system

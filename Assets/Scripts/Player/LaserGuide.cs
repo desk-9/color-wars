@@ -50,7 +50,7 @@ public class LaserGuide : MonoBehaviour
 
     public void SetLaserGradients()
     {
-        TeamManager team = GetComponent<Player>()?.team;
+        TeamManager team = GetComponent<Player>()?.Team;
         if (team != null)
         {
             aimLaserGradient = team.resources.aimLaserGradient;

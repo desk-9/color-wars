@@ -141,7 +141,7 @@ public class PlayerTutorial : MonoBehaviour
         GameManager.playerTeamAssignments = new Dictionary<int, int>();
         foreach (Player player in GameManager.instance.GetPlayersWithTeams())
         {
-            int teamIndex = GameManager.instance.teams.IndexOf(player.team);
+            int teamIndex = GameManager.instance.teams.IndexOf(player.Team);
             GameManager.playerTeamAssignments[player.playerNumber] = teamIndex;
         }
         TeamManager.playerSpritesAlreadySet = true;

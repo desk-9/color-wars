@@ -28,7 +28,7 @@ public class TeamSelectionCollider : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         Player player = collision.gameObject.GetComponent<Player>();
-        if (player != null && team != null && player.team != team)
+        if (player != null && team != null && player.Team != team)
         {
             PlayerStateManager stateManager = player.GetComponent<PlayerStateManager>();
             if (stateManager != null)
@@ -39,7 +39,7 @@ public class TeamSelectionCollider : MonoBehaviour
                     return;
                 }
             }
-            if (player.team != team && team.teamMembers.Count < maxOnTeam)
+            if (player.Team != team && team.teamMembers.Count < maxOnTeam)
             {
                 player.SetTeam(team);
                 AudioManager.instance.Ching.Play();

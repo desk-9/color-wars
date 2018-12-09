@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using System;
 using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
@@ -37,6 +38,7 @@ public class Ball : MonoBehaviourPunCallbacks
         get { return transform.position; }
     }
 
+
     /// <summary>
     /// The current owner of the ball if there is one, null otherwise
     /// </summary>
@@ -55,19 +57,18 @@ public class Ball : MonoBehaviourPunCallbacks
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             rigidbody.angularVelocity = 0f;
             notificationManager.NotifyMessage(message, gameObject);
+            // TODO dkonik: You need to stop listening to this event at some point idiot.
+            // Also, maybe this should just be private
             notificationManager.CallOnStateStart(State.ShootBall_micro, HandlePlayerShotBall);
             if (!this.isActiveAndEnabled)
             {
                 return;
             }
-            if (owner_ != null)
-            {
-                this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
-            }
-            else
-            {
-                trailRenderer.enabled = false;
-            }
+            // TODO dkonik: This used to be where the color of the ball was set. 
+            // No longer! But figure out where that should go. Part of it is in 
+            // handle charge change. But we also want to change it even if not charged.
+            // Possession manager should probably have a possession event change too, and
+            // that is what *most* things listen to...but idk.
         }
     }
 
@@ -103,7 +104,11 @@ public class Ball : MonoBehaviourPunCallbacks
             });
 
         trailRenderer.colorGradient = gradient;
+        
+        // I think we do this because if you instantly enable it, there is a short
+        // trail that appears as the ball lerps to the new owners nose
         this.FrameDelayCall(EnableTrail, 5);
+
         if (fill)
         {
             renderer.color = to_;
@@ -127,37 +132,6 @@ public class Ball : MonoBehaviourPunCallbacks
         SetColor(neutralColor, false);
     }
 
-    private Color ColorFromBallCarrier(BallCarrier carrier)
-    {
-        TeamManager carrierTeam = carrier.EnsureComponent<Player>().team;
-        return carrierTeam != null ? carrierTeam.teamColor.color : Color.white;
-    }
-
-    private void AdjustSpriteToCurrentTeam()
-    {
-        // Happens if player shoots a frame after pickup
-        if (Owner == null)
-        {
-            Debug.Assert(LastOwner != null);
-            Color lastOwnerColor = ColorFromBallCarrier(LastOwner);
-            bool fill = goal?.currentTeam != null && goal?.currentTeam.teamColor == lastOwnerColor;
-            SetColor(lastOwnerColor, fill);
-            return;
-        }
-
-        Color currentOwnerColor = ColorFromBallCarrier(Owner);
-
-        if (goal?.currentTeam != null &&
-            goal?.currentTeam.teamColor == currentOwnerColor)
-        {
-            SetColor(currentOwnerColor, true);
-        }
-        else
-        {
-            SetColor(currentOwnerColor, false);
-        }
-    }
-
     private void Start()
     {
         notificationManager = GameManager.instance.notificationManager;
@@ -173,6 +147,12 @@ public class Ball : MonoBehaviourPunCallbacks
         GameManager.instance.notificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
+        GameManager.instance.notificationManager.CallOnMessage(
+            Message.ChargeChanged, HandleChargeChanged
+        );
+        GameManager.instance.notificationManager.CallOnMessage(
+            Message.GoalScored, HandleGoalScore
+        );
     }
 
     private void HandleUnpossesion()
@@ -186,9 +166,36 @@ public class Ball : MonoBehaviourPunCallbacks
         });
     }
 
-    public void HandleGoalScore(Color color)
+    private void HandleChargeChanged()
     {
-        TrailRenderer trailRenderer = GetComponent<TrailRenderer>();
+        // TODO dkonik: This was in the old adjustSpriteToCurrentTeam function...
+        // is it still needed?
+        //// Happens if player shoots a frame after pickup
+        //if (Owner == null)
+        //{
+        //    Debug.Assert(LastOwner != null);
+        //    Color lastOwnerColor = ColorFromBallCarrier(LastOwner);
+        //    bool fill = goal?.currentTeam != null && goal?.currentTeam.teamColor == lastOwnerColor;
+        //    SetColor(lastOwnerColor, fill);
+        //    return;
+        //}
+        TeamManager newTeam = GameManager.instance.PossessionManager.CurrentTeam;
+        if (newTeam == null)
+        {
+            throw new Exception("Would not expect the current team to be null in charge changed");
+        }
+        
+        if (GameManager.instance.PossessionManager.IsCharged)
+        {
+            SetColor(GameManager.instance.PossessionManager.CurrentTeam.teamColor, true);
+        } else
+        {
+            SetColor(GameManager.instance.PossessionManager.CurrentTeam.teamColor, false);
+        }
+    }
+
+    private void HandleGoalScore()
+    {
         trailRenderer.enabled = false;
         Ownable = false;
     }

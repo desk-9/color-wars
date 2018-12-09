@@ -1,4 +1,5 @@
 using UnityEngine;
+using UtilityExtensions;
 
 public class PlayerNullZoneEffect : MonoBehaviour
 {
@@ -9,19 +10,17 @@ public class PlayerNullZoneEffect : MonoBehaviour
 
     private void Start()
     {
-        player = GetComponent<Player>();
-        renderer = GetComponent<SpriteRenderer>();
+        player = this.EnsureComponent<Player>();
+        renderer = this.EnsureComponent<SpriteRenderer>();
         GameManager.instance.notificationManager.CallOnMessage(Message.BallIsPossessed, CheckEffect);
     }
 
     private void CheckEffect()
     {
-        NamedColor color = player?.team?.teamColor;
-        Goal goal = GameManager.instance.goal;
-        if (color != null && renderer != null && player != null
-            && goal != null)
+        NamedColor color = player?.Team?.teamColor;
+        if (color != null)
         {
-            if (goal.currentTeam != player.team && inNullZone)
+            if (GameManager.instance.PossessionManager.CurrentTeam != player.Team && inNullZone)
             {
                 effectEnabled = true;
                 Utility.HSVColor newColor = new Utility.HSVColor(color);
@@ -37,7 +36,7 @@ public class PlayerNullZoneEffect : MonoBehaviour
 
     private void DisableEffect()
     {
-        NamedColor color = player?.team?.teamColor;
+        NamedColor color = player?.Team?.teamColor;
         if (color != null && renderer != null)
         {
             effectEnabled = false;
