@@ -172,10 +172,10 @@ public class TutorialLiveClips : MonoBehaviour
         currentSubclipIndex = 0;
         SceneManager.LoadScene(clipName, LoadSceneMode.Additive);
         SetCurrentSubclip();
-        foreach (TeamManager team in GameManager.instance.teams)
-        {
-            team.ResetScore();
-        }
+        //foreach (TeamManager team in GameManager.instance.teams)
+        //{
+        //    team.ResetScore();
+        //}
     }
 
     private IEnumerator Clips()

@@ -46,7 +46,6 @@ public class GameManager : MonoBehaviour
 
     public Callback OnGameOver = delegate { };
 
-    public BackgroundScroller backgroundScroller;
     private string[] countdownSoundNames = new string[]
     {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
     private float matchLengthSeconds;
@@ -114,23 +113,23 @@ public class GameManager : MonoBehaviour
         {
             scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
         }
-        // if (pushAwayOtherPlayers) {
-        //     nc.CallOnStateStart(State.Posession, BlowBack);
-        // }
+
         meta = SceneStateManager.instance.gameObject;
         if (meta == null)
         {
             Debug.LogWarning("Meta object is null!!!!");
         }
 
-        // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
-        if (!PlayerTutorial.runTutorial && SceneManager.GetActiveScene().name == "court")
-        {
-            notificationManager.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
-            this.FrameDelayCall(
-                () => { foreach (TeamManager team in teams) { team.ResetTeam(); } },
-                3);
-        }
+        // The reason we subscribe to both goal scored and score changed is because when goal scored fires,
+        // the appropriate 
+        notificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChange);
+        notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+    }
+
+    private void HandleGoalScored()
+    {
+        cameraShake.shakeAmount = Settings.GoalShakeAmount;
+        cameraShake.shakeDuration = Settings.GoalShakeDuration;
     }
 
     private IEnumerator EndGameCountdown()
@@ -143,7 +142,7 @@ public class GameManager : MonoBehaviour
         EndGame();
     }
 
-    private TeamManager TopTeam()
+    public TeamManager GetWinningTeam()
     {
         return teams.Aggregate(
             (bestSoFar, next) =>
@@ -158,7 +157,7 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        winner = TopTeam();
+        winner = GetWinningTeam();
         gameOver = true;
         OnGameOver();
     }
@@ -189,7 +188,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ScoreChanged()
+    private void HandleScoreChange()
     {
         if (winCondition == WinCondition.FirstToX || winCondition == WinCondition.TennisRules)
         {
@@ -199,7 +198,7 @@ public class GameManager : MonoBehaviour
 
     private void CheckForWinner()
     {
-        TeamManager topTeam = TopTeam();
+        TeamManager topTeam = GetWinningTeam();
         if (topTeam != null && topTeam.score >= Settings.WinningScore)
         {
             if (winCondition == WinCondition.TennisRules)
@@ -220,45 +219,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public int AmountOneTeamAhead()
-    {
-        // Returns the amount the winning team is ahead by
-        Debug.Assert(teams.Count >= 2);
-        return Mathf.Abs(teams[0].score - teams[1].score);
-    }
-
-    public void GoalScoredForTeam(TeamManager scored)
-    {
-        foreach (TeamManager team in teams)
-        {
-            if ((Color)team.teamColor == scored.teamColor)
-            {
-                team.IncrementScore();
-                TeamManager winningTeam = TopTeam();
-                if (winningTeam != null)
-                {
-                    backgroundScroller.SetBackground(winningTeam.resources);
-                }
-                else
-                {
-                    backgroundScroller.SetBackground(neutralResources);
-                }
-                ScoreChanged();
-            }
-            else
-            {
-                team.MakeInvisibleAfterGoal();
-            }
-        }
-        if (!TutorialLiveClips.runningLiveClips)
-        {
-            UtilityExtensionsContainer.TimeDelayCall(
-                this, ResetGameAfterGoal, pauseAfterGoalScore);
-        }
-        cameraShake.shakeAmount = Settings.GoalShakeAmount;
-        cameraShake.shakeDuration = Settings.GoalShakeDuration;
-    }
-
     private void ResetGameAfterGoal()
     {
         // TODO dkonik: This should just fire the event and everything else should
@@ -268,10 +228,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         notificationManager.NotifyMessage(Message.Reset, this);
-        foreach (TeamManager team in teams)
-        {
-            team.ResetTeam();
-        }
+
         ball.ResetBall(pauseAfterReset);
         notificationManager.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
@@ -283,27 +240,6 @@ public class GameManager : MonoBehaviour
 
         // Reset music.
         StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
-    }
-
-    private void StartGameAfterBallAnimation()
-    {
-        foreach (TeamManager team in teams)
-        {
-            team.BeginMovement();
-        }
-
-
-    }
-    public void GoalScoredOnTeam(TeamManager scoredOn)
-    {
-        foreach (TeamManager team in teams)
-        {
-            if ((Color)team.teamColor != scoredOn.teamColor)
-            {
-                team.IncrementScore();
-                ScoreChanged();
-            }
-        }
     }
 
     public List<Player> GetPlayersWithTeams()

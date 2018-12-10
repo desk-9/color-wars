@@ -80,7 +80,10 @@ public class Goal : MonoBehaviour
         TeamManager currentTeam = GameManager.instance.PossessionManager.CurrentTeam;
         if (currentTeam != null)
         {
-            GameManager.instance.GoalScoredForTeam(currentTeam);
+            GameManager.instance.notificationManager.NotifyMessage(Message.GoalScored, this);
+        } else
+        {
+            Debug.LogError("Team scored goal but PossessionManager.CurrentTeam is null");
         }
     }
 

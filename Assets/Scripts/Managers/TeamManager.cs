@@ -32,22 +32,35 @@ public class TeamManager
         };
         unusedSprites = new Stack<Sprite>(memberSprites);
         unusedYs = new Stack<float>(playerYs);
+
+        GameManager.instance.notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        GameManager.instance.notificationManager.CallOnMessage(Message.Reset, ResetTeam);
+        GameManager.instance.notificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
     }
 
-
-    public void ResetScore()
+    private void HandleGoalScored()
     {
-        score = 0;
-        GameManager.instance.notificationManager.NotifyMessage(Message.ScoreChanged, this);
-        GameManager.instance.scoreDisplayer?.UpdateScores();
+        if (GameManager.instance.PossessionManager.CurrentTeam == this)
+        {
+            // We scored a goal
+            IncrementScore();
+        } else
+        {
+            // Other team scored a goal
+            MakeInvisibleAfterGoal();
+        }
     }
 
-    public void IncrementScore()
+    private void HandleRoundStartCountdownFinished()
+    {
+        ResetTeam();
+        BeginMovement();
+    }
+
+    private void IncrementScore()
     {
         score += 1;
-        GameManager.instance.notificationManager.NotifyMessage(Message.ScoreChanged, this);
-        GameManager.instance.notificationManager.NotifyMessage(Message.GoalScored, this);
-        GameManager.instance.scoreDisplayer?.UpdateScores();
+        GameManager.instance.notificationManager.NotifyMessage(Message.ScoreChanged, this, true);
     }
 
     private float CalculateRotation(Vector2 position)
@@ -127,7 +140,7 @@ public class TeamManager
         }
     }
 
-    public void MakeInvisibleAfterGoal()
+    private void MakeInvisibleAfterGoal()
     {
         foreach (Player teamMember in teamMembers)
         {
@@ -135,7 +148,7 @@ public class TeamManager
         }
     }
 
-    public void ResetTeam()
+    private void ResetTeam()
     {
         foreach (Player teamMember in teamMembers)
         {
@@ -143,7 +156,7 @@ public class TeamManager
         }
     }
 
-    public void BeginMovement()
+    private void BeginMovement()
     {
         foreach (Player teamMember in teamMembers)
         {

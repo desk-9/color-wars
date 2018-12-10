@@ -85,6 +85,14 @@ public class NotificationManager
     private SortedDictionary<State, PlayerCallback> onAnyPlayerExitStateSubscribers_early =
         new SortedDictionary<State, PlayerCallback>();
 
+    // Useful for publishing "system-wide" events that are meant to stick around
+    // for a while/be maintainable. You must add a new event name to the Message
+    // enum, then ensure something is calling NotifyMessage appropriately.
+    private SortedDictionary<Message, EventCallback> onMessage =
+        new SortedDictionary<Message, EventCallback>();
+    private SortedDictionary<Message, EventCallback> onMessage_early =
+    new SortedDictionary<Message, EventCallback>();
+
     public NotificationManager()
     {
         foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
@@ -98,6 +106,7 @@ public class NotificationManager
         foreach (Message event_type in (Message[])System.Enum.GetValues(typeof(Message)))
         {
             onMessage[event_type] = delegate { };
+            onMessage_early[event_type] = delegate { };
         }
     }
 
@@ -138,34 +147,53 @@ public class NotificationManager
         
     }
 
-    // Enum-based callback system
-    //
-    // Useful for publishing "system-wide" events that are meant to stick around
-    // for a while/be maintainable. You must add a new event name to the Message
-    // enum, then ensure something is calling NotifyMessage appropriately.
-    private SortedDictionary<Message, EventCallback> onMessage =
-        new SortedDictionary<Message, EventCallback>();
-
-    public void CallOnMessageWithSender(Message event_type, EventCallback callback)
+    public void CallOnMessageWithSender(Message event_type, EventCallback callback, bool early = false)
     {
-        onMessage[event_type] += callback;
+        if (early)
+        {
+            onMessage_early[event_type] += callback;
+        } else
+        {
+            onMessage[event_type] += callback;
+        }
     }
 
-    public void CallOnMessage(Message event_type, Callback callback)
+    public void CallOnMessage(Message event_type, Callback callback, bool early = false)
     {
-        onMessage[event_type] += (object o) => callback();
+        if (early)
+        {
+            onMessage_early[event_type] += (object o) => callback();
+        }
+        else
+        {
+            onMessage[event_type] += (object o) => callback();
+        }
     }
 
     public void CallOnMessageIf(Message event_type, EventCallback callback,
-                                EventPredicate predicate)
+                                EventPredicate predicate, bool early = false)
     {
-        onMessage[event_type] += (object o) =>
+        if (early)
         {
-            if (predicate(o))
+            onMessage_early[event_type] += (object o) =>
             {
-                callback(o);
-            }
-        };
+                if (predicate(o))
+                {
+                    callback(o);
+                }
+            };
+        }
+        else
+        {
+            onMessage[event_type] += (object o) =>
+            {
+                if (predicate(o))
+                {
+                    callback(o);
+                }
+            };
+        }
+
     }
 
     public void CallOnMessageIfSameObject(Message event_type, Callback callback, GameObject thing)
@@ -173,14 +201,28 @@ public class NotificationManager
         CallOnMessageIf(event_type, o => callback(), o => (o as GameObject) == thing);
     }
 
-    public void NotifyMessage(Message event_type, object sender)
+    public void NotifyMessage(Message event_type, object sender, bool early = false)
     {
-        onMessage[event_type](sender);
+        if (early)
+        {
+            onMessage_early[event_type](sender);
+        }
+        else
+        {
+            onMessage[event_type](sender);
+        }
     }
 
-    public void UnsubscribeMessage(Message event_type, EventCallback callback)
+    public void UnsubscribeMessage(Message event_type, EventCallback callback, bool early = false)
     {
-        onMessage[event_type] -= callback;
+        if (early)
+        {
+            onMessage_early[event_type] -= callback;
+        }
+        else
+        {
+            onMessage[event_type] -= callback;
+        }
     }
 
     // String-based event system

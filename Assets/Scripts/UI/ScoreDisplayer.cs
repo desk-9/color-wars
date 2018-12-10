@@ -18,6 +18,8 @@ public class ScoreDisplayer : MonoBehaviour
         };
         matchTimeText = transform.FindComponent<Text>("MatchTimeText");
         StartCoroutine(InitScores());
+
+        GameManager.instance.notificationManager.CallOnMessage(Message.ScoreChanged, UpdateScores);
     }
 
     private IEnumerator InitScores()
@@ -52,7 +54,7 @@ public class ScoreDisplayer : MonoBehaviour
         }
     }
 
-    public void UpdateScores()
+    private void UpdateScores()
     {
         for (int i = 0; i < teams.Count && i < GameManager.instance.teams.Count; i++)
         {
