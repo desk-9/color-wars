@@ -52,7 +52,7 @@ public class WinDisplay : MonoBehaviour
     {
         FindTextObjects();
 
-        TeamManager winner = GameManager.instance.winner;
+        TeamManager winner = GameManager.instance.Winner;
         if (winner == null)
         {
             winnerText.text = "Tie!";
@@ -60,16 +60,16 @@ public class WinDisplay : MonoBehaviour
         }
         else
         {
-            winnerText.text = string.Format("{0} Team won!", winner.teamColor.name);
-            winnerText.color = winner.teamColor;
+            winnerText.text = string.Format("{0} Team won!", winner.TeamColor.name);
+            winnerText.color = winner.TeamColor;
         }
     }
 
     private void StartCountdown()
     {
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.instance.NotificationManager.CallOnMessage(
             Message.PlayerPressedX, () => SceneStateManager.instance.ReloadScene());
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.instance.NotificationManager.CallOnMessage(
             Message.PlayerPressedY, () => SceneStateManager.instance.Load(Scene.Selection));
         StartCoroutine(ResetCountdown());
     }

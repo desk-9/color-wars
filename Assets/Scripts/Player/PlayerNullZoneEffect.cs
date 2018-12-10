@@ -12,12 +12,12 @@ public class PlayerNullZoneEffect : MonoBehaviour
     {
         player = this.EnsureComponent<Player>();
         renderer = this.EnsureComponent<SpriteRenderer>();
-        GameManager.instance.notificationManager.CallOnMessage(Message.BallIsPossessed, CheckEffect);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.BallIsPossessed, CheckEffect);
     }
 
     private void CheckEffect()
     {
-        NamedColor color = player?.Team?.teamColor;
+        NamedColor color = player?.Team?.TeamColor;
         if (color != null)
         {
             if (GameManager.instance.PossessionManager.CurrentTeam != player.Team && inNullZone)
@@ -36,7 +36,7 @@ public class PlayerNullZoneEffect : MonoBehaviour
 
     private void DisableEffect()
     {
-        NamedColor color = player?.Team?.teamColor;
+        NamedColor color = player?.Team?.TeamColor;
         if (color != null && renderer != null)
         {
             effectEnabled = false;

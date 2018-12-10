@@ -101,7 +101,7 @@ public class TronWall : MonoBehaviour
                                                   (linePoints[1] + linePoints[0]) / 2, transform.rotation);
         ParticleSystem ps = instantiated.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule main = ps.main;
-        main.startColor = team.teamColor.color;
+        main.startColor = team.TeamColor.color;
         ParticleSystem.ShapeModule shape = ps.shape;
         shape.radius = magnitude * .65f;
         ParticleSystem.EmissionModule emission = ps.emission;
@@ -122,13 +122,13 @@ public class TronWall : MonoBehaviour
             // Check if it was your teammate
             Player otherPlayer = other.GetComponent<Player>();
             if (otherPlayer != null &&
-                otherPlayer.Team.teamColor == team.teamColor)
+                otherPlayer.Team.TeamColor == team.TeamColor)
             {
                 return;
             }
 
             creator.HandleWallCollision();
-            GameManager.instance.notificationManager.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
+            GameManager.instance.NotificationManager.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
             PlayDestroyedParticleEffect();
             Destroy(gameObject);
             return;
@@ -149,7 +149,7 @@ public class TronWall : MonoBehaviour
                                     Vector3 otherDirection = player.transform.right;
                                     other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
                                     playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
-                                    GameManager.instance.notificationManager.NotifyMessage(Message.TronWallDestroyed, other);
+                                    GameManager.instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
                                 },
                                      playerStun.StopStunned);
         }

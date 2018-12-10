@@ -16,7 +16,7 @@ public class NullZoneBlink : MonoBehaviour
     {
         renderer = this.EnsureComponent<SpriteRenderer>();
         startingColor = renderer.color;
-        GameManager.instance.notificationManager.CallOnMessage(Message.NullChargePrevention, FlashNullZone);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.NullChargePrevention, FlashNullZone);
     }
 
     private void FlashNullZone()

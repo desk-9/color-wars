@@ -5,10 +5,10 @@ public class TeamManager
 {
     public static bool playerSpritesAlreadySet = false;
     private static Dictionary<int, Sprite> playerSpriteUsages = new Dictionary<int, Sprite>();
-    public int teamNumber { get; set; }
-    public NamedColor teamColor { get; set; }
+    public int TeamNumber { get; set; }
+    public NamedColor TeamColor { get; set; }
 
-    public int score { get; private set; }
+    public int Score { get; private set; }
     public List<Player> teamMembers = new List<Player>();
     public TeamResourceManager resources;
     private List<Sprite> memberSprites;
@@ -24,8 +24,8 @@ public class TeamManager
 
     public TeamManager(int teamNumber, NamedColor teamColor)
     {
-        this.teamNumber = teamNumber;
-        this.teamColor = teamColor;
+        this.TeamNumber = teamNumber;
+        this.TeamColor = teamColor;
         resources = new TeamResourceManager(this);
         memberSprites = new List<Sprite>() {
             resources.mainPlayerSprite, resources.altPlayerSprite
@@ -33,9 +33,9 @@ public class TeamManager
         unusedSprites = new Stack<Sprite>(memberSprites);
         unusedYs = new Stack<float>(playerYs);
 
-        GameManager.instance.notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
-        GameManager.instance.notificationManager.CallOnMessage(Message.Reset, ResetTeam);
-        GameManager.instance.notificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.Reset, ResetTeam);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
     }
 
     private void HandleGoalScored()
@@ -59,8 +59,8 @@ public class TeamManager
 
     private void IncrementScore()
     {
-        score += 1;
-        GameManager.instance.notificationManager.NotifyMessage(Message.ScoreChanged, this, true);
+        Score += 1;
+        GameManager.instance.NotificationManager.NotifyMessage(Message.ScoreChanged, this, true);
     }
 
     private float CalculateRotation(Vector2 position)
@@ -88,11 +88,11 @@ public class TeamManager
     public void AddTeamMember(Player newMember)
     {
         teamMembers.Add(newMember);
-        Utility.Print(teamNumber);
+        Utility.Print(TeamNumber);
         if (unusedYs.Count > 0)
         {
             newMember.initialPosition = new Vector2(
-                                                    playerXs[teamNumberToX[teamNumber - 1]],
+                                                    playerXs[teamNumberToX[TeamNumber - 1]],
                                                     unusedYs.Pop());
             newMember.initialRotation = CalculateRotation(newMember.initialPosition);
         }
@@ -104,7 +104,7 @@ public class TeamManager
         Sprite sprite = unusedSprites.Peek();
         if (renderer != null && sprite != null)
         {
-            renderer.color = teamColor;
+            renderer.color = TeamColor;
             if (!playerSpritesAlreadySet)
             {
                 renderer.sprite = sprite;

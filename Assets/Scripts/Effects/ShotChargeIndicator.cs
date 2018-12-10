@@ -20,6 +20,6 @@ public class ShotChargeIndicator : CircularIndicator
 
     public void MatchTeamColor(TeamManager team)
     {
-        fillColor = team.teamColor.color;
+        fillColor = team.TeamColor.color;
     }
 }

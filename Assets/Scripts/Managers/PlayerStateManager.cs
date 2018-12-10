@@ -186,7 +186,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
-        GameManager.instance.notificationManager.RegisterPlayer(this);
+        GameManager.instance.NotificationManager.RegisterPlayer(this);
     }
 
     public void AttemptPossession(Callback start, Callback stop)

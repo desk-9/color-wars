@@ -20,7 +20,7 @@ public class EndGameText : MonoBehaviour
 
     public void GameOverFunction()
     {
-        endText.color = GameManager.instance.winner.teamColor.color;
+        endText.color = GameManager.instance.Winner.TeamColor.color;
         endText.text = endTextContent;
 
         // Start "Game!" text lerp

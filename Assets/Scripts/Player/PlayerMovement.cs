@@ -238,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
             // TODO dkonik: Ugly to be directly checking the balls color like this
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
-                ball.renderer.color == player.Team.teamColor.color)
+                ball.renderer.color == player.Team.TeamColor.color)
             {
                 aimAssistTarget = goal;
                 stickAngleWhenSnapped = lastDirection;
@@ -272,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (Time.time - startTime > 0.75f)
                 {
-                    GameManager.instance.notificationManager.NotifyStringEvent("MoveTutorial", this.gameObject);
+                    GameManager.instance.NotificationManager.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
             }
             else
@@ -290,7 +290,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        GameManager.instance.notificationManager.CallOnMessageWithSender(
+        GameManager.instance.NotificationManager.CallOnMessageWithSender(
             Message.PlayerStick, playerPair =>
             {
                 Tuple<Vector2, GameObject> pair = playerPair as Tuple<Vector2, GameObject>;

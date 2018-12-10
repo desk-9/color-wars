@@ -48,7 +48,7 @@ public class BallCarrier : MonoBehaviour
         }
         laserGuide = this.GetComponent<LaserGuide>();
 
-        NotificationManager notificationManager = GameManager.instance.notificationManager;
+        NotificationManager notificationManager = GameManager.instance.NotificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
         stateManager.OnStateChange += HandleNewPlayerState;
     }
@@ -69,7 +69,7 @@ public class BallCarrier : MonoBehaviour
         {
             return;
         }
-        TeamManager enemyTeam = GameManager.instance.teams.Find((teamManager) => teamManager != player.Team);
+        TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
         Debug.Assert(enemyTeam != null);
 
         {
@@ -83,7 +83,7 @@ public class BallCarrier : MonoBehaviour
             Gradient grad = new Gradient();
             grad.SetKeys(
                 new GradientColorKey[] {
-                    new GradientColorKey(player.Team.teamColor, 0.0f)
+                    new GradientColorKey(player.Team.TeamColor, 0.0f)
                 },
                 new GradientAlphaKey[] {
                     new GradientAlphaKey(1.0f,  0.0f),

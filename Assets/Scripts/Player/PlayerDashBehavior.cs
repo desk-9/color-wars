@@ -47,9 +47,9 @@ public class PlayerDashBehavior : MonoBehaviour
 
         stateManager.OnStateChange += HandleNewPlayerState;
 
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedDash, DashButtonPressed, this.gameObject);
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedDash, DeshButtonReleased, this.gameObject);
     }
 
@@ -231,7 +231,7 @@ public class PlayerDashBehavior : MonoBehaviour
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
         Player otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
-            (otherPlayer.Team?.teamColor != player.Team?.teamColor
+            (otherPlayer.Team?.TeamColor != player.Team?.TeamColor
              || otherPlayer.Team == null || player.Team == null))
         {
             Ball ball = TrySteal(otherPlayer);

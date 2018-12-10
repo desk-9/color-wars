@@ -15,9 +15,9 @@ public class TeamSelectionCollider : MonoBehaviour
     private void Start()
     {
         countText = GetComponentInChildren<Text>();
-        if (teamNumber < GameManager.instance.teams.Count)
+        if (teamNumber < GameManager.instance.Teams.Count)
         {
-            team = GameManager.instance.teams[teamNumber];
+            team = GameManager.instance.Teams[teamNumber];
         }
         this.FrameDelayCall(() =>
         {
@@ -80,12 +80,12 @@ public class TeamSelectionCollider : MonoBehaviour
                 this.TimeDelayCall(() =>
                 {
                     AudioManager.instance.GoalSwitch.Play();
-                    renderer.color = 0.85f * team.teamColor.color;
+                    renderer.color = 0.85f * team.TeamColor.color;
                 }, 0.3f);
             }
             else
             {
-                renderer.color = team.teamColor;
+                renderer.color = team.TeamColor;
             }
             lastCount = team.teamMembers.Count;
         }

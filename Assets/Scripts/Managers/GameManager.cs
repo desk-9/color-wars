@@ -9,7 +9,7 @@ using UtilityExtensions;
 public class GameManager : MonoBehaviour
 {
     #region Managers
-    public NotificationManager notificationManager;
+    public NotificationManager NotificationManager { get; set; }
     public PossessionManager PossessionManager { get; set; }
     #endregion
 
@@ -19,13 +19,13 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
-    public List<TeamManager> teams { get; set; }
+    public List<TeamManager> Teams { get; set; }
     public TeamResourceManager neutralResources;
     // public GameEndController end_controller {get; set;}
     public float matchLength = 5f;
     
     public bool gameOver { get; private set; } = false;
-    public TeamManager winner { get; private set; } = null;
+    public TeamManager Winner { get; private set; } = null;
     public GameObject meta;
     public float pauseAfterGoalScore = 3f;
     public float pauseAfterReset = 2f;
@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
         {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        notificationManager = new NotificationManager();
+        NotificationManager = new NotificationManager();
         PossessionManager = GetComponent<PossessionManager>();
     }
 
@@ -122,8 +122,8 @@ public class GameManager : MonoBehaviour
 
         // The reason we subscribe to both goal scored and score changed is because when goal scored fires,
         // the appropriate 
-        notificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChange);
-        notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChange);
+        NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
     }
 
     private void HandleGoalScored()
@@ -144,20 +144,20 @@ public class GameManager : MonoBehaviour
 
     public TeamManager GetWinningTeam()
     {
-        return teams.Aggregate(
+        return Teams.Aggregate(
             (bestSoFar, next) =>
             {
-                if (bestSoFar == null || bestSoFar.score == next.score)
+                if (bestSoFar == null || bestSoFar.Score == next.Score)
                 {
                     return null;
                 }
-                return next.score > bestSoFar.score ? next : bestSoFar;
+                return next.Score > bestSoFar.Score ? next : bestSoFar;
             });
     }
 
     private void EndGame()
     {
-        winner = GetWinningTeam();
+        Winner = GetWinningTeam();
         gameOver = true;
         OnGameOver();
     }
@@ -167,24 +167,24 @@ public class GameManager : MonoBehaviour
     {
         if (GameManager.playerTeamsAlreadySelected)
         {
-            return teams[playerTeamAssignments[caller.playerNumber]];
+            return Teams[playerTeamAssignments[caller.playerNumber]];
         }
         else if (GameManager.cheatForcePlayerAssignment)
         {
-            return teams[caller.playerNumber % teams.Count];
+            return Teams[caller.playerNumber % Teams.Count];
         }
         return null;
     }
 
     private void InitializeTeams()
     {
-        teams = new List<TeamManager>();
+        Teams = new List<TeamManager>();
         neutralResources = new TeamResourceManager(null);
 
         for (int i = 0; i < teamColors.Length; ++i)
         {
             // Add 1 so we get Team 1 and Team 2
-            teams.Add(new TeamManager(i + 1, teamColors[i]));
+            Teams.Add(new TeamManager(i + 1, teamColors[i]));
         }
     }
 
@@ -199,15 +199,15 @@ public class GameManager : MonoBehaviour
     private void CheckForWinner()
     {
         TeamManager topTeam = GetWinningTeam();
-        if (topTeam != null && topTeam.score >= Settings.WinningScore)
+        if (topTeam != null && topTeam.Score >= Settings.WinningScore)
         {
             if (winCondition == WinCondition.TennisRules)
             {
                 int secondBestScore =
-                    (from team in teams
+                    (from team in Teams
                      where team != topTeam
-                     select team.score).Max();
-                if (Mathf.Abs(secondBestScore - topTeam.score) >= Settings.RequiredWinMargin)
+                     select team.Score).Max();
+                if (Mathf.Abs(secondBestScore - topTeam.Score) >= Settings.RequiredWinMargin)
                 {
                     EndGame();
                 }
@@ -227,10 +227,10 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        notificationManager.NotifyMessage(Message.Reset, this);
+        NotificationManager.NotifyMessage(Message.Reset, this);
 
         ball.ResetBall(pauseAfterReset);
-        notificationManager.NotifyMessage(Message.StartCountdown, this);
+        NotificationManager.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
         foreach (TronWall wall in GameObject.FindObjectsOfType<TronWall>())
         {
@@ -245,7 +245,7 @@ public class GameManager : MonoBehaviour
     public List<Player> GetPlayersWithTeams()
     {
         List<Player> result = new List<Player>();
-        foreach (TeamManager team in teams)
+        foreach (TeamManager team in Teams)
         {
             result.AddRange(team.teamMembers);
         }
@@ -300,7 +300,7 @@ public class GameManager : MonoBehaviour
         }
         // Ensure slowMo doesn't stop until ALL balls are dropped
         slowMoCount += 1;
-        notificationManager.NotifyMessage(Message.SlowMoEntered, this);
+        NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
         if (!TutorialLiveClips.runningLiveClips)
         {
             StartCoroutine(PitchShifter(Settings.SlowedPitch, Settings.PitchShiftTime));
@@ -327,7 +327,7 @@ public class GameManager : MonoBehaviour
             {
                 StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
             }
-            notificationManager.NotifyMessage(Message.SlowMoExited, this);
+            NotificationManager.NotifyMessage(Message.SlowMoExited, this);
         }
     }
 

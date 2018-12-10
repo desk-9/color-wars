@@ -47,7 +47,7 @@ public class Player : MonoBehaviourPunCallbacks
         ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
         explosionMain.startLifetime = GameManager.instance.pauseAfterGoalScore;
-        explosionMain.startColor = Team.teamColor.color;
+        explosionMain.startColor = Team.TeamColor.color;
         explosionParticleSystem.Play();
     }
 
@@ -114,7 +114,7 @@ public class Player : MonoBehaviourPunCallbacks
 
         if (teamOverride >= 0)
         {
-            SetTeam(GameManager.instance.teams[teamOverride]);
+            SetTeam(GameManager.instance.Teams[teamOverride]);
         }
         else if ((GameManager.playerTeamsAlreadySelected || GameManager.cheatForcePlayerAssignment)
             && playerNumber >= 0)

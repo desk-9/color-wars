@@ -134,7 +134,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        notificationManager = GameManager.instance.notificationManager;
+        notificationManager = GameManager.instance.NotificationManager;
         start_location = transform.position;
         trailRenderer = this.EnsureComponent<TrailRenderer>();
         renderer = GetComponentInChildren<SpriteRenderer>();
@@ -144,13 +144,13 @@ public class Ball : MonoBehaviourPunCallbacks
         ballFill = this.GetComponentInChildren<BallFillColor>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
 
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.instance.NotificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.instance.NotificationManager.CallOnMessage(
             Message.ChargeChanged, HandleChargeChanged
         );
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.instance.NotificationManager.CallOnMessage(
             Message.GoalScored, HandleGoalScore
         );
     }
@@ -187,10 +187,10 @@ public class Ball : MonoBehaviourPunCallbacks
         
         if (GameManager.instance.PossessionManager.IsCharged)
         {
-            SetColor(GameManager.instance.PossessionManager.CurrentTeam.teamColor, true);
+            SetColor(GameManager.instance.PossessionManager.CurrentTeam.TeamColor, true);
         } else
         {
-            SetColor(GameManager.instance.PossessionManager.CurrentTeam.teamColor, false);
+            SetColor(GameManager.instance.PossessionManager.CurrentTeam.TeamColor, false);
         }
     }
 

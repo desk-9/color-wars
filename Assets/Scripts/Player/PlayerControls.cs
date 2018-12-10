@@ -45,7 +45,7 @@ public class PlayerControls : MonoBehaviourPunCallbacks
     private void GivenInputDevice(IC.InputDevice device)
     {
         inputDevice = device;
-        GameManager.instance.notificationManager.NotifyMessage(Message.InputDeviceAssigned, gameObject);
+        GameManager.instance.NotificationManager.NotifyMessage(Message.InputDeviceAssigned, gameObject);
         PlayerPuppet puppet = GetComponent<PlayerPuppet>();
         if (puppet == null || !puppet.doPuppeting)
         {
@@ -137,11 +137,11 @@ public class PlayerControls : MonoBehaviourPunCallbacks
     {
         if (pressed && pressedEvent.HasValue)
         {
-            GameManager.instance.notificationManager.NotifyMessage(pressedEvent.Value, player);
+            GameManager.instance.NotificationManager.NotifyMessage(pressedEvent.Value, player);
         }
         if (released && releasedEvent.HasValue)
         {
-            GameManager.instance.notificationManager.NotifyMessage(releasedEvent.Value, player);
+            GameManager.instance.NotificationManager.NotifyMessage(releasedEvent.Value, player);
         }
     }
 
@@ -153,7 +153,7 @@ public class PlayerControls : MonoBehaviourPunCallbacks
         {
             return;
         }
-        GameManager.instance.notificationManager.NotifyMessage(
+        GameManager.instance.NotificationManager.NotifyMessage(
             Message.PlayerStick,
             Tuple.Create(new Vector2(stickX, stickY), player));
 

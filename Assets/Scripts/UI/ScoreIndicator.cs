@@ -22,9 +22,9 @@ public class ScoreIndicator : MonoBehaviour
     {
 
         // Find team
-        foreach (TeamManager candidateTeam in GameManager.instance.teams)
+        foreach (TeamManager candidateTeam in GameManager.instance.Teams)
         {
-            if (candidateTeam.teamColor.name == teamName)
+            if (candidateTeam.TeamColor.name == teamName)
             {
                 team = candidateTeam;
                 break;
@@ -37,7 +37,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Set last lerp color to the team color
-        stops[stops.Count - 1] = team.teamColor.color;
+        stops[stops.Count - 1] = team.TeamColor.color;
 
         // Find references to child indicator GameObjects
         foreach (Transform childIndicator in
@@ -47,7 +47,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Update score indicator when a goal is scored
-        GameManager.instance.notificationManager.CallOnMessageWithSender(
+        GameManager.instance.NotificationManager.CallOnMessageWithSender(
             Message.GoalScored,
             (object scoringTeam) =>
             {
@@ -58,11 +58,11 @@ public class ScoreIndicator : MonoBehaviour
             });
 
         // Reset score indicator when game is restarted
-        GameManager.instance.notificationManager.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
 
         foreach (GameObject pointIndicator in pointIndicators)
         {
-            pointIndicator.GetComponent<SpriteRenderer>().color = team.teamColor.color;
+            pointIndicator.GetComponent<SpriteRenderer>().color = team.TeamColor.color;
         }
     }
 
@@ -71,10 +71,10 @@ public class ScoreIndicator : MonoBehaviour
         for (int i = 0; i < pointIndicators.Count; ++i)
         {
             SpriteRenderer renderer = pointIndicators[i].GetComponent<SpriteRenderer>();
-            renderer.sprite = (i < team.score) ?
+            renderer.sprite = (i < team.Score) ?
                 team.resources.scoreIndicatorFullSprite :
                 team.resources.scoreIndicatorEmptySprite;
-            renderer.color = team.teamColor.color;
+            renderer.color = team.TeamColor.color;
         }
     }
 
@@ -82,7 +82,7 @@ public class ScoreIndicator : MonoBehaviour
     {
         // Scores are 1-indexed, pointIndicators are 0-indexed
         // ASSUMPTION: this function is invoked *after* team.score has been updated
-        int nextPoint = team.score - 1;
+        int nextPoint = team.Score - 1;
         GameObject pointIndicator = pointIndicators[nextPoint];
         SpriteRenderer renderer = pointIndicator.GetComponent<SpriteRenderer>();
 
@@ -102,7 +102,7 @@ public class ScoreIndicator : MonoBehaviour
             pointIndicator.gameObject.transform.rotation);
         ParticleSystem scoreGoalParticleSystem = scoreGoalEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule scoreGoalMain = scoreGoalParticleSystem.main;
-        scoreGoalMain.startColor = team.teamColor.color;
+        scoreGoalMain.startColor = team.TeamColor.color;
         scoreGoalParticleSystem.Play();
         this.TimeDelayCall(() => Destroy(scoreGoalEffect), scoreGoalMain.duration);
     }

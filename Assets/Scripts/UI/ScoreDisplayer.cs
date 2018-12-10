@@ -19,7 +19,7 @@ public class ScoreDisplayer : MonoBehaviour
         matchTimeText = transform.FindComponent<Text>("MatchTimeText");
         StartCoroutine(InitScores());
 
-        GameManager.instance.notificationManager.CallOnMessage(Message.ScoreChanged, UpdateScores);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateScores);
     }
 
     private IEnumerator InitScores()
@@ -56,12 +56,12 @@ public class ScoreDisplayer : MonoBehaviour
 
     private void UpdateScores()
     {
-        for (int i = 0; i < teams.Count && i < GameManager.instance.teams.Count; i++)
+        for (int i = 0; i < teams.Count && i < GameManager.instance.Teams.Count; i++)
         {
             Text text = teams[i];
-            TeamManager team = GameManager.instance.teams[i];
-            text.text = string.Format("{0} Team: {1}", team.teamColor.name, team.score);
-            text.color = team.teamColor;
+            TeamManager team = GameManager.instance.Teams[i];
+            text.text = string.Format("{0} Team: {1}", team.TeamColor.name, team.Score);
+            text.color = team.TeamColor;
         }
     }
 }

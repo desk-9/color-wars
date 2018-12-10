@@ -38,9 +38,9 @@ public class PlayerTronMechanic : MonoBehaviour
         player = this.EnsureComponent<Player>();
         playerStun = this.EnsureComponent<PlayerStun>();
         velocityWhileLaying = playerMovement.movementSpeed * layingSpeedMovementSpeedRatio;
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedWall, WallPressed, gameObject);
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedWall, WallEnd, gameObject);
 
     }
