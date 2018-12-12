@@ -35,7 +35,7 @@ public enum State : byte
     Stun = 7,
     FrozenAfterGoal = 8,
     LayTronWall = 9,
-    Steal_micro = 10, // Transitions to possession
+    Possession_micro = 10, // Transitions to possession
     StartOfMatch = 11,
     ControllerDisconnected = 12,
 }
@@ -80,7 +80,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         { State.Stun,              new StunInformation() },
         { State.FrozenAfterGoal,   null },
         { State.LayTronWall,       null },
-        { State.Steal_micro,       new StealBallInformation() },
+        { State.Possession_micro,  new PossessBallInformation() },
     };
 
     /// <summary>

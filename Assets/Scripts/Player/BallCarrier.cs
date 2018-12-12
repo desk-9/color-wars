@@ -63,7 +63,7 @@ public class BallCarrier : MonoBehaviour
         stateManager.AttemptPossession(() => StartCarryingBall(), DropBall);
     }
 
-        private void BlowBackEnemyPlayers()
+    private void BlowBackEnemyPlayers()
     {
         if (player.Team == null)
         {
@@ -163,7 +163,7 @@ public class BallCarrier : MonoBehaviour
         isCoolingDown = false;
     }
 
-    public void DropBall()
+    private void DropBall()
     {
         if (Ball != null)
         {
