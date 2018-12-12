@@ -126,22 +126,20 @@ public class Player : MonoBehaviourPunCallbacks
                 SetTeam(Team);
             }
         }
-        if (isNormalPlayer)
-        {
-            // initialPosition = transform.position;
-            // initalRotation = rb2d.rotation;
-        }
+
+        GameManager.instance.NotificationManager.CallOnMessage(Message.PlayerAssignedPlayerNumber, HandlePlayerNumberAssigned);
         GameManager.instance.players.Add(this);
-        // Debug.LogFormat("Assigned player {0} to team {1}", name, team.teamNumber);
     }
 
-    public void HandleOwnership() {
-        // Deal with state changes due to being owned (or not owned) by the
-        // local network player
-        if (NetworkPlayerManager.instance.LocalOwnsPlayer(playerNumber))
+    /// <summary>
+    /// Deal with state changes due to being owned (or not owned) by the
+    /// local network player
+    /// </summary>
+    public void HandlePlayerNumberAssigned()
+    {
+        if (NetworkPlayerManager.Instance.LocalOwnsPlayer(playerNumber))
         {
-            var view = GetComponent<PhotonView>();
-            view.TransferOwnership(PhotonNetwork.LocalPlayer);
+            photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
             var controls = GetComponent<PlayerControls>();
             controls.AskForDevice();
         }

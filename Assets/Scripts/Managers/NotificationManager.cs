@@ -66,6 +66,8 @@ public enum Message
 
     ChargeChanged,
     Reset,
+
+    PlayerAssignedPlayerNumber,
 };
 
 public class NotificationManager

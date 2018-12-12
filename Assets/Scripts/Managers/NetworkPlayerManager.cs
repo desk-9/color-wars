@@ -7,24 +7,30 @@ using Photon.Realtime;
 using UtilityExtensions;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
+/// <summary>
+/// This class handles storing, setting, and communicating the ownership of
+/// Player objects by Photon network Players.
+/// </summary>
 public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
 {
-    // This class handles storing, setting, and communicating the ownership of
-    // Player objects by Photon network Players.
     public static string FREE_PLAYERS_PROPERTY_KEY = "__FreePlayersPropertiesKey__";
     public static string PLAYER_OWNERS_PROPERTIES_KEY = "__PlayerOwnersPropertiesKey__";
-    public static NetworkPlayerManager instance;
+    public static NetworkPlayerManager Instance { get; set; }
+
     // This is currently just set as a literal, but will almost certainly
     // change, especially as we add a lobby system.
     List<int> freePlayers = new List<int> { 1, 2, 3, 4 };
-    Dictionary<int, int> playerOwners = new Dictionary<int, int>();
-    PhotonView photonView;
+
+    /// <summary>
+    /// Maps player number to photon actorID
+    /// </summary>
+    Dictionary<int, int> playerNumberToActorId = new Dictionary<int, int>();
 
     void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
         }
         else
         {
@@ -32,23 +38,12 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Ensures the free players is populated by the first player to enter
+    /// the room
+    /// </summary>
+    void EnsureRoomPropertiesExist()
     {
-        Utility.Print("Mapping manager", LogLevel.Error);
-        photonView = GetComponent<PhotonView>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    void FirstLoad()
-    {
-        // Ensures the free players is populated by the first player to enter
-        // the room
         if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(FREE_PLAYERS_PROPERTY_KEY))
         {
             var outData = new Hashtable();
@@ -58,92 +53,108 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         }
     }
 
-    void LoadData()
+    /// <summary>
+    /// Load the networked property data to the local variables.
+    /// </summary>
+    void LoadRoomProperties()
     {
-        // Load the networked property data to the local variables.
         freePlayers = new List<int>(
             PhotonNetwork.CurrentRoom.CustomProperties[FREE_PLAYERS_PROPERTY_KEY] as int[]);
-        playerOwners = PhotonNetwork.CurrentRoom.CustomProperties[PLAYER_OWNERS_PROPERTIES_KEY] as Dictionary<int, int>;
+        playerNumberToActorId = PhotonNetwork.CurrentRoom.CustomProperties[PLAYER_OWNERS_PROPERTIES_KEY] as Dictionary<int, int>;
     }
 
-    void SetData()
+    /// <summary>
+    /// Push the values of the local variables to the networked properties
+    /// </summary>
+    void SetRoomPropertiesFromLocalData()
     {
-        // Push the values of the local variables to the networked properties
         Hashtable outData = new Hashtable {
             {FREE_PLAYERS_PROPERTY_KEY, freePlayers.ToArray()},
-            {PLAYER_OWNERS_PROPERTIES_KEY, playerOwners}
+            {PLAYER_OWNERS_PROPERTIES_KEY, playerNumberToActorId}
         };
         PhotonNetwork.CurrentRoom.SetCustomProperties(outData);
     }
 
+    /// <summary>
+    /// Takes possession of the next available player object for the local
+    /// network player.
+    /// </summary>
     public override void OnJoinedRoom()
     {
-        // Takes possession of the next available player object for the local
-        // network player.
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 1) {
-            FirstLoad();
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            EnsureRoomPropertiesExist();
         }
         OwnNextPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
+    // TODO dkonik: I don't think this will work. I think this is *after* a player
+    // left the room. I think what will have to happen is the other players will have
+    // to listen for when a user leaves the room and someone (probably master) will ahve to 
+    // do this cleanup
     public override void OnLeftRoom()
     {
         ReleaseAllPlayers(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
+    /// <summary>
+    /// Returns whether or not the specified player number is the locally controlled
+    /// </summary>
+    /// <param name="playerNumber"></param>
+    /// <returns></returns>
     public bool LocalOwnsPlayer(int playerNumber)
     {
-        // Whether the local network player owns a certain player object number
-        if (playerOwners.ContainsKey(playerNumber))
+        if (playerNumberToActorId.ContainsKey(playerNumber))
         {
-            return playerOwners[playerNumber] == PhotonNetwork.LocalPlayer.ActorNumber;
+            return playerNumberToActorId[playerNumber] == PhotonNetwork.LocalPlayer.ActorNumber;
         }
         return false;
     }
 
+    /// <summary>
+    /// Takes control of some free player object for the given actor ID
+    /// (networked player ID), and sync state change to other networked
+    /// players and player objects.
+    /// </summary>
+    /// <param name="actorId"></param>
     void OwnNextPlayer(int actorId)
     {
-        // Takes control of some free player object for th given actor ID
-        // (networked player ID), and sync state change to other networked
-        // players and player objects.
-        LoadData();
+        LoadRoomProperties();
         int nextPlayer = freePlayers.Last();
-        freePlayers.Remove(freePlayers.Count);
-        playerOwners.Add(nextPlayer, actorId);
-        SetData();
+        freePlayers.Remove(nextPlayer);
+        playerNumberToActorId.Add(nextPlayer, actorId);
+        SetRoomPropertiesFromLocalData();
         foreach (var player in GameManager.instance.players)
         {
-            player.HandleOwnership();
+            player.HandlePlayerNumberAssigned();
         }
-
+        GameManager.instance.NotificationManager.NotifyMessage(Message.PlayerAssignedPlayerNumber, this);
     }
 
+    /// <summary>
+    /// Releases all player objects owned by the given network ID.
+    /// </summary>
+    /// <param name="actorId"></param>
     void ReleaseAllPlayers(int actorId)
     {
-        // Releases all player objects owned by the given network ID.
-        LoadData();
-        var nowFree = playerOwners.Where(pair => pair.Value == actorId)
+        LoadRoomProperties();
+        var nowFree = playerNumberToActorId.Where(pair => pair.Value == actorId)
             .Select(pair => pair.Key).ToList();
         foreach (int playerId in nowFree)
         {
             ReleasePlayer_Internal(playerId);
         }
-        SetData();
+        SetRoomPropertiesFromLocalData();
 
     }
 
-    void ReleasePlayer(int playerId)
-    {
-        // Releases a single player object from whatever actor owns it.
-        LoadData();
-        ReleasePlayer_Internal(playerId);
-        SetData();
-    }
-
+    /// <summary>
+    /// Internal helper used by ReleasePlayer
+    /// </summary>
+    /// <param name="playerId"></param>
     void ReleasePlayer_Internal(int playerId)
     {
-        // Internal helper used by ReleasePlayer
         freePlayers.Add(playerId);
-        playerOwners.Remove(playerId);
+        playerNumberToActorId.Remove(playerId);
     }
 }
