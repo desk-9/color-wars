@@ -59,7 +59,7 @@ public class Ball : MonoBehaviourPunCallbacks
             notificationManager.NotifyMessage(message, gameObject);
             // TODO dkonik: You need to stop listening to this event at some point idiot.
             // Also, maybe this should just be private
-            notificationManager.CallOnStateStart(State.ShootBall_micro, HandlePlayerShotBall);
+            notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
             if (!this.isActiveAndEnabled)
             {
                 return;
@@ -74,12 +74,20 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void HandlePlayerShotBall(Player player)
     {
+        NormalMovementInformation information = player.StateManager.CurrentStateInformation as NormalMovementInformation;
+
+        // If we didn't shoot the ball, just return
+        if (!information.ShotBall)
+        {
+            return;
+        }
+
         AudioManager.instance.ShootBallSound.Play(.5f);
 
         // TODO anyone: This is where we could do something like handling turning off of the 
         // photon transform view component, since we know which way the ball will be heading for
         // a little bit.
-        ShootBallInformation information = player.StateManager.CurrentStateInformation as ShootBallInformation;
+       
 
         // What we should (could?) do here is interpolate, based off of information.EventTimeStamp,
         // the current position of the ball

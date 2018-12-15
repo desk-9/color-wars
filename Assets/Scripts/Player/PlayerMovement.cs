@@ -49,7 +49,6 @@ public class PlayerMovement : MonoBehaviour
 
     public float movementSpeed;
     public float rotationSpeed = 1080;
-    public bool freezeRotation = false;
     public float maxAwayFromBallAngle = 10f;
 
     public bool instantRotation { get; set; } = true;
@@ -132,10 +131,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void RotatePlayer()
     {
-        if (freezeRotation)
-        {
-            return;
-        }
         Vector2 direction = lastDirection;
         if (direction != Vector2.zero)
         {

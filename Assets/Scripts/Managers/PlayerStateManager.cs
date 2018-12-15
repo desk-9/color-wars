@@ -31,7 +31,6 @@ public enum State : byte
     Dash = 3, 
     Possession = 4,
     ChargeShot = 5,
-    ShootBall_micro = 6, // Transitions to normal
     Stun = 7,
     FrozenAfterGoal = 8,
     LayTronWall = 9,
@@ -68,18 +67,18 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// Dictionary of information objects that states can use. Not every state needs this,
     /// so for any given state this may be null
     /// </summary>
-    private Dictionary<State, PlayerStateInformation> stateInfos = new Dictionary<State, PlayerStateInformation>()
+    private Dictionary<State, StateTransitionInformation> stateInfos = new Dictionary<State, StateTransitionInformation>()
     {
         { State.StartupState,      null },
-        { State.NormalMovement,    null },
+        { State.NormalMovement,    new NormalMovementInformation() },
         { State.ChargeDash,        null },
         { State.Dash,              new DashInformation() },
         { State.Possession,        null },
         { State.ChargeShot,        null },
-        { State.ShootBall_micro,   new ShootBallInformation() },
         { State.Stun,              new StunInformation() },
         { State.FrozenAfterGoal,   null },
         { State.LayTronWall,       null },
+        // TODO dkonik: Get rid of this micro state
         { State.Possession_micro,  new PossessBallInformation() },
     };
 
@@ -87,7 +86,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// Current state information.
     /// NOTE: This may be null if the state does not have any relevant information
     /// </summary>
-    public PlayerStateInformation CurrentStateInformation => stateInfos[CurrentState];
+    public StateTransitionInformation CurrentStateInformation => stateInfos[CurrentState];
 
     /// <summary>
     /// To reduce garbage collection and not allocate everytime a state change is made, we reuse the same
@@ -96,7 +95,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// </summary>
     /// <param name="state"></param>
     /// <returns></returns>
-    public T GetStateInformationForWriting<T>(State state) where T : PlayerStateInformation
+    public T GetStateInformationForWriting<T>(State state) where T : StateTransitionInformation
     {
         if (state == CurrentState)
         {
@@ -110,11 +109,27 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 
     /// <summary>
     /// Networked transition to state. 
-    /// NOTE: If this state requires PlayerStateTransitionInformation, it should be set before calling this
+    /// NOTE: If this state requires PlayerStateTransitionInformation, it should be filled in before calling
+    /// this and passed in as the second argument (just for error checking). Except for NormalMovement.
+    /// It is special because it is the most commonly transitioned to state and it would be tedious to
+    /// always have to pass in the infromation with it
     /// </summary>
     /// <param name="state"></param>
-    public void TransitionToState(State state)
+    public void TransitionToState(State state, StateTransitionInformation transitionInfo = null)
     {
+        // Some error checking. If this is a state which contains an information object
+        if (stateInfos[state] != null)
+        {
+            // But we didn't pass one in (exclude NormalMovement, see thefunction comment)
+            if (transitionInfo == null && state != State.NormalMovement)
+            {
+                Debug.LogError("Called TransitionToState but did not provide the transition information");
+            } else if (stateInfos[state] != transitionInfo)
+            {
+                Debug.LogError("Not reusing the pre allocated state transition information. You should not be calling new. Call GetStateInformationForWriting");
+            }
+        }
+
         State oldState = CurrentState;
         CurrentState = state;
 

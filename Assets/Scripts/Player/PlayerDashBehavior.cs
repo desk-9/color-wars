@@ -126,7 +126,7 @@ public class PlayerDashBehavior : MonoBehaviour
             info.StartPosition = playerMovement.CurrentPosition;
             info.Direction = (Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
             info.Strength = chargeAmount;
-            stateManager.TransitionToState(State.Dash);
+            stateManager.TransitionToState(State.Dash, info);
         }
     }
 

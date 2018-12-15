@@ -6,7 +6,7 @@ using UnityEngine;
 /// Base class that all player states inherit from that provides an "interface" way to
 /// serialize and deserialize
 /// </summary>
-public abstract class PlayerStateInformation
+public abstract class StateTransitionInformation
 {
     /// <summary>
     /// This is the photon time that the original event happened
@@ -24,7 +24,7 @@ public abstract class PlayerStateInformation
     }
 }
 
-public class DashInformation : PlayerStateInformation
+public class DashInformation : StateTransitionInformation
 {
     public Vector2 StartPosition { get; set; }
     public Vector2 Direction { get; set; }
@@ -47,7 +47,7 @@ public class DashInformation : PlayerStateInformation
     }
 }
 
-public class PossessBallInformation : PlayerStateInformation
+public class PossessBallInformation : StateTransitionInformation
 {
     public class BlowBackInformation
     {
@@ -125,28 +125,37 @@ public class PossessBallInformation : PlayerStateInformation
     }
 }
 
-public class ShootBallInformation : PlayerStateInformation
+public class NormalMovementInformation : StateTransitionInformation
 {
+    public bool ShotBall { get; set; } = false;
     public Vector2 BallStartPosition { get; set; }
     public Vector2 Direction { get; set; }
     public float Strength { get; set; }
 
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
-        BallStartPosition = (Vector3)stream.ReceiveNext();
-        Direction = (Vector3)stream.ReceiveNext();
-        Strength = (float)stream.ReceiveNext();
+        ShotBall = (bool)stream.ReceiveNext();
+        if (ShotBall)
+        {
+            BallStartPosition = (Vector3)stream.ReceiveNext();
+            Direction = (Vector3)stream.ReceiveNext();
+            Strength = (float)stream.ReceiveNext();
+        }
     }
 
     public override void Serialize(PhotonStream stream, PhotonMessageInfo info)
     {
-        stream.SendNext(BallStartPosition);
-        stream.SendNext(Direction);
-        stream.SendNext(Strength);
+        stream.SendNext(ShotBall);
+        if (ShotBall)
+        {
+            stream.SendNext(BallStartPosition);
+            stream.SendNext(Direction);
+            stream.SendNext(Strength);
+        }
     }
 }
 
-public class StunInformation : PlayerStateInformation
+public class StunInformation : StateTransitionInformation
 {
     public Vector2 StartPosition { get; set; }
     public Vector2 Direction { get; set; }
