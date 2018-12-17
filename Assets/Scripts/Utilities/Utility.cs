@@ -331,46 +331,6 @@ public static class Utility
         }
     }
 
-    public static void BlowbackPlayers(Vector2 center, float radius,
-                                       float blowback_strength,
-                                       bool blowback_is_velocity = false,
-                                       HashSet<GameObject> excludes = null,
-                                       float? stunTime = null)
-    {
-        GameObjectCallback stunPlayer = (GameObject thing) =>
-        {
-            PlayerStateManager player = thing.GetComponent<PlayerStateManager>();
-            PlayerStun stun = thing.GetComponent<PlayerStun>();
-            if (player != null && stun != null)
-            {
-                player.AttemptStun(
-                    () => stun.StartStun(null, stunTime), stun.StopStunned);
-            }
-        };
-        Blowback(center, radius, blowback_strength, blowback_is_velocity,
-                 LayerMask.GetMask("Player"), stunPlayer, excludes);
-    }
-
-    public static void BlowbackFromPlayer(GameObject player, float radius,
-                                          float blowback_strength,
-                                          bool blowback_is_velocity = false,
-                                          float? stunTime = null)
-    {
-
-        HashSet<GameObject> ignoreSet = new HashSet<GameObject>() { player.gameObject };
-        if (player.GetComponent<Player>().Team != null)
-        {
-            ignoreSet = new HashSet<GameObject>(
-                player.GetComponent<Player>().Team.teamMembers.Select(p => p.gameObject)
-                );
-        }
-        BlowbackPlayers(player.transform.position, radius,
-                        blowback_strength, blowback_is_velocity,
-                        ignoreSet,
-                        stunTime);
-    }
-
-
     public static void Print(params object[] args)
     {
         LogLevel logLevel = LogLevel.Normal;

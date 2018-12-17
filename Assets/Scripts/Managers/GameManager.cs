@@ -33,7 +33,12 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameSettings gameSettings;
-    public GameSettings Settings { get { return gameSettings; } }
+    public static GameSettings Settings { get
+        {
+            instance.ThrowIfNull("Instance was null when trying to acquire GameSettings");
+            return instance.gameSettings;
+        }
+    }
 
     public GameObject blowbackPrefab;
 
@@ -95,14 +100,6 @@ public class GameManager : MonoBehaviour
         }
         NotificationManager = new NotificationManager();
         PossessionManager = GetComponent<PossessionManager>();
-    }
-
-    private void BlowBack(Player player)
-    {
-        // TODO dkonik: This shouldn't be instantiated every time, it should be reused
-        Utility.BlowbackFromPlayer(player.gameObject, Settings.BlowbackRadius, Settings.BlowbackSpeed, false,
-                                   Settings.BlowbackStunTime);
-        GameObject.Instantiate(blowbackPrefab, player.transform.position, player.transform.rotation);
     }
 
     private void Start()

@@ -23,6 +23,21 @@ public class Player : MonoBehaviourPunCallbacks
     private Rigidbody2D rb2d;
     private new Collider2D collider;
     private GameObject explosionEffect;
+    private PlayerMovement playerMovement;
+
+    public PlayerMovement PlayerMovement
+    {
+        get
+        {
+            // Lazy load
+            if (playerMovement == null)
+            {
+                playerMovement = GetComponent<PlayerMovement>()
+                    .ThrowIfNull("Player could not find PlayerMovement component");
+            }
+            return playerMovement;
+        }
+    }
 
     public void CallAsSoonAsTeamAssigned(OnTeamAssignedCallback callback)
     {

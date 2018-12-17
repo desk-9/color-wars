@@ -4,6 +4,13 @@ using UtilityExtensions;
 
 public class BallCarrier : MonoBehaviour
 {
+    [SerializeField]
+	private float blowbackRadius = 15f;
+    [SerializeField]
+	private float blowbackForce = 100f;
+    [SerializeField]
+	private float blowbackStunTime = 0.2f;
+
     public GameObject blowbackEffectPrefab;
     public float coolDownTime = .1f;
     public Ball Ball { private set; get; }
@@ -12,9 +19,6 @@ public class BallCarrier : MonoBehaviour
     public bool slowMoOnCarry = true;
     
     public float timeCarryStarted { get; private set; }
-    public float blowbackRadius = 3f;
-    public float blowbackForce = 5f;
-    public float blowbackStunTime = 0.1f;
     private float ballOffsetFromCenter = .5f;
     private PlayerMovement playerMovement;
     private PlayerStateManager stateManager;
@@ -62,6 +66,38 @@ public class BallCarrier : MonoBehaviour
         // TODO dkonik: Finish this up, got distracted
         stateManager.AttemptPossession(() => StartCarryingBall(), DropBall);
     }
+    private void PossessBall()
+    {
+        // Get blown back players info
+        TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
+        Debug.Assert(enemyTeam != null);
+
+        foreach (Player enemyPlayer in enemyTeam.teamMembers)
+        {
+            Vector3 blowBackVector = enemyPlayer.transform.position - transform.position;
+
+            if (blowBackVector.magnitude < blowbackRadius &&
+                enemyPlayer.StateManager.IsInState(State.NormalMovement, State.LayTronWall, State.Dash))
+            {
+                enemyPlayer.StateManager.StunNetworked(
+                    enemyPlayer.PlayerMovement.CurrentPosition,
+                    blowBackVector.normalized * blowbackForce,
+                    blowbackStunTime
+                    );
+                
+                // TODO remove me: Just left this here for reference
+                //PlayerStun otherStun = enemyPlayer.GetComponent<PlayerStun>();
+                //PlayerStateManager otherStateManager = enemyPlayer.GetComponent<PlayerStateManager>();
+                //if (otherStun != null && otherStateManager != null)
+                //{
+                //    otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
+                //}
+            }
+        }
+
+        stateManager.TransitionToState(State.Possession);
+    }
+
 
     private void BlowBackEnemyPlayers()
     {
@@ -96,19 +132,7 @@ public class BallCarrier : MonoBehaviour
             Destroy(effect, 1.0f);
         }
 
-        foreach (Player enemyPlayer in enemyTeam.teamMembers)
-        {
-            Vector3 blowBackVector = enemyPlayer.transform.position - transform.position;
-            if (blowBackVector.magnitude < blowbackRadius)
-            {
-                PlayerStun otherStun = enemyPlayer.GetComponent<PlayerStun>();
-                PlayerStateManager otherStateManager = enemyPlayer.GetComponent<PlayerStateManager>();
-                if (otherStun != null && otherStateManager != null)
-                {
-                    otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
-                }
-            }
-        }
+
     }
 
     // This function is called when the BallCarrier initially gains possession
@@ -140,8 +164,6 @@ public class BallCarrier : MonoBehaviour
             ballOffsetFromCenter = ballOffsetMultiplier * (spriteExtents + ballRadius.Value);
         }
     }
-
-
 
     private IEnumerator CarryBall()
     {
@@ -241,7 +263,7 @@ public class BallCarrier : MonoBehaviour
             stateManager.CurrentState == State.ChargeDash ||
             stateManager.CurrentState == State.LayTronWall)
         {
-            stateManager.TransitionToState(State.Possession);
+            PossessBall();
         }
     }
 

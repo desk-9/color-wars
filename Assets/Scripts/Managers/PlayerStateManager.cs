@@ -17,9 +17,7 @@ public enum OldState
 };
 
 /// <summary>
-/// Represents all of the possible states a player can be in. Micro states, or
-/// states that transition to another state automatically are designated with the 
-/// "_micro" suffix. 
+/// Represents all of the possible states a player can be in.
 /// NOTE: If you add a state, you should add it the state to the [PlayerStateManager.states]
 /// </summary>
 public enum State : byte
@@ -34,7 +32,6 @@ public enum State : byte
     Stun = 7,
     FrozenAfterGoal = 8,
     LayTronWall = 9,
-    Possession_micro = 10, // Transitions to possession
     StartOfMatch = 11,
     ControllerDisconnected = 12,
 }
@@ -78,8 +75,6 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         { State.Stun,              new StunInformation() },
         { State.FrozenAfterGoal,   null },
         { State.LayTronWall,       null },
-        // TODO dkonik: Get rid of this micro state
-        { State.Possession_micro,  new PossessBallInformation() },
     };
 
     /// <summary>
@@ -87,6 +82,15 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// NOTE: This may be null if the state does not have any relevant information
     /// </summary>
     public StateTransitionInformation CurrentStateInformation => stateInfos[CurrentState];
+
+    /// <summary>
+    /// If a non owner changed our state, we should not listen to the owner until they have 
+    /// confirmed this (by serializing the state). So, for example, if player 1 stuns player 2, 
+    /// they will force everyone to make player 2 go to the stun state. So when player 3 gets that RPC,
+    /// they will lock player 2 to the stun state (ignoring anything else player 2 sends) until player 2 
+    /// sends (via serialization) that they are in the stun state.
+    /// </summary>
+    private bool nonOwnerForcedState = false;
 
     /// <summary>
     /// To reduce garbage collection and not allocate everytime a state change is made, we reuse the same
@@ -153,8 +157,27 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
             }
         } else
         {
+            State newState = (State)stream.ReceiveNext();
+
+            if (nonOwnerForcedState)
+            {
+                if (newState != CurrentState)
+                {
+                    // Received an update from the owner, but it is not a confirmation
+                    // of the forced state, so we ignore it
+                    Debug.Log("Received a state update from owner while locked to a forced state");
+                    return;
+                } else
+                {
+                    // The owner confirmed the forced state. We are already in that state, so we don't need
+                    // to actually do anything
+                    nonOwnerForcedState = false;
+                    return;
+                }
+            }
+
             State oldState = CurrentState;
-            CurrentState = (State)stream.ReceiveNext();
+            CurrentState = newState;
 
             // If this state has information in it, read it
             if (stateInfos[CurrentState] != null)
@@ -168,6 +191,71 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
                 OnStateChange?.Invoke(oldState, CurrentState);
             }
         }
+    }
+
+    // TODO dkonik: Immediately, I don't see us needing this for anything other than stun.
+    // But this paradigm can be generalized to any state. I.e. have a "forceToState" function
+    // which allows any playerto force any other player to a given state. Though if we do this
+    // we will have to have some
+    /// <summary>
+    /// Forces the player to the stun state for everyone
+    /// </summary>
+    /// <param name="startPosition"></param>
+    /// <param name="blowbackVelocity"></param>
+    /// <param name="duration"></param>
+    public void StunNetworked(Vector2 startPosition, Vector2 blowbackVelocity, float duration)
+    {
+        // TODO dkonik: Using AllViaServer so that photon can guarantee ordering. However, this might
+        // not be the right thing to do. The reason I we need to guarantee ordering (or something along those lines)
+        // is because if the situation described in the comment in [StunNetworked_Interal], namely: "Say, for example,
+        // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 
+        // possesses the ball right by player 2. Both player 1 and player 3 will send an RPC to stun player
+        // 2" happens, then we need to be able to guarantee ordering. 
+        photonView.RPC("StunNetworked_Interal", RpcTarget.AllViaServer, startPosition, blowbackVelocity, duration);
+    }
+
+    [PunRPC]
+    private void StunNetworked_Interal(Vector2 startPosition, Vector2 blowbackVelocity, float duration, PhotonMessageInfo rpcInfo)
+    {
+        // Situations can arise where two players try to stun third at roughly the same time. Say, for example,
+        // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 
+        // possesses the ball right by player 2. Both player 1 and player 3 will send an RPC to stun player
+        // 2. Photon guarantees ordering (at least the way we are currently doing it). So we will just have
+        // everyoen ignore the second rpc.
+        //
+        // Or, another situation that might arise is that player 1 stuns player 2, and so sends the RPC out to force 
+        // player 2 to stun state. Player 2 might get this, and serialize out the stun information before player 3
+        // even gets the RPC, in which case we can also ignore it.
+        if (CurrentState == State.Stun)
+        {
+            StunInformation stunInfo = CurrentStateInformation as StunInformation;
+            bool isSameInformation = stunInfo.EventTimeStamp == rpcInfo.timestamp;
+            Debug.LogFormat("Got an RPC to enter stun state while already in stun, ignoring. IsSameInformation: {0}", isSameInformation);
+            
+            return;
+        }
+
+        if (nonOwnerForcedState)
+        {
+            Debug.Log("Received an RPC forcing to enter Stun state, but we are already in a forced state.");
+            return;
+        }
+
+        // Just enter stun as usual, except using the rpc timestamp as the timestamp
+        // If we are the owner, this will get serialized out as usual as well, which is what we want.
+        // If we are not, nonOwnerState will get set to true so we will ignore any other updates
+        // from the owner until they confirm the forced state.
+        nonOwnerForcedState = !photonView.IsMine;
+
+        StunInformation info = GetStateInformationForWriting<StunInformation>(State.Stun);
+        info.StartPosition = startPosition;
+        info.Velocity = blowbackVelocity;
+        info.Duration = duration;
+        info.EventTimeStamp = rpcInfo.timestamp;
+
+        State oldState = CurrentState;
+        CurrentState = State.Stun;
+        OnStateChange?.Invoke(oldState, CurrentState);
     }
 
 
@@ -266,6 +354,18 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
                 onAnyChange(state, nextState.Value);
             }
         }
+    }
+
+    public bool IsInState(params State[] states)
+    {
+        foreach (State state in states)
+        {
+            if (CurrentState == state)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public bool IsInState(params OldState[] states)

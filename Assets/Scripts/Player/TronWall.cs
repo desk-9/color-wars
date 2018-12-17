@@ -5,6 +5,9 @@ using System.Linq;
 
 public class TronWall : MonoBehaviour
 {
+    [SerializeField]
+    [Tooltip("The amount of time that the destroyer of a wall is stunned")]
+    private float wallBreakerStunTime = .35f;
 
     public float wallDestroyTime = .3f;
     public int maxParticlesOnDestroy = 100;
@@ -115,8 +118,8 @@ public class TronWall : MonoBehaviour
     {
         GameObject other = collision.gameObject;
         Player player = other.GetComponent<Player>();
-        PlayerStateManager stateManager = other.GetComponent<PlayerStateManager>();
 
+        // If the wall is still being laid
         if (stretchWallCoroutine != null)
         {
             // Check if it was your teammate
@@ -139,19 +142,18 @@ public class TronWall : MonoBehaviour
         {
             KillSelf();
         }
-        else if ((player != null) && (stateManager != null) &&
-                                   (stateManager.oldState == OldState.Dash))
+        else if ((player != null) && 
+            (player.StateManager != null) &&
+            (player.StateManager.CurrentState == State.Dash))
         {
             KillSelf();
-            PlayerStun playerStun = other.EnsureComponent<PlayerStun>();
-            stateManager.AttemptStun(() =>
-                                {
-                                    Vector3 otherDirection = player.transform.right;
-                                    other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
-                                    playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
-                                    GameManager.instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
-                                },
-                                     playerStun.StopStunned);
+
+            // We knock back left because the sprites are facing right...so left is
+            // the back end of the character
+            Vector3 knockBackdirection = -player.transform.right;
+            player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
+                knockBackdirection * knockbackOnBreak, wallBreakerStunTime);
+            GameManager.instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
         }
 
     }

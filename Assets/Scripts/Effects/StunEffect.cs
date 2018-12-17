@@ -2,14 +2,19 @@ using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
 
+// TODO dkonik: Consolidate with PlayerStun...maybe?
 public class StunEffect : MonoBehaviour
 {
-    public float flashInterval = 0.1f;
+    [SerializeField]
+    private float stunFlashInterval = .1f;
+
     private bool stopEffect = false;
+
 
     private void Start()
     {
         PlayerStateManager stateManager = this.EnsureComponent<PlayerStateManager>();
+        stateManager.OnStateChange += HandleNewPlayerState;
     }
 
     private void HandleNewPlayerState(State oldState, State newState)
@@ -33,9 +38,9 @@ public class StunEffect : MonoBehaviour
         while (!stopEffect)
         {
             renderer.color = shiftedColor;
-            yield return new WaitForSeconds(flashInterval);
+            yield return new WaitForSeconds(stunFlashInterval);
             renderer.color = baseColor;
-            yield return new WaitForSeconds(flashInterval);
+            yield return new WaitForSeconds(stunFlashInterval);
         }
         stopEffect = false;
     }

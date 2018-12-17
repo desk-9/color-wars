@@ -164,9 +164,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementSpeed: 30
   rotationSpeed: 1080
-  freezeRotation: 0
   maxAwayFromBallAngle: 20
-  lastDirection: {x: 0, y: 0}
+  aimAssistThreshold: 20
+  aimAssistLerpAmount: 0.5
+  goalAimAssistOffset: 1
+  delayBetweenSnaps: 0.2
+  aimAssistEpsilon: 3.5
+  aimAssistLerpStrength: 0.2
 --- !u!114 &114215232534320030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,15 +301,6 @@ MonoBehaviour:
     type: 3}
   coolDownTime: 0.1
   slowMoOnCarry: 1
-  aimAssistThreshold: 20
-  aimAssistLerpAmount: 0.5
-  goalAimAssistOffset: 1
-  delayBetweenSnaps: 0.2
-  snapEpsilon: 3.5
-  snapLerpStrength: 0.2
-  blowbackRadius: 15
-  blowbackForce: 100
-  blowbackStunTime: 0.2
 --- !u!114 &114920135743144974
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,7 +344,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e2c5e274b6fb4d5cb730d55a0aceb4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stunTime: 0.7
 --- !u!114 &114319664088283476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,7 +356,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209e8991cf01b419ebe9573ca024c9ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flashInterval: 0.1
 --- !u!120 &120631931489294666
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -482,16 +475,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b31f31e3cae45443eb82857cd992377a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tronWall: {fileID: 1293006675088886, guid: 12e0ce2da3e4646c0aaecdf8cfb5975f, type: 3}
-  tronButton: 12
   wallLifeLength: 4
+  tronWallPrefab: {fileID: 1293006675088886, guid: 12e0ce2da3e4646c0aaecdf8cfb5975f,
+    type: 3}
+  tronButton: 20
   lengthStunWhileLaying: 1.5
   layingSpeedMovementSpeedRatio: 0.79
   tronWallOffset: 2.5
   wallLimit: 2
-  layWallOnDash: 0
-  wallBreakerStunTime: 0.35
-  tronWallLayingLimit: 1
+  wallLayingDurationCap: 1
 --- !u!114 &114738638914321764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -570,7 +562,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 4111182174256709696}
-  viewIdField: 7
+  viewIdField: 0
   InstantiationId: 7
   isRuntimeInstantiated: 0
 --- !u!114 &4111182174256709696

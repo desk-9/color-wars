@@ -146,12 +146,6 @@ public class PlayerDashBehavior : MonoBehaviour
     {
         dashCoroutine = StartCoroutine(Dash());
         lastDashTime = Time.time;
-
-        // TODO dkonik: This should not be here, this should be in tronmechanic
-        if (tronMechanic.layWallOnDash)
-        {
-            tronMechanic.PlaceWallAnchor();
-        }
     }
 
     private void StopDash()
@@ -214,16 +208,12 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void Stun(Player otherPlayer)
     {
-        PlayerStun otherStun = otherPlayer.GetComponent<PlayerStun>();
-        PlayerStateManager otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
-        if (otherStun != null && otherStateManager != null)
-        {
-            cameraShake.shakeAmount = stealShakeAmount;
-            cameraShake.shakeDuration = stealShakeDuration;
-            otherStateManager.AttemptStun(
-                                          () => otherStun.StartStun(rb.velocity.normalized * stealKnockbackAmount, stealKnockbackLength),
-                otherStun.StopStunned);
-        }
+        cameraShake.shakeAmount = stealShakeAmount;
+        cameraShake.shakeDuration = stealShakeDuration;
+        otherPlayer.StateManager.StunNetworked(
+            otherPlayer.PlayerMovement.CurrentPosition,
+            playerMovement.CurrentVelocity.normalized * stealKnockbackAmount,
+            stealKnockbackLength);
     }
 
     private void StunAndSteal(GameObject otherGameObject)

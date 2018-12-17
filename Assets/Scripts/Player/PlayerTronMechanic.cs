@@ -7,17 +7,25 @@ using System.Linq;
 
 public class PlayerTronMechanic : MonoBehaviour
 {
+    [SerializeField]
+    private float wallLifeLength = 4f;
+    [SerializeField]
+	private GameObject tronWallPrefab;
+    [SerializeField]
+	private IC.InputControlType tronButton = IC.InputControlType.Action2;
+    [SerializeField]
+	private float lengthStunWhileLaying = 1.5f;
+    [SerializeField]
+	private float layingSpeedMovementSpeedRatio = .79f;
+    [SerializeField]
+	private float tronWallOffset = 2.5f;
+    [SerializeField]
+	private int wallLimit = 2;
+    [SerializeField]
+	private float wallLayingDurationCap = 1f;
+    [SerializeField]
+    private float wallBreakSoundVolume = .35f;
 
-    public GameObject tronWall;
-    public IC.InputControlType tronButton = IC.InputControlType.Action2;
-    public float wallLifeLength = 10f;
-    public float lengthStunWhileLaying = 2.5f;
-    public float layingSpeedMovementSpeedRatio;
-    public float tronWallOffset = 2f;
-    public int wallLimit = 3;
-    public bool layWallOnDash = false;
-    public float wallBreakerStunTime = .35f;
-    public float tronWallLayingLimit = 1f;
     private PlayerStateManager stateManager;
     private PlayerMovement playerMovement;
     private PlayerStun playerStun;
@@ -66,7 +74,7 @@ public class PlayerTronMechanic : MonoBehaviour
             walls.RemoveAt(0);
         }
 
-        GameObject newWall = GameObject.Instantiate(tronWall,
+        GameObject newWall = GameObject.Instantiate(tronWallPrefab,
                                              transform.position - transform.right * tronWallOffset,
                                              transform.rotation);
         TronWall tronWallComponent = newWall.EnsureComponent<TronWall>();
@@ -108,7 +116,7 @@ public class PlayerTronMechanic : MonoBehaviour
 
         yield return null;
         float elapsedTime = 0f;
-        while (elapsedTime < tronWallLayingLimit)
+        while (elapsedTime < wallLayingDurationCap)
         {
             rb.velocity = transform.right * velocityWhileLaying;
             rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
@@ -131,9 +139,8 @@ public class PlayerTronMechanic : MonoBehaviour
 
     public void HandleWallCollision()
     {
-        AudioManager.instance.StunPlayerWallBreak.Play(.35f);
-        stateManager.AttemptStun(() => playerStun.StartStun(Vector2.zero, lengthStunWhileLaying),
-                                 () => playerStun.StopStunned());
+        AudioManager.instance.StunPlayerWallBreak.Play(wallBreakSoundVolume);
+        stateManager.StunNetworked(playerMovement.CurrentPosition, Vector2.zero, lengthStunWhileLaying);
     }
 
     private void StopLayingWall()

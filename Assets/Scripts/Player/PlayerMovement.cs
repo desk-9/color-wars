@@ -47,6 +47,11 @@ public class PlayerMovement : MonoBehaviour
         get { return transform.position; }
     }
 
+    public Vector2 CurrentVelocity
+    {
+        get { return rb2d.velocity; }
+    }
+
     public float movementSpeed;
     public float rotationSpeed = 1080;
     public float maxAwayFromBallAngle = 10f;
