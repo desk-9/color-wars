@@ -16,6 +16,14 @@ public enum OldState
     LayTronWall
 };
 
+// TODO dkonik: Bad place for this comment but I just want to make sure to 
+// get it written somewhere before I get distracted refactoring something else.
+// Wherever the actual possession logic goes needs to make sure to handle the case
+// where two players both take possession of the ball at the same time. It just needs to 
+// make sure that the second player who picked up the ball gracefully gives up possession.
+// Actually, on second thought, every client should check (whenever they get a possession event)
+// what the time stamp is of the message, and give it to whoever has the oldest timestamp.
+
 /// <summary>
 /// Represents all of the possible states a player can be in.
 /// NOTE: If you add a state, you should add it the state to the [PlayerStateManager.states]

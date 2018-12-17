@@ -7,7 +7,7 @@ using UtilityExtensions;
 public class Ball : MonoBehaviourPunCallbacks
 {
     public new SpriteRenderer renderer;
-    public new Rigidbody2D rigidbody;
+    
     [SerializeField]
     private GameObject implosionPrefab;
 
@@ -20,6 +20,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private float speedOnShoot;
     private Color neutralColor = Color.white;
     private int relevantCollisionLayers;
+    private new Rigidbody2D rigidbody;
 
     /// <summary>
     /// The owner before the current one, or just the last owner if there is no
@@ -36,6 +37,19 @@ public class Ball : MonoBehaviourPunCallbacks
     public Vector2 CurrentPosition
     {
         get { return transform.position; }
+    }
+
+    private float _radius = -1f;
+    public float Radius
+    {
+        get
+        {
+            if (_radius == -1f)
+            {
+                _radius = GetComponent<CircleCollider2D>().bounds.extents.x;
+            }
+            return _radius;
+        }
     }
 
 
@@ -70,6 +84,16 @@ public class Ball : MonoBehaviourPunCallbacks
             // Possession manager should probably have a possession event change too, and
             // that is what *most* things listen to...but idk.
         }
+    }
+
+    public void TakeOwnership()
+    {
+        photonView.RequestOwnership();
+    }
+
+    public void MoveTo(Vector2 newPosition)
+    {
+        rigidbody.MovePosition(newPosition);
     }
 
     private void HandlePlayerShotBall(Player player)
@@ -161,6 +185,14 @@ public class Ball : MonoBehaviourPunCallbacks
         GameManager.instance.NotificationManager.CallOnMessage(
             Message.GoalScored, HandleGoalScore
         );
+        GameManager.instance.NotificationManager.CallOnStateStart(State.Possession, HandlePossession);
+    }
+
+    private void HandlePossession(Player player)
+    {
+        // TODO dkonik: Probably more to do here
+        rigidbody.velocity = Vector2.zero;
+        rigidbody.angularVelocity = 0;
     }
 
     private void HandleUnpossesion()

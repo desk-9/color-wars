@@ -19,7 +19,7 @@ public class BallCarrier : MonoBehaviour
     public bool slowMoOnCarry = true;
     
     public float timeCarryStarted { get; private set; }
-    private float ballOffsetFromCenter = .5f;
+    private float ballOffsetFromCenter;
     private PlayerMovement playerMovement;
     private PlayerStateManager stateManager;
     private Coroutine carryBallCoroutine;
@@ -55,6 +55,7 @@ public class BallCarrier : MonoBehaviour
         NotificationManager notificationManager = GameManager.instance.NotificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
         stateManager.OnStateChange += HandleNewPlayerState;
+        CalculateOffset();
     }
 
     private void HandleNewPlayerState(State oldState, State newState)
@@ -63,12 +64,19 @@ public class BallCarrier : MonoBehaviour
         {
             StartCarryingBall();
         }
-        // TODO dkonik: Finish this up, got distracted
-        stateManager.AttemptPossession(() => StartCarryingBall(), DropBall);
+
+        if (oldState == State.Possession)
+        {
+            DropBall();
+        }
     }
+
+    /// <summary>
+    /// Handles stunning all of the nearby players and transitioning to Possess state
+    /// </summary>
     private void PossessBall()
     {
-        // Get blown back players info
+        // Stun the players that should get blown back
         TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
         Debug.Assert(enemyTeam != null);
 
@@ -84,14 +92,6 @@ public class BallCarrier : MonoBehaviour
                     blowBackVector.normalized * blowbackForce,
                     blowbackStunTime
                     );
-                
-                // TODO remove me: Just left this here for reference
-                //PlayerStun otherStun = enemyPlayer.GetComponent<PlayerStun>();
-                //PlayerStateManager otherStateManager = enemyPlayer.GetComponent<PlayerStateManager>();
-                //if (otherStun != null && otherStateManager != null)
-                //{
-                //    otherStateManager.AttemptStun(() => otherStun.StartStun(blowBackVector.normalized * blowbackForce, blowbackStunTime), otherStun.StopStunned);
-                //}
             }
         }
 
@@ -99,16 +99,13 @@ public class BallCarrier : MonoBehaviour
     }
 
 
-    private void BlowBackEnemyPlayers()
+    private void DoBlowbackEffect()
     {
-        if (player.Team == null)
-        {
-            return;
-        }
         TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
         Debug.Assert(enemyTeam != null);
 
         {
+            // TODO dkonik: Don't instantiate this every time, reuse
             // Because C# doesn't have lvalue references. FML.
             GameObject effect = Instantiate(blowbackEffectPrefab, transform.position, transform.rotation);
             ParticleSystem ps = effect.GetComponent<ParticleSystem>();
@@ -131,46 +128,39 @@ public class BallCarrier : MonoBehaviour
 
             Destroy(effect, 1.0f);
         }
-
-
     }
 
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     public void StartCarryingBall()
     {
-        // TODO dkonik: Commented this out to make it compile. Fix this
+        DoBlowbackEffect();
+        timeCarryStarted = Time.time;
 
-        //BlowBackEnemyPlayers();
-        //timeCarryStarted = Time.time;
-        //ball.rigidbody.velocity = Vector2.zero;
-        //ball.rigidbody.angularVelocity = 0;
-        //CalculateOffset(ball);
-        //if (slowMoOnCarry)
-        //{
-        //    GameManager.instance.SlowMo();
-        //}
-        //laserGuide?.DrawLaser();
-        //carryBallCoroutine = StartCoroutine(CarryBall(ball));
+        if (slowMoOnCarry)
+        {
+            GameManager.instance.SlowMo();
+        }
+        
+        // TODO dkonik: Make the laser guide event based
+        laserGuide?.DrawLaser();
+        carryBallCoroutine = StartCoroutine(CarryBall());
     }
 
-    private void CalculateOffset(Ball ball)
+    private void CalculateOffset()
     {
-        float? ballRadius = ball.GetComponent<CircleCollider2D>()?.bounds.extents.x;
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
-        if (renderer != null && ballRadius != null)
+        if (renderer != null)
         {
             float spriteExtents = renderer.sprite.bounds.extents.x * transform.localScale.x;
-            ballOffsetFromCenter = ballOffsetMultiplier * (spriteExtents + ballRadius.Value);
+            ballOffsetFromCenter = ballOffsetMultiplier * (spriteExtents + Ball.Radius);
         }
     }
 
     private IEnumerator CarryBall()
     {
-        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         IsCarryingBall = true;
-        //ball.Owner = this;
-
+        Ball.TakeOwnership();
         while (true)
         {
             PlaceBallAtNose();
@@ -189,13 +179,12 @@ public class BallCarrier : MonoBehaviour
     {
         if (Ball != null)
         {
+            // TODO dkonik: This should be in a SlowMoManager
             GameManager.instance.ResetSlowMo();
             StopCoroutine(carryBallCoroutine);
             carryBallCoroutine = null;
 
-            // Reset references
-            Ball.Owner = null;
-
+            // TODO dkonik: This should be event based
             laserGuide?.StopDrawingLaser();
             if (this.isActiveAndEnabled)
             {
@@ -215,11 +204,13 @@ public class BallCarrier : MonoBehaviour
     {
         if (Ball != null)
         {
-            Rigidbody2D rigidbody = Ball.GetComponent<Rigidbody2D>();
             Vector2 newPosition =
                 CircularLerp(Ball.transform.position, NosePosition(Ball), transform.position,
                              ballOffsetFromCenter, Time.deltaTime, ballTurnSpeed);
-            rigidbody.MovePosition(newPosition);
+            Ball.MoveTo(newPosition);
+        } else
+        {
+            Debug.LogError("Ball is null in BallCarrier. Should not ever happen");
         }
     }
 
