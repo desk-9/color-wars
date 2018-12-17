@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,7 +39,6 @@ public class PlayerMovement : MonoBehaviour
     private HashSet<State> externalControlStates = new HashSet<State>
     {
         State.Dash,
-        State.Stun,
         State.LayTronWall,
     };
 
@@ -327,6 +327,32 @@ public class PlayerMovement : MonoBehaviour
         }, 2);
     }
 
+    private void DoStunMovement()
+    {
+        StunInformation info = stateManager.CurrentStateInformation as StunInformation;
+
+        if (info == null)
+        {
+            throw new Exception("No stun information in stun state");
+        }
+
+        StopAllMovement(false);
+
+        // If we for some reason transition to the stun state *after* 
+        // we were supposed to have finished with the stun state, just put
+        // the player where they would have ended up
+        float timeTravelledSoFar = (float)(PhotonNetwork.Time - info.EventTimeStamp);
+        if (timeTravelledSoFar > info.Duration)
+        {
+            timeTravelledSoFar = info.Duration;
+        }
+
+        // Calculate the start position based on the time that has elapsed since
+        // the message was sent
+        rb2d.position = info.StartPosition + timeTravelledSoFar * info.Velocity;
+        rb2d.velocity = info.Velocity;
+    }
+
     private void HandleNewPlayerState(State oldState, State newState)
     {
         // Handle enabling/disabling kinematic on the player
@@ -352,7 +378,11 @@ public class PlayerMovement : MonoBehaviour
         } else if (newState == State.FrozenAfterGoal)
         {
             StopAllMovement(true);
-        } else if (externalControlStates.Contains(newState))
+        } else if (newState == State.Stun)
+        {
+            DoStunMovement();
+        }
+        else if (externalControlStates.Contains(newState))
         {
             StopAllMovement(false);
         }

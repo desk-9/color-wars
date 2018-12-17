@@ -300,14 +300,6 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void AttemptStun(Callback start, Callback stop)
-    {
-        if (IsInState(OldState.NormalMovement, OldState.Posession, OldState.LayTronWall, OldState.Dash))
-        {
-            SwitchToState(OldState.Stun, start, stop);
-        }
-    }
-
     public void AttemptLayTronWall(Callback start, Callback stop)
     {
         if (IsInState(OldState.NormalMovement))
