@@ -82,7 +82,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         { State.ChargeShot,        null },
         { State.Stun,              new StunInformation() },
         { State.FrozenAfterGoal,   null },
-        { State.LayTronWall,       null },
+        { State.LayTronWall,       new TronWallInformation() },
     };
 
     /// <summary>
@@ -298,22 +298,6 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         GameManager.instance.NotificationManager.RegisterPlayer(this);
-    }
-
-    public void AttemptPossession(Callback start, Callback stop)
-    {
-        if (IsInState(DEPRECATED_State.NormalMovement, DEPRECATED_State.Dash, DEPRECATED_State.ChargeDash, DEPRECATED_State.LayTronWall))
-        {
-            SwitchToState(DEPRECATED_State.Posession, start, stop);
-        }
-    }
-
-    public void AttemptLayTronWall(Callback start, Callback stop)
-    {
-        if (IsInState(DEPRECATED_State.NormalMovement))
-        {
-            SwitchToState(DEPRECATED_State.LayTronWall, start, stop);
-        }
     }
 
     public void AttemptFrozenAfterGoal(Callback start, Callback stop)

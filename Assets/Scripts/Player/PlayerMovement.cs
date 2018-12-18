@@ -39,7 +39,6 @@ public class PlayerMovement : MonoBehaviour
     private HashSet<State> externalControlStates = new HashSet<State>
     {
         State.Dash,
-        State.LayTronWall,
     };
 
     public Vector2 CurrentPosition
@@ -50,6 +49,17 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 CurrentVelocity
     {
         get { return rb2d.velocity; }
+    }
+
+    /// <summary>
+    /// Since we fucked up and put the players' forward vector
+    /// to their right, this is just a way to get the forward vector that
+    /// makes more sense. Also, if we decide to change it, this will
+    /// at least make it easier to change (in one spot rather than 20).
+    /// </summary>
+    public Vector2 Forward
+    {
+        get { return transform.right; }
     }
 
     public float movementSpeed;
@@ -353,6 +363,25 @@ public class PlayerMovement : MonoBehaviour
         rb2d.velocity = info.Velocity;
     }
 
+    private void DoLayTronWall()
+    {
+        // TODO dkonik: Previously, we were setting this every frame while the player was
+        // laying the tron wall, do we still need to do this.
+        TronWallInformation info = stateManager.CurrentStateInformation as TronWallInformation;
+
+        if (info == null)
+        {
+            throw new Exception("No tron wall information in LayWall state");
+        }
+
+        StopAllMovement(false);
+
+        float timeTravelledSoFar = (float)(PhotonNetwork.Time - info.EventTimeStamp);
+        Vector2 layingVelocity = PlayerTronMechanic.layingSpeedMovementSpeedRatio * movementSpeed * info.Direction;
+        rb2d.position = info.StartPosition + timeTravelledSoFar * layingVelocity;
+        rb2d.velocity = layingVelocity;
+    }
+
     private void HandleNewPlayerState(State oldState, State newState)
     {
         // Handle enabling/disabling kinematic on the player
@@ -381,6 +410,9 @@ public class PlayerMovement : MonoBehaviour
         } else if (newState == State.Stun)
         {
             DoStunMovement();
+        } else if (newState == State.LayTronWall)
+        {
+            DoLayTronWall();
         }
         else if (externalControlStates.Contains(newState))
         {

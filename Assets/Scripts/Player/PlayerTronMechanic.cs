@@ -7,6 +7,8 @@ using System.Linq;
 
 public class PlayerTronMechanic : MonoBehaviour
 {
+    public static float layingSpeedMovementSpeedRatio = .79f;
+
     [SerializeField]
     private float wallLifeLength = 4f;
     [SerializeField]
@@ -15,8 +17,6 @@ public class PlayerTronMechanic : MonoBehaviour
 	private IC.InputControlType tronButton = IC.InputControlType.Action2;
     [SerializeField]
 	private float lengthStunWhileLaying = 1.5f;
-    [SerializeField]
-	private float layingSpeedMovementSpeedRatio = .79f;
     [SerializeField]
 	private float tronWallOffset = 2.5f;
     [SerializeField]
@@ -28,12 +28,8 @@ public class PlayerTronMechanic : MonoBehaviour
 
     private PlayerStateManager stateManager;
     private PlayerMovement playerMovement;
-    private PlayerStun playerStun;
     private Player player;
-    private Rigidbody2D rb;
     private List<TronWall> walls = new List<TronWall>();
-    private IC.InputDevice inputDevice;
-    private float velocityWhileLaying;
     private Coroutine layWallCoroutine;
 
 
@@ -41,24 +37,35 @@ public class PlayerTronMechanic : MonoBehaviour
     private void Start()
     {
         playerMovement = this.EnsureComponent<PlayerMovement>();
-        rb = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
-        playerStun = this.EnsureComponent<PlayerStun>();
-        velocityWhileLaying = playerMovement.movementSpeed * layingSpeedMovementSpeedRatio;
         GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
-            Message.PlayerPressedWall, WallPressed, gameObject);
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
-            Message.PlayerReleasedWall, WallEnd, gameObject);
-
+            Message.PlayerPressedWall, LayWallButtonPressed, gameObject);
+        stateManager.OnStateChange += HandleNewPlayerState;
     }
 
-    private void WallPressed()
+    private void HandleNewPlayerState(State oldState, State newState)
     {
-        if (player.Team != null)
+        if (newState == State.LayTronWall)
         {
-            stateManager.AttemptLayTronWall(
-                () => layWallCoroutine = StartCoroutine(LayTronWall()), StopLayingWall);
+            layWallCoroutine = StartCoroutine(LayTronWall());
+        }
+
+        if (oldState == State.LayTronWall)
+        {
+            // Only place the wall if we did not get stunned
+            StopLayingWall(newState != State.Stun);
+        }
+    }
+
+    private void LayWallButtonPressed()
+    {
+        if (player.Team != null && stateManager.CurrentState == State.NormalMovement)
+        {
+            TronWallInformation info = stateManager.GetStateInformationForWriting<TronWallInformation>(State.LayTronWall);
+            info.Direction = playerMovement.Forward;
+            info.StartPosition = playerMovement.CurrentPosition;
+            stateManager.TransitionToState(State.LayTronWall, info);
         }
     }
 
@@ -75,7 +82,7 @@ public class PlayerTronMechanic : MonoBehaviour
         }
 
         GameObject newWall = GameObject.Instantiate(tronWallPrefab,
-                                             transform.position - transform.right * tronWallOffset,
+                                             transform.position - (Vector3)playerMovement.Forward * tronWallOffset,
                                              transform.rotation);
         TronWall tronWallComponent = newWall.EnsureComponent<TronWall>();
         walls.Add(tronWallComponent);
@@ -88,43 +95,19 @@ public class PlayerTronMechanic : MonoBehaviour
         walls.Last().PlaceWall();
     }
 
-    private void WallEnd()
-    {
-        if (stateManager.IsInState(DEPRECATED_State.LayTronWall))
-        {
-            if (layWallCoroutine != null)
-            {
-                StopCoroutine(layWallCoroutine);
-            }
-            layWallCoroutine = null;
-            PlaceCurrentWall();
-            // TODO dkonik: If another player destroys the tron wall that this player is laying,
-            // this player may ignore that message if this fires before that destruction gets to their
-            // client. So, that message should include the photon timestamp so that the player can check,
-            // and even if they have transitioned to a new state (normal movement, or they even started charging
-            // a dash or whatever, they'll properly transition to stun state.
-            stateManager.TransitionToState(State.NormalMovement);
-        }
-    }
-
     private IEnumerator LayTronWall()
     {
         PlaceWallAnchor();
-
-        rb.velocity = transform.right * velocityWhileLaying;
-        rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
 
         yield return null;
         float elapsedTime = 0f;
         while (elapsedTime < wallLayingDurationCap)
         {
-            rb.velocity = transform.right * velocityWhileLaying;
-            rb.rotation = Vector2.SignedAngle(Vector2.right, transform.right);
-
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        WallEnd();
+
+        stateManager.TransitionToState(State.NormalMovement);
     }
 
     public void StopWatching(TronWall wall)
@@ -143,19 +126,27 @@ public class PlayerTronMechanic : MonoBehaviour
         stateManager.StunNetworked(playerMovement.CurrentPosition, Vector2.zero, lengthStunWhileLaying);
     }
 
-    private void StopLayingWall()
+    /// <summary>
+    /// Stops laying the wall, if the player is in the process of laying one.
+    /// </summary>
+    /// <param name="placeWall">Specifies whether or not the player should place the wall (i.e. the wall
+    /// laying process came to a natural end)</param>
+    private void StopLayingWall(bool placeWall)
     {
         if (layWallCoroutine != null)
         {
             StopCoroutine(layWallCoroutine);
             layWallCoroutine = null;
-            PlaceCurrentWall();
+            if (placeWall)
+            {
+                PlaceCurrentWall();
+            }
         }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (layWallCoroutine == null)
+        if (layWallCoroutine == null || stateManager.CurrentState != State.LayTronWall)
         {
             return;
         }
@@ -164,7 +155,7 @@ public class PlayerTronMechanic : MonoBehaviour
         if (collision.gameObject != currentWall &&
             layerMask == (layerMask | (1 << collision.gameObject.layer)))
         {
-            StopLayingWall();
+            StopLayingWall(true);
             stateManager.TransitionToState(State.NormalMovement);
         }
     }

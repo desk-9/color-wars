@@ -297,6 +297,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4abcea3fd45d64d389967783e181b42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blowbackRadius: 15
+  blowbackForce: 100
+  blowbackStunTime: 0.2
   blowbackEffectPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
     type: 3}
   coolDownTime: 0.1
@@ -356,6 +359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209e8991cf01b419ebe9573ca024c9ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stunFlashInterval: 0.1
 --- !u!120 &120631931489294666
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -484,6 +488,7 @@ MonoBehaviour:
   tronWallOffset: 2.5
   wallLimit: 2
   wallLayingDurationCap: 1
+  wallBreakSoundVolume: 0.35
 --- !u!114 &114738638914321764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -562,7 +567,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 4111182174256709696}
-  viewIdField: 0
+  viewIdField: 7
   InstantiationId: 7
   isRuntimeInstantiated: 0
 --- !u!114 &4111182174256709696

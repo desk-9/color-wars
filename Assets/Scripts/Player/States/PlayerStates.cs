@@ -33,8 +33,8 @@ public class DashInformation : StateTransitionInformation
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
         base.Deserialize(stream, info);
-        StartPosition = (Vector3)stream.ReceiveNext();
-        Direction = (Vector3)stream.ReceiveNext();
+        StartPosition = (Vector2)stream.ReceiveNext();
+        Direction = (Vector2)stream.ReceiveNext();
         Strength = (float)stream.ReceiveNext();
     }
 
@@ -144,8 +144,8 @@ public class NormalMovementInformation : StateTransitionInformation
         ShotBall = (bool)stream.ReceiveNext();
         if (ShotBall)
         {
-            BallStartPosition = (Vector3)stream.ReceiveNext();
-            Direction = (Vector3)stream.ReceiveNext();
+            BallStartPosition = (Vector2)stream.ReceiveNext();
+            Direction = (Vector2)stream.ReceiveNext();
             Strength = (float)stream.ReceiveNext();
         }
     }
@@ -170,8 +170,8 @@ public class StunInformation : StateTransitionInformation
 
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
-        StartPosition = (Vector3)stream.ReceiveNext();
-        Velocity = (Vector3)stream.ReceiveNext();
+        StartPosition = (Vector2)stream.ReceiveNext();
+        Velocity = (Vector2)stream.ReceiveNext();
         Duration = (float)stream.ReceiveNext();
     }
 
@@ -180,5 +180,27 @@ public class StunInformation : StateTransitionInformation
         stream.SendNext(StartPosition);
         stream.SendNext(Velocity);
         stream.SendNext(Duration);
+    }
+}
+
+public class TronWallInformation : StateTransitionInformation
+{
+    /// <summary>
+    /// The point at which the player started laying the tron wall
+    /// </summary>
+    public Vector2 StartPosition { get; set; }
+    public Vector2 Direction { get; set; }
+
+
+    public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
+    {
+        StartPosition = (Vector2)stream.ReceiveNext();
+        Direction = (Vector2)stream.ReceiveNext();
+    }
+
+    public override void Serialize(PhotonStream stream, PhotonMessageInfo info)
+    {
+        stream.SendNext(StartPosition);
+        stream.SendNext(Direction);
     }
 }
