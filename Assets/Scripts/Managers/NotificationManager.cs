@@ -6,7 +6,7 @@ using UnityEngine;
 // tied to individual, non-singleton objects shouldn't go here.
 
 public delegate void PlayerCallback(Player player);
-public delegate void PlayerTransitionCallback(Player player, OldState start, OldState end);
+public delegate void PlayerTransitionCallback(Player player, DEPRECATED_State start, DEPRECATED_State end);
 // Replacement for EventHandler without the EventArgs
 public delegate void EventCallback(object sender);
 public delegate void GameObjectCallback(GameObject thing);

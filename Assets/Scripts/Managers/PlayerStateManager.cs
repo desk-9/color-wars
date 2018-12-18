@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum OldState
+public enum DEPRECATED_State
 {
     StartupState,
     NormalMovement,
@@ -45,7 +45,7 @@ public enum State : byte
 }
 
 public delegate void ToggleCallback(bool isEnteringState);
-public delegate void TransitionCallback(OldState start, OldState end);
+public delegate void TransitionCallback(DEPRECATED_State start, DEPRECATED_State end);
 
 public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 {
@@ -267,27 +267,27 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     }
 
 
-    private SortedDictionary<OldState, ToggleCallback> onToggleState =
-        new SortedDictionary<OldState, ToggleCallback>();
-    private SortedDictionary<OldState, Callback> onStartState =
-        new SortedDictionary<OldState, Callback>();
-    private SortedDictionary<OldState, Callback> onEndState =
-        new SortedDictionary<OldState, Callback>();
+    private SortedDictionary<DEPRECATED_State, ToggleCallback> onToggleState =
+        new SortedDictionary<DEPRECATED_State, ToggleCallback>();
+    private SortedDictionary<DEPRECATED_State, Callback> onStartState =
+        new SortedDictionary<DEPRECATED_State, Callback>();
+    private SortedDictionary<DEPRECATED_State, Callback> onEndState =
+        new SortedDictionary<DEPRECATED_State, Callback>();
     private TransitionCallback onAnyChange = delegate { };
-    public OldState oldState { get; private set; }
+    public DEPRECATED_State oldState { get; private set; }
 
     private Callback stopCurrentState;
-    private OldState defaultState = OldState.NormalMovement;
+    private DEPRECATED_State defaultState = DEPRECATED_State.NormalMovement;
     private Callback startDefaultState;
     private Callback stopDefaultState;
 
     private void Awake()
     {
-        oldState = OldState.StartupState;
+        oldState = DEPRECATED_State.StartupState;
         stopCurrentState = delegate { };
         startDefaultState = delegate { };
         stopDefaultState = delegate { };
-        foreach (OldState state in (OldState[])System.Enum.GetValues(typeof(OldState)))
+        foreach (DEPRECATED_State state in (DEPRECATED_State[])System.Enum.GetValues(typeof(DEPRECATED_State)))
         {
             onToggleState[state] = delegate { };
             onStartState[state] = delegate { };
@@ -302,31 +302,31 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 
     public void AttemptPossession(Callback start, Callback stop)
     {
-        if (IsInState(OldState.NormalMovement, OldState.Dash, OldState.ChargeDash, OldState.LayTronWall))
+        if (IsInState(DEPRECATED_State.NormalMovement, DEPRECATED_State.Dash, DEPRECATED_State.ChargeDash, DEPRECATED_State.LayTronWall))
         {
-            SwitchToState(OldState.Posession, start, stop);
+            SwitchToState(DEPRECATED_State.Posession, start, stop);
         }
     }
 
     public void AttemptLayTronWall(Callback start, Callback stop)
     {
-        if (IsInState(OldState.NormalMovement))
+        if (IsInState(DEPRECATED_State.NormalMovement))
         {
-            SwitchToState(OldState.LayTronWall, start, stop);
+            SwitchToState(DEPRECATED_State.LayTronWall, start, stop);
         }
     }
 
     public void AttemptFrozenAfterGoal(Callback start, Callback stop)
     {
-        SwitchToState(OldState.FrozenAfterGoal, start, stop);
+        SwitchToState(DEPRECATED_State.FrozenAfterGoal, start, stop);
     }
 
     public void AttemptStartState(Callback start, Callback stop)
     {
-        SwitchToState(OldState.StartupState, start, stop);
+        SwitchToState(DEPRECATED_State.StartupState, start, stop);
     }
 
-    private void SwitchToState(OldState state, Callback start, Callback stop)
+    private void SwitchToState(DEPRECATED_State state, Callback start, Callback stop)
     {
         Utility.Print("Switching from", oldState, "to", state);
         stopCurrentState();
@@ -338,7 +338,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         AlertSubscribers(state, true);
     }
 
-    private void AlertSubscribers(OldState state, bool isEnteringState, OldState? nextState = null)
+    private void AlertSubscribers(DEPRECATED_State state, bool isEnteringState, DEPRECATED_State? nextState = null)
     {
         onToggleState[state](isEnteringState);
         if (isEnteringState)
@@ -368,9 +368,9 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         return false;
     }
 
-    public bool IsInState(params OldState[] states)
+    public bool IsInState(params DEPRECATED_State[] states)
     {
-        foreach (OldState state in states)
+        foreach (DEPRECATED_State state in states)
         {
             if (oldState == state)
             {
