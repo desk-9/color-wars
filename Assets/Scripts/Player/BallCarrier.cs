@@ -72,9 +72,9 @@ public class BallCarrier : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles stunning all of the nearby players and transitioning to Possess state
+    /// Stuns the players that should get blown back
     /// </summary>
-    private void PossessBall()
+    private void StunNearbyPlayers()
     {
         // Stun the players that should get blown back
         TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
@@ -94,8 +94,6 @@ public class BallCarrier : MonoBehaviour
                     );
             }
         }
-
-        stateManager.TransitionToState(State.Possession);
     }
 
 
@@ -254,7 +252,8 @@ public class BallCarrier : MonoBehaviour
             stateManager.CurrentState == State.ChargeDash ||
             stateManager.CurrentState == State.LayTronWall)
         {
-            PossessBall();
+            StunNearbyPlayers();
+            stateManager.TransitionToState(State.Possession);
         }
     }
 
@@ -270,7 +269,7 @@ public class BallCarrier : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (stateManager != null && stateManager.IsInState(DEPRECATED_State.Dash))
+        if (stateManager != null && stateManager.CurrentState == State.Dash)
         {
             HandleCollision(other.gameObject);
         }

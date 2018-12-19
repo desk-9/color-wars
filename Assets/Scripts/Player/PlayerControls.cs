@@ -70,7 +70,7 @@ public class PlayerControls : MonoBehaviourPunCallbacks
             StopCoroutine(broadcast);
         }
         broadcast = null;
-        stateManager?.AttemptStartState(delegate { }, delegate { });
+        stateManager.TransitionToState(State.StartupState);
         inputDevice = null;
     }
 
