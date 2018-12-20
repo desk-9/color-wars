@@ -1,4 +1,8 @@
-﻿// using UnityEngine;
+﻿// TODO: Why does this component exist? What problem does it solve?
+
+
+
+// using UnityEngine;
 
 // internal delegate Vector2 VectorCallback();
 
