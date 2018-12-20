@@ -17,7 +17,7 @@ public class Ball : MonoBehaviour
         ballActivation = GetComponent<BallActivation>();
 
         // TODO Set up event callbacks
-        // EventsManager.instance.onGoalScored += this.OnGoalScored;
+        // EventsManager.instance.onGoalScored += this.HandleGoalScored;
     }
 
     public bool CanBeCarriedBy(BallCarrier ballCarrier) {
@@ -36,7 +36,7 @@ public class Ball : MonoBehaviour
         // Set position
     }
 
-    public void HandleGoalScore() {
+    public void HandleGoalScored() {
         TrailRenderer trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.enabled = false;
         owner = null;

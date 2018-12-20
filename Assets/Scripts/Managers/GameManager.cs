@@ -227,7 +227,7 @@ public class GameManager : MonoBehaviour
     public void GoalScoredForTeam(TeamManager scored)
     {
         // TODO: switch this to an event
-        ball.HandleGoalScore();
+        ball.HandleGoalScored();
 
         // goal?.StopTeamSwitching();
         foreach (TeamManager team in teams)
