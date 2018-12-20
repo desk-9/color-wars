@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+// TODO: Remove this component!
+// IIRC, NamedColor predated the TeamResourceManager, and hasn't aged well since
+// -krista
 [System.Serializable]
 public class NamedColor
 {

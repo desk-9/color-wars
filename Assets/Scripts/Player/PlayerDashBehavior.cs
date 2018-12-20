@@ -116,10 +116,6 @@ public class PlayerDashBehavior : MonoBehaviour
     {
         dashCoroutine = StartCoroutine(Dash(chargeAmount));
         lastDashTime = Time.time;
-        if (tronMechanic.layWallOnDash)
-        {
-            tronMechanic.PlaceWallAnchor();
-        }
     }
 
     private void StopDash()

@@ -3,8 +3,7 @@ using UtilityExtensions;
 using Photon.Realtime;
 using Photon.Pun;
 
-// public class Player : MonoBehaviourPunCallbacks
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPunCallbacks
 {
     // private PlayerStateManager stateManager;
     public delegate void OnTeamAssignedCallback(TeamManager team);
@@ -67,6 +66,13 @@ public class Player : MonoBehaviour
         {
             Destroy(explosionEffect);
             explosionEffect = null;
+        }
+    }
+
+    public void ResetTronWalls() {
+        PlayerTronMechanic tronMechanic = this.GetComponent<PlayerTronMechanic>();
+        if (tronMechanic != null) {
+            tronMechanic.KillAllWalls();
         }
     }
 
