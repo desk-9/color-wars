@@ -140,6 +140,7 @@ public class TeamManager
         foreach (Player teamMember in teamMembers)
         {
             teamMember.ResetPlayerPosition();
+            teamMember.ResetTronWalls();
         }
     }
 

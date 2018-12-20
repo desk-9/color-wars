@@ -184,6 +184,11 @@ public static class Utility
         };
     }
 
+    public static bool IsInLayer(GameObject go, LayerMask layerMask)
+    {
+        return layerMask == (layerMask | (1 << go.layer));
+    }
+
     // Ripped from
     // https://answers.unity.com/questions/661383/whats-the-most-efficient-way-to-rotate-a-vector2-o.html
     public static Vector2 RotateVector(this Vector2 v, float degrees)

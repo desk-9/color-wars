@@ -74,6 +74,13 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
+    public void ResetTronWalls() {
+        PlayerTronMechanic tronMechanic = this.GetComponent<PlayerTronMechanic>();
+        if (tronMechanic != null) {
+            tronMechanic.KillAllWalls();
+        }
+    }
+
     public void BeginPlayerMovement()
     {
         stateManager.CurrentStateHasFinished();

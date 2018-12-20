@@ -284,10 +284,6 @@ public class GameManager : MonoBehaviour
         ball.ResetBall(pauseAfterReset);
         notificationCenter.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
-        foreach (TronWall wall in GameObject.FindObjectsOfType<TronWall>())
-        {
-            wall.KillSelf();
-        }
 
         goal?.SwitchToNextTeam(false);
         goal?.ResetNeutral();
