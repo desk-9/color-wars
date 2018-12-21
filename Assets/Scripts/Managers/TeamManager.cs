@@ -20,7 +20,6 @@ public class TeamManager
         {0, 1},
         {1, 0},
     };
-    private Stack<float> unusedYs;
 
     public TeamManager(int teamNumber, NamedColor teamColor)
     {
@@ -31,7 +30,6 @@ public class TeamManager
             resources.mainPlayerSprite, resources.altPlayerSprite
         };
         unusedSprites = new Stack<Sprite>(memberSprites);
-        unusedYs = new Stack<float>(playerYs);
     }
 
 
@@ -50,21 +48,19 @@ public class TeamManager
         GameManager.instance.scoreDisplayer?.UpdateScores();
     }
 
-    private float CalculateRotation(Vector2 position)
+    private float CalculateRotation(int xIndex, int yIndex)
     {
-        int xIndex = playerXs.IndexOf(position.x);
-        int yIndex = playerYs.IndexOf(position.y);
         if (xIndex == 0 && yIndex == 0)
         {
-            return 45;
+            return 225;
         }
         else if (xIndex == 1 && yIndex == 0)
         {
-            return 135;
+            return 45;
         }
         else if (xIndex == 1 && yIndex == 1)
         {
-            return 225;
+            return 135;
         }
         else
         {
@@ -76,13 +72,12 @@ public class TeamManager
     {
         teamMembers.Add(newMember);
         Utility.Print(teamNumber);
-        if (unusedYs.Count > 0)
-        {
-            newMember.initialPosition = new Vector2(
-                                                    playerXs[teamNumberToX[teamNumber - 1]],
-                                                    unusedYs.Pop());
-            newMember.initialRotation = CalculateRotation(newMember.initialPosition);
-        }
+        int yIndex = teamMembers.Count - 1;
+        int xIndex = ((teamNumber - 1) + yIndex) % 2;
+        newMember.initialPosition = new Vector2(
+            playerXs[xIndex],
+            playerYs[yIndex]);
+        newMember.initialRotation = CalculateRotation(xIndex, yIndex);
         SpriteRenderer renderer = newMember.GetComponent<SpriteRenderer>();
         if (unusedSprites.Count == 0)
         {
@@ -113,7 +108,6 @@ public class TeamManager
     {
         if (teamMembers.Contains(member))
         {
-            unusedYs.Push(member.initialPosition.y);
             if (spriteUsage.ContainsKey(member))
             {
                 unusedSprites.Push(spriteUsage[member]);

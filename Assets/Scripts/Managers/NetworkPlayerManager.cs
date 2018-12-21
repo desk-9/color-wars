@@ -49,6 +49,7 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
     {
         // Ensures the free players is populated by the first player to enter
         // the room
+        Utility.Print("Did First Load for NetworkPlayerManager in room", LogLevel.Warning);
         if (!PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(FREE_PLAYERS_PROPERTY_KEY))
         {
             var outData = new Hashtable();
@@ -86,9 +87,9 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         OwnNextPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
-    public override void OnLeftRoom()
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player leaver)
     {
-        ReleaseAllPlayers(PhotonNetwork.LocalPlayer.ActorNumber);
+        ReleaseAllPlayers(leaver.ActorNumber);
     }
 
     public bool LocalOwnsPlayer(int playerNumber)

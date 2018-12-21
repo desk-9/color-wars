@@ -25,6 +25,8 @@ public enum Message
 {
     BallIsPossessed,
     BallIsUnpossessed,
+    BallPossessedByPlayer,
+    BallUnpossessedByPlayer,
     StartCountdown,
     CountdownFinished,
     GoalScored,

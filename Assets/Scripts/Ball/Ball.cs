@@ -48,8 +48,12 @@ public class Ball : MonoBehaviour
             owner_ = value;
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
+            Message playerMessage = owner_ == null ? Message.BallPossessedByPlayer : Message.BallUnpossessedByPlayer;
             rigidbody.angularVelocity = 0f;
             notificationManager.NotifyMessageWithoutSender(message);
+            if (owner_ != null) {
+                notificationManager.NotifyMessagePlayer(playerMessage, owner_.gameObject);
+            }
             if (!this.isActiveAndEnabled)
             {
                 return;

@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
     {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
     private float matchLengthSeconds;
 
-    private Ball ball
+    public Ball ball
     {
         get
         {

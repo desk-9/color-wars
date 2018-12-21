@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
+using Photon.Realtime;
+using Photon.Pun;
 using UtilityExtensions;
 
 public class BallCarrier : MonoBehaviour
@@ -61,6 +63,13 @@ public class BallCarrier : MonoBehaviour
 
         NotificationManager notificationManager = GameManager.instance.notificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        notificationManager.CallOnMessageWithPlayerObject(
+            Message.BallPossessedByPlayer,
+            (player) => {
+                if (IsLocalPlayer() && Ball == null) {
+                    stateManager.AttemptPossession(() => StartCarryingBall(GameManager.instance.ball), DropBall);
+                }
+            });
     }
 
     private void BlowBackEnemyPlayers()
@@ -111,10 +120,20 @@ public class BallCarrier : MonoBehaviour
         }
     }
 
+    bool IsLocalPlayer() {
+        var playerView = GetComponent<PhotonView>();
+        return playerView && playerView.IsMine;
+    }
+
     // This function is called when the BallCarrier initially gains possession
     // of the ball
     public void StartCarryingBall(Ball ball)
     {
+
+        var ballView = ball.GetComponent<PhotonView>();
+        if (IsLocalPlayer()) {
+            ballView.TransferOwnership(PhotonNetwork.LocalPlayer);
+        }
         BlowBackEnemyPlayers();
         timeCarryStarted = Time.time;
         ball.rigidbody.velocity = Vector2.zero;
