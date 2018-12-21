@@ -1,7 +1,7 @@
 [submodule "Assets/InControl"]
-	path = Assets/InControl
+	path = Assets/ThirdPartyLibs/InControl
 	url = git@github.com:spruceb/paid-incontrol.git
 	branch = master
 [submodule "Assets/Photon"]
-	path = Assets/Photon
+	path = Assets/ThirdPartyLibs/Photon
 	url = git@github.com:dkonik/Photon.git
