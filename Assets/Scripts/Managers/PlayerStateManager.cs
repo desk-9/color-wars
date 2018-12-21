@@ -58,15 +58,17 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// </summary>
     private Dictionary<State, StateTransitionInformation> stateInfos = new Dictionary<State, StateTransitionInformation>()
     {
-        { State.StartupState,      null },
-        { State.NormalMovement,    new NormalMovementInformation() },
-        { State.ChargeDash,        null },
-        { State.Dash,              new DashInformation() },
-        { State.Possession,        null },
-        { State.ChargeShot,        null },
-        { State.Stun,              new StunInformation() },
-        { State.FrozenAfterGoal,   null },
-        { State.LayTronWall,       new TronWallInformation() },
+        { State.StartupState,               null },
+        { State.NormalMovement,             new NormalMovementInformation() },
+        { State.ChargeDash,                 null },
+        { State.Dash,                       new DashInformation() },
+        { State.Possession,                 null },
+        { State.ChargeShot,                 null },
+        { State.Stun,                       new StunInformation() },
+        { State.FrozenAfterGoal,            null },
+        { State.LayTronWall,                new TronWallInformation() },
+        { State.StartOfMatch,               null },
+        { State.ControllerDisconnected,     null },
     };
 
     /// <summary>
@@ -120,7 +122,9 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
             if (transitionInfo == null && state != State.NormalMovement)
             {
                 Debug.LogError("Called TransitionToState but did not provide the transition information");
-            } else if (stateInfos[state] != transitionInfo)
+            }
+
+            if (stateInfos[state] != transitionInfo && state != State.NormalMovement)
             {
                 Debug.LogError("Not reusing the pre allocated state transition information. You should not be calling new. Call GetStateInformationForWriting");
             }
@@ -253,6 +257,11 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     private void Start()
     {
         GameManager.instance.NotificationManager.RegisterPlayer(this);
+    }
+
+    private void Update()
+    {
+        Debug.LogErrorFormat("Current state: {0}", CurrentState);
     }
 
     public bool IsInState(params State[] states)

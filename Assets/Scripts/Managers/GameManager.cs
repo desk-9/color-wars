@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
 
     private void Initialization()
     {
+        NotificationManager = new NotificationManager();
         if (!PlayerTutorial.runTutorial && !playerTeamsAlreadySelected)
         {
             cheatForcePlayerAssignment = true;
@@ -98,7 +99,6 @@ public class GameManager : MonoBehaviour
         {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        NotificationManager = new NotificationManager();
         PossessionManager = GetComponent<PossessionManager>();
     }
 

@@ -40,7 +40,9 @@ public class PlayerTronMechanic : MonoBehaviour
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
         GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
-            Message.PlayerPressedWall, LayWallButtonPressed, gameObject);
+            Message.PlayerPressedWall, OnLayWallButtonPressed, gameObject);
+        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+            Message.PlayerReleasedWall, () => StopLayingWall(true), gameObject);
         stateManager.OnStateChange += HandleNewPlayerState;
     }
 
@@ -58,7 +60,15 @@ public class PlayerTronMechanic : MonoBehaviour
         }
     }
 
-    private void LayWallButtonPressed()
+    private void OnLayWallButtonReleased()
+    {
+        if (stateManager.CurrentState == State.LayTronWall)
+        {
+            stateManager.TransitionToState(State.NormalMovement);
+        }
+    }
+
+    private void OnLayWallButtonPressed()
     {
         if (player.Team != null && stateManager.CurrentState == State.NormalMovement)
         {
