@@ -42,7 +42,7 @@ public class PlayerTronMechanic : MonoBehaviour
         GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedWall, OnLayWallButtonPressed, gameObject);
         GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
-            Message.PlayerReleasedWall, () => StopLayingWall(true), gameObject);
+            Message.PlayerReleasedWall, OnLayWallButtonReleased, gameObject);
         stateManager.OnStateChange += HandleNewPlayerState;
     }
 

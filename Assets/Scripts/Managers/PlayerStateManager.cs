@@ -259,11 +259,6 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         GameManager.instance.NotificationManager.RegisterPlayer(this);
     }
 
-    private void Update()
-    {
-        Debug.LogErrorFormat("Current state: {0}", CurrentState);
-    }
-
     public bool IsInState(params State[] states)
     {
         foreach (State state in states)
