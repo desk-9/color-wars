@@ -79,6 +79,7 @@ public class PlayerMovement : MonoBehaviour
     private GameObject teammate;
     private Ball ball;
     private Player player;
+    private bool eventSent = false;
 
     [SerializeField]
     private float aimAssistThreshold = 20f;
@@ -275,7 +276,10 @@ public class PlayerMovement : MonoBehaviour
 
         while (true)
         {
-            rb2d.velocity = movementSpeed * lastDirection;
+            if (eventSent) {
+                  rb2d.velocity = movementSpeed * lastDirection;
+                  eventSent = false;
+              }
 
             // TODO dkonik: Remove this code. This is for the tutorial.
             if (lastDirection.magnitude > 0.1f)
@@ -307,6 +311,7 @@ public class PlayerMovement : MonoBehaviour
                 GameObject player = pair?.Item2;
                 if (pair != null && this != null && player == this.gameObject)
                 {
+                    eventSent = true;
                     lastDirection = pair.Item1;
                 }
             });
@@ -319,7 +324,7 @@ public class PlayerMovement : MonoBehaviour
         player = this.EnsureComponent<Player>();
         goal = GameObject.FindObjectOfType<GoalAimPoint>()?.gameObject;
         ball = GameObject.FindObjectOfType<Ball>();
-        this.FrameDelayCall(() => 
+        this.FrameDelayCall(() =>
         {
             TeamManager team = player.Team;
 
@@ -348,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
 
         StopAllMovement(false);
 
-        // If we for some reason transition to the stun state *after* 
+        // If we for some reason transition to the stun state *after*
         // we were supposed to have finished with the stun state, just put
         // the player where they would have ended up
         float timeTravelledSoFar = (float)(PhotonNetwork.Time - info.EventTimeStamp);
