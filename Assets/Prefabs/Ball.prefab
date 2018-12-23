@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 114284750926977716}
   - component: {fileID: 96678130803253634}
   - component: {fileID: 1319945779}
-  - component: {fileID: 3478682052155535211}
+  - component: {fileID: 2373567841021937249}
   m_Layer: 10
   m_Name: Ball
   m_TagString: Untagged
@@ -362,11 +362,11 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   ObservedComponents:
-  - {fileID: 3478682052155535211}
-  viewIdField: 7
+  - {fileID: 0}
+  viewIdField: 0
   InstantiationId: 7
   isRuntimeInstantiated: 0
---- !u!114 &3478682052155535211
+--- !u!114 &2373567841021937249
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1302162468020258}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de7bba237874e410ca8c66c72682aa51, type: 3}
+  m_Script: {fileID: 11500000, guid: 38e6157188c939a468fe905350efc1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1768583797059612

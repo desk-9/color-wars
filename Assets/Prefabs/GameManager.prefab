@@ -63,9 +63,6 @@ MonoBehaviour:
   players: []
   gameSettings:
     PushAwayOtherPlayers: 1
-    BlowbackRadius: 9
-    BlowbackSpeed: 30
-    BlowbackStunTime: 0.1
     SlowMoFactor: 0.4
     PitchShiftTime: 0.3
     SlowedPitch: 0.5
@@ -77,7 +74,6 @@ MonoBehaviour:
   blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
     type: 3}
   winCondition: 2
-  backgroundScroller: {fileID: 0}
 --- !u!114 &114211205889215070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,7 +161,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 7
+  viewIdField: 0
   InstantiationId: 7
   isRuntimeInstantiated: 0
 --- !u!114 &1325572632197481605
