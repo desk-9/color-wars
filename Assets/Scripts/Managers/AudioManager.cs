@@ -92,7 +92,7 @@ public class AudioManager : MonoBehaviour
     {
         if (shouldSlowMo && GameManager.instance != null
             && GameManager.Settings.RespectSoundEffectSlowMo
-            && GameManager.instance.IsSlowMo())
+            && GameManager.instance.SlowMoManager.IsSlowMo)
         {
 
             source.pitch = GameManager.Settings.SlowedPitch;

@@ -35,7 +35,6 @@ public class PhysicsTransformView : MonoBehaviour, IPunObservable {
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) {
-        Debug.Log("serialized view");
         if (stream.IsWriting) {
             stream.SendNext(rigidbody.position);
             stream.SendNext(rigidbody.velocity);

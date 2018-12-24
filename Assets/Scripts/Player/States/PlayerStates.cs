@@ -136,8 +136,7 @@ public class NormalMovementInformation : StateTransitionInformation
 {
     public bool ShotBall { get; set; } = false;
     public Vector2 BallStartPosition { get; set; }
-    public Vector2 Direction { get; set; }
-    public float Strength { get; set; }
+    public Vector2 Velocity { get; set; }
 
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -145,8 +144,7 @@ public class NormalMovementInformation : StateTransitionInformation
         if (ShotBall)
         {
             BallStartPosition = (Vector2)stream.ReceiveNext();
-            Direction = (Vector2)stream.ReceiveNext();
-            Strength = (float)stream.ReceiveNext();
+            Velocity = (Vector2)stream.ReceiveNext();
         }
     }
 
@@ -156,8 +154,7 @@ public class NormalMovementInformation : StateTransitionInformation
         if (ShotBall)
         {
             stream.SendNext(BallStartPosition);
-            stream.SendNext(Direction);
-            stream.SendNext(Strength);
+            stream.SendNext(Velocity);
         }
     }
 }

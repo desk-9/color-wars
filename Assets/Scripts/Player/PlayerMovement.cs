@@ -109,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator RotateOnly(bool snapToGameObjects)
     {
         aimAssistTarget = null;
+        Vector2 startingPosition = rb2d.position;
         while (true)
         {
             if (snapToGameObjects)
@@ -118,16 +119,16 @@ public class PlayerMovement : MonoBehaviour
             {
                 RotatePlayer();
             }
+
+            // Lock the player in place
+            rb2d.position = startingPosition;
             yield return null;
         }
     }
 
     private void StartRotateOnly(bool snapToGameObjects)
     {
-        if (playerMovementCoroutine != null)
-        {
-            StopCoroutine(playerMovementCoroutine);
-        }
+        StopAllMovement(true);
 
         playerMovementCoroutine = StartCoroutine(RotateOnly(snapToGameObjects));
     }
@@ -137,6 +138,7 @@ public class PlayerMovement : MonoBehaviour
         if (playerMovementCoroutine != null)
         {
             StopCoroutine(playerMovementCoroutine);
+            playerMovementCoroutine = null;
 
             if (zeroOutVelocity)
             {
@@ -340,6 +342,14 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }, 2);
+
+        // Subscribe to events
+        GameManager.instance.NotificationManager.CallOnMessage(Message.SlowMoEntered, HandleSlowMo);
+    }
+
+    private void HandleSlowMo()
+    {
+        instantRotation = !GameManager.instance.SlowMoManager.IsSlowMo;
     }
 
     private void DoStunMovement()

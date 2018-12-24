@@ -71,9 +71,7 @@ public class Ball : MonoBehaviourPunCallbacks
             Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
             rigidbody.angularVelocity = 0f;
             notificationManager.NotifyMessage(message, gameObject);
-            // TODO dkonik: You need to stop listening to this event at some point idiot.
-            // Also, maybe this should just be private
-            notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
+            
             if (!this.isActiveAndEnabled)
             {
                 return;
@@ -99,7 +97,6 @@ public class Ball : MonoBehaviourPunCallbacks
     private void HandlePlayerShotBall(Player player)
     {
         NormalMovementInformation information = player.StateManager.CurrentStateInformation as NormalMovementInformation;
-
         // If we didn't shoot the ball, just return
         if (!information.ShotBall)
         {
@@ -107,19 +104,13 @@ public class Ball : MonoBehaviourPunCallbacks
         }
 
         AudioManager.instance.ShootBallSound.Play(.5f);
-
-        // TODO anyone: This is where we could do something like handling turning off of the 
-        // photon transform view component, since we know which way the ball will be heading for
-        // a little bit.
        
-
-        // What we should (could?) do here is interpolate, based off of information.EventTimeStamp,
-        // the current position of the ball
-
-        // This was the old code 
-        //Vector3 shotDirection = information.Direction;
-        //Rigidbody2D ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
-        //ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
+        if (photonView.IsMine)
+        {
+            // TODO dkonik: Do more here, interp based on the timestamp and ball start
+            // pos, but I am being lazy right now just to see how this works
+            rigidbody.velocity = information.Velocity;
+        }
     }
 
     private void SetColor(Color to_, bool fill)
@@ -176,16 +167,17 @@ public class Ball : MonoBehaviourPunCallbacks
         ballFill = this.GetComponentInChildren<BallFillColor>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
 
-        GameManager.instance.NotificationManager.CallOnMessage(
+        notificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
-        GameManager.instance.NotificationManager.CallOnMessage(
+        notificationManager.CallOnMessage(
             Message.ChargeChanged, HandleChargeChanged
         );
-        GameManager.instance.NotificationManager.CallOnMessage(
+        notificationManager.CallOnMessage(
             Message.GoalScored, HandleGoalScore
         );
-        GameManager.instance.NotificationManager.CallOnStateStart(State.Possession, HandlePossession);
+        notificationManager.CallOnStateStart(State.Possession, HandlePossession);
+        notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
     }
 
     private void HandlePossession(Player player)

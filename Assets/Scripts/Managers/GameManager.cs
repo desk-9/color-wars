@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     #region Managers
     public NotificationManager NotificationManager { get; set; }
     public PossessionManager PossessionManager { get; set; }
+    public SlowMoManager SlowMoManager { get; set; }
     #endregion
 
     public static bool playerTeamsAlreadySelected = false;
@@ -99,7 +100,8 @@ public class GameManager : MonoBehaviour
         {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        PossessionManager = GetComponent<PossessionManager>();
+        PossessionManager = this.EnsureComponent<PossessionManager>();
+        SlowMoManager = this.EnsureComponent<SlowMoManager>();
     }
 
     private void Start()
@@ -276,56 +278,6 @@ public class GameManager : MonoBehaviour
         }
 
         backgroundMusic.pitch = target;
-    }
-
-    public bool IsSlowMo()
-    {
-        return slowMoCount > 0;
-    }
-
-    private int slowMoCount = 0;
-    public void SlowMo()
-    {
-        Utility.ChangeTimeScale(Settings.SlowMoFactor);
-        foreach (Player player in GetAllPlayers())
-        {
-            PlayerMovement movement = player.GetComponent<PlayerMovement>();
-            if (movement != null)
-            {
-                movement.instantRotation = false;
-            }
-        }
-        // Ensure slowMo doesn't stop until ALL balls are dropped
-        slowMoCount += 1;
-        NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
-        if (!TutorialLiveClips.runningLiveClips)
-        {
-            StartCoroutine(PitchShifter(Settings.SlowedPitch, Settings.PitchShiftTime));
-        }
-    }
-
-    public void ResetSlowMo()
-    {
-        // Ensure slowMo doesn't stop until ALL balls are dropped
-        slowMoCount -= 1;
-        if (slowMoCount == 0)
-        {
-            Utility.ChangeTimeScale(1);
-            IEnumerable<PlayerMovement> movements = (from player in GetAllPlayers()
-                                                     where player.GetComponent<PlayerMovement>() != null
-                                                     select player.GetComponent<PlayerMovement>());
-            foreach (PlayerMovement movement in movements)
-            {
-                movement.instantRotation = true;
-            }
-
-            // Pitch-shift BGM back to normal.
-            if (!TutorialLiveClips.runningLiveClips)
-            {
-                StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
-            }
-            NotificationManager.NotifyMessage(Message.SlowMoExited, this);
-        }
     }
 
     public void FlashScreen(float flashLength = 0.1f, Color? flashColor = null)

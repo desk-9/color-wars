@@ -94,7 +94,7 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
     // do this cleanup
     public override void OnLeftRoom()
     {
-        ReleaseAllPlayers(PhotonNetwork.LocalPlayer.ActorNumber);
+        //ReleaseAllPlayers(PhotonNetwork.LocalPlayer.ActorNumber);
     }
 
     /// <summary>

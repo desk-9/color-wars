@@ -134,11 +134,6 @@ public class BallCarrier : MonoBehaviour
     {
         DoBlowbackEffect();
         timeCarryStarted = Time.time;
-
-        if (slowMoOnCarry)
-        {
-            GameManager.instance.SlowMo();
-        }
         
         // TODO dkonik: Make the laser guide event based
         laserGuide?.DrawLaser();
@@ -177,10 +172,11 @@ public class BallCarrier : MonoBehaviour
     {
         if (Ball != null)
         {
-            // TODO dkonik: This should be in a SlowMoManager
-            GameManager.instance.ResetSlowMo();
-            StopCoroutine(carryBallCoroutine);
-            carryBallCoroutine = null;
+            if (carryBallCoroutine != null)
+            {
+                StopCoroutine(carryBallCoroutine);
+                carryBallCoroutine = null;
+            }
 
             // TODO dkonik: This should be event based
             laserGuide?.StopDrawingLaser();

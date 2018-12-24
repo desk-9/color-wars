@@ -171,8 +171,7 @@ public class ShootBallMechanic : MonoBehaviour
         NormalMovementInformation shootBallInfo = stateManager.GetStateInformationForWriting<NormalMovementInformation>(State.NormalMovement);
         shootBallInfo.ShotBall = true;
         shootBallInfo.BallStartPosition = ball.CurrentPosition;
-        shootBallInfo.Direction = ball.CurrentPosition - (Vector2)transform.position;
-        shootBallInfo.Strength = shotSpeed;
+        shootBallInfo.Velocity = (ball.CurrentPosition - (Vector2)transform.position).normalized * shotSpeed;
 
         // Cleanup and transition states
         StopShootBallCoroutines();
