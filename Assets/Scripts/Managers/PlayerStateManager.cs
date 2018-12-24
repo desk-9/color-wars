@@ -62,7 +62,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         { State.NormalMovement,             new NormalMovementInformation() },
         { State.ChargeDash,                 null },
         { State.Dash,                       new DashInformation() },
-        { State.Possession,                 null },
+        { State.Possession,                 new PossessBallInformation() },
         { State.ChargeShot,                 null },
         { State.Stun,                       new StunInformation() },
         { State.FrozenAfterGoal,            null },

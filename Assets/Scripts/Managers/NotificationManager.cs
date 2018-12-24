@@ -15,10 +15,17 @@ public delegate bool EventPredicate(object sender);
 
 public enum Message
 {
+    // Ball
     BallIsPossessed,
     BallIsUnpossessed,
+    BallWentOutOfBounds,
+
+    // Game flow
     StartCountdown,
     CountdownFinished,
+    PlayerAssignedPlayerNumber,
+
+    // Game events
     GoalScored,
     ScoreChanged,
     SlowMoEntered,
@@ -27,32 +34,26 @@ public enum Message
     StolenFrom,
     TronWallDestroyed,
     TronWallDestroyedWhileLaying,
+    ChargeChanged,
+    ResetAfterGoal,
 
+    // Input
     InputDeviceAssigned,
-
     PlayerStick,
-
     PlayerPressedA,
     PlayerReleasedA,
-
     PlayerPressedLeftBumper,
     PlayerReleasedLeftBumper,
-
     PlayerPressedRightBumper,
     PlayerReleasedRightBumper,
-
     PlayerPressedB,
     PlayerReleasedB,
-
     PlayerPressedX,
     PlayerReleasedX,
-
     PlayerPressedY,
     PlayerReleasedY,
-
     PlayerPressedBack,
     PlayerReleasedBack,
-
     PlayerPressedDash,
     PlayerReleasedDash,
     PlayerPressedShoot,
@@ -60,13 +61,9 @@ public enum Message
     PlayerPressedWall,
     PlayerReleasedWall,
 
+    // Tutorial
     RecordingInterrupt,
     RecordingFinished,
-
-    ChargeChanged,
-    Reset,
-
-    PlayerAssignedPlayerNumber,
 };
 
 public class NotificationManager

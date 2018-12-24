@@ -249,7 +249,7 @@ public class PlayerDashBehavior : MonoBehaviour
         Ball ball = gameObject.GetComponent<Ball>();
         if (ball != null)
         {
-            return (ball.Owner == null) ? null : ball.Owner.GetComponent<Player>();
+            return ball.Owner;
         }
         return gameObject.GetComponent<Player>();
     }

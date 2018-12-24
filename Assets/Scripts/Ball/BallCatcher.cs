@@ -7,7 +7,7 @@ public class BallCatcher : MonoBehaviour
         Ball ball = collider.gameObject.GetComponent<Ball>();
         if (ball != null)
         {
-            ball.ResetBall();
+            GameManager.instance.NotificationManager.NotifyMessage(Message.BallWentOutOfBounds, this);
         }
     }
 }

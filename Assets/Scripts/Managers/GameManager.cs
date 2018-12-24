@@ -9,9 +9,9 @@ using UtilityExtensions;
 public class GameManager : MonoBehaviour
 {
     #region Managers
-    public NotificationManager NotificationManager { get; set; }
-    public PossessionManager PossessionManager { get; set; }
-    public SlowMoManager SlowMoManager { get; set; }
+    public NotificationManager NotificationManager { get; private set; }
+    public PossessionManager PossessionManager { get; private set; }
+    public SlowMoManager SlowMoManager { get; private set; }
     #endregion
 
     public static bool playerTeamsAlreadySelected = false;
@@ -226,8 +226,7 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        NotificationManager.NotifyMessage(Message.Reset, this);
-
+        NotificationManager.NotifyMessage(Message.ResetAfterGoal, this);
         ball.ResetBall(pauseAfterReset);
         NotificationManager.NotifyMessage(Message.StartCountdown, this);
         GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();

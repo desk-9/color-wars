@@ -34,7 +34,7 @@ public class TeamManager
         unusedYs = new Stack<float>(playerYs);
 
         GameManager.instance.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
-        GameManager.instance.NotificationManager.CallOnMessage(Message.Reset, ResetTeam);
+        GameManager.instance.NotificationManager.CallOnMessage(Message.ResetAfterGoal, ResetTeam);
         GameManager.instance.NotificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
     }
 

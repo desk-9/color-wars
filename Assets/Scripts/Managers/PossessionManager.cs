@@ -59,7 +59,7 @@ public class PossessionManager : MonoBehaviour
         notificationManager = GameManager.instance.NotificationManager;
         notificationManager.CallOnStateStart(State.Possession, HandleNewPlayerPossession, true);
         notificationManager.CallOnStateEnd(State.Possession, HandlePlayerLostPossession, true);
-        notificationManager.CallOnMessage(Message.Reset, ResetValues);
+        notificationManager.CallOnMessage(Message.ResetAfterGoal, ResetValues);
         ResetValues();
     }
 
@@ -74,11 +74,17 @@ public class PossessionManager : MonoBehaviour
     {
         PossessingPlayer = player;
 
+        // At the beginning of the round, the last player is null, so just notify
+        if (lastPlayerToPossessBall == null)
+        {
+            notificationManager.NotifyMessage(Message.ChargeChanged, this);
+            return;
+        }
+
         // If this is the same as the last player or we are already 
         // set to this team, or if there was not last player (happens at beginning
         // of round) do nothing
-        if (lastPlayerToPossessBall == null ||
-            PossessingPlayer == lastPlayerToPossessBall ||
+        if (PossessingPlayer == lastPlayerToPossessBall ||
             (lastPlayerToPossessBall.Team == PossessingPlayer.Team && IsCharged))
         {
             return;

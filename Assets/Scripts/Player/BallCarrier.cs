@@ -238,7 +238,7 @@ public class BallCarrier : MonoBehaviour
     private void HandleCollision(GameObject thing)
     {
         Ball ball = thing.GetComponent<Ball>();
-        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown || ball.Owner == this)
+        if (ball == null || ball.Owner != null || !ball.Ownable || isCoolingDown || ball.Owner == player)
         {
             return;
         }
@@ -249,7 +249,10 @@ public class BallCarrier : MonoBehaviour
             stateManager.CurrentState == State.LayTronWall)
         {
             StunNearbyPlayers();
-            stateManager.TransitionToState(State.Possession);
+
+            PossessBallInformation info = stateManager.GetStateInformationForWriting<PossessBallInformation>(State.Possession);
+            info.StoleBall = false;
+            stateManager.TransitionToState(State.Possession, info);
         }
     }
 

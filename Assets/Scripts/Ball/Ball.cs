@@ -11,14 +11,9 @@ public class Ball : MonoBehaviourPunCallbacks
     [SerializeField]
     private GameObject implosionPrefab;
 
-    private CircleCollider2D circleCollider;
-    private Goal goal;
-    private Vector2 start_location;
-    private BallFillColor ballFill;
+    private Vector2 startLocation;
     private NotificationManager notificationManager;
-    private TrailRenderer trailRenderer;
     private float speedOnShoot;
-    private Color neutralColor = Color.white;
     private int relevantCollisionLayers;
     private new Rigidbody2D rigidbody;
 
@@ -26,7 +21,7 @@ public class Ball : MonoBehaviourPunCallbacks
     /// The owner before the current one, or just the last owner if there is no
     /// current owner
     /// </summary>
-    public BallCarrier LastOwner { get; private set; }
+    public Player LastOwner { get; private set; }
 
     /// <summary>
     /// In certain situations (like after a goal is scored, or while the ball
@@ -56,8 +51,8 @@ public class Ball : MonoBehaviourPunCallbacks
     /// <summary>
     /// The current owner of the ball if there is one, null otherwise
     /// </summary>
-    private BallCarrier owner_;
-    public BallCarrier Owner
+    private Player owner_;
+    public Player Owner
     {
         get { return owner_; }
         set
@@ -113,69 +108,21 @@ public class Ball : MonoBehaviourPunCallbacks
         }
     }
 
-    private void SetColor(Color to_, bool fill)
-    {
-        Gradient gradient = new Gradient();
-        gradient.SetKeys(
-            new GradientColorKey[] {
-                new GradientColorKey(to_, 0.0f),
-                new GradientColorKey(to_, 1.0f)
-            },
-            new GradientAlphaKey[] {
-                new GradientAlphaKey(1f, 0.0f),
-                new GradientAlphaKey(0f, 1.0f)
-            });
-
-        trailRenderer.colorGradient = gradient;
-        
-        // I think we do this because if you instantly enable it, there is a short
-        // trail that appears as the ball lerps to the new owners nose
-        this.FrameDelayCall(EnableTrail, 5);
-
-        if (fill)
-        {
-            renderer.color = to_;
-            ballFill.EnableAndSetColor(to_);
-        }
-        else
-        {
-            renderer.color = Color.Lerp(to_, Color.white, .6f);
-            ballFill.DisableFill();
-        }
-    }
-
-    private void EnableTrail()
-    {
-        trailRenderer.enabled = true;
-    }
-
-    // This is for resets
-    private void SetSpriteToNeutral()
-    {
-        SetColor(neutralColor, false);
-    }
-
     private void Start()
     {
         notificationManager = GameManager.instance.NotificationManager;
-        start_location = transform.position;
-        trailRenderer = this.EnsureComponent<TrailRenderer>();
+        startLocation = transform.position;
         renderer = GetComponentInChildren<SpriteRenderer>();
-        circleCollider = this.EnsureComponent<CircleCollider2D>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
-        goal = GameObject.FindObjectOfType<Goal>();
-        ballFill = this.GetComponentInChildren<BallFillColor>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
 
         notificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
         notificationManager.CallOnMessage(
-            Message.ChargeChanged, HandleChargeChanged
-        );
-        notificationManager.CallOnMessage(
             Message.GoalScored, HandleGoalScore
         );
+        notificationManager.CallOnMessage(Message.BallWentOutOfBounds, () => ResetBall());
         notificationManager.CallOnStateStart(State.Possession, HandlePossession);
         notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
     }
@@ -185,6 +132,7 @@ public class Ball : MonoBehaviourPunCallbacks
         // TODO dkonik: Probably more to do here
         rigidbody.velocity = Vector2.zero;
         rigidbody.angularVelocity = 0;
+        Owner = player;
     }
 
     private void HandleUnpossesion()
@@ -198,48 +146,15 @@ public class Ball : MonoBehaviourPunCallbacks
         });
     }
 
-    private void HandleChargeChanged()
-    {
-        // TODO dkonik: This was in the old adjustSpriteToCurrentTeam function...
-        // is it still needed?
-        //// Happens if player shoots a frame after pickup
-        //if (Owner == null)
-        //{
-        //    Debug.Assert(LastOwner != null);
-        //    Color lastOwnerColor = ColorFromBallCarrier(LastOwner);
-        //    bool fill = goal?.currentTeam != null && goal?.currentTeam.teamColor == lastOwnerColor;
-        //    SetColor(lastOwnerColor, fill);
-        //    return;
-        //}
-        TeamManager newTeam = GameManager.instance.PossessionManager.CurrentTeam;
-        if (newTeam == null)
-        {
-            throw new Exception("Would not expect the current team to be null in charge changed");
-        }
-        
-        if (GameManager.instance.PossessionManager.IsCharged)
-        {
-            SetColor(GameManager.instance.PossessionManager.CurrentTeam.TeamColor, true);
-        } else
-        {
-            SetColor(GameManager.instance.PossessionManager.CurrentTeam.TeamColor, false);
-        }
-    }
-
     private void HandleGoalScore()
     {
-        trailRenderer.enabled = false;
         Ownable = false;
     }
 
     public void ResetBall(float? lengthOfEffect = null)
     {
         // Reset values 
-        circleCollider.enabled = true;
-        renderer.enabled = true;
-        SetSpriteToNeutral();
-        transform.position = start_location;
-        trailRenderer.enabled = false;
+        transform.position = startLocation;
         Ownable = true;
         rigidbody.velocity = Vector2.zero;
         Owner = null;

@@ -42,7 +42,7 @@ public class Goal : MonoBehaviour
         NotificationManager notificationManager = GameManager.instance.NotificationManager;
         notificationManager.CallOnStringEventWithSender(GoalSwitchCollider.EventId, ColliderSwitch);
         notificationManager.CallOnMessage(Message.ChargeChanged, HandleChargeChanged);
-        notificationManager.CallOnMessage(Message.Reset, ResetNeutral);
+        notificationManager.CallOnMessage(Message.ResetAfterGoal, ResetNeutral);
     }
 
     private void HandleChargeChanged()
