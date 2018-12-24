@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public static bool playerTeamsAlreadySelected = false;
     public static Dictionary<int, int> playerTeamAssignments = new Dictionary<int, int>();
     public static bool cheatForcePlayerAssignment = false;
-    public static GameManager instance;
+    public static GameManager Instance;
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
     public List<TeamManager> Teams { get; set; }
@@ -36,8 +36,8 @@ public class GameManager : MonoBehaviour
     private GameSettings gameSettings;
     public static GameSettings Settings { get
         {
-            instance.ThrowIfNull("Instance was null when trying to acquire GameSettings");
-            return instance.gameSettings;
+            Instance.ThrowIfNull("Instance was null when trying to acquire GameSettings");
+            return Instance.gameSettings;
         }
     }
 
@@ -75,9 +75,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             Initialization();
         }
         else

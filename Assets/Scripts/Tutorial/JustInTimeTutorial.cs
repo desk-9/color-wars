@@ -27,24 +27,24 @@ public class JustInTimeTutorial : MonoBehaviour
         //    Message.BallPossessedWhileNeutral, PassToTeammate);
         //GameManager.instance.notificationManager.CallOnMessageWithSender(
         //    Message.BallPossessedWhileCharged, ShootAtGoal);
-        GameManager.instance.NotificationManager.CallOnMessage(
+        GameManager.Instance.NotificationManager.CallOnMessage(
             Message.GoalScored,
             () =>
             {
-                if (!alreadySeen && GameManager.instance.Teams.All(
+                if (!alreadySeen && GameManager.Instance.Teams.All(
                         team => team.Score > scoreThreshold))
                 {
                     alreadySeen = true;
                 }
             });
 
-        GameManager.instance.NotificationManager.CallOnStateEnd(State.Possession, Unpossessed);
+        GameManager.Instance.NotificationManager.CallOnStateEnd(State.Possession, Unpossessed);
 
-        GameManager.instance.NotificationManager.CallOnMessage(
+        GameManager.Instance.NotificationManager.CallOnMessage(
             Message.PlayerReleasedBack,
             () =>
             {
-                scoreThreshold = GameManager.instance.Teams.Max(team => team.Score);
+                scoreThreshold = GameManager.Instance.Teams.Max(team => team.Score);
                 alreadySeen = false;
             });
         // On possession loss: no text

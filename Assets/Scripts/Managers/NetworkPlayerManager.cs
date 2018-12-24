@@ -124,11 +124,11 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         freePlayers.Remove(nextPlayer);
         playerNumberToActorId.Add(nextPlayer, actorId);
         SetRoomPropertiesFromLocalData();
-        foreach (var player in GameManager.instance.players)
+        foreach (var player in GameManager.Instance.players)
         {
             player.HandlePlayerNumberAssigned();
         }
-        GameManager.instance.NotificationManager.NotifyMessage(Message.PlayerAssignedPlayerNumber, this);
+        GameManager.Instance.NotificationManager.NotifyMessage(Message.PlayerAssignedPlayerNumber, this);
     }
 
     /// <summary>

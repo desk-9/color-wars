@@ -256,7 +256,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 
     private void Start()
     {
-        GameManager.instance.NotificationManager.RegisterPlayer(this);
+        GameManager.Instance.NotificationManager.RegisterPlayer(this);
     }
 
     public bool IsInState(params State[] states)

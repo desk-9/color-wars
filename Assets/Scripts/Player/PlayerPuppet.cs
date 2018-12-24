@@ -33,7 +33,7 @@ public class PlayerPuppet : MonoBehaviour
         {
             return;
         }
-        GameManager.instance.NotificationManager.CallOnMessage(
+        GameManager.Instance.NotificationManager.CallOnMessage(
             Message.RecordingFinished,
             () =>
             {
@@ -91,7 +91,7 @@ public class PlayerPuppet : MonoBehaviour
                 {
                     Debug.LogWarning("Interrupt! Text will change");
 
-                    GameManager.instance.NotificationManager.NotifyMessage(
+                    GameManager.Instance.NotificationManager.NotifyMessage(
                         Message.RecordingInterrupt, this.gameObject);
 
                 }
@@ -100,7 +100,7 @@ public class PlayerPuppet : MonoBehaviour
             }
             if (!recordingFinishedThisFrame)
             {
-                GameManager.instance.NotificationManager.NotifyMessage(
+                GameManager.Instance.NotificationManager.NotifyMessage(
                     Message.RecordingFinished, this.gameObject);
             }
             if (!loop)

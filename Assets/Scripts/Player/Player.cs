@@ -61,7 +61,7 @@ public class Player : MonoBehaviourPunCallbacks
         explosionEffect = GameObject.Instantiate(Team.resources.explosionPrefab, transform.position, transform.rotation);
         ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
-        explosionMain.startLifetime = GameManager.instance.pauseAfterGoalScore;
+        explosionMain.startLifetime = GameManager.Instance.pauseAfterGoalScore;
         explosionMain.startColor = Team.TeamColor.color;
         explosionParticleSystem.Play();
     }
@@ -129,21 +129,21 @@ public class Player : MonoBehaviourPunCallbacks
 
         if (teamOverride >= 0)
         {
-            SetTeam(GameManager.instance.Teams[teamOverride]);
+            SetTeam(GameManager.Instance.Teams[teamOverride]);
         }
         else if ((GameManager.playerTeamsAlreadySelected || GameManager.cheatForcePlayerAssignment)
             && playerNumber >= 0)
         {
             // Dummies have a player number of -1, and shouldn't get a team
-            Team = GameManager.instance.GetTeamAssignment(this);
+            Team = GameManager.Instance.GetTeamAssignment(this);
             if (Team != null && isNormalPlayer)
             {
                 SetTeam(Team);
             }
         }
 
-        GameManager.instance.NotificationManager.CallOnMessage(Message.PlayerAssignedPlayerNumber, HandlePlayerNumberAssigned);
-        GameManager.instance.players.Add(this);
+        GameManager.Instance.NotificationManager.CallOnMessage(Message.PlayerAssignedPlayerNumber, HandlePlayerNumberAssigned);
+        GameManager.Instance.players.Add(this);
     }
 
     /// <summary>
@@ -166,7 +166,7 @@ public class Player : MonoBehaviourPunCallbacks
         {
             this.Team.RemoveTeamMember(this);
         }
-        GameManager.instance.players.Remove(this);
+        GameManager.Instance.players.Remove(this);
     }
 
 }

@@ -14,19 +14,19 @@ public class BackgroundScroller : MonoBehaviour
     {
         renderer = GetComponent<SpriteRenderer>();
         origin = transform.position;
-        GameManager.instance.NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChanged);
+        GameManager.Instance.NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChanged);
     }
 
     private void HandleScoreChanged()
     {
-        TeamManager winningTeam = GameManager.instance.GetWinningTeam();
+        TeamManager winningTeam = GameManager.Instance.GetWinningTeam();
         if (winningTeam != null)
         {
             SetBackground(winningTeam.resources);
         }
         else
         {
-            SetBackground(GameManager.instance.neutralResources);
+            SetBackground(GameManager.Instance.neutralResources);
         }
     }
 

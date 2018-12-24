@@ -60,15 +60,15 @@ public class TutorialSlideshow : MonoBehaviour
 
     private void StartListeningForPlayers()
     {
-        GameManager.instance.NotificationManager.CallOnMessageWithSender(
+        GameManager.Instance.NotificationManager.CallOnMessageWithSender(
             Message.PlayerReleasedA, CheckinPlayer);
-        GameManager.instance.NotificationManager.CallOnMessage(
+        GameManager.Instance.NotificationManager.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 
     private List<GameObject> GetPlayers()
     {
-        return (from player in GameManager.instance.GetAllPlayers()
+        return (from player in GameManager.Instance.GetAllPlayers()
                 select player.gameObject).ToList();
     }
 

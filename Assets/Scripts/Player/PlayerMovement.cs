@@ -288,7 +288,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (Time.time - startTime > 0.75f)
                 {
-                    GameManager.instance.NotificationManager.NotifyStringEvent("MoveTutorial", this.gameObject);
+                    GameManager.Instance.NotificationManager.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
             }
             else
@@ -306,7 +306,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        GameManager.instance.NotificationManager.CallOnMessageWithSender(
+        GameManager.Instance.NotificationManager.CallOnMessageWithSender(
             Message.PlayerStick, playerPair =>
             {
                 Tuple<Vector2, GameObject> pair = playerPair as Tuple<Vector2, GameObject>;
@@ -344,12 +344,12 @@ public class PlayerMovement : MonoBehaviour
         }, 2);
 
         // Subscribe to events
-        GameManager.instance.NotificationManager.CallOnMessage(Message.SlowMoEntered, HandleSlowMo);
+        GameManager.Instance.NotificationManager.CallOnMessage(Message.SlowMoEntered, HandleSlowMo);
     }
 
     private void HandleSlowMo()
     {
-        instantRotation = !GameManager.instance.SlowMoManager.IsSlowMo;
+        instantRotation = !GameManager.Instance.SlowMoManager.IsSlowMo;
     }
 
     private void DoStunMovement()

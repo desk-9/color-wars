@@ -104,7 +104,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        notificationManager = GameManager.instance.NotificationManager;
+        notificationManager = GameManager.Instance.NotificationManager;
         startLocation = transform.position;
         renderer = GetComponentInChildren<SpriteRenderer>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();

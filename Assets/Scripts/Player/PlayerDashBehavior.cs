@@ -47,9 +47,9 @@ public class PlayerDashBehavior : MonoBehaviour
 
         stateManager.OnStateChange += HandleNewPlayerState;
 
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedDash, DashButtonPressed, this.gameObject);
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedDash, DeshButtonReleased, this.gameObject);
     }
 

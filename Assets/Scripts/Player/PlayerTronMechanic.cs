@@ -39,9 +39,9 @@ public class PlayerTronMechanic : MonoBehaviour
         playerMovement = this.EnsureComponent<PlayerMovement>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedWall, OnLayWallButtonPressed, gameObject);
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedWall, OnLayWallButtonReleased, gameObject);
         stateManager.OnStateChange += HandleNewPlayerState;
     }

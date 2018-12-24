@@ -52,7 +52,7 @@ public class BallCarrier : MonoBehaviour
         }
         laserGuide = this.GetComponent<LaserGuide>();
 
-        NotificationManager notificationManager = GameManager.instance.NotificationManager;
+        NotificationManager notificationManager = GameManager.Instance.NotificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
         stateManager.OnStateChange += HandleNewPlayerState;
         CalculateOffset();
@@ -77,7 +77,7 @@ public class BallCarrier : MonoBehaviour
     private void StunNearbyPlayers()
     {
         // Stun the players that should get blown back
-        TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
+        TeamManager enemyTeam = GameManager.Instance.Teams.Find((teamManager) => teamManager != player.Team);
         Debug.Assert(enemyTeam != null);
 
         foreach (Player enemyPlayer in enemyTeam.teamMembers)
@@ -99,7 +99,7 @@ public class BallCarrier : MonoBehaviour
 
     private void DoBlowbackEffect()
     {
-        TeamManager enemyTeam = GameManager.instance.Teams.Find((teamManager) => teamManager != player.Team);
+        TeamManager enemyTeam = GameManager.Instance.Teams.Find((teamManager) => teamManager != player.Team);
         Debug.Assert(enemyTeam != null);
 
         {

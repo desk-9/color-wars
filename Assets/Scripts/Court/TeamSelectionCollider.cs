@@ -15,9 +15,9 @@ public class TeamSelectionCollider : MonoBehaviour
     private void Start()
     {
         countText = GetComponentInChildren<Text>();
-        if (teamNumber < GameManager.instance.Teams.Count)
+        if (teamNumber < GameManager.Instance.Teams.Count)
         {
-            team = GameManager.instance.Teams[teamNumber];
+            team = GameManager.Instance.Teams[teamNumber];
         }
         this.FrameDelayCall(() =>
         {

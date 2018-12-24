@@ -41,10 +41,10 @@ public class PlayerCheckin
         {
             this.onReset = onReset;
         }
-        GameManager.instance.NotificationManager.CallOnMessageWithSender(checkinEvent, Checkin);
+        GameManager.Instance.NotificationManager.CallOnMessageWithSender(checkinEvent, Checkin);
         if (checkoutEvent.HasValue)
         {
-            GameManager.instance.NotificationManager.CallOnMessageWithSender(checkoutEvent.Value, Checkout);
+            GameManager.Instance.NotificationManager.CallOnMessageWithSender(checkoutEvent.Value, Checkout);
         }
     }
 

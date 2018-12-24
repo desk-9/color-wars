@@ -15,12 +15,12 @@ public class EndGameText : MonoBehaviour
     {
         endText = transform.FindComponent<Text>("EndText");
         endText.text = "";
-        GameManager.instance.OnGameOver += () => GameOverFunction();
+        GameManager.Instance.OnGameOver += () => GameOverFunction();
     }
 
     public void GameOverFunction()
     {
-        endText.color = GameManager.instance.Winner.TeamColor.color;
+        endText.color = GameManager.Instance.Winner.TeamColor.color;
         endText.text = endTextContent;
 
         // Start "Game!" text lerp

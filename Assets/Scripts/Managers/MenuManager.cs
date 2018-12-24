@@ -20,7 +20,7 @@ public class MenuManager : MonoBehaviour
     {
         if (winDisplay != null)
         {
-            GameManager.instance.OnGameOver += () =>
+            GameManager.Instance.OnGameOver += () =>
             {
                 this.RealtimeDelayCall(winDisplay.GameOverFunction, pauseBeforeWinDisplay);
             };
@@ -47,7 +47,7 @@ public class MenuManager : MonoBehaviour
         }
 
         // note: don't allow pausing if game is over.
-        if (!GameManager.instance.gameOver
+        if (!GameManager.Instance.gameOver
             && PlayerInputManager.instance.Any((device)
                             => device.GetControl(StartButton).WasPressed))
         {
@@ -55,7 +55,7 @@ public class MenuManager : MonoBehaviour
             return;
         }
 
-        if ((SceneStateManager.instance.paused || GameManager.instance.gameOver)
+        if ((SceneStateManager.instance.paused || GameManager.Instance.gameOver)
             && PlayerInputManager.instance.Any((device)
                             => device.GetControl(MainMenuButton).WasPressed))
         {

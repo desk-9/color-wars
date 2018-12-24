@@ -71,7 +71,7 @@ public class PlayerRecorder : MonoBehaviour
         if (allRecordAtOnce)
         {
             // Have all players start and stop recordings on same button press
-            GameManager.instance.NotificationManager.CallOnMessage(
+            GameManager.Instance.NotificationManager.CallOnMessage(
                 Message.PlayerPressedRightBumper, () =>
                 {
                     if (recording == null)

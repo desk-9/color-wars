@@ -46,7 +46,7 @@ public class RoundStartBlocker : MonoBehaviour
         lineRenderer.enabled = false;
         // Reset line to original points
         lineRenderer.SetPositions(originalLinePoints);
-        GameObject.Instantiate(GameManager.instance.neutralResources.tronWallSuicidePrefab,
+        GameObject.Instantiate(GameManager.Instance.neutralResources.tronWallSuicidePrefab,
                                transform.position,
                                transform.rotation).EnsureComponent<ParticleSystem>().Play();
     }
@@ -59,7 +59,7 @@ public class RoundStartBlocker : MonoBehaviour
         }
         edgeCollider.enabled = false;
         lineRenderer.enabled = false;
-        GameObject instatiated = GameObject.Instantiate(GameManager.instance.neutralResources.tronWallDestroyedPrefab,
+        GameObject instatiated = GameObject.Instantiate(GameManager.Instance.neutralResources.tronWallDestroyedPrefab,
                                transform.position,
                                transform.rotation);
         ParticleSystem ps = instatiated.EnsureComponent<ParticleSystem>();

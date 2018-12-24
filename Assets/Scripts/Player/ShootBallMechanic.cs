@@ -32,9 +32,9 @@ public class ShootBallMechanic : MonoBehaviour
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
 
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedShoot, OnShootPressed, gameObject);
-        GameManager.instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
         stateManager.OnStateChange += HandleNewPlayerState;
 
@@ -100,12 +100,12 @@ public class ShootBallMechanic : MonoBehaviour
         }
 
         // Circular timer
-        GameObject circularTimerPrefab = GameManager.instance.neutralResources.circularTimerPrefab;
+        GameObject circularTimerPrefab = GameManager.Instance.neutralResources.circularTimerPrefab;
         circularTimer = Instantiate(
             circularTimerPrefab, transform).GetComponent<CircularTimer>();
 
         // ShotCharge indicator
-        GameObject shotChargeIndicatorPrefab = GameManager.instance.neutralResources.shotChargeIndicatorPrefab;
+        GameObject shotChargeIndicatorPrefab = GameManager.Instance.neutralResources.shotChargeIndicatorPrefab;
         shotChargeIndicator = Instantiate(
             shotChargeIndicatorPrefab, transform).GetComponent<ShotChargeIndicator>();
 

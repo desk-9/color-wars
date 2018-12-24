@@ -90,9 +90,9 @@ public class AudioManager : MonoBehaviour
 
     public void PlayClip(AudioClip asset, float volume, bool shouldSlowMo = false)
     {
-        if (shouldSlowMo && GameManager.instance != null
+        if (shouldSlowMo && GameManager.Instance != null
             && GameManager.Settings.RespectSoundEffectSlowMo
-            && GameManager.instance.SlowMoManager.IsSlowMo)
+            && GameManager.Instance.SlowMoManager.IsSlowMo)
         {
 
             source.pitch = GameManager.Settings.SlowedPitch;

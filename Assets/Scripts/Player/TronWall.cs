@@ -131,7 +131,7 @@ public class TronWall : MonoBehaviour
             }
 
             creator.HandleWallCollision();
-            GameManager.instance.NotificationManager.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
+            GameManager.Instance.NotificationManager.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
             PlayDestroyedParticleEffect();
             Destroy(gameObject);
             return;
@@ -153,7 +153,7 @@ public class TronWall : MonoBehaviour
             Vector3 knockBackdirection = -player.transform.right;
             player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
                 knockBackdirection * knockbackOnBreak, wallBreakerStunTime);
-            GameManager.instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
+            GameManager.Instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
         }
 
     }
