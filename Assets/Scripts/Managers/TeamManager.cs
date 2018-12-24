@@ -60,7 +60,7 @@ public class TeamManager
     private void IncrementScore()
     {
         Score += 1;
-        GameManager.instance.NotificationManager.NotifyMessage(Message.ScoreChanged, this, true);
+        GameManager.instance.NotificationManager.NotifyMessage(Message.ScoreChanged, this);
     }
 
     private float CalculateRotation(Vector2 position)

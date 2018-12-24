@@ -63,19 +63,13 @@ public class Ball : MonoBehaviourPunCallbacks
             }
             owner_ = value;
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
-            Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
+
             rigidbody.angularVelocity = 0f;
-            notificationManager.NotifyMessage(message, gameObject);
             
             if (!this.isActiveAndEnabled)
             {
                 return;
             }
-            // TODO dkonik: This used to be where the color of the ball was set. 
-            // No longer! But figure out where that should go. Part of it is in 
-            // handle charge change. But we also want to change it even if not charged.
-            // Possession manager should probably have a possession event change too, and
-            // that is what *most* things listen to...but idk.
         }
     }
 
@@ -124,7 +118,13 @@ public class Ball : MonoBehaviourPunCallbacks
         );
         notificationManager.CallOnMessage(Message.BallWentOutOfBounds, () => ResetBall());
         notificationManager.CallOnStateStart(State.Possession, HandlePossession);
+        notificationManager.CallOnStateEnd(State.Possession, HandlePossessionLost);
         notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
+    }
+
+    private void HandlePossessionLost(Player player)
+    {
+        Owner = null;
     }
 
     private void HandlePossession(Player player)

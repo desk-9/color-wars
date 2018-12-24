@@ -199,16 +199,10 @@ public class NotificationManager
         CallOnMessageIf(event_type, o => callback(), o => (o as GameObject) == thing);
     }
 
-    public void NotifyMessage(Message event_type, object sender, bool early = false)
+    public void NotifyMessage(Message event_type, object sender)
     {
-        if (early)
-        {
-            onMessage_early[event_type](sender);
-        }
-        else
-        {
-            onMessage[event_type](sender);
-        }
+        onMessage_early[event_type](sender);
+        onMessage[event_type](sender);
     }
 
     public void UnsubscribeMessage(Message event_type, EventCallback callback, bool early = false)

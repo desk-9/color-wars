@@ -59,6 +59,7 @@ public class PossessionManager : MonoBehaviour
         notificationManager = GameManager.instance.NotificationManager;
         notificationManager.CallOnStateStart(State.Possession, HandleNewPlayerPossession, true);
         notificationManager.CallOnStateEnd(State.Possession, HandlePlayerLostPossession, true);
+        notificationManager.CallOnStateEnd(State.ChargeShot, HandlePlayerShotBall, true);
         notificationManager.CallOnMessage(Message.ResetAfterGoal, ResetValues);
         ResetValues();
     }
@@ -78,50 +79,78 @@ public class PossessionManager : MonoBehaviour
         if (lastPlayerToPossessBall == null)
         {
             notificationManager.NotifyMessage(Message.ChargeChanged, this);
+            notificationManager.NotifyMessage(Message.BallIsPossessed, player);
             return;
         }
 
         // If this is the same as the last player or we are already 
-        // set to this team, or if there was not last player (happens at beginning
-        // of round) do nothing
-        if (PossessingPlayer == lastPlayerToPossessBall ||
-            (lastPlayerToPossessBall.Team == PossessingPlayer.Team && IsCharged))
+        // set to this team
+        if (PossessingPlayer != lastPlayerToPossessBall &&
+            !(lastPlayerToPossessBall.Team == PossessingPlayer.Team && IsCharged))
         {
-            return;
-        }
-
-        // If we passed to our teammate
-        if (PossessingPlayer.Team == lastPlayerToPossessBall.Team)
-        {
-            if (PlayerInNullZone(player))
+            // If we passed to our teammate
+            if (PossessingPlayer.Team == lastPlayerToPossessBall.Team)
             {
-                // Blocked by the null zone
-                notificationManager.NotifyMessage(Message.NullChargePrevention, this);
+                if (PlayerInNullZone(player))
+                {
+                    // Blocked by the null zone
+                    notificationManager.NotifyMessage(Message.NullChargePrevention, this);
+                }
+                else
+                {
+                    // We made a successful pass
+                    IsCharged = true;
+                    notificationManager.NotifyMessage(Message.ChargeChanged, this);
+                }
             }
             else
             {
-                // We made a successful pass
-                IsCharged = true;
-                notificationManager.NotifyMessage(Message.ChargeChanged, this);
+                // Opposing team got the ball
+                bool oldCharged = IsCharged;
+                IsCharged = false;
+                if (oldCharged)
+                {
+                    notificationManager.NotifyMessage(Message.ChargeChanged, this);
+                }
+
             }
         }
-        else
-        {
-            // Opposing team got the ball
-            bool oldCharged = IsCharged;
-            IsCharged = false;
-            if (oldCharged)
-            {
-                notificationManager.NotifyMessage(Message.ChargeChanged, this);
-            }
-            
-        }
+
+        notificationManager.NotifyMessage(Message.BallIsPossessed, player);
     }
 
     private void HandlePlayerLostPossession(Player player)
     {
+        // The reason we check for player == PossessingPlayer is because we could
+        // theoretically get the notification that a new player has possession before
+        // we get notified that the old player lost the ball. This shouldn't happen,
+        // but we may need to revisit this
+        Debug.Assert(player == PossessingPlayer, "Player was not possessing player in PossessionManager");
+
+        if (player.StateManager.CurrentState != State.ChargeShot)
+        {
+            DoPossessionLost(player);
+        }
+    }
+
+    private void HandlePlayerShotBall(Player player)
+    {
+        // The reason we check for player == PossessingPlayer is because we could
+        // theoretically get the notification that a new player has possession before
+        // we get notified that the old player lost the ball. This shouldn't happen,
+        // but we may need to revisit this
+        Debug.Assert(player == PossessingPlayer, "Player was not possessing player in PossessionManager");
+        if (player == PossessingPlayer)
+        {
+            DoPossessionLost(player);
+        }
+    }
+
+    private void DoPossessionLost(Player player)
+    {
         lastPlayerToPossessBall = player;
         PossessingPlayer = null;
+        notificationManager.NotifyMessage(Message.BallIsUnpossessed, player);
     }
 
     private bool PlayerInNullZone(Player player)

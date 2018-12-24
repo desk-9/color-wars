@@ -17,10 +17,11 @@ public enum LogLevel
     Error
 }
 
+/// <summary>
+/// This namespace is for any general utility extensions to existing classes
+/// </summary>
 namespace UtilityExtensions
 {
-    // This namespace is for any general utility extensions to existing classes
-
     public static class UtilityExtensionsContainer
     {
         // TODO dkonik: Does this actually fucking work? lol static dynamic

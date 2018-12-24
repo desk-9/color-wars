@@ -54,6 +54,7 @@ public class GhostTrail : MonoBehaviour
     {
         while (true)
         {
+            // TODO dkonik: Pool these
             GameObject newGhostObject = GameObject.Instantiate(ghostObject, transform.position, transform.rotation);
             newGhostObject.transform.localScale = transform.localScale;
             newGhostObject.GetComponent<Ghost>().Initialize(renderer, ghostLifeLength, startingAlpha);

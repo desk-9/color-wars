@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityExtensions;
 
 public class SlowMoManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class SlowMoManager : MonoBehaviour
     /// This ensures that slow mo doesn't stop until all balls are dropped
     /// </summary>
     private int slowMoCount = 0;
+    Coroutine pitchShiftCoroutine;
 
     void Start()
     {
@@ -24,23 +26,32 @@ public class SlowMoManager : MonoBehaviour
         slowMoCount += 1;
 
         // If we just entered slowmo, shift pitch and notify
-        if (slowMoCount > 1)
+        if (slowMoCount > 0)
         {
             GameManager.instance.NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
-            StartCoroutine(PitchShifter(GameManager.Settings.SlowedPitch, GameManager.Settings.PitchShiftTime));
+
+            if (pitchShiftCoroutine != null)
+            {
+                StopCoroutine(pitchShiftCoroutine);
+            }
+            pitchShiftCoroutine = StartCoroutine(PitchShifter(GameManager.Settings.SlowedPitch, GameManager.Settings.PitchShiftTime));
         }
     }
 
     private void StopSlowMo()
     {
         // Ensure slowMo doesn't stop until ALL balls are dropped
-        slowMoCount -= 1;
+        slowMoCount = Mathf.Max(0,slowMoCount - 1);
         if (slowMoCount == 0)
         {
             Utility.ChangeTimeScale(1);
 
             // Pitch-shift BGM back to normal.
-            StartCoroutine(PitchShifter(1.0f, GameManager.Settings.PitchShiftTime));
+            if (pitchShiftCoroutine != null)
+            {
+                StopCoroutine(pitchShiftCoroutine);
+            }
+            pitchShiftCoroutine = StartCoroutine(PitchShifter(1.0f, GameManager.Settings.PitchShiftTime));
             GameManager.instance.NotificationManager.NotifyMessage(Message.SlowMoExited, this);
         }
     }
@@ -49,12 +60,10 @@ public class SlowMoManager : MonoBehaviour
     {
         // TODO dkonik: Fix this background music fuckery
         AudioSource backgroundMusic = GameObject.Find("BGM")?.GetComponent<AudioSource>();
-
-        if (backgroundMusic == null) yield break;
+        backgroundMusic.ThrowIfNull("Could nto find background music object");
 
         float start = backgroundMusic.pitch;
         float t = 0.0f;
-
         while (backgroundMusic.pitch != target && t <= time)
         {
             t += Time.deltaTime;

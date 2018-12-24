@@ -34,7 +34,6 @@ public class PlayerControls : MonoBehaviourPunCallbacks
     public void AskForDevice() {
         var player = GetComponent<Player>();
         var photonView = GetComponent<PhotonView>();
-        Utility.Print("Checking if should control", player.playerNumber, "Ownership:", photonView.IsMine, LogLevel.Error);
         if (photonView.IsMine) {
             PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
                                                         GivenInputDevice,
