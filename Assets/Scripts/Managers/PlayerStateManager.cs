@@ -120,7 +120,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// Networked transition to state. 
     /// NOTE: If this state requires PlayerStateTransitionInformation, it should be filled in before calling
     /// this and passed in as the second argument (just for error checking). Except for NormalMovement.
-    /// It is special because it is the most commonly transitioned to state and it would be tedious to
+    /// NormalMovement is special because it is the most commonly transitioned to state and it would be tedious to
     /// always have to pass in the infromation with it
     /// </summary>
     /// <param name="state"></param>
@@ -129,10 +129,17 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         // Some error checking. If this is a state which contains an information object
         if (stateInfos[state] != null)
         {
-            // But we didn't pass one in (exclude NormalMovement, see thefunction comment)
-            if (transitionInfo == null && state != State.NormalMovement)
+            // But we didn't pass one in
+            if (transitionInfo == null)
             {
-                Debug.LogError("Called TransitionToState but did not provide the transition information");
+                // Normal movement is special, because it is the "default" state
+                if (state == State.NormalMovement)
+                {
+                    ((NormalMovementInformation)stateInfos[State.NormalMovement]).ShotBall = false;
+                } else
+                {
+                    Debug.LogError("Called TransitionToState but did not provide the transition information");
+                }
             }
 
             if (stateInfos[state] != transitionInfo && state != State.NormalMovement)

@@ -3,8 +3,6 @@ using UnityEngine;
 using IC = InControl;
 using UtilityExtensions;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour
 {
     public GameObject dashEffectPrefab;
@@ -151,13 +149,10 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private IEnumerator Dash()
     {
-        // TODO anyone: This is where we could do something like handling turning off of the 
-        // photon transform view component, since we know which way the ball will be heading for
-        // a little bit.
-
         DashInformation information = stateManager.CurrentStateInformation_Exn<DashInformation>();
 
-        float dashDuration = Mathf.Min(information.Velocity.magnitude, 0.5f);
+        // TODO dkonik: Revisit this math, why do we do this?
+        float dashDuration = Mathf.Min((information.Velocity.magnitude / dashSpeed) - 1f, 0.5f);
         AudioManager.instance.DashSound.Play();
 
 
