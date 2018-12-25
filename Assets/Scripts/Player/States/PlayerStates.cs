@@ -110,12 +110,14 @@ public class StunInformation : StateTransitionInformation
     public Vector2 StartPosition { get; set; }
     public Vector2 Velocity { get; set; }
     public float Duration { get; set; }
+    public bool StolenFrom { get; set; } = false;
 
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
         StartPosition = (Vector2)stream.ReceiveNext();
         Velocity = (Vector2)stream.ReceiveNext();
         Duration = (float)stream.ReceiveNext();
+        StolenFrom = (bool)stream.ReceiveNext();
     }
 
     public override void Serialize(PhotonStream stream, PhotonMessageInfo info)
@@ -123,6 +125,7 @@ public class StunInformation : StateTransitionInformation
         stream.SendNext(StartPosition);
         stream.SendNext(Velocity);
         stream.SendNext(Duration);
+        stream.SendNext(StolenFrom);
     }
 }
 

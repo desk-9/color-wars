@@ -133,7 +133,7 @@ public class PlayerTronMechanic : MonoBehaviour
     public void HandleWallCollision()
     {
         AudioManager.instance.StunPlayerWallBreak.Play(wallBreakSoundVolume);
-        stateManager.StunNetworked(playerMovement.CurrentPosition, Vector2.zero, lengthStunWhileLaying);
+        stateManager.StunNetworked(playerMovement.CurrentPosition, Vector2.zero, lengthStunWhileLaying, false);
     }
 
     /// <summary>

@@ -17,8 +17,6 @@ public class PlayerDashBehavior : MonoBehaviour
     public float chargeRate = 1.0f;
     public float dashSpeed = 50.0f;
     public float cooldown = 0.5f;
-    public float stealShakeAmount = .7f;
-    public float stealShakeDuration = .05f;
     public float stealKnockbackAmount = 100f;
     public float stealKnockbackLength = .5f;
     public float wallHitStunTime = 0.05f;
@@ -33,7 +31,6 @@ public class PlayerDashBehavior : MonoBehaviour
     private GameObject dashEffect;
     private GameObject dashAimer;
     private float lastDashTime;
-    private CameraShake cameraShake;
     private float chargeAmount = 0;
 
     private void Start()
@@ -43,7 +40,6 @@ public class PlayerDashBehavior : MonoBehaviour
         stateManager = this.EnsureComponent<PlayerStateManager>();
         carrier = this.EnsureComponent<BallCarrier>();
         tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
-        cameraShake = GameObject.FindObjectOfType<CameraShake>();
 
         stateManager.OnStateChange += HandleNewPlayerState;
 
@@ -208,12 +204,11 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void Stun(Player otherPlayer)
     {
-        cameraShake.shakeAmount = stealShakeAmount;
-        cameraShake.shakeDuration = stealShakeDuration;
         otherPlayer.StateManager.StunNetworked(
             otherPlayer.PlayerMovement.CurrentPosition,
             playerMovement.CurrentVelocity.normalized * stealKnockbackAmount,
-            stealKnockbackLength);
+            stealKnockbackLength,
+            true);
     }
 
     private void StunAndSteal(GameObject otherGameObject)

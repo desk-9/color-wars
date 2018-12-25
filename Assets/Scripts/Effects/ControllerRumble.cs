@@ -27,7 +27,6 @@ public class ControllerRumble : MonoBehaviour
         if (playerControls != null && stateManager != null)
         {
             NotificationManager notificationManager = GameManager.Instance.NotificationManager;
-            notificationManager.CallOnMessageIfSameObject(Message.StolenFrom, () => StartRumble(duration: stealRumbleDuration), gameObject);
             notificationManager.CallOnMessage(Message.GoalScored, () => StartRumble(duration: gameWinRumbleDuration));
             notificationManager.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration: layingWallStunDuration), gameObject);
             stateManager.OnStateChange += HandleNewPlayerState;
@@ -39,6 +38,15 @@ public class ControllerRumble : MonoBehaviour
         if (newState == State.Possession)
         {
             StartRumble(duration: ballPossessionRumbleDuration);
+        }
+
+        if (newState == State.Stun)
+        {
+            StunInformation info = stateManager.CurrentStateInformation as StunInformation;
+            if (info.StolenFrom)
+            {
+                StartRumble(duration: stealRumbleDuration);
+            }
         }
     }
 

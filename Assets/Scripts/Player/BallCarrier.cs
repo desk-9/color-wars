@@ -90,7 +90,8 @@ public class BallCarrier : MonoBehaviour
                 enemyPlayer.StateManager.StunNetworked(
                     enemyPlayer.PlayerMovement.CurrentPosition,
                     blowBackVector.normalized * blowbackForce,
-                    blowbackStunTime
+                    blowbackStunTime,
+                    false
                     );
             }
         }

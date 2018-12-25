@@ -10,8 +10,6 @@ public class GameSettings
     public float SlowMoFactor = 0.4f;
     public float PitchShiftTime = 0.3f;
     public float SlowedPitch = 0.5f;
-    public float GoalShakeAmount = 1.5f;
-    public float GoalShakeDuration = .4f;
     public bool RespectSoundEffectSlowMo = true;
     public int WinningScore = 4;
     public int RequiredWinMargin = 1;

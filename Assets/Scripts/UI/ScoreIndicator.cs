@@ -47,6 +47,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Update score indicator when a goal is scored
+        // TODO dkonik: Fix this this does not work at the moment
         GameManager.Instance.NotificationManager.CallOnMessageWithSender(
             Message.GoalScored,
             (object scoringTeam) =>

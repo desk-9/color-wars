@@ -71,8 +71,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private CameraShake cameraShake;
-
     private void Awake()
     {
         if (Instance == null)
@@ -107,7 +105,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SceneStateManager.instance.UnPauseTime();
-        cameraShake = GameObject.FindObjectOfType<CameraShake>();
         if (winCondition == WinCondition.Time)
         {
             scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
@@ -122,13 +119,6 @@ public class GameManager : MonoBehaviour
         // The reason we subscribe to both goal scored and score changed is because when goal scored fires,
         // the appropriate 
         NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChange);
-        NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
-    }
-
-    private void HandleGoalScored()
-    {
-        cameraShake.shakeAmount = Settings.GoalShakeAmount;
-        cameraShake.shakeDuration = Settings.GoalShakeDuration;
     }
 
     private IEnumerator EndGameCountdown()

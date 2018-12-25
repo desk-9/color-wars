@@ -41,6 +41,11 @@ public class PlayerStun : MonoBehaviour
             Debug.LogError("Stun information was null in stun state");
         }
 
+        if (info.StolenFrom)
+        {
+            GameManager.Instance.NotificationManager.NotifyMessage(Message.BallWasStolen, this);
+        }
+
         float timeSinceCall = (float)(PhotonNetwork.Time - info.EventTimeStamp);
 
         if (timeSinceCall < info.Duration)

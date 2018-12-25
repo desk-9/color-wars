@@ -152,7 +152,7 @@ public class TronWall : MonoBehaviour
             // the back end of the character
             Vector3 knockBackdirection = -player.transform.right;
             player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
-                knockBackdirection * knockbackOnBreak, wallBreakerStunTime);
+                knockBackdirection * knockbackOnBreak, wallBreakerStunTime, false);
             GameManager.Instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
         }
 

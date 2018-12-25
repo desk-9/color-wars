@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 1325572632197481605}
   - component: {fileID: 4234837731021330579}
   - component: {fileID: 7444753961910310332}
+  - component: {fileID: 3189841601692809775}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -202,3 +203,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15506a52d1536341877473b6ca12768, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3189841601692809775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a6dc06c2dfa62e4a8256b0bc22c1025, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stealShakeAmount: 0.7
+  stealShakeDuration: 0.05

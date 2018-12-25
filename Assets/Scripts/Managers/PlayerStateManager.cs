@@ -199,19 +199,31 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// <param name="startPosition"></param>
     /// <param name="blowbackVelocity"></param>
     /// <param name="duration"></param>
-    public void StunNetworked(Vector2 startPosition, Vector2 blowbackVelocity, float duration)
+    public void StunNetworked(Vector2 startPosition, Vector2 blowbackVelocity, float duration, bool stolenFrom)
     {
-        // TODO dkonik: Using AllViaServer so that photon can guarantee ordering. However, this might
-        // not be the right thing to do. The reason I we need to guarantee ordering (or something along those lines)
-        // is because if the situation described in the comment in [StunNetworked_Interal], namely: "Say, for example,
-        // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 
-        // possesses the ball right by player 2. Both player 1 and player 3 will send an RPC to stun player
-        // 2" happens, then we need to be able to guarantee ordering. 
-        photonView.RPC("StunNetworked_Interal", RpcTarget.AllViaServer, startPosition, blowbackVelocity, duration);
+        if (photonView.IsMine)
+        {
+            // If we are the local player, just serialize out as usual
+            StunInformation info = GetStateInformationForWriting<StunInformation>(State.Stun);
+            info.StartPosition = startPosition;
+            info.Velocity = blowbackVelocity;
+            info.Duration = duration;
+            info.StolenFrom = stolenFrom;
+            TransitionToState(State.Stun, info);
+        } else
+        {
+            // TODO dkonik: Using AllViaServer so that photon can guarantee ordering. However, this might
+            // not be the right thing to do. The reason I we need to guarantee ordering (or something along those lines)
+            // is because if the situation described in the comment in [StunNetworked_Interal], namely: "Say, for example,
+            // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 
+            // possesses the ball right by player 2. Both player 1 and player 3 will send an RPC to stun player
+            // 2" happens, then we need to be able to guarantee ordering. 
+            photonView.RPC("StunNetworked_Interal", RpcTarget.AllViaServer, startPosition, blowbackVelocity, duration, stolenFrom);
+        }
     }
 
     [PunRPC]
-    private void StunNetworked_Interal(Vector2 startPosition, Vector2 blowbackVelocity, float duration, PhotonMessageInfo rpcInfo)
+    private void StunNetworked_Interal(Vector2 startPosition, Vector2 blowbackVelocity, float duration, bool stolenFrom, PhotonMessageInfo rpcInfo)
     {
         // Situations can arise where two players try to stun third at roughly the same time. Say, for example,
         // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 

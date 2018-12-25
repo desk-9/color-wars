@@ -1381,7 +1381,6 @@ GameObject:
   - component: {fileID: 497832507}
   - component: {fileID: 497832506}
   - component: {fileID: 497832511}
-  - component: {fileID: 497832512}
   - component: {fileID: 497832513}
   - component: {fileID: 497832514}
   m_Layer: 0
@@ -1490,22 +1489,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profile: {fileID: 11400000, guid: 1a5f9e5ce3c294ff7849bc0938f7228f, type: 2}
---- !u!114 &497832512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497832505}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e52b37546de6d4bc5833aa5d9794b6f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  camTransform: {fileID: 0}
-  shakeDuration: 0
-  shakeAmount: 0.7
-  decreaseFactor: 1
 --- !u!114 &497832513
 MonoBehaviour:
   m_ObjectHideFlags: 0
