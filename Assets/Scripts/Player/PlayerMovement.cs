@@ -32,18 +32,19 @@ public class PlayerMovement : MonoBehaviour
         State.StartOfMatch
     };
 
-    /// <summary>
-    /// States where the position/movement of the player is not controlled by the controller,
-    /// but momentarily controlled by something else
-    /// </summary>
-    private HashSet<State> externalControlStates = new HashSet<State>
-    {
-        State.Dash,
-    };
-
     public Vector2 CurrentPosition
     {
         get { return transform.position; }
+    }
+
+    public Quaternion CurrentRotation
+    {
+        get { return transform.rotation; }
+    }
+
+    public float CurrentRigidBodyRotation
+    {
+        get { return rb2d.rotation; }
     }
 
     public Vector2 CurrentVelocity
@@ -53,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     /// <summary>
     /// Since we fucked up and put the players' forward vector
-    /// to their right, this is just a way to get the forward vector that
+    /// to their right (I think that was me), this is just a way to get the forward vector that
     /// makes more sense. Also, if we decide to change it, this will
     /// at least make it easier to change (in one spot rather than 20).
     /// </summary>
@@ -128,12 +129,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartRotateOnly(bool snapToGameObjects)
     {
-        StopAllMovement(true);
+        StopAllMovementCoroutines(true);
 
         playerMovementCoroutine = StartCoroutine(RotateOnly(snapToGameObjects));
     }
 
-    private void StopAllMovement(bool zeroOutVelocity = false)
+    private void StopAllMovementCoroutines(bool zeroOutVelocity = false)
     {
         if (playerMovementCoroutine != null)
         {
@@ -355,14 +356,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void DoStunMovement()
     {
-        StunInformation info = stateManager.CurrentStateInformation as StunInformation;
+        StunInformation info = stateManager.CurrentStateInformation_Exn<StunInformation>();
 
-        if (info == null)
-        {
-            throw new Exception("No stun information in stun state");
-        }
-
-        StopAllMovement(false);
+        StopAllMovementCoroutines(false);
 
         // If we for some reason transition to the stun state *after*
         // we were supposed to have finished with the stun state, just put
@@ -383,19 +379,22 @@ public class PlayerMovement : MonoBehaviour
     {
         // TODO dkonik: Previously, we were setting this every frame while the player was
         // laying the tron wall, do we still need to do this.
-        TronWallInformation info = stateManager.CurrentStateInformation as TronWallInformation;
+        TronWallInformation info = stateManager.CurrentStateInformation_Exn<TronWallInformation>();
 
-        if (info == null)
-        {
-            throw new Exception("No tron wall information in LayWall state");
-        }
-
-        StopAllMovement(false);
+        StopAllMovementCoroutines(false);
 
         float timeTravelledSoFar = (float)(PhotonNetwork.Time - info.EventTimeStamp);
         Vector2 layingVelocity = PlayerTronMechanic.layingSpeedMovementSpeedRatio * movementSpeed * info.Direction;
         rb2d.position = info.StartPosition + timeTravelledSoFar * layingVelocity;
         rb2d.velocity = layingVelocity;
+    }
+
+    private void DoDash()
+    {
+        StopAllMovementCoroutines(true);
+        // TODO dkonik: We are not using start position. But maybe we want to
+        DashInformation info = stateManager.CurrentStateInformation_Exn<DashInformation>();
+        rb2d.velocity = info.Velocity;
     }
 
     private void HandleNewPlayerState(State oldState, State newState)
@@ -422,17 +421,16 @@ public class PlayerMovement : MonoBehaviour
             StartRotateOnly(newState == State.Possession || newState == State.ChargeShot);
         } else if (newState == State.FrozenAfterGoal)
         {
-            StopAllMovement(true);
+            StopAllMovementCoroutines(true);
         } else if (newState == State.Stun)
         {
             DoStunMovement();
         } else if (newState == State.LayTronWall)
         {
             DoLayTronWall();
-        }
-        else if (externalControlStates.Contains(newState))
+        } else if (newState == State.Dash)
         {
-            StopAllMovement(false);
+            DoDash();
         }
     }
 }

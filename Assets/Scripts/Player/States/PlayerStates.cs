@@ -27,23 +27,20 @@ public abstract class StateTransitionInformation
 public class DashInformation : StateTransitionInformation
 {
     public Vector2 StartPosition { get; set; }
-    public Vector2 Direction { get; set; }
-    public float Strength { get; set; }
+    public Vector2 Velocity { get; set; }
 
     public override void Deserialize(PhotonStream stream, PhotonMessageInfo info)
     {
         base.Deserialize(stream, info);
         StartPosition = (Vector2)stream.ReceiveNext();
-        Direction = (Vector2)stream.ReceiveNext();
-        Strength = (float)stream.ReceiveNext();
+        Velocity = (Vector2)stream.ReceiveNext();
     }
 
     public override void Serialize(PhotonStream stream, PhotonMessageInfo info)
     {
         base.Serialize(stream, info);
         stream.SendNext(StartPosition);
-        stream.SendNext(Direction);
-        stream.SendNext(Strength);
+        stream.SendNext(Velocity);
     }
 }
 

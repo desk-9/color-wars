@@ -42,7 +42,7 @@ public class ControllerRumble : MonoBehaviour
 
         if (newState == State.Stun)
         {
-            StunInformation info = stateManager.CurrentStateInformation as StunInformation;
+            StunInformation info = stateManager.CurrentStateInformation_Exn<StunInformation>();
             if (info.StolenFrom)
             {
                 StartRumble(duration: stealRumbleDuration);

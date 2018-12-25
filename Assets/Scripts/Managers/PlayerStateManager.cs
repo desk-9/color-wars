@@ -71,11 +71,22 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         { State.ControllerDisconnected,     null },
     };
 
+
     /// <summary>
     /// Current state information.
-    /// NOTE: This may be null if the state does not have any relevant information
+    /// NOTE: This throws if it is not the information that was expected
     /// </summary>
-    public StateTransitionInformation CurrentStateInformation => stateInfos[CurrentState];
+    public T CurrentStateInformation_Exn<T>() where T : StateTransitionInformation
+    {
+        if (stateInfos[CurrentState] is T)
+        {
+            return stateInfos[CurrentState] as T;
+        }
+        else
+        {
+            throw new Exception(string.Format("Current state information was not what was expected. Expected {0}, got {1}", typeof(T), stateInfos[CurrentState].GetType()));
+        }
+    }
 
     /// <summary>
     /// If a non owner changed our state, we should not listen to the owner until they have 
@@ -236,7 +247,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
         // even gets the RPC, in which case we can also ignore it.
         if (CurrentState == State.Stun)
         {
-            StunInformation stunInfo = CurrentStateInformation as StunInformation;
+            StunInformation stunInfo = CurrentStateInformation_Exn<StunInformation>();
             bool isSameInformation = stunInfo.EventTimeStamp == rpcInfo.timestamp;
             Debug.LogFormat("Got an RPC to enter stun state while already in stun, ignoring. IsSameInformation: {0}", isSameInformation);
             

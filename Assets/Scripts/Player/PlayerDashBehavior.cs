@@ -42,7 +42,7 @@ public class PlayerDashBehavior : MonoBehaviour
         GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedDash, DashButtonPressed, this.gameObject);
         GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
-            Message.PlayerReleasedDash, DeshButtonReleased, this.gameObject);
+            Message.PlayerReleasedDash, DashButtonReleased, this.gameObject);
     }
 
     private void HandleNewPlayerState(State oldState, State newState)
@@ -83,8 +83,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void StartChargeDash()
     {
-        chargeCoroutine = StartCoroutine(Charge());
-        dashAimer = Instantiate(dashAimerPrefab, transform.position, transform.rotation, transform);
+        chargeCoroutine = StartCoroutine(ChargeDash());
     }
 
     private void StopChargeDash()
@@ -105,21 +104,22 @@ public class PlayerDashBehavior : MonoBehaviour
         }
     }
 
-    private void DeshButtonReleased()
+    private void DashButtonReleased()
     {
         if (stateManager.CurrentState == State.ChargeDash)
         {
             DashInformation info = stateManager.GetStateInformationForWriting<DashInformation>(State.Dash);
             info.StartPosition = playerMovement.CurrentPosition;
-            info.Direction = (Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
-            info.Strength = chargeAmount;
+            info.Velocity = (Quaternion.AngleAxis(playerMovement.CurrentRigidBodyRotation, Vector3.forward) * Vector3.right).normalized * dashSpeed * (1.0f + chargeAmount);
             stateManager.TransitionToState(State.Dash, info);
         }
     }
 
-    private IEnumerator Charge()
+    private IEnumerator ChargeDash()
     {
-        float startChargeTime = Time.time;
+        // TODO dkonik: Reuse this, don't instantiate every time
+        dashAimer = Instantiate(dashAimerPrefab, playerMovement.CurrentPosition, playerMovement.CurrentRotation, transform);
+
         chargeAmount = 0.0f;
 
         while (true)
@@ -150,15 +150,16 @@ public class PlayerDashBehavior : MonoBehaviour
         // TODO anyone: This is where we could do something like handling turning off of the 
         // photon transform view component, since we know which way the ball will be heading for
         // a little bit.
-        // TODO dkonik: Handle this stuff
 
-        DashInformation information = stateManager.CurrentStateInformation as DashInformation;
-        float dashDuration = Mathf.Min(information.Strength, 0.5f);
+        DashInformation information = stateManager.CurrentStateInformation_Exn<DashInformation>();
+
+        float dashDuration = Mathf.Min(information.Velocity.magnitude, 0.5f);
         AudioManager.instance.DashSound.Play();
 
 
         // Set duration of particle system for each dash trail.
-        dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
+        // TODO dkonik: Do not instantiate every time
+        dashEffect = Instantiate(dashEffectPrefab, playerMovement.CurrentPosition, playerMovement.CurrentRotation, transform);
 
         foreach (ParticleSystem ps in dashEffect.GetComponentsInChildren<ParticleSystem>())
         {
@@ -168,14 +169,9 @@ public class PlayerDashBehavior : MonoBehaviour
             ps.Play();
         }
 
-        Vector2 direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         float startTime = Time.time;
-
-        // TODO dkonik: Make sure to handle this properly with respect to PlayerMovement component
         while (Time.time - startTime <= dashDuration)
         {
-            rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
-
             yield return null;
         }
 
@@ -193,15 +189,6 @@ public class PlayerDashBehavior : MonoBehaviour
         return otherCarrier?.Ball;
     }
 
-    private void Stun(Player otherPlayer)
-    {
-        otherPlayer.StateManager.StunNetworked(
-            otherPlayer.PlayerMovement.CurrentPosition,
-            playerMovement.CurrentVelocity.normalized * stealKnockbackAmount,
-            stealKnockbackLength,
-            true);
-    }
-
     private void StunAndSteal(GameObject otherGameObject)
     {
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
@@ -215,17 +202,20 @@ public class PlayerDashBehavior : MonoBehaviour
             bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);
             if (shouldSteal || (ball == null && !onlyStunBallCarriers))
             {
-                Stun(otherPlayer);
+                otherPlayer.StateManager.StunNetworked(
+                    otherPlayer.PlayerMovement.CurrentPosition,
+                    playerMovement.CurrentVelocity.normalized * stealKnockbackAmount,
+                    stealKnockbackLength,
+                    true);
             }
 
             if (shouldSteal)
             {
-                // TODO dkonik: This stuff. COmmented out to make it compile
-                //GameManager.instance.notificationManager.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
-                //AudioManager.instance.StealSound.Play(.5f);
-                //StealBallInformation info = stateManager.GetStateInformationForWriting<StealBallInformation>();
-                //stateManager.AttemptPossession(
-                //    () => carrier.StartCarryingBall(ball), carrier.DropBall);
+                AudioManager.instance.StealSound.Play(.5f);
+                PossessBallInformation info = stateManager.GetStateInformationForWriting<PossessBallInformation>(State.Possession);
+                info.StoleBall = true;
+                info.VictimPlayerNumber = otherPlayer.playerNumber;
+                stateManager.TransitionToState(State.Possession, info);
             }
         }
     }

@@ -35,11 +35,7 @@ public class PlayerStun : MonoBehaviour
     /// <returns></returns>
     private IEnumerator Stun()
     {
-        StunInformation info = playerStateManager.CurrentStateInformation as StunInformation;
-        if (info == null)
-        {
-            Debug.LogError("Stun information was null in stun state");
-        }
+        StunInformation info = playerStateManager.CurrentStateInformation_Exn<StunInformation>();
 
         if (info.StolenFrom)
         {

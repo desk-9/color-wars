@@ -85,7 +85,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void HandlePlayerShotBall(Player player)
     {
-        NormalMovementInformation information = player.StateManager.CurrentStateInformation as NormalMovementInformation;
+        NormalMovementInformation information = player.StateManager.CurrentStateInformation_Exn<NormalMovementInformation>();
         // If we didn't shoot the ball, just return
         if (!information.ShotBall)
         {
