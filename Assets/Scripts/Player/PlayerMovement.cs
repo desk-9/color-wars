@@ -160,7 +160,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                float maxAngleChange = Vector2.SignedAngle(transform.right, direction);
+                float maxAngleChange = Vector2.SignedAngle(Forward, direction);
                 float sign = Mathf.Sign(maxAngleChange);
                 float speedChange = rotationSpeed * Time.deltaTime;
                 float actualChange = sign * Mathf.Min(Mathf.Abs(maxAngleChange), speedChange);
@@ -198,7 +198,7 @@ public class PlayerMovement : MonoBehaviour
     private void AimAssistTowardsTarget()
     {
         Vector3 vector = (aimAssistTarget.transform.position - transform.position).normalized;
-        rb2d.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(transform.right, vector, aimAssistLerpStrength));
+        rb2d.rotation = Vector2.SignedAngle(Vector2.right, Vector2.Lerp(Forward, vector, aimAssistLerpStrength));
     }
 
     /// <summary>
@@ -250,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
 
             // TODO dkonik: Ugly to be directly checking the balls color like this
             if (goalVector.HasValue &&
-                    Mathf.Abs(Vector2.Angle(transform.right, goalVector.Value)) < aimAssistThreshold &&
+                    Mathf.Abs(Vector2.Angle(Forward, goalVector.Value)) < aimAssistThreshold &&
                 ball.renderer.color == player.Team.TeamColor.color)
             {
                 aimAssistTarget = goal;
@@ -258,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
                 AimAssistTowardsTarget();
             }
             else if (teammateVector.HasValue &&
-                         Mathf.Abs(Vector2.Angle(transform.right, teammateVector.Value)) < aimAssistThreshold)
+                         Mathf.Abs(Vector2.Angle(Forward, teammateVector.Value)) < aimAssistThreshold)
             {
                 aimAssistTarget = teammate;
                 stickAngleWhenSnapped = lastDirection;

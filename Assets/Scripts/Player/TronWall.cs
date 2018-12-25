@@ -150,7 +150,7 @@ public class TronWall : MonoBehaviour
 
             // We knock back left because the sprites are facing right...so left is
             // the back end of the character
-            Vector3 knockBackdirection = -player.transform.right;
+            Vector2 knockBackdirection = -player.PlayerMovement.Forward;
             player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
                 knockBackdirection * knockbackOnBreak, wallBreakerStunTime, false);
             GameManager.Instance.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);

@@ -229,7 +229,6 @@ MonoBehaviour:
     type: 3}
   dashAimerPrefab: {fileID: 1412520093174376, guid: eb210e989d7bd4df9bb31d913d1cfc2a,
     type: 3}
-  dashButton: 11
   onlyStunBallCarriers: 1
   onlyStealOnBallHit: 1
   stopDashOnCollisionWith:
@@ -240,8 +239,6 @@ MonoBehaviour:
   chargeRate: 0.5
   dashSpeed: 100
   cooldown: 0.3
-  stealShakeAmount: 0.7
-  stealShakeDuration: 0.05
   stealKnockbackAmount: 100
   stealKnockbackLength: 0.4
   wallHitStunTime: 0.05
@@ -566,7 +563,7 @@ MonoBehaviour:
   OwnershipTransfer: 1
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 0
+  viewIdField: 7
   InstantiationId: 7
   isRuntimeInstantiated: 0
 --- !u!114 &1579188638025929307

@@ -28,7 +28,6 @@ public class BallCarrier : MonoBehaviour
     private GameObject teammate;
     private Player player;
     private GameObject goal;
-    private Rigidbody2D rb2d;
 
     
     private const float ballOffsetMultiplier = 0.98f;
@@ -40,7 +39,6 @@ public class BallCarrier : MonoBehaviour
         player = this.EnsureComponent<Player>();
         playerMovement = this.EnsureComponent<PlayerMovement>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        rb2d = GetComponent<Rigidbody2D>();
         Ball = FindObjectOfType<Ball>().ThrowIfNull("Could not find ball");
         if (playerMovement != null && stateManager != null)
         {
@@ -191,7 +189,7 @@ public class BallCarrier : MonoBehaviour
 
     private Vector2 NosePosition(Ball ball)
     {
-        Vector3 newPosition = transform.position + transform.right * ballOffsetFromCenter;
+        Vector2 newPosition = playerMovement.CurrentPosition + playerMovement.Forward * ballOffsetFromCenter;
         return newPosition;
     }
 

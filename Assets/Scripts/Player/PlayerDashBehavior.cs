@@ -9,7 +9,6 @@ public class PlayerDashBehavior : MonoBehaviour
 {
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
-    public IC.InputControlType dashButton = IC.InputControlType.Action2;
     public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
@@ -26,8 +25,6 @@ public class PlayerDashBehavior : MonoBehaviour
     private Rigidbody2D rb;
     private Coroutine chargeCoroutine;
     private Coroutine dashCoroutine;
-    private PlayerTronMechanic tronMechanic;
-    private BallCarrier carrier;
     private GameObject dashEffect;
     private GameObject dashAimer;
     private float lastDashTime;
@@ -35,11 +32,10 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void Start()
     {
+        player = this.EnsureComponent<Player>();
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        carrier = this.EnsureComponent<BallCarrier>();
-        tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
 
         stateManager.OnStateChange += HandleNewPlayerState;
 
@@ -72,11 +68,6 @@ public class PlayerDashBehavior : MonoBehaviour
         {
             StartChargeDash();
         }
-    }
-
-    private void Awake()
-    {
-        player = this.EnsureComponent<Player>();
     }
 
     public void SetPrefabColors()
