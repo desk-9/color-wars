@@ -345,6 +345,7 @@ public class PlayerMovement : MonoBehaviour
 
         // Subscribe to events
         GameManager.Instance.NotificationManager.CallOnMessage(Message.SlowMoEntered, HandleSlowMo);
+        GameManager.Instance.NotificationManager.CallOnMessage(Message.SlowMoExited, HandleSlowMo);
     }
 
     private void HandleSlowMo()
