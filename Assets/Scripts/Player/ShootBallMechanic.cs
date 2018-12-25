@@ -32,9 +32,9 @@ public class ShootBallMechanic : MonoBehaviour
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
 
-        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedShoot, OnShootPressed, gameObject);
-        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
         stateManager.OnStateChange += HandleNewPlayerState;
 

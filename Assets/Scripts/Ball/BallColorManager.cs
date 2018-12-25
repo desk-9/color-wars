@@ -23,16 +23,16 @@ public class BallColorManager : MonoBehaviour
 
         trailRenderer = this.EnsureComponent<TrailRenderer>();
 
-        GameManager.Instance.NotificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.ChargeChanged, HandleChargeChanged
         );
-        GameManager.Instance.NotificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.BallWentOutOfBounds, ResetToNeutral
         );
-        GameManager.Instance.NotificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.ResetAfterGoal, ResetToNeutral
         );
-        GameManager.Instance.NotificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.GoalScored, HandleGoalScore
         );
     }
@@ -63,15 +63,15 @@ public class BallColorManager : MonoBehaviour
         //    return;
         //}
 
-        TeamManager newTeam = GameManager.Instance.PossessionManager.CurrentTeam;
+        TeamManager newTeam = GameManager.PossessionManager.CurrentTeam;
         if (newTeam == null)
         {
             throw new Exception("Would not expect the current team to be null in charge changed");
         }
 
         SetColor(
-            GameManager.Instance.PossessionManager.CurrentTeam.TeamColor, 
-            GameManager.Instance.PossessionManager.IsCharged
+            GameManager.PossessionManager.CurrentTeam.TeamColor, 
+            GameManager.PossessionManager.IsCharged
         );
     }
 

@@ -41,9 +41,9 @@ public class PlayerDashBehavior : MonoBehaviour
 
         stateManager.OnStateChange += HandleNewPlayerState;
 
-        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedDash, DashButtonPressed, this.gameObject);
-        GameManager.Instance.NotificationManager.CallOnMessageIfSameObject(
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedDash, DashButtonReleased, this.gameObject);
     }
 
@@ -190,7 +190,7 @@ public class PlayerDashBehavior : MonoBehaviour
             (otherPlayer.Team?.TeamColor != player.Team?.TeamColor
              || otherPlayer.Team == null || player.Team == null))
         {
-            if (GameManager.Instance.PossessionManager.PossessingPlayer == otherPlayer && hitBall)
+            if (GameManager.PossessionManager.PossessingPlayer == otherPlayer && hitBall)
             {
                 // Stun other player
                 otherPlayer.StateManager.StunNetworked(

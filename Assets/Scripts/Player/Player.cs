@@ -142,7 +142,7 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
 
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.PlayerAssignedPlayerNumber, HandlePlayerNumberAssigned);
+        GameManager.NotificationManager.CallOnMessage(Message.PlayerAssignedPlayerNumber, HandlePlayerNumberAssigned);
         GameManager.Instance.players.Add(this);
     }
 

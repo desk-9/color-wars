@@ -14,7 +14,7 @@ public class BackgroundScroller : MonoBehaviour
     {
         renderer = GetComponent<SpriteRenderer>();
         origin = transform.position;
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChanged);
+        GameManager.NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChanged);
     }
 
     private void HandleScoreChanged()

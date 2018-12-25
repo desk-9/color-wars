@@ -48,7 +48,7 @@ public class ScoreIndicator : MonoBehaviour
 
         // Update score indicator when a goal is scored
         // TODO dkonik: Fix this this does not work at the moment
-        GameManager.Instance.NotificationManager.CallOnMessageWithSender(
+        GameManager.NotificationManager.CallOnMessageWithSender(
             Message.GoalScored,
             (object scoringTeam) =>
             {
@@ -59,7 +59,7 @@ public class ScoreIndicator : MonoBehaviour
             });
 
         // Reset score indicator when game is restarted
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
+        GameManager.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
 
         foreach (GameObject pointIndicator in pointIndicators)
         {

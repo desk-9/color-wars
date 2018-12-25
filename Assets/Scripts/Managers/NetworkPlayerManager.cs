@@ -128,7 +128,7 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         {
             player.HandlePlayerNumberAssigned();
         }
-        GameManager.Instance.NotificationManager.NotifyMessage(Message.PlayerAssignedPlayerNumber, this);
+        GameManager.NotificationManager.NotifyMessage(Message.PlayerAssignedPlayerNumber, this);
     }
 
     /// <summary>

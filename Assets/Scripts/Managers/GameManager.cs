@@ -9,9 +9,15 @@ using UtilityExtensions;
 public class GameManager : MonoBehaviour
 {
     #region Managers
-    public NotificationManager NotificationManager { get; private set; }
-    public PossessionManager PossessionManager { get; private set; }
-    public SlowMoManager SlowMoManager { get; private set; }
+    // Static accessors to be less tedious to access all of the time
+    public static NotificationManager NotificationManager { get { return Instance.notificationManager; } }
+    public static PossessionManager PossessionManager { get { return Instance.possessionManager; } }
+    public static SlowMoManager SlowMoManager { get { return Instance.slowMoManager; } }
+
+    // The actual managers
+    private NotificationManager notificationManager;
+    private PossessionManager possessionManager;
+    private SlowMoManager slowMoManager;
     #endregion
 
     public static bool playerTeamsAlreadySelected = false;
@@ -86,7 +92,10 @@ public class GameManager : MonoBehaviour
 
     private void Initialization()
     {
-        NotificationManager = new NotificationManager();
+        notificationManager = new NotificationManager();
+        possessionManager = this.EnsureComponent<PossessionManager>();
+        slowMoManager = this.EnsureComponent<SlowMoManager>();
+
         if (!PlayerTutorial.runTutorial && !playerTeamsAlreadySelected)
         {
             cheatForcePlayerAssignment = true;
@@ -98,8 +107,6 @@ public class GameManager : MonoBehaviour
         {
             this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
         }
-        PossessionManager = this.EnsureComponent<PossessionManager>();
-        SlowMoManager = this.EnsureComponent<SlowMoManager>();
     }
 
     private void Start()

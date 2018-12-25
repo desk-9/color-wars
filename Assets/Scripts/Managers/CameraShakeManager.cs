@@ -39,8 +39,8 @@ public class CameraShakeManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.BallWasStolen, HandleStun);
+        GameManager.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        GameManager.NotificationManager.CallOnMessage(Message.BallWasStolen, HandleStun);
     }
 
     private void HandleStun()

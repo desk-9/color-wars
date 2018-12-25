@@ -39,7 +39,7 @@ public class PlayerStun : MonoBehaviour
 
         if (info.StolenFrom)
         {
-            GameManager.Instance.NotificationManager.NotifyMessage(Message.BallWasStolen, this);
+            GameManager.NotificationManager.NotifyMessage(Message.BallWasStolen, this);
         }
 
         float timeSinceCall = (float)(PhotonNetwork.Time - info.EventTimeStamp);

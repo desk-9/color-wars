@@ -50,7 +50,7 @@ public class BallCarrier : MonoBehaviour
         }
         laserGuide = this.GetComponent<LaserGuide>();
 
-        NotificationManager notificationManager = GameManager.Instance.NotificationManager;
+        NotificationManager notificationManager = GameManager.NotificationManager;
         notificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
         stateManager.OnStateChange += HandleNewPlayerState;
         CalculateOffset();

@@ -33,14 +33,14 @@ public class TeamManager
         unusedSprites = new Stack<Sprite>(memberSprites);
         unusedYs = new Stack<float>(playerYs);
 
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.ResetAfterGoal, ResetTeam);
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
+        GameManager.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        GameManager.NotificationManager.CallOnMessage(Message.ResetAfterGoal, ResetTeam);
+        GameManager.NotificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
     }
 
     private void HandleGoalScored()
     {
-        if (GameManager.Instance.PossessionManager.CurrentTeam == this)
+        if (GameManager.PossessionManager.CurrentTeam == this)
         {
             // We scored a goal
             IncrementScore();
@@ -60,7 +60,7 @@ public class TeamManager
     private void IncrementScore()
     {
         Score += 1;
-        GameManager.Instance.NotificationManager.NotifyMessage(Message.ScoreChanged, this);
+        GameManager.NotificationManager.NotifyMessage(Message.ScoreChanged, this);
     }
 
     private float CalculateRotation(Vector2 position)

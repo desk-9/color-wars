@@ -19,7 +19,7 @@ public class ScoreDisplayer : MonoBehaviour
         matchTimeText = transform.FindComponent<Text>("MatchTimeText");
         StartCoroutine(InitScores());
 
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateScores);
+        GameManager.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateScores);
     }
 
     private IEnumerator InitScores()

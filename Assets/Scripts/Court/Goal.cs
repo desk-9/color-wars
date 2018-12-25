@@ -39,7 +39,7 @@ public class Goal : MonoBehaviour
             .ThrowIfNull("Could not find player blocker");
         ResetNeutral();
 
-        NotificationManager notificationManager = GameManager.Instance.NotificationManager;
+        NotificationManager notificationManager = GameManager.NotificationManager;
         notificationManager.CallOnStringEventWithSender(GoalSwitchCollider.EventId, ColliderSwitch);
         notificationManager.CallOnMessage(Message.ChargeChanged, HandleChargeChanged);
         notificationManager.CallOnMessage(Message.ResetAfterGoal, ResetNeutral);
@@ -47,12 +47,12 @@ public class Goal : MonoBehaviour
 
     private void HandleChargeChanged()
     {
-        if (GameManager.Instance.PossessionManager.IsCharged)
+        if (GameManager.PossessionManager.IsCharged)
         {
             OnlyBlockPlayers();
             if (fillRenderer != null)
             {
-                fillRenderer.color = GameManager.Instance.PossessionManager.CurrentTeam.TeamColor;
+                fillRenderer.color = GameManager.PossessionManager.CurrentTeam.TeamColor;
             }
             AudioManager.instance.GoalSwitch.Play();
         } else
@@ -77,10 +77,10 @@ public class Goal : MonoBehaviour
 
     private void ScoreGoal(Ball ball)
     {
-        TeamManager currentTeam = GameManager.Instance.PossessionManager.CurrentTeam;
+        TeamManager currentTeam = GameManager.PossessionManager.CurrentTeam;
         if (currentTeam != null)
         {
-            GameManager.Instance.NotificationManager.NotifyMessage(Message.GoalScored, this);
+            GameManager.NotificationManager.NotifyMessage(Message.GoalScored, this);
         } else
         {
             Debug.LogError("Team scored goal but PossessionManager.CurrentTeam is null");

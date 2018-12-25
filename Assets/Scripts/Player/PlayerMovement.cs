@@ -81,6 +81,7 @@ public class PlayerMovement : MonoBehaviour
     private Player player;
     private bool eventSent = false;
 
+    [Header("Parameters")]
     [SerializeField]
     private float aimAssistThreshold = 20f;
     [SerializeField]
@@ -93,8 +94,8 @@ public class PlayerMovement : MonoBehaviour
     private float aimAssistEpsilon = 3.5f;
     [SerializeField]
     private float aimAssistLerpStrength = .2f;
-
-    public const float minBallForceRotationTime = 0.1f;
+    [SerializeField]
+    private float minBallForceRotationTime = 0.1f;
 
     private void StartNormalMovement()
     {
@@ -250,8 +251,8 @@ public class PlayerMovement : MonoBehaviour
 
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(Forward, goalVector.Value)) < aimAssistThreshold &&
-                    GameManager.Instance.PossessionManager.CurrentTeam == player.Team &&
-                    GameManager.Instance.PossessionManager.IsCharged)
+                    GameManager.PossessionManager.CurrentTeam == player.Team &&
+                    GameManager.PossessionManager.IsCharged)
             {
                 aimAssistTarget = goal;
                 stickAngleWhenSnapped = lastDirection;
@@ -288,7 +289,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (Time.time - startTime > 0.75f)
                 {
-                    GameManager.Instance.NotificationManager.NotifyStringEvent("MoveTutorial", this.gameObject);
+                    GameManager.NotificationManager.NotifyStringEvent("MoveTutorial", this.gameObject);
                 }
             }
             else
@@ -306,7 +307,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        GameManager.Instance.NotificationManager.CallOnMessageWithSender(
+        GameManager.NotificationManager.CallOnMessageWithSender(
             Message.PlayerStick, playerPair =>
             {
                 Tuple<Vector2, GameObject> pair = playerPair as Tuple<Vector2, GameObject>;
@@ -343,13 +344,13 @@ public class PlayerMovement : MonoBehaviour
         }, 2);
 
         // Subscribe to events
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.SlowMoEntered, HandleSlowMo);
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.SlowMoExited, HandleSlowMo);
+        GameManager.NotificationManager.CallOnMessage(Message.SlowMoEntered, HandleSlowMo);
+        GameManager.NotificationManager.CallOnMessage(Message.SlowMoExited, HandleSlowMo);
     }
 
     private void HandleSlowMo()
     {
-        instantRotation = !GameManager.Instance.SlowMoManager.IsSlowMo;
+        instantRotation = !GameManager.SlowMoManager.IsSlowMo;
     }
 
     private void DoStunMovement()

@@ -56,7 +56,7 @@ public class PossessionManager : MonoBehaviour
     void Start()
     {
         // Register callbacks
-        notificationManager = GameManager.Instance.NotificationManager;
+        notificationManager = GameManager.NotificationManager;
         notificationManager.CallOnStateStart(State.Possession, HandleNewPlayerPossession, true);
         notificationManager.CallOnStateEnd(State.Possession, HandlePlayerLostPossession, true);
         notificationManager.CallOnStateEnd(State.ChargeShot, HandlePlayerShotBall, true);

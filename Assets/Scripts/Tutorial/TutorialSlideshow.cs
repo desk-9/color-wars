@@ -60,9 +60,9 @@ public class TutorialSlideshow : MonoBehaviour
 
     private void StartListeningForPlayers()
     {
-        GameManager.Instance.NotificationManager.CallOnMessageWithSender(
+        GameManager.NotificationManager.CallOnMessageWithSender(
             Message.PlayerReleasedA, CheckinPlayer);
-        GameManager.Instance.NotificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 

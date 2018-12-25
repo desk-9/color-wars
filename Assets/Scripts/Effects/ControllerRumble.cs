@@ -26,7 +26,7 @@ public class ControllerRumble : MonoBehaviour
         stateManager = GetComponent<PlayerStateManager>();
         if (playerControls != null && stateManager != null)
         {
-            NotificationManager notificationManager = GameManager.Instance.NotificationManager;
+            NotificationManager notificationManager = GameManager.NotificationManager;
             notificationManager.CallOnMessage(Message.GoalScored, () => StartRumble(duration: gameWinRumbleDuration));
             notificationManager.CallOnMessageIfSameObject(Message.TronWallDestroyedWhileLaying, () => StartRumble(duration: layingWallStunDuration), gameObject);
             stateManager.OnStateChange += HandleNewPlayerState;

@@ -6,7 +6,7 @@ public class GoalSwitchCollider : MonoBehaviour
 
     private void GoalSwitch(GameObject thing)
     {
-        GameManager.Instance.NotificationManager.NotifyStringEvent(EventId, thing);
+        GameManager.NotificationManager.NotifyStringEvent(EventId, thing);
     }
 
     private void OnTriggerEnter2D(Collider2D collider)

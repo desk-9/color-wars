@@ -16,8 +16,8 @@ public class SlowMoManager : MonoBehaviour
 
     void Start()
     {
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.BallIsPossessed, StartSlowMo, true);
-        GameManager.Instance.NotificationManager.CallOnMessage(Message.BallIsUnpossessed, StopSlowMo, true);
+        GameManager.NotificationManager.CallOnMessage(Message.BallIsPossessed, StartSlowMo, true);
+        GameManager.NotificationManager.CallOnMessage(Message.BallIsUnpossessed, StopSlowMo, true);
     }
 
     private void StartSlowMo()
@@ -28,7 +28,7 @@ public class SlowMoManager : MonoBehaviour
         // If we just entered slowmo, shift pitch and notify
         if (slowMoCount > 0)
         {
-            GameManager.Instance.NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
+            GameManager.NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
 
             if (pitchShiftCoroutine != null)
             {
@@ -52,7 +52,7 @@ public class SlowMoManager : MonoBehaviour
                 StopCoroutine(pitchShiftCoroutine);
             }
             pitchShiftCoroutine = StartCoroutine(PitchShifter(1.0f, GameManager.Settings.PitchShiftTime));
-            GameManager.Instance.NotificationManager.NotifyMessage(Message.SlowMoExited, this);
+            GameManager.NotificationManager.NotifyMessage(Message.SlowMoExited, this);
         }
     }
 
