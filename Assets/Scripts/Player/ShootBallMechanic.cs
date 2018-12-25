@@ -38,8 +38,6 @@ public class ShootBallMechanic : MonoBehaviour
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
         stateManager.OnStateChange += HandleNewPlayerState;
 
-        Ball ball = GameObject.FindObjectOfType<Ball>();
-
         InitializeCircularIndicators(); // This is for team selection screen
 
         // In this situation, maxChargeShotTime is irrelevant => change it to

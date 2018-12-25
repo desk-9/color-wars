@@ -9,7 +9,6 @@ public class PlayerDashBehavior : MonoBehaviour
 {
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
-    public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
     public float maxChargeTime = 1.0f;
@@ -29,6 +28,7 @@ public class PlayerDashBehavior : MonoBehaviour
     private GameObject dashAimer;
     private float lastDashTime;
     private float chargeAmount = 0;
+    private Ball ball;
 
     private void Start()
     {
@@ -36,6 +36,10 @@ public class PlayerDashBehavior : MonoBehaviour
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
+
+        // TODO dkonik: Revisit this, this might not be true in in like team selection
+        // stage
+        ball = FindObjectOfType<Ball>().ThrowIfNull("Could not find ball");
 
         stateManager.OnStateChange += HandleNewPlayerState;
 
@@ -183,12 +187,6 @@ public class PlayerDashBehavior : MonoBehaviour
         stateManager.TransitionToState(State.NormalMovement);
     }
 
-    private Ball TrySteal(Player otherPlayer)
-    {
-        BallCarrier otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
-        return otherCarrier?.Ball;
-    }
-
     private void StunAndSteal(GameObject otherGameObject)
     {
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
@@ -197,20 +195,16 @@ public class PlayerDashBehavior : MonoBehaviour
             (otherPlayer.Team?.TeamColor != player.Team?.TeamColor
              || otherPlayer.Team == null || player.Team == null))
         {
-            Ball ball = TrySteal(otherPlayer);
-
-            bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);
-            if (shouldSteal || (ball == null && !onlyStunBallCarriers))
+            if (GameManager.Instance.PossessionManager.PossessingPlayer == otherPlayer && hitBall)
             {
+                // Stun other player
                 otherPlayer.StateManager.StunNetworked(
                     otherPlayer.PlayerMovement.CurrentPosition,
                     playerMovement.CurrentVelocity.normalized * stealKnockbackAmount,
                     stealKnockbackLength,
                     true);
-            }
 
-            if (shouldSteal)
-            {
+                // Fill out info and transition states
                 AudioManager.instance.StealSound.Play(.5f);
                 PossessBallInformation info = stateManager.GetStateInformationForWriting<PossessBallInformation>(State.Possession);
                 info.StoleBall = true;

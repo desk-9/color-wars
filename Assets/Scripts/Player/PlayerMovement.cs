@@ -78,7 +78,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 stickAngleWhenSnapped;
     private GameObject goal;
     private GameObject teammate;
-    private Ball ball;
     private Player player;
     private bool eventSent = false;
 
@@ -249,10 +248,10 @@ public class PlayerMovement : MonoBehaviour
                 teammateVector = (teammate.transform.position - transform.position).normalized;
             }
 
-            // TODO dkonik: Ugly to be directly checking the balls color like this
             if (goalVector.HasValue &&
                     Mathf.Abs(Vector2.Angle(Forward, goalVector.Value)) < aimAssistThreshold &&
-                ball.renderer.color == player.Team.TeamColor.color)
+                    GameManager.Instance.PossessionManager.CurrentTeam == player.Team &&
+                    GameManager.Instance.PossessionManager.IsCharged)
             {
                 aimAssistTarget = goal;
                 stickAngleWhenSnapped = lastDirection;
@@ -326,7 +325,6 @@ public class PlayerMovement : MonoBehaviour
         stateManager.TransitionToState(State.StartOfMatch);
         player = this.EnsureComponent<Player>();
         goal = GameObject.FindObjectOfType<GoalAimPoint>()?.gameObject;
-        ball = GameObject.FindObjectOfType<Ball>();
         this.FrameDelayCall(() =>
         {
             TeamManager team = player.Team;
