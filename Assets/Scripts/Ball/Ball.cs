@@ -116,7 +116,8 @@ public class Ball : MonoBehaviourPunCallbacks
         notificationManager.CallOnMessage(
             Message.GoalScored, HandleGoalScore
         );
-        notificationManager.CallOnMessage(Message.BallWentOutOfBounds, () => ResetBall());
+        notificationManager.CallOnMessage(Message.BallWentOutOfBounds, () => ResetBall(false));
+        notificationManager.CallOnMessage(Message.ResetAfterGoal, () => ResetBall(true));
         notificationManager.CallOnStateStart(State.Possession, HandlePossession);
         notificationManager.CallOnStateEnd(State.Possession, HandlePossessionLost);
         notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
@@ -151,7 +152,7 @@ public class Ball : MonoBehaviourPunCallbacks
         Ownable = false;
     }
 
-    public void ResetBall(float? lengthOfEffect = null)
+    private void ResetBall(bool doSpawnAnimation)
     {
         // Reset values 
         transform.position = startLocation;
@@ -161,9 +162,9 @@ public class Ball : MonoBehaviourPunCallbacks
         LastOwner = null;
 
         // Start Spawn effect
-        if (lengthOfEffect != null)
+        if (doSpawnAnimation)
         {
-            StartCoroutine(ImplosionEffect(lengthOfEffect.Value));
+            StartCoroutine(ImplosionEffect(GameManager.Settings.LengthOfBallSpawnAnimation));
         }
     }
 

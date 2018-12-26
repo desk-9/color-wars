@@ -28,14 +28,12 @@ public class GameManager : MonoBehaviour
     public NamedColor[] teamColors;
     public List<TeamManager> Teams { get; set; }
     public TeamResourceManager neutralResources;
-    // public GameEndController end_controller {get; set;}
-    public float matchLength = 5f;
     
     public bool gameOver { get; private set; } = false;
     public TeamManager Winner { get; private set; } = null;
     public GameObject meta;
-    public float pauseAfterGoalScore = 3f;
-    public float pauseAfterReset = 2f;
+
+
     public List<Player> players = new List<Player>();
 
     [SerializeField]
@@ -49,18 +47,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject blowbackPrefab;
 
-    public enum WinCondition
-    {
-        Time, FirstToX, TennisRules
-    }
-
-    public WinCondition winCondition = WinCondition.TennisRules;
-
     public Callback OnGameOver = delegate { };
-
-    private string[] countdownSoundNames = new string[]
-    {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
-    private float matchLengthSeconds;
 
     private Ball ball
     {
@@ -102,20 +89,11 @@ public class GameManager : MonoBehaviour
         }
         gameOver = false;
         InitializeTeams();
-        matchLengthSeconds = 60 * matchLength;
-        if (!PlayerTutorial.runTutorial && winCondition == WinCondition.Time)
-        {
-            this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
-        }
     }
 
     private void Start()
     {
         SceneStateManager.instance.UnPauseTime();
-        if (winCondition == WinCondition.Time)
-        {
-            scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
-        }
 
         meta = SceneStateManager.instance.gameObject;
         if (meta == null)
@@ -123,19 +101,7 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("Meta object is null!!!!");
         }
 
-        // The reason we subscribe to both goal scored and score changed is because when goal scored fires,
-        // the appropriate 
-        NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChange);
-    }
-
-    private IEnumerator EndGameCountdown()
-    {
-        foreach (string count in countdownSoundNames)
-        {
-            AudioManager.Play("countdown/" + count);
-            yield return new WaitForSeconds(1f);
-        }
-        EndGame();
+        NotificationManager.CallOnMessage(Message.ScoreChanged, HandleGoalScored);
     }
 
     public TeamManager GetWinningTeam()
@@ -184,57 +150,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleScoreChange()
-    {
-        if (winCondition == WinCondition.FirstToX || winCondition == WinCondition.TennisRules)
-        {
-            CheckForWinner();
-        }
-    }
-
-    private void CheckForWinner()
+    private void HandleGoalScored()
     {
         TeamManager topTeam = GetWinningTeam();
         if (topTeam != null && topTeam.Score >= Settings.WinningScore)
         {
-            if (winCondition == WinCondition.TennisRules)
-            {
-                int secondBestScore =
-                    (from team in Teams
-                     where team != topTeam
-                     select team.Score).Max();
-                if (Mathf.Abs(secondBestScore - topTeam.Score) >= Settings.RequiredWinMargin)
-                {
-                    EndGame();
-                }
-            }
-            else if (winCondition == WinCondition.FirstToX)
-            {
-                EndGame();
-            }
+            EndGame();
+        } else
+        {
+            this.TimeDelayCall(ResetGameAfterGoal, Settings.PauseAfterGoalScore);
         }
     }
 
     private void ResetGameAfterGoal()
     {
-        // TODO dkonik: This should just fire the event and everything else should
-        // take care of that
-        if (gameOver)
+        if (!gameOver)
         {
-            return;
-        }
-        NotificationManager.NotifyMessage(Message.ResetAfterGoal, this);
-        ball.ResetBall(pauseAfterReset);
-        NotificationManager.NotifyMessage(Message.StartCountdown, this);
-        GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
-        foreach (TronWall wall in GameObject.FindObjectsOfType<TronWall>())
-        {
-            wall.KillSelf();
+            NotificationManager.NotifyMessage(Message.ResetAfterGoal, this);
+            NotificationManager.NotifyMessage(Message.StartCountdown, this);
         }
 
-
-        // Reset music.
-        StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
     }
 
     public List<Player> GetPlayersWithTeams()
@@ -255,25 +190,6 @@ public class GameManager : MonoBehaviour
     public List<Player> GetHumanPlayers()
     {
         return players.Where(player => player.playerNumber >= 0).ToList();
-    }
-
-    private IEnumerator PitchShifter(float target, float time)
-    {
-        AudioSource backgroundMusic = GameObject.Find("BGM")?.GetComponent<AudioSource>();
-
-        if (backgroundMusic == null) yield break;
-
-        float start = backgroundMusic.pitch;
-        float t = 0.0f;
-
-        while (backgroundMusic.pitch != target && t <= time)
-        {
-            t += Time.deltaTime;
-            backgroundMusic.pitch = Mathf.Lerp(start, target, t / time);
-            yield return null;
-        }
-
-        backgroundMusic.pitch = target;
     }
 
     public void FlashScreen(float flashLength = 0.1f, Color? flashColor = null)

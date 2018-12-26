@@ -214,7 +214,7 @@ public class PlayerTutorial : MonoBehaviour
             yield return null;
         }
         ResetCheckin();
-        GameManager.NotificationManager.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
+        //GameManager.NotificationManager.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
         readyUpCount.text = "";
 
         // Start the countdown.

@@ -13,4 +13,8 @@ public class GameSettings
     public bool RespectSoundEffectSlowMo = true;
     public int WinningScore = 4;
     public int RequiredWinMargin = 1;
+    [Tooltip("The amount of time that the goal scoring team is allotted to move around after they scored")]
+    public float PauseAfterGoalScore = 3f;
+    [Tooltip("The length of the ball implosion animation")]
+    public float LengthOfBallSpawnAnimation = 2f;
 }

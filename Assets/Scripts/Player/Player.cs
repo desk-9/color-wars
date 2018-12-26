@@ -18,9 +18,7 @@ public class Player : MonoBehaviourPunCallbacks
     public Vector2 initialPosition;
     public float initialRotation;
 
-    private bool isNormalPlayer = true;
     private new SpriteRenderer renderer;
-    private Rigidbody2D rb2d;
     private new Collider2D collider;
     private GameObject explosionEffect;
     private PlayerMovement playerMovement;
@@ -50,34 +48,24 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void MakeInvisibleAfterGoal()
     {
-        if (isNormalPlayer)
-        {
-            renderer.enabled = false;
-            collider.enabled = false;
-
-            StateManager.TransitionToState(State.FrozenAfterGoal);
-        }
+        renderer.enabled = false;
+        collider.enabled = false;
+        StateManager.TransitionToState(State.FrozenAfterGoal);
 
         explosionEffect = GameObject.Instantiate(Team.resources.explosionPrefab, transform.position, transform.rotation);
         ParticleSystem explosionParticleSystem = explosionEffect.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule explosionMain = explosionParticleSystem.main;
-        explosionMain.startLifetime = GameManager.Instance.pauseAfterGoalScore;
+        explosionMain.startLifetime = GameManager.Settings.PauseAfterGoalScore;
         explosionMain.startColor = Team.TeamColor.color;
         explosionParticleSystem.Play();
     }
 
-    public void ResetPlayerPosition()
+    public void ResetPlayerAfterGoal()
     {
-        if (isNormalPlayer)
-        {
-            StateManager.TransitionToState(State.StartOfMatch);
+        StateManager.TransitionToState(State.StartOfMatch);
+        renderer.enabled = true;
+        collider.enabled = true;
 
-            transform.position = initialPosition;
-            rb2d.rotation = initialRotation;
-            renderer.enabled = true;
-            collider.enabled = true;
-            rb2d.velocity = Vector2.zero;
-        }
         if (explosionEffect != null)
         {
             Destroy(explosionEffect);
@@ -118,14 +106,8 @@ public class Player : MonoBehaviourPunCallbacks
     private void Start()
     {
         renderer = GetComponent<SpriteRenderer>();
-        rb2d = GetComponent<Rigidbody2D>();
         StateManager = GetComponent<PlayerStateManager>();
         collider = GetComponent<Collider2D>();
-
-        // Whether this is a "hidden" player that doesn't actually show up/move
-        // (i.e. purely sends input events and owns a controller)
-        isNormalPlayer = renderer != null && rb2d != null
-            && StateManager != null && collider != null;
 
         if (teamOverride >= 0)
         {
@@ -136,7 +118,7 @@ public class Player : MonoBehaviourPunCallbacks
         {
             // Dummies have a player number of -1, and shouldn't get a team
             Team = GameManager.Instance.GetTeamAssignment(this);
-            if (Team != null && isNormalPlayer)
+            if (Team != null)
             {
                 SetTeam(Team);
             }

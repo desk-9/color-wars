@@ -21,6 +21,8 @@ public class RoundStartBlocker : MonoBehaviour
         lineRenderer.GetPositions(originalLinePoints);
 
         lastResetTime = Time.time;
+
+        GameManager.NotificationManager.CallOnMessage(Message.ResetAfterGoal, HandleResetAfterGoal);
     }
 
     private void Update()
@@ -73,7 +75,7 @@ public class RoundStartBlocker : MonoBehaviour
         ps.Play();
     }
 
-    public void Reset()
+    private void HandleResetAfterGoal()
     {
         edgeCollider.enabled = true;
         lineRenderer.enabled = true;

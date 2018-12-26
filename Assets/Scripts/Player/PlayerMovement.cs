@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
         State.ChargeDash,
         State.Possession,
         State.ChargeShot,
-        State.StartOfMatch
     };
 
     public Vector2 CurrentPosition
@@ -307,6 +306,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
+        player = this.EnsureComponent<Player>();
 
         // TODO dkonik: Remove this dependency on ball carrier
         ballCarrier = this.EnsureComponent<BallCarrier>();
@@ -323,11 +323,6 @@ public class PlayerMovement : MonoBehaviour
             });
         stateManager.OnStateChange += HandleNewPlayerState;
 
-        // TODO dkonik: This may need to be pushed a frame back, to provide other components the
-        // ability to subscribe to this...though I doubt anything is waiting on the
-        // StartOfMatch state
-        stateManager.TransitionToState(State.StartOfMatch);
-        player = this.EnsureComponent<Player>();
         goal = GameObject.FindObjectOfType<GoalAimPoint>()?.gameObject;
         this.FrameDelayCall(() =>
         {
@@ -433,6 +428,12 @@ public class PlayerMovement : MonoBehaviour
         } else if (newState == State.Dash)
         {
             DoDash();
+        } else if (newState == State.StartOfMatch)
+        {
+            StopAllMovementCoroutines(true);
+            rb2d.position = player.initialPosition;
+            rb2d.rotation = player.initialRotation;
+            StartRotateOnly(false);
         }
     }
 }

@@ -33,7 +33,7 @@ public class TeamManager
         unusedSprites = new Stack<Sprite>(memberSprites);
         unusedYs = new Stack<float>(playerYs);
 
-        GameManager.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
+        GameManager.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored, true);
         GameManager.NotificationManager.CallOnMessage(Message.ResetAfterGoal, ResetTeam);
         GameManager.NotificationManager.CallOnMessage(Message.CountdownFinished, HandleRoundStartCountdownFinished);
     }
@@ -152,7 +152,7 @@ public class TeamManager
     {
         foreach (Player teamMember in teamMembers)
         {
-            teamMember.ResetPlayerPosition();
+            teamMember.ResetPlayerAfterGoal();
         }
     }
 

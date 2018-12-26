@@ -47,16 +47,7 @@ public class ScoreIndicator : MonoBehaviour
         }
 
         // Update score indicator when a goal is scored
-        // TODO dkonik: Fix this this does not work at the moment
-        GameManager.NotificationManager.CallOnMessageWithSender(
-            Message.GoalScored,
-            (object scoringTeam) =>
-            {
-                if ((TeamManager)scoringTeam == team)
-                {
-                    DisplayNextPoint();
-                }
-            });
+        GameManager.NotificationManager.CallOnMessage(Message.GoalScored, HandleGoalScored);
 
         // Reset score indicator when game is restarted
         GameManager.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateAllDisplays);
@@ -64,6 +55,14 @@ public class ScoreIndicator : MonoBehaviour
         foreach (GameObject pointIndicator in pointIndicators)
         {
             pointIndicator.GetComponent<SpriteRenderer>().color = team.TeamColor.color;
+        }
+    }
+
+    private void HandleGoalScored()
+    {
+        if (GameManager.PossessionManager.CurrentTeam == team)
+        {
+            DisplayNextPoint();
         }
     }
 

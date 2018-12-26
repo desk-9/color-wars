@@ -23,6 +23,24 @@ public class TronWall : MonoBehaviour
     private EdgeCollider2D edgeCollider;
     private float tronWallOffset;
 
+    private void Start()
+    {
+        GameManager.NotificationManager.CallOnMessageWithSender(Message.GoalScored, HandleGoalScored);
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.NotificationManager.UnsubscribeMessage(Message.GoalScored, HandleGoalScored);
+    }
+
+    private void HandleGoalScored(object _)
+    {
+        // Unfortunately this function exists because of the way notification manager is set,
+        // where the delegates aren't actually no arg functions but take an object. Thus, in order to remove
+        // ourselves we have to have this function
+        KillSelf();
+    }
+
     public void Initialize(PlayerTronMechanic creator, float lifeLength, TeamManager team,
                             float tronWallOffset)
     {

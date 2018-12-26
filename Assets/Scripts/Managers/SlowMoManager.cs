@@ -13,55 +13,77 @@ public class SlowMoManager : MonoBehaviour
     /// </summary>
     private int slowMoCount = 0;
     Coroutine pitchShiftCoroutine;
+    private AudioSource backgroundMusic;
 
     void Start()
     {
-        GameManager.NotificationManager.CallOnMessage(Message.BallIsPossessed, StartSlowMo, true);
-        GameManager.NotificationManager.CallOnMessage(Message.BallIsUnpossessed, StopSlowMo, true);
+        // TODO dkonik: Fix this background music fuckery
+        backgroundMusic = GameObject.Find("BGM")?.EnsureComponent<AudioSource>();
+
+        GameManager.NotificationManager.CallOnMessage(Message.BallIsPossessed, HandleBallPossessed, true);
+        GameManager.NotificationManager.CallOnMessage(Message.BallIsUnpossessed, HandleBallDropped, true);
+        GameManager.NotificationManager.CallOnMessage(Message.GoalScored, SetBackToDefault);
+    }
+
+    private void HandleBallPossessed()
+    {
+        slowMoCount += 1;
+
+        // Only do this if we are just entering slow mo
+        if (slowMoCount == 1)
+        {
+            StartSlowMo();
+        }
+    }
+
+    private void HandleBallDropped()
+    {
+        // Ensure slowMo doesn't stop until ALL balls are dropped
+        slowMoCount = Mathf.Max(0, slowMoCount - 1);
+        if (slowMoCount == 0)
+        {
+            StopSlowMo();
+        }
+    }
+
+    private void SetBackToDefault()
+    {
+        slowMoCount = 0;
+        if (pitchShiftCoroutine != null)
+        {
+            StopCoroutine(pitchShiftCoroutine);
+        }
+        pitchShiftCoroutine = StartCoroutine(PitchShifter(1.0f, GameManager.Settings.PitchShiftTime));
     }
 
     private void StartSlowMo()
     {
         Utility.ChangeTimeScale(GameManager.Settings.SlowMoFactor);
-        slowMoCount += 1;
 
-        // If we just entered slowmo, shift pitch and notify
-        if (slowMoCount > 0)
+        GameManager.NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
+
+        if (pitchShiftCoroutine != null)
         {
-            GameManager.NotificationManager.NotifyMessage(Message.SlowMoEntered, this);
-
-            if (pitchShiftCoroutine != null)
-            {
-                StopCoroutine(pitchShiftCoroutine);
-            }
-            pitchShiftCoroutine = StartCoroutine(PitchShifter(GameManager.Settings.SlowedPitch, GameManager.Settings.PitchShiftTime));
+            StopCoroutine(pitchShiftCoroutine);
         }
+        pitchShiftCoroutine = StartCoroutine(PitchShifter(GameManager.Settings.SlowedPitch, GameManager.Settings.PitchShiftTime));
     }
 
     private void StopSlowMo()
     {
-        // Ensure slowMo doesn't stop until ALL balls are dropped
-        slowMoCount = Mathf.Max(0,slowMoCount - 1);
-        if (slowMoCount == 0)
-        {
-            Utility.ChangeTimeScale(1);
+        Utility.ChangeTimeScale(1);
 
-            // Pitch-shift BGM back to normal.
-            if (pitchShiftCoroutine != null)
-            {
-                StopCoroutine(pitchShiftCoroutine);
-            }
-            pitchShiftCoroutine = StartCoroutine(PitchShifter(1.0f, GameManager.Settings.PitchShiftTime));
-            GameManager.NotificationManager.NotifyMessage(Message.SlowMoExited, this);
+        // Pitch-shift BGM back to normal.
+        if (pitchShiftCoroutine != null)
+        {
+            StopCoroutine(pitchShiftCoroutine);
         }
+        pitchShiftCoroutine = StartCoroutine(PitchShifter(1.0f, GameManager.Settings.PitchShiftTime));
+        GameManager.NotificationManager.NotifyMessage(Message.SlowMoExited, this);
     }
 
     private IEnumerator PitchShifter(float target, float time)
     {
-        // TODO dkonik: Fix this background music fuckery
-        AudioSource backgroundMusic = GameObject.Find("BGM")?.GetComponent<AudioSource>();
-        backgroundMusic.ThrowIfNull("Could nto find background music object");
-
         float start = backgroundMusic.pitch;
         float t = 0.0f;
         while (backgroundMusic.pitch != target && t <= time)
@@ -72,5 +94,6 @@ public class SlowMoManager : MonoBehaviour
         }
 
         backgroundMusic.pitch = target;
+        pitchShiftCoroutine = null;
     }
 }
