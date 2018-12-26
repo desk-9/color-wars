@@ -97,11 +97,9 @@ public class RoundStartBlocker : MonoBehaviour
         {
             DisableSelf();
 
-            // TODO dkonik: We may need to add some information to the normal
-            // movement state that includes a bool saying "zero out the velocity"
-            // since we were doing that before but are not any longer. First, need to test.
-            // This may just work the way it is.
-            stateManager.TransitionToState(State.NormalMovement);
+            Vector2 knockBackdirection = -player.PlayerMovement.Forward;
+            player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
+                knockBackdirection * TronWall.knockbackOnBreak, TronWall.wallBreakerStunTime, false);
         }
     }
 }

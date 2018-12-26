@@ -5,13 +5,13 @@ using System.Linq;
 
 public class TronWall : MonoBehaviour
 {
-    [SerializeField]
     [Tooltip("The amount of time that the destroyer of a wall is stunned")]
-    private float wallBreakerStunTime = .35f;
+    public const float wallBreakerStunTime = .35f;
+    public const float knockbackOnBreak = 1f;
 
     public float wallDestroyTime = .3f;
     public int maxParticlesOnDestroy = 100;
-    public float knockbackOnBreak = 1f;
+
 
     private float lifeLength { get; set; }
 
@@ -148,8 +148,6 @@ public class TronWall : MonoBehaviour
         {
             KillSelf();
 
-            // We knock back left because the sprites are facing right...so left is
-            // the back end of the character
             Vector2 knockBackdirection = -player.PlayerMovement.Forward;
             player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
                 knockBackdirection * knockbackOnBreak, wallBreakerStunTime, false);

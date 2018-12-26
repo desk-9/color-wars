@@ -171,6 +171,7 @@ MonoBehaviour:
   delayBetweenSnaps: 0.2
   aimAssistEpsilon: 3.5
   aimAssistLerpStrength: 0.2
+  minBallForceRotationTime: 0.1
 --- !u!114 &114215232534320030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,11 +230,9 @@ MonoBehaviour:
     type: 3}
   dashAimerPrefab: {fileID: 1412520093174376, guid: eb210e989d7bd4df9bb31d913d1cfc2a,
     type: 3}
-  onlyStunBallCarriers: 1
   onlyStealOnBallHit: 1
   stopDashOnCollisionWith:
   - Wall
-  - TronWall
   - PlayerBlocker
   maxChargeTime: 1
   chargeRate: 0.5
