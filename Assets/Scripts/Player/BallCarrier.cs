@@ -63,7 +63,8 @@ public class BallCarrier : MonoBehaviour
             StartCarryingBall();
         }
 
-        if (oldState == State.Possession)
+        if ((oldState == State.Possession && newState != State.ChargeShot) ||
+            oldState == State.ChargeShot)
         {
             DropBall();
         }
