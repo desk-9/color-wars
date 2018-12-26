@@ -219,6 +219,11 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// <param name="duration"></param>
     public void StunNetworked(Vector2 startPosition, Vector2 blowbackVelocity, float duration, bool stolenFrom)
     {
+        if (CurrentState == State.Stun)
+        {
+            return;
+        }
+
         if (photonView.IsMine)
         {
             // If we are the local player, just serialize out as usual

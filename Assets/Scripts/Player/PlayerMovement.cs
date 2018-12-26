@@ -80,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     private GameObject teammate;
     private Player player;
     private bool eventSent = false;
+    private BallCarrier ballCarrier;
 
     [Header("Parameters")]
     [SerializeField]
@@ -171,9 +172,8 @@ public class PlayerMovement : MonoBehaviour
                     finalRotation = 360 - Mathf.Repeat(-finalRotation, 360);
                 }
                 finalRotation = Mathf.Repeat(finalRotation, 360);
-                BallCarrier ballCarrier = GetComponent<BallCarrier>();
-                if (ballCarrier != null && ballCarrier.Ball != null
-                    && (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime)
+                if (GameManager.PossessionManager.PossessingPlayer == player &&
+                    (Time.time - ballCarrier.timeCarryStarted) >= minBallForceRotationTime)
                 {
                     Ball ball = ballCarrier.Ball;
                     Vector3 ballDirection = (ball.transform.position - transform.position).normalized;
@@ -307,6 +307,9 @@ public class PlayerMovement : MonoBehaviour
     {
         rb2d = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
+
+        // TODO dkonik: Remove this dependency on ball carrier
+        ballCarrier = this.EnsureComponent<BallCarrier>();
         GameManager.NotificationManager.CallOnMessageWithSender(
             Message.PlayerStick, playerPair =>
             {
