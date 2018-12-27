@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 1319945779}
   - component: {fileID: 2373567841021937249}
   - component: {fileID: 4019916387848648849}
+  - component: {fileID: 4299082118362517105}
   m_Layer: 10
   m_Name: Ball
   m_TagString: Untagged
@@ -350,7 +351,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 2373567841021937249}
   viewIdField: 0
   InstantiationId: 7
   isRuntimeInstantiated: 0
@@ -366,6 +367,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e6157188c939a468fe905350efc1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  movementSpeed: 5
+  forceUpdateSeconds: 2
 --- !u!114 &4019916387848648849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -381,6 +385,21 @@ MonoBehaviour:
   outerRingRenderer: {fileID: 212372124968514046}
   innerFillRenderer: {fileID: 212377078288977304}
   neutralColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &4299082118362517105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302162468020258}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!1 &1768583797059612
 GameObject:
   m_ObjectHideFlags: 0

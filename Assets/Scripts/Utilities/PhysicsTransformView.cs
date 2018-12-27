@@ -4,6 +4,13 @@ using Photon.Realtime;
 
 [RequireComponent(typeof(PhotonView))]
 public class PhysicsTransformView : MonoBehaviour, IPunObservable {
+    [SerializeField]
+    private float rotationSpeed = 10;
+    [SerializeField]
+    private float movementSpeed = 1;
+    [SerializeField]
+    private float forceUpdateSeconds = 2f;
+
     private PhotonView photonView;
     private Rigidbody2D rigidbody;
 
@@ -11,6 +18,8 @@ public class PhysicsTransformView : MonoBehaviour, IPunObservable {
 
     private Vector2 networkPosition;
     private float networkRotation;
+
+    private float lastForcedUpdateTime = 0;
 
     void Awake() {
         photonView = GetComponent<PhotonView>();
@@ -22,13 +31,13 @@ public class PhysicsTransformView : MonoBehaviour, IPunObservable {
     void FixedUpdate() {
         if (!photonView.IsMine) {
             if (updateState == 1) {
-                Utility.Print("First update", LogLevel.Error);
+                Utility.Print("Force transform update", LogLevel.Error);
                 rigidbody.position = networkPosition;
                 rigidbody.rotation = networkRotation;
                 updateState = 2;
             } else {
-                rigidbody.position = Vector2.MoveTowards(rigidbody.position, networkPosition, Time.fixedDeltaTime * 1f);
-                rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, networkRotation, Time.fixedDeltaTime * 10f);
+                rigidbody.position = Vector2.MoveTowards(rigidbody.position, networkPosition, Time.fixedDeltaTime * movementSpeed);
+                rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, networkRotation, Time.fixedDeltaTime * rotationSpeed);
 
             }
         }
@@ -41,15 +50,16 @@ public class PhysicsTransformView : MonoBehaviour, IPunObservable {
             stream.SendNext(rigidbody.angularVelocity);
             stream.SendNext(rigidbody.rotation);
         } else {
-            if (updateState == 0) {
+            if (updateState == 0 || (Time.fixedTime - lastForcedUpdateTime) > forceUpdateSeconds) {
                 updateState = 1;
+                lastForcedUpdateTime = Time.fixedTime;
             }
             networkPosition = (Vector2) stream.ReceiveNext();
             rigidbody.velocity = (Vector2) stream.ReceiveNext();
             rigidbody.angularVelocity = (float) stream.ReceiveNext();
             networkRotation = (float) stream.ReceiveNext();
-            float lag = Mathf.Abs((float) (PhotonNetwork.Time - info.timestamp));
-            networkPosition += rigidbody.velocity * lag;
+            // float lag = Mathf.Abs((float) (PhotonNetwork.Time - info.timestamp));
+            // networkPosition += rigidbody.velocity * lag;
         }
     }
 }

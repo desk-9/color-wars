@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class BallCarrier : MonoBehaviour
 {
@@ -17,7 +19,7 @@ public class BallCarrier : MonoBehaviour
 
     private float ballTurnSpeed = 10f;
     public bool slowMoOnCarry = true;
-    
+
     public float timeCarryStarted { get; private set; }
     private float ballOffsetFromCenter;
     private PlayerMovement playerMovement;
@@ -28,8 +30,9 @@ public class BallCarrier : MonoBehaviour
     private GameObject teammate;
     private Player player;
     private GameObject goal;
+    private PhotonView photonView;
 
-    
+
     private const float ballOffsetMultiplier = 0.98f;
 
     public bool IsCarryingBall { get; private set; } = false;
@@ -40,6 +43,7 @@ public class BallCarrier : MonoBehaviour
         playerMovement = this.EnsureComponent<PlayerMovement>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         Ball = FindObjectOfType<Ball>().ThrowIfNull("Could not find ball");
+        photonView = this.EnsureComponent<PhotonView>();
         if (playerMovement != null && stateManager != null)
         {
             PlayerMovement actualPlayerMovement = playerMovement as PlayerMovement;
@@ -134,7 +138,7 @@ public class BallCarrier : MonoBehaviour
     {
         DoBlowbackEffect();
         timeCarryStarted = Time.time;
-        
+
         // TODO dkonik: Make the laser guide event based
         laserGuide?.DrawLaser();
         carryBallCoroutine = StartCoroutine(CarryBall());
@@ -153,7 +157,9 @@ public class BallCarrier : MonoBehaviour
     private IEnumerator CarryBall()
     {
         IsCarryingBall = true;
-        Ball.TakeOwnership();
+        if (photonView.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) {
+            Ball.TakeOwnership();
+        }
         while (true)
         {
             PlaceBallAtNose();

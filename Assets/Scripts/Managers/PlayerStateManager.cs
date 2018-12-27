@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO dkonik: Bad place for this comment but I just want to make sure to 
+// TODO dkonik: Bad place for this comment but I just want to make sure to
 // get it written somewhere before I get distracted refactoring something else.
 // Wherever the actual possession logic goes needs to make sure to handle the case
-// where two players both take possession of the ball at the same time. It just needs to 
+// where two players both take possession of the ball at the same time. It just needs to
 // make sure that the second player who picked up the ball gracefully gives up possession.
 // Actually, on second thought, every client should check (whenever they get a possession event)
 // what the time stamp is of the message, and give it to whoever has the oldest timestamp.
@@ -18,10 +18,10 @@ using UnityEngine;
 public enum State : byte
 {
     // Initial state
-    StartupState = 0, 
+    StartupState = 0,
     NormalMovement = 1,
     ChargeDash = 2,
-    Dash = 3, 
+    Dash = 3,
     Possession = 4,
     ChargeShot = 5,
     Stun = 7,
@@ -35,17 +35,24 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 {
     public State CurrentState { private set; get; } = State.StartupState;
 
-    // TODO dkonik: I can potentially see an ordering issue with this being one event. This may need to be split
-    // up into two events (OnStateEnded and OnStateEntered) which are always called latter after the former. 
-    // We may not need to do this, but the situation I am thinking of is something like the following:
-    // let's say we add two states which both change the color of the player. One changes to color to orange and the 
-    // other to green. If we transition from the orange state to the green state, if we are not careful, we can get something
-    // like the Green state first handles the OnStateChange event, which changes the players color to green. Then, the 
-    // Orange state handles it, and if we are not careful, it might change the player's color back to regular. There are
-    // obviously multiple ways to handle this, one being that the orange state would check if the new state also changes the color
-    // and not change it back to regular in that case (not great because of coupling between the two). The better one would be to have
-    // a PlayerColor component which is responsible for all player color changes, based on the state. That way, that component can change
-    // the color however it likes and not worry about it being changed elsewhere.
+    // TODO dkonik: I can potentially see an ordering issue with this being one
+    // event. This may need to be split up into two events (OnStateEnded and
+    // OnStateEntered) which are always called latter after the former. We may
+    // not need to do this, but the situation I am thinking of is something like
+    // the following: let's say we add two states which both change the color of
+    // the player. One changes to color to orange and the other to green. If we
+    // transition from the orange state to the green state, if we are not
+    // careful, we can get something like the Green state first handles the
+    // OnStateChange event, which changes the players color to green. Then, the
+    // Orange state handles it, and if we are not careful, it might change the
+    // player's color back to regular. There are obviously multiple ways to
+    // handle this, one being that the orange state would check if the new state
+    // also changes the color and not change it back to regular in that case
+    // (not great because of coupling between the two). The better one would be
+    // to have a PlayerColor component which is responsible for all player color
+    // changes, based on the state. That way, that component can change the
+    // color however it likes and not worry about it being changed elsewhere.
+
     /// <summary>
     /// An event that gets fired whenever the player changes state. It provides the old
     /// and the new state, respectively.
@@ -89,10 +96,10 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     }
 
     /// <summary>
-    /// If a non owner changed our state, we should not listen to the owner until they have 
-    /// confirmed this (by serializing the state). So, for example, if player 1 stuns player 2, 
+    /// If a non owner changed our state, we should not listen to the owner until they have
+    /// confirmed this (by serializing the state). So, for example, if player 1 stuns player 2,
     /// they will force everyone to make player 2 go to the stun state. So when player 3 gets that RPC,
-    /// they will lock player 2 to the stun state (ignoring anything else player 2 sends) until player 2 
+    /// they will lock player 2 to the stun state (ignoring anything else player 2 sends) until player 2
     /// sends (via serialization) that they are in the stun state.
     /// </summary>
     private bool nonOwnerForcedState = false;
@@ -108,8 +115,9 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     {
         if (state == CurrentState)
         {
-            // TODO: I am totally on the fence on whether we should be treating these state informations as
-            // transition information, or as legitimate information used throughout the life of the state...
+            // TODO: I am totally on the fence on whether we should be treating
+            // these state informations as transition information, or as
+            // legitimate information used throughout the life of the state...
             // figure that out
             throw new System.Exception("PlayerStateManager: Should not be modifying current state information");
         }
@@ -117,7 +125,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     }
 
     /// <summary>
-    /// Networked transition to state. 
+    /// Networked transition to state.
     /// NOTE: If this state requires PlayerStateTransitionInformation, it should be filled in before calling
     /// this and passed in as the second argument (just for error checking). Except for NormalMovement.
     /// NormalMovement is special because it is the most commonly transitioned to state and it would be tedious to
@@ -126,6 +134,9 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     /// <param name="state"></param>
     public void TransitionToState(State state, StateTransitionInformation transitionInfo = null)
     {
+        if (!photonView.IsMine) {
+            Utility.Print("Tried to transition to state on non-owned player", LogLevel.Error);
+        }
         // Some error checking. If this is a state which contains an information object
         if (stateInfos[state] != null)
         {
@@ -238,9 +249,9 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
             // TODO dkonik: Using AllViaServer so that photon can guarantee ordering. However, this might
             // not be the right thing to do. The reason I we need to guarantee ordering (or something along those lines)
             // is because if the situation described in the comment in [StunNetworked_Interal], namely: "Say, for example,
-            // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 
+            // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3
             // possesses the ball right by player 2. Both player 1 and player 3 will send an RPC to stun player
-            // 2" happens, then we need to be able to guarantee ordering. 
+            // 2" happens, then we need to be able to guarantee ordering.
             photonView.RPC("StunNetworked_Interal", RpcTarget.AllViaServer, startPosition, blowbackVelocity, duration, stolenFrom);
         }
     }
@@ -249,12 +260,12 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     private void StunNetworked_Interal(Vector2 startPosition, Vector2 blowbackVelocity, float duration, bool stolenFrom, PhotonMessageInfo rpcInfo)
     {
         // Situations can arise where two players try to stun third at roughly the same time. Say, for example,
-        // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3 
+        // player 1 destroys player 2s tron wall while they are laying it at the same time that player 3
         // possesses the ball right by player 2. Both player 1 and player 3 will send an RPC to stun player
         // 2. Photon guarantees ordering (at least the way we are currently doing it). So we will just have
         // everyoen ignore the second rpc.
         //
-        // Or, another situation that might arise is that player 1 stuns player 2, and so sends the RPC out to force 
+        // Or, another situation that might arise is that player 1 stuns player 2, and so sends the RPC out to force
         // player 2 to stun state. Player 2 might get this, and serialize out the stun information before player 3
         // even gets the RPC, in which case we can also ignore it.
         if (CurrentState == State.Stun)
@@ -262,7 +273,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
             StunInformation stunInfo = CurrentStateInformation_Exn<StunInformation>();
             bool isSameInformation = stunInfo.EventTimeStamp == rpcInfo.timestamp;
             Debug.LogFormat("Got an RPC to enter stun state while already in stun, ignoring. IsSameInformation: {0}", isSameInformation);
-            
+
             return;
         }
 
