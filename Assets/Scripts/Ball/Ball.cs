@@ -7,7 +7,7 @@ using UtilityExtensions;
 public class Ball : MonoBehaviourPunCallbacks
 {
     public new SpriteRenderer renderer;
-    
+
     [SerializeField]
     private GameObject implosionPrefab;
 
@@ -60,12 +60,15 @@ public class Ball : MonoBehaviourPunCallbacks
             if (owner_ != null)
             {
                 LastOwner = owner_;
+                GetComponent<PhysicsTransformView>().enabled = true;
+            } else {
+                GetComponent<PhysicsTransformView>().enabled = false;
             }
             owner_ = value;
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
 
             rigidbody.angularVelocity = 0f;
-            
+
             if (!this.isActiveAndEnabled)
             {
                 return;
@@ -93,7 +96,7 @@ public class Ball : MonoBehaviourPunCallbacks
         }
 
         AudioManager.instance.ShootBallSound.Play(.5f);
-       
+
         if (photonView.IsMine)
         {
             // TODO dkonik: Do more here, interp based on the timestamp and ball start
@@ -154,7 +157,7 @@ public class Ball : MonoBehaviourPunCallbacks
 
     private void ResetBall(bool doSpawnAnimation)
     {
-        // Reset values 
+        // Reset values
         transform.position = startLocation;
         Ownable = true;
         rigidbody.velocity = Vector2.zero;
