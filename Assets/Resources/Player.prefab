@@ -561,7 +561,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 1579188638025929307}
+  - {fileID: 114920135743144974}
   viewIdField: 0
   InstantiationId: 7
   isRuntimeInstantiated: 0
@@ -577,3 +578,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38e6157188c939a468fe905350efc1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  movementSpeed: 5
+  forceUpdateSeconds: 2
