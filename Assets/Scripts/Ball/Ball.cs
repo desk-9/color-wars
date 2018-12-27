@@ -16,6 +16,7 @@ public class Ball : MonoBehaviourPunCallbacks
     private float speedOnShoot;
     private int relevantCollisionLayers;
     private new Rigidbody2D rigidbody;
+    private PhysicsTransformView physicsTransformView;
 
     /// <summary>
     /// The owner before the current one, or just the last owner if there is no
@@ -60,9 +61,9 @@ public class Ball : MonoBehaviourPunCallbacks
             if (owner_ != null)
             {
                 LastOwner = owner_;
-                GetComponent<PhysicsTransformView>().enabled = true;
+                physicsTransformView.enabled = true;
             } else {
-                GetComponent<PhysicsTransformView>().enabled = false;
+                physicsTransformView.enabled = false;
             }
             owner_ = value;
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
@@ -112,6 +113,7 @@ public class Ball : MonoBehaviourPunCallbacks
         renderer = GetComponentInChildren<SpriteRenderer>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
+        physicsTransformView = this.EnsureComponent<PhysicsTransformView>();
 
         notificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion

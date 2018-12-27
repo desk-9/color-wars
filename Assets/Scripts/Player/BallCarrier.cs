@@ -30,6 +30,7 @@ public class BallCarrier : MonoBehaviour
     private GameObject teammate;
     private Player player;
     private GameObject goal;
+    private PhotonView photonView;
 
 
     private const float ballOffsetMultiplier = 0.98f;
@@ -42,6 +43,7 @@ public class BallCarrier : MonoBehaviour
         playerMovement = this.EnsureComponent<PlayerMovement>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
         Ball = FindObjectOfType<Ball>().ThrowIfNull("Could not find ball");
+        photonView = this.EnsureComponent<PhotonView>();
         if (playerMovement != null && stateManager != null)
         {
             PlayerMovement actualPlayerMovement = playerMovement as PlayerMovement;
@@ -155,7 +157,7 @@ public class BallCarrier : MonoBehaviour
     private IEnumerator CarryBall()
     {
         IsCarryingBall = true;
-        if (GetComponent<PhotonView>().OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) {
+        if (photonView.OwnerActorNr == PhotonNetwork.LocalPlayer.ActorNumber) {
             Ball.TakeOwnership();
         }
         while (true)
