@@ -135,7 +135,7 @@ public class PlayerStateManager : MonoBehaviourPun, IPunObservable
     public void TransitionToState(State state, StateTransitionInformation transitionInfo = null)
     {
         if (!photonView.IsMine) {
-            Utility.Print("Tried to transition to state on non-owned player", LogLevel.Error);
+            Utility.Print("Tried to transition to state on non-owned player from", CurrentState, "to", state, LogLevel.Error);
         }
         // Some error checking. If this is a state which contains an information object
         if (stateInfos[state] != null)

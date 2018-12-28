@@ -86,14 +86,19 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    public void SetTeam(TeamManager team)
+    // It's now possible for the network to force a certain sprite/roster number
+    // for a player
+    public void SetTeam(TeamManager team, int forceSpriteNumber = -1)
     {
+        if (this.Team == team) {
+            return;
+        }
         if (this.Team != null)
         {
             this.Team.RemoveTeamMember(this);
         }
         this.Team = team;
-        team.AddTeamMember(this);
+        team.AddTeamMember(this, forceSpriteNumber);
         this.FrameDelayCall(() =>
         {
             GetComponent<PlayerDashBehavior>()?.SetPrefabColors();
@@ -105,6 +110,12 @@ public class Player : MonoBehaviourPunCallbacks
     // Use this for initialization
     private void Start()
     {
+        // The spawn point manager sends the player number in the initialization
+        // message, allowing non-locally-controlled players to spawn with the
+        // right player number
+        if (photonView.InstantiationData != null) {
+            playerNumber = (int) photonView.InstantiationData[0];
+        }
         renderer = GetComponent<SpriteRenderer>();
         StateManager = GetComponent<PlayerStateManager>();
         collider = GetComponent<Collider2D>();
@@ -117,15 +128,23 @@ public class Player : MonoBehaviourPunCallbacks
             && playerNumber >= 0)
         {
             // Dummies have a player number of -1, and shouldn't get a team
-            Team = GameManager.Instance.GetTeamAssignment(this);
-            if (Team != null)
+            var assignedTeam = GameManager.Instance.GetTeamAssignment(this);
+            if (assignedTeam != null)
             {
-                SetTeam(Team);
+                SetTeam(assignedTeam);
             }
+        } else {
+            Utility.Print("Player", playerNumber, "has no team on spawn", LogLevel.Warning);
         }
 
-        GameManager.NotificationManager.CallOnMessage(Message.PlayerAssignedPlayerNumber, HandlePlayerNumberAssigned);
         GameManager.Instance.players.Add(this);
+        // Under the current flow, players should ONLY be spawned after already
+        // having been assigned to an actor, so before the start function. Thus
+        // this handing function is now just part of startup rather than
+        // triggerable at any time.
+        //
+        // TODO clean up name of function
+        HandlePlayerNumberAssigned();
     }
 
     /// <summary>
@@ -139,6 +158,10 @@ public class Player : MonoBehaviourPunCallbacks
             photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
             var controls = GetComponent<PlayerControls>();
             controls.AskForDevice();
+            // TODO figure out right state transition here. Right now this is
+            // here to allow players in the lobby to move, since they don't have
+            // a countdown, but pretty sure current behavior is messed up.
+            BeginPlayerMovement();
         }
     }
 

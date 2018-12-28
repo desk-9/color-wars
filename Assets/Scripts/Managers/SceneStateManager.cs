@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Realtime;
+using Photon.Pun;
 
 public enum Scene
 {
@@ -77,7 +79,15 @@ public class SceneStateManager : MonoBehaviour
             TeamManager.playerSpritesAlreadySet = false;
             JustInTimeTutorial.alreadySeen = false;
         }
-        SceneManager.LoadScene(scenes[currentScene]);
+        // No longer directly load scenes, instead use Photon to do it. In
+        // Photon the pattern is to allow the master to actually call LoadLevel,
+        // and with auto scene sync on all clients will follow suit.
+        //
+        // Must use this instead of normal level loading to allow PhotonViews to
+        // be correctly cleaned up.
+        if (PhotonNetwork.IsMasterClient) {
+            PhotonNetwork.LoadLevel(scenes[currentScene]);
+        }
         AdjustTime(newScene);
         OnEnter[currentScene]();
 

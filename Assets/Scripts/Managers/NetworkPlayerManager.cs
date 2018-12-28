@@ -38,6 +38,36 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         }
     }
 
+    void Start() {
+        // We now have a new kind of "pre-period", where a scene loads and these
+        // components all get initialized, but we're already connected to Photon
+        // and in a room. When this happens, the Player Manager should re-spawn
+        // player objects based on the information set in the (effectively
+        // static) room properties. This works because the only information that
+        // actually needs to carry over from the lobby to the court is which
+        // player numbers are controlled by which actors, which teams their on,
+        // and what their sprite number within that team is. None of this
+        // requires consistency in actual player objects, just saving a few ints
+        // across scenes.
+        if (PhotonNetwork.InRoom) {
+            SpawnExistingPlayers();
+        }
+    }
+
+    void SpawnExistingPlayers() {
+        LoadRoomProperties();
+        // TODO Frame delay call! Currently the frame delay is necessary to
+        // allow spawn point objects to register with the spawn point manager.
+        // Unclear exactly how to handle, but should clean up.
+        this.FrameDelayCall(() => {
+                foreach (var (player, actor) in playerNumberToActorId) {
+                    if (actor == PhotonNetwork.LocalPlayer.ActorNumber) {
+                        SpawnMyPlayerObjects(player);
+                    }
+                }
+            }, 3);
+    }
+
     /// <summary>
     /// Ensures the free players is populated by the first player to enter
     /// the room
@@ -86,15 +116,28 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
             EnsureRoomPropertiesExist();
         }
         OwnNextPlayer(PhotonNetwork.LocalPlayer.ActorNumber);
+
     }
 
-    // TODO dkonik: I don't think this will work. I think this is *after* a player
-    // left the room. I think what will have to happen is the other players will have
-    // to listen for when a user leaves the room and someone (probably master) will ahve to 
-    // do this cleanup
-    public override void OnLeftRoom()
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-        //ReleaseAllPlayers(PhotonNetwork.LocalPlayer.ActorNumber);
+        LoadRoomProperties();
+    }
+
+    // PR Comment: Could swear I'd noticed this didn't work and fixed it, but
+    // guess it was in some stash somewhere I never committed. Either way, fixed
+    // now.
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player gonePlayer)
+    {
+        LoadRoomProperties();
+        ReleaseAllPlayers(gonePlayer.ActorNumber);
+        if (PhotonNetwork.LocalPlayer.IsMasterClient) {
+            // TODO(spruce): Pretty sure this is all correctly handled now by
+            // Photon's automatic cleanup of objects instantiated by a player
+            // when they leave the room (see Lifetime section in
+            // https://doc.photonengine.com/en-us/pun/current/gameplay/instantiation)
+            // DespawnLeft();
+        }
     }
 
     /// <summary>
@@ -111,6 +154,37 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         return false;
     }
 
+    // TODO unused function, should probably clean up
+    void DespawnLeft() {
+        var spawnedPlayerNumbers = new HashSet<int>(
+            from player in GameManager.Instance.players select player.playerNumber);
+        var ownedPlayers = new HashSet<int>(
+            from pair in playerNumberToActorId select pair.Key);
+        var left = spawnedPlayerNumbers.Except(ownedPlayers);
+        foreach (int playerNumber in left) {
+            DespawnPlayerWithNumber(playerNumber);
+        }
+    }
+
+    // TODO unused funciton, should clean up
+    void DespawnPlayerWithNumber(int playerNumber) {
+        var despawnPlayer = (from player in GameManager.Instance.players
+                      where player.playerNumber == playerNumber
+                      select player).FirstOrDefault();
+        if (despawnPlayer != null) {
+            PhotonNetwork.Destroy(despawnPlayer.GetComponent<PhotonView>());
+        }
+    }
+
+    // Uses the spawn point manager to spawn locally owned players. Should ONLY
+    // be called on playerNumbers actually controlled by this local network
+    // actor.
+    //
+    // TODO add checks/errors
+    void SpawnMyPlayerObjects(int playerNumber) {
+        SpawnPointManager.Instance.SpawnPlayerWithNumber(playerNumber);
+    }
+
     /// <summary>
     /// Takes control of some free player object for the given actor ID
     /// (networked player ID), and sync state change to other networked
@@ -124,10 +198,7 @@ public class NetworkPlayerManager : MonoBehaviourPunCallbacks, IConnectionCallba
         freePlayers.Remove(nextPlayer);
         playerNumberToActorId.Add(nextPlayer, actorId);
         SetRoomPropertiesFromLocalData();
-        foreach (var player in GameManager.Instance.players)
-        {
-            player.HandlePlayerNumberAssigned();
-        }
+        SpawnMyPlayerObjects(nextPlayer);
         GameManager.NotificationManager.NotifyMessage(Message.PlayerAssignedPlayerNumber, this);
     }
 

@@ -31,7 +31,6 @@ public class PhysicsTransformView : MonoBehaviour, IPunObservable {
     void FixedUpdate() {
         if (!photonView.IsMine) {
             if (updateState == 1) {
-                Utility.Print("Force transform update", LogLevel.Error);
                 rigidbody.position = networkPosition;
                 rigidbody.rotation = networkRotation;
                 updateState = 2;

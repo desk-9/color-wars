@@ -24,6 +24,7 @@ public enum Message
     StartCountdown,
     CountdownFinished,
     PlayerAssignedPlayerNumber,
+    TeamsChanged,
 
     // Game events
     GoalScored,
@@ -142,7 +143,7 @@ public class NotificationManager
         {
             onAnyPlayerExitStateSubscribers[state] += callback;
         }
-        
+
     }
 
     public void CallOnMessageWithSender(Message event_type, EventCallback callback, bool early = false)

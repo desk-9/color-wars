@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
@@ -39,7 +39,10 @@ public class TeamSelectionCollider : MonoBehaviour
                     return;
                 }
             }
-            if (player.Team != team && team.teamMembers.Count < maxOnTeam)
+            // Networking info: local team selection doesn't apply to non-local
+            // players. Instead we wait for them to send us their team state.
+            if (player.Team != team && team.teamMembers.Count < maxOnTeam &&
+                player.photonView.IsMine)
             {
                 player.SetTeam(team);
                 AudioManager.instance.Ching.Play();
@@ -68,6 +71,7 @@ public class TeamSelectionCollider : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // TODO refactor to use the TeamsChanged event
         if (team != null && team.teamMembers.Count != lastCount)
         {
             if (countText != null)
