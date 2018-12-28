@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     public NamedColor[] teamColors;
     public List<TeamManager> Teams { get; set; }
     public TeamResourceManager neutralResources;
-    
     public bool gameOver { get; private set; } = false;
     public TeamManager Winner { get; private set; } = null;
     public GameObject meta;
@@ -138,6 +137,24 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    // Used for pre-player object initialization, i.e. figuring out where to
+    // spawn in new player objects during the "court pre-period". This period is
+    // where no player objects exist, but all information about which objects
+    // should exist, which teams they're on, and where they should spawn, is all
+    // available through various static/room property maps of ints to ints.
+    public TeamManager GetTeamAssignment(int playerNumber)
+    {
+        if (GameManager.playerTeamsAlreadySelected)
+        {
+            return Teams[playerTeamAssignments[playerNumber]];
+        }
+        else if (GameManager.cheatForcePlayerAssignment)
+        {
+            return Teams[playerNumber % Teams.Count];
+        }
+        return null;
+    }
+
     private void InitializeTeams()
     {
         Teams = new List<TeamManager>();
@@ -180,6 +197,17 @@ public class GameManager : MonoBehaviour
             result.AddRange(team.teamMembers);
         }
         return result;
+    }
+
+    // Networking info: frequently we need to work with/store player numbers
+    // rather than player objects, due to network-synced data structures. This
+    // utility function allows easy access to players given their player number,
+    // but should potentially (and very easily could) be replaced with something
+    // more efficient if it ends up being used in a tight loop.
+    public Player GetPlayerFromNumber(int playerNumber) {
+        return (from player in players
+                where player.playerNumber == playerNumber
+                select player).FirstOrDefault();
     }
 
     public List<Player> GetAllPlayers()

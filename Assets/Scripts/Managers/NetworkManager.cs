@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
-
+using UtilityExtensions;
 
 public class NetworkManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
 {
@@ -10,6 +10,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
 
     // This client's version number. Users are separated by gameVersion.
     private string gameVersion = "1";
+
+    private string gameRoomName = "set_this_to_something_else_locally";
 
     private void Awake()
     {
@@ -30,11 +32,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
     //   to Photon Cloud Network
     public void Connect()
     {
-        if (PhotonNetwork.IsConnected)
+        // We have a new situation, loading Court *after* the lobby. This means
+        // we're already connected, and already in a room. In this case, we
+        // don't want to do anything at all
+        if (PhotonNetwork.IsConnected && !PhotonNetwork.InRoom)
         {
-            // Must attempt to join a Random Room. If it fails, we'll get
-            // notified in OnJoinRandomFailed() and we'll create one.
-            PhotonNetwork.JoinRandomRoom();
+            // Attempt to join the hardcoded room. Should never fail.
+            //
+            // TODO Why is this a frame delay call now? Can't remember
+            this.FrameDelayCall(() => PhotonNetwork.JoinOrCreateRoom(gameRoomName, new RoomOptions { MaxPlayers = maxPlayersPerRoom }, TypedLobby.Default));
         }
         else
         {
@@ -49,7 +55,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
         Utility.Print("OnConnectedToMaster() was called by PUN");
         // The first we try to do is to join a potential existing room. If there
         // is, good, else, we'll be called back with OnJoinRandomFailed()
-        PhotonNetwork.JoinRandomRoom();
+        PhotonNetwork.JoinOrCreateRoom(gameRoomName, new RoomOptions { MaxPlayers = maxPlayersPerRoom }, TypedLobby.Default);
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -57,7 +63,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks, IConnectionCallbacks
         Utility.Print("OnJoinRandomFailed() was called by PUN. No random room available, so we create one.");
         // Critical: we failed to join a random room, maybe none exists
         // or they are all full. So create a new room to join.
-        PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
+        PhotonNetwork.CreateRoom(gameRoomName, new RoomOptions { MaxPlayers = maxPlayersPerRoom });
     }
 
     public override void OnJoinedRoom()
