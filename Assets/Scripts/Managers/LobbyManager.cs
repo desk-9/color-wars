@@ -32,6 +32,10 @@ public class LobbyManager : MonoBehaviourPunCallbacks {
     }
     void Start() {
         GameManager.NotificationManager.CallOnMessage(Message.TeamsChanged, HandleTeamsChanged);
+        // Force skip lobby
+        // TODO gate this behind debug flag
+        GameManager.NotificationManager.CallOnMessage(Message.PlayerPressedRightBumper,
+                                                      EndTeamSelection);
     }
 
     void HandleTeamsChanged() {
