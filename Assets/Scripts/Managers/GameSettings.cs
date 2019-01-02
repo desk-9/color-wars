@@ -17,4 +17,5 @@ public class GameSettings
     public float PauseAfterGoalScore = 3f;
     [Tooltip("The length of the ball implosion animation")]
     public float LengthOfBallSpawnAnimation = 2f;
+    public Color NeutralColor = Color.white;
 }

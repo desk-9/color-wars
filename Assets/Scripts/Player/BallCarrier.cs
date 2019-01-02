@@ -118,7 +118,7 @@ public class BallCarrier : MonoBehaviour
             Gradient grad = new Gradient();
             grad.SetKeys(
                 new GradientColorKey[] {
-                    new GradientColorKey(player.Team.TeamColor, 0.0f)
+                    new GradientColorKey(player.Team != null ? player.Team.TeamColor : GameManager.Settings.NeutralColor, 0.0f)
                 },
                 new GradientAlphaKey[] {
                     new GradientAlphaKey(1.0f,  0.0f),

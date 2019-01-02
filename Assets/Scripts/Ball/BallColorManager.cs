@@ -9,8 +9,6 @@ public class BallColorManager : MonoBehaviour
     private SpriteRenderer outerRingRenderer;
     [SerializeField]
     private SpriteRenderer innerFillRenderer;
-    [SerializeField]
-    private Color neutralColor = Color.white;
 
     private TrailRenderer trailRenderer;
     private Coroutine delayedTrailEnable;
@@ -45,7 +43,7 @@ public class BallColorManager : MonoBehaviour
     private void ResetToNeutral()
     {
         trailRenderer.enabled = false;
-        outerRingRenderer.color = neutralColor;
+        outerRingRenderer.color = GameManager.Settings.NeutralColor;
         innerFillRenderer.enabled = false;
     }
 
