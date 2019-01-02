@@ -142,7 +142,6 @@ public class NetworkTeamManager : MonoBehaviourPunCallbacks, IConnectionCallback
     public void PushToTeamManagers() {
         var stateCopy = new Dictionary<int, Dictionary<int, int>>(teamState);
         foreach (var (teamNumber, teamData) in stateCopy) {
-            Debug.LogError(teamNumber);
             var team = (from t in GameManager.Instance.Teams
                             where t.TeamNumber == teamNumber
                             select t).First();

@@ -25,7 +25,7 @@ public class TeamSelectionCollider : MonoBehaviour
         }, 2);
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         Player player = collision.gameObject.GetComponent<Player>();
         if (player != null && team != null && player.Team != team)
@@ -33,7 +33,13 @@ public class TeamSelectionCollider : MonoBehaviour
             PlayerStateManager stateManager = player.GetComponent<PlayerStateManager>();
             if (stateManager != null)
             {
-                if (mustDashToSwitch && stateManager.CurrentState != State.Dash)
+                // The player could have already transitioned to a different state
+                // after running into the team selection collider, so we also need to check
+                // if the previous state was dash and if the player changed states in this frame.
+                bool playerHitWhileDashing = stateManager.CurrentState == State.Dash ||
+                    (stateManager.PreviousState == State.Dash &&
+                    (Time.time - stateManager.TimeOfLastStateChange) < Time.deltaTime);
+                if (mustDashToSwitch && !playerHitWhileDashing)
                 {
                     // Only switch if dashing
                     return;

@@ -33,7 +33,34 @@ public enum State : byte
 
 public class PlayerStateManager : MonoBehaviourPun, IPunObservable
 {
-    public State CurrentState { private set; get; } = State.StartupState;
+    private State _currentState = State.StartupState;
+    public State CurrentState {
+        private set
+        {
+            TimeOfLastStateChange = Time.time;
+            PreviousState = _currentState;
+            _currentState = value;
+        }
+        get
+        {
+            return _currentState;
+        }
+    }
+
+    /// <summary>
+    /// The Time.time of when the player last changed states
+    /// </summary>
+    public float TimeOfLastStateChange { get; private set; }
+
+    /// <summary>
+    /// The state the player was in before the current state
+    /// </summary>
+    public State PreviousState { get; private set; }
+
+    /// <summary>
+    /// The information of the previous state, if there is any, null otherwise.
+    /// </summary>
+    public StateTransitionInformation PreviousStateInformation => stateInfos[PreviousState];
 
     // TODO dkonik: I can potentially see an ordering issue with this being one
     // event. This may need to be split up into two events (OnStateEnded and
