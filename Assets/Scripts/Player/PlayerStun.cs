@@ -1,45 +1,66 @@
+using Photon.Pun;
 using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
 
 public class PlayerStun : MonoBehaviour
 {
-    public float stunTime = 5f;
-    private Coroutine stunned;
+    private Coroutine stunCoroutine;
+    private PlayerStateManager playerStateManager;
 
-    public void StartStun(Vector2? knockbackVelocity = null, float? length = null)
+    private void Start()
     {
-        if (knockbackVelocity != null)
-        {
-            Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
-            if (rigidbody != null)
-            {
-                this.FrameDelayCall(() => rigidbody.velocity = knockbackVelocity.Value);
-            }
-        }
-        stunned = StartCoroutine(Stun(length));
+        playerStateManager = this.EnsureComponent<PlayerStateManager>();
+        playerStateManager.OnStateChange += HandleNewPlayerState;
     }
 
-    private IEnumerator Stun(float? length = null)
+    private void HandleNewPlayerState(State oldState, State newState)
     {
-        if (length == null)
+        if (newState == State.Stun)
         {
-            length = stunTime;
+            stunCoroutine = StartCoroutine(Stun());
         }
-        float endTime = Time.time + length.Value;
-        while (Time.time < endTime)
+
+        if (oldState == State.Stun)
         {
-            yield return null;
+            StopStunned();
         }
-        this.GetComponent<PlayerStateManager>()?.CurrentStateHasFinished();
+    }
+
+    /// <summary>
+    /// Manages the duration of the stun.
+    /// NOTE: Does not handle the movement. PlayerMovement will take care of managing
+    /// that while in the stun state
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator Stun()
+    {
+        StunInformation info = playerStateManager.CurrentStateInformation_Exn<StunInformation>();
+
+        if (info.StolenFrom)
+        {
+            GameManager.NotificationManager.NotifyMessage(Message.BallWasStolen, this);
+        }
+
+        float timeSinceCall = (float)(PhotonNetwork.Time - info.EventTimeStamp);
+
+        if (timeSinceCall < info.Duration)
+        {
+            yield return new WaitForSeconds(info.Duration - timeSinceCall);
+        } else
+        {
+            Debug.LogError("Entered stun after Duration. This shouldn't happen or should happen very rarely. Look into this");
+        }
+        
+        playerStateManager.TransitionToState(State.NormalMovement);
     }
 
     public void StopStunned()
     {
-        if (stunned != null)
+        if (stunCoroutine != null)
         {
-            StopCoroutine(stunned);
-            stunned = null;
+            StopCoroutine(stunCoroutine);
+            stunCoroutine = null;
         }
     }
 }

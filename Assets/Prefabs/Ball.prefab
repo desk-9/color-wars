@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4752171050471876}
   - component: {fileID: 212377078288977304}
-  - component: {fileID: 114402724493256660}
   m_Layer: 10
   m_Name: ColoredInset
   m_TagString: Untagged
@@ -80,18 +79,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &114402724493256660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1295680539210760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: beccde179ac2e4a0fb7e3fc3b68e383f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1302162468020258
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,8 +93,10 @@ GameObject:
   - component: {fileID: 58959865703537910}
   - component: {fileID: 114284750926977716}
   - component: {fileID: 96678130803253634}
-  - component: {fileID: 1319945778}
   - component: {fileID: 1319945779}
+  - component: {fileID: 2373567841021937249}
+  - component: {fileID: 4019916387848648849}
+  - component: {fileID: 4299082118362517105}
   m_Layer: 10
   m_Name: Ball
   m_TagString: Untagged
@@ -229,7 +218,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderer: {fileID: 0}
-  rigidbody: {fileID: 0}
   implosionPrefab: {fileID: 1070085223310474, guid: 0b18c9d735f894333af57d63750d6af3,
     type: 3}
 --- !u!96 &96678130803253634
@@ -345,21 +333,6 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!114 &1319945778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302162468020258}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
 --- !u!114 &1319945779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,12 +349,57 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 0
+  OwnershipTransfer: 1
   ObservedComponents:
-  - {fileID: 1319945778}
+  - {fileID: 2373567841021937249}
   viewIdField: 0
-  InstantiationId: 2
+  InstantiationId: 7
   isRuntimeInstantiated: 0
+--- !u!114 &2373567841021937249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302162468020258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38e6157188c939a468fe905350efc1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 10
+  movementSpeed: 5
+  forceUpdateSeconds: 2
+--- !u!114 &4019916387848648849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302162468020258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beccde179ac2e4a0fb7e3fc3b68e383f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outerRingRenderer: {fileID: 212372124968514046}
+  innerFillRenderer: {fileID: 212377078288977304}
+  neutralColor: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &4299082118362517105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302162468020258}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
 --- !u!1 &1768583797059612
 GameObject:
   m_ObjectHideFlags: 0

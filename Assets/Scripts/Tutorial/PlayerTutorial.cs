@@ -69,7 +69,7 @@ public class PlayerTutorial : MonoBehaviour
         inTeamSelection = (tutorialType == TutorialType.TeamSelection
                            && GameObject.Find("TeamSelection") != null);
 
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => { if (!inTeamSelection) { skipReadyUpCheat = true; } });
 
         skipTutorialCheckin = PlayerCheckin.TextCountCheckin(
@@ -94,7 +94,7 @@ public class PlayerTutorial : MonoBehaviour
 
     private List<GameObject> GetPlayers()
     {
-        return (from player in GameManager.instance.GetHumanPlayers()
+        return (from player in GameManager.Instance.GetHumanPlayers()
                 select player.gameObject).ToList();
     }
 
@@ -139,9 +139,9 @@ public class PlayerTutorial : MonoBehaviour
     {
         GameManager.playerTeamsAlreadySelected = true;
         GameManager.playerTeamAssignments = new Dictionary<int, int>();
-        foreach (Player player in GameManager.instance.GetPlayersWithTeams())
+        foreach (Player player in GameManager.Instance.GetPlayersWithTeams())
         {
-            int teamIndex = GameManager.instance.teams.IndexOf(player.team);
+            int teamIndex = GameManager.Instance.Teams.IndexOf(player.Team);
             GameManager.playerTeamAssignments[player.playerNumber] = teamIndex;
         }
         TeamManager.playerSpritesAlreadySet = true;
@@ -188,7 +188,7 @@ public class PlayerTutorial : MonoBehaviour
         yield return new WaitForFixedUpdate();
         while (true)
         {
-            if (inTeamSelection && GameManager.instance.teams.All(team => team.teamMembers.Count == 2))
+            if (inTeamSelection && GameManager.Instance.Teams.All(team => team.teamMembers.Count == 2))
             {
                 TeamSelectionFinished();
                 yield break;
@@ -205,7 +205,7 @@ public class PlayerTutorial : MonoBehaviour
         readyUpText.text = "TRY LAYING A WALL WITH <BButton>";
 
         ResetCheckin();
-        GameManager.instance.notificationManager.CallOnMessageWithSender(
+        GameManager.NotificationManager.CallOnMessageWithSender(
             Message.PlayerReleasedWall, CheckinPlayer
         );
         yield return null;
@@ -214,7 +214,7 @@ public class PlayerTutorial : MonoBehaviour
             yield return null;
         }
         ResetCheckin();
-        GameManager.instance.notificationManager.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
+        //GameManager.NotificationManager.UnsubscribeMessage(Message.PlayerReleasedWall, CheckinPlayer);
         readyUpCount.text = "";
 
         // Start the countdown.

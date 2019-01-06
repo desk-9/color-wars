@@ -5,10 +5,13 @@ using System.Linq;
 
 public class TronWall : MonoBehaviour
 {
+    [Tooltip("The amount of time that the destroyer of a wall is stunned")]
+    public const float wallBreakerStunTime = .35f;
+    public const float knockbackOnBreak = 1f;
 
     public float wallDestroyTime = .3f;
     public int maxParticlesOnDestroy = 100;
-    public float knockbackOnBreak = 1f;
+
 
     private float lifeLength { get; set; }
 
@@ -19,6 +22,24 @@ public class TronWall : MonoBehaviour
     private Coroutine stretchWallCoroutine;
     private EdgeCollider2D edgeCollider;
     private float tronWallOffset;
+
+    private void Start()
+    {
+        GameManager.NotificationManager.CallOnMessageWithSender(Message.GoalScored, HandleGoalScored);
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.NotificationManager.UnsubscribeMessage(Message.GoalScored, HandleGoalScored);
+    }
+
+    private void HandleGoalScored(object _)
+    {
+        // Unfortunately this function exists because of the way notification manager is set,
+        // where the delegates aren't actually no arg functions but take an object. Thus, in order to remove
+        // ourselves we have to have this function
+        KillSelf();
+    }
 
     public void Initialize(PlayerTronMechanic creator, float lifeLength, TeamManager team,
                             float tronWallOffset)
@@ -101,7 +122,7 @@ public class TronWall : MonoBehaviour
                                                   (linePoints[1] + linePoints[0]) / 2, transform.rotation);
         ParticleSystem ps = instantiated.EnsureComponent<ParticleSystem>();
         ParticleSystem.MainModule main = ps.main;
-        main.startColor = team.teamColor.color;
+        main.startColor = team.TeamColor.color;
         ParticleSystem.ShapeModule shape = ps.shape;
         shape.radius = magnitude * .65f;
         ParticleSystem.EmissionModule emission = ps.emission;
@@ -115,20 +136,20 @@ public class TronWall : MonoBehaviour
     {
         GameObject other = collision.gameObject;
         Player player = other.GetComponent<Player>();
-        PlayerStateManager stateManager = other.GetComponent<PlayerStateManager>();
 
+        // If the wall is still being laid
         if (stretchWallCoroutine != null)
         {
             // Check if it was your teammate
             Player otherPlayer = other.GetComponent<Player>();
             if (otherPlayer != null &&
-                otherPlayer.team.teamColor == team.teamColor)
+                otherPlayer.Team.TeamColor == team.TeamColor)
             {
                 return;
             }
 
             creator.HandleWallCollision();
-            GameManager.instance.notificationManager.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
+            GameManager.NotificationManager.NotifyMessage(Message.TronWallDestroyedWhileLaying, creator.gameObject);
             PlayDestroyedParticleEffect();
             Destroy(gameObject);
             return;
@@ -139,19 +160,27 @@ public class TronWall : MonoBehaviour
         {
             KillSelf();
         }
-        else if ((player != null) && (stateManager != null) &&
-                                   (stateManager.currentState == State.Dash))
+        else if ((player != null) && 
+            (player.StateManager != null) &&
+            (player.StateManager.CurrentState == State.Dash))
         {
             KillSelf();
-            PlayerStun playerStun = other.EnsureComponent<PlayerStun>();
-            stateManager.AttemptStun(() =>
-                                {
-                                    Vector3 otherDirection = player.transform.right;
-                                    other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
-                                    playerStun.StartStun(-otherDirection * knockbackOnBreak, creator.wallBreakerStunTime);
-                                    GameManager.instance.notificationManager.NotifyMessage(Message.TronWallDestroyed, other);
-                                },
-                                     playerStun.StopStunned);
+
+            Vector2 knockBackdirection = -player.PlayerMovement.Forward;
+
+            // Duplicate of comment in TronWall:
+            // I think it is fine that we don't check for who the owner is here. This may result in
+            // multiple people sending out the stun rpc, however, this is
+            // the best way to guarantee that a player gets stunned whenever they *should*
+            // get stunned. For example, if player 2 just started laying a tron wall and
+            // player 1 dashes into it, none of the other players may have the information
+            // the player 2 laid a tron wall yet. So it is up to player 2 to send that rpc.
+            //
+            // I suppose what we could do is check to see if the tron wall is ours of if the player
+            // is ours, and then send the rpc.
+            player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
+                knockBackdirection * knockbackOnBreak, wallBreakerStunTime, false);
+            GameManager.NotificationManager.NotifyMessage(Message.TronWallDestroyed, other);
         }
 
     }

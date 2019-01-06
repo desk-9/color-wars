@@ -21,6 +21,8 @@ public class RoundStartBlocker : MonoBehaviour
         lineRenderer.GetPositions(originalLinePoints);
 
         lastResetTime = Time.time;
+
+        GameManager.NotificationManager.CallOnMessage(Message.ResetAfterGoal, HandleResetAfterGoal);
     }
 
     private void Update()
@@ -46,7 +48,7 @@ public class RoundStartBlocker : MonoBehaviour
         lineRenderer.enabled = false;
         // Reset line to original points
         lineRenderer.SetPositions(originalLinePoints);
-        GameObject.Instantiate(GameManager.instance.neutralResources.tronWallSuicidePrefab,
+        GameObject.Instantiate(GameManager.Instance.neutralResources.tronWallSuicidePrefab,
                                transform.position,
                                transform.rotation).EnsureComponent<ParticleSystem>().Play();
     }
@@ -59,7 +61,7 @@ public class RoundStartBlocker : MonoBehaviour
         }
         edgeCollider.enabled = false;
         lineRenderer.enabled = false;
-        GameObject instatiated = GameObject.Instantiate(GameManager.instance.neutralResources.tronWallDestroyedPrefab,
+        GameObject instatiated = GameObject.Instantiate(GameManager.Instance.neutralResources.tronWallDestroyedPrefab,
                                transform.position,
                                transform.rotation);
         ParticleSystem ps = instatiated.EnsureComponent<ParticleSystem>();
@@ -73,7 +75,7 @@ public class RoundStartBlocker : MonoBehaviour
         ps.Play();
     }
 
-    public void Reset()
+    private void HandleResetAfterGoal()
     {
         edgeCollider.enabled = true;
         lineRenderer.enabled = true;
@@ -93,11 +95,24 @@ public class RoundStartBlocker : MonoBehaviour
         }
 
         if ((player != null) && (stateManager != null) &&
-            (stateManager.currentState == State.Dash))
+            (stateManager.CurrentState == State.Dash))
         {
             DisableSelf();
-            other.EnsureComponent<Rigidbody2D>().velocity = Vector2.zero;
-            stateManager.CurrentStateHasFinished();
+
+            Vector2 knockBackdirection = -player.PlayerMovement.Forward;
+
+            // Duplicate of comment in TronWall:
+            // I think it is fine that we don't check for who the owner is here. This may result in
+            // multiple people sending out the stun rpc, however, this is
+            // the best way to guarantee that a player gets stunned whenever they *should*
+            // get stunned. For example, if player 2 just started laying a tron wall and
+            // player 1 dashes into it, none of the other players may have the information
+            // the player 2 laid a tron wall yet. So it is up to player 2 to send that rpc.
+            //
+            // I suppose what we could do is check to see if the tron wall is ours of if the player
+            // is ours, and then send the rpc.
+            player.StateManager.StunNetworked(player.PlayerMovement.CurrentPosition,
+                knockBackdirection * TronWall.knockbackOnBreak, TronWall.wallBreakerStunTime, false);
         }
     }
 }

@@ -17,12 +17,49 @@ public enum LogLevel
     Error
 }
 
+/// <summary>
+/// This namespace is for any general utility extensions to existing classes
+/// </summary>
 namespace UtilityExtensions
 {
-    // This namespace is for any general utility extensions to existing classes
-
     public static class UtilityExtensionsContainer
     {
+        // TODO dkonik: Does this actually fucking work? lol static dynamic
+        public static dynamic ThrowIfNull(this Component component, string exceptionMessage = null)
+        {
+            if (component == null)
+            {
+                if (exceptionMessage != null)
+                {
+                    throw new Exception(exceptionMessage);
+                } else
+                {
+                    throw new Exception();
+                }
+            } else
+            {
+                return component;
+            }
+        }
+
+        public static dynamic ThrowIfNull(this GameObject gameObject, string exceptionMessage = null)
+        {
+            if (gameObject == null)
+            {
+                if (exceptionMessage != null)
+                {
+                    throw new Exception(exceptionMessage);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            else
+            {
+                return gameObject;
+            }
+        }
 
         public static T EnsureComponent<T>(this GameObject game_object) where T : Component
         {
@@ -166,6 +203,14 @@ namespace UtilityExtensions
                 return defaultValue;
             }
         }
+
+        public static void Deconstruct<T1, T2>(this KeyValuePair<T1, T2> tuple,
+                                               out T1 key, out T2 value)
+        {
+            key = tuple.Key;
+            value = tuple.Value;
+        }
+
     }
 }
 
@@ -294,46 +339,6 @@ public static class Utility
             }
         }
     }
-
-    public static void BlowbackPlayers(Vector2 center, float radius,
-                                       float blowback_strength,
-                                       bool blowback_is_velocity = false,
-                                       HashSet<GameObject> excludes = null,
-                                       float? stunTime = null)
-    {
-        GameObjectCallback stunPlayer = (GameObject thing) =>
-        {
-            PlayerStateManager player = thing.GetComponent<PlayerStateManager>();
-            PlayerStun stun = thing.GetComponent<PlayerStun>();
-            if (player != null && stun != null)
-            {
-                player.AttemptStun(
-                    () => stun.StartStun(null, stunTime), stun.StopStunned);
-            }
-        };
-        Blowback(center, radius, blowback_strength, blowback_is_velocity,
-                 LayerMask.GetMask("Player"), stunPlayer, excludes);
-    }
-
-    public static void BlowbackFromPlayer(GameObject player, float radius,
-                                          float blowback_strength,
-                                          bool blowback_is_velocity = false,
-                                          float? stunTime = null)
-    {
-
-        HashSet<GameObject> ignoreSet = new HashSet<GameObject>() { player.gameObject };
-        if (player.GetComponent<Player>().team != null)
-        {
-            ignoreSet = new HashSet<GameObject>(
-                player.GetComponent<Player>().team.teamMembers.Select(p => p.gameObject)
-                );
-        }
-        BlowbackPlayers(player.transform.position, radius,
-                        blowback_strength, blowback_is_velocity,
-                        ignoreSet,
-                        stunTime);
-    }
-
 
     public static void Print(params object[] args)
     {

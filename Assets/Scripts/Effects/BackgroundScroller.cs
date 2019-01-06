@@ -14,6 +14,20 @@ public class BackgroundScroller : MonoBehaviour
     {
         renderer = GetComponent<SpriteRenderer>();
         origin = transform.position;
+        GameManager.NotificationManager.CallOnMessage(Message.ScoreChanged, HandleScoreChanged);
+    }
+
+    private void HandleScoreChanged()
+    {
+        TeamManager winningTeam = GameManager.Instance.GetWinningTeam();
+        if (winningTeam != null)
+        {
+            SetBackground(winningTeam.resources);
+        }
+        else
+        {
+            SetBackground(GameManager.Instance.neutralResources);
+        }
     }
 
     private void Update()
@@ -25,7 +39,7 @@ public class BackgroundScroller : MonoBehaviour
         transform.Rotate(new Vector3(0, 0, rotationRate * Time.deltaTime));
     }
 
-    public void SetBackground(TeamResourceManager resource)
+    private void SetBackground(TeamResourceManager resource)
     {
         if (renderer != null)
         {

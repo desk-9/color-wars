@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UtilityExtensions;
 
@@ -15,9 +15,9 @@ public class TeamSelectionCollider : MonoBehaviour
     private void Start()
     {
         countText = GetComponentInChildren<Text>();
-        if (teamNumber < GameManager.instance.teams.Count)
+        if (teamNumber < GameManager.Instance.Teams.Count)
         {
-            team = GameManager.instance.teams[teamNumber];
+            team = GameManager.Instance.Teams[teamNumber];
         }
         this.FrameDelayCall(() =>
         {
@@ -25,21 +25,30 @@ public class TeamSelectionCollider : MonoBehaviour
         }, 2);
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         Player player = collision.gameObject.GetComponent<Player>();
-        if (player != null && team != null && player.team != team)
+        if (player != null && team != null && player.Team != team)
         {
             PlayerStateManager stateManager = player.GetComponent<PlayerStateManager>();
             if (stateManager != null)
             {
-                if (mustDashToSwitch && !stateManager.IsInState(State.Dash))
+                // The player could have already transitioned to a different state
+                // after running into the team selection collider, so we also need to check
+                // if the previous state was dash and if the player changed states in this frame.
+                bool playerHitWhileDashing = stateManager.CurrentState == State.Dash ||
+                    (stateManager.PreviousState == State.Dash &&
+                    (Time.time - stateManager.TimeOfLastStateChange) < Time.deltaTime);
+                if (mustDashToSwitch && !playerHitWhileDashing)
                 {
                     // Only switch if dashing
                     return;
                 }
             }
-            if (player.team != team && team.teamMembers.Count < maxOnTeam)
+            // Networking info: local team selection doesn't apply to non-local
+            // players. Instead we wait for them to send us their team state.
+            if (player.Team != team && team.teamMembers.Count < maxOnTeam &&
+                player.photonView.IsMine)
             {
                 player.SetTeam(team);
                 AudioManager.instance.Ching.Play();
@@ -68,6 +77,7 @@ public class TeamSelectionCollider : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // TODO refactor to use the TeamsChanged event
         if (team != null && team.teamMembers.Count != lastCount)
         {
             if (countText != null)
@@ -80,12 +90,12 @@ public class TeamSelectionCollider : MonoBehaviour
                 this.TimeDelayCall(() =>
                 {
                     AudioManager.instance.GoalSwitch.Play();
-                    renderer.color = 0.85f * team.teamColor.color;
+                    renderer.color = 0.85f * team.TeamColor.color;
                 }, 0.3f);
             }
             else
             {
-                renderer.color = team.teamColor;
+                renderer.color = team.TeamColor;
             }
             lastCount = team.teamMembers.Count;
         }

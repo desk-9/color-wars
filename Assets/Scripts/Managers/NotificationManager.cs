@@ -6,7 +6,6 @@ using UnityEngine;
 // tied to individual, non-singleton objects shouldn't go here.
 
 public delegate void PlayerCallback(Player player);
-public delegate void PlayerTransitionCallback(Player player, State start, State end);
 // Replacement for EventHandler without the EventArgs
 public delegate void EventCallback(object sender);
 public delegate void GameObjectCallback(GameObject thing);
@@ -16,48 +15,46 @@ public delegate bool EventPredicate(object sender);
 
 public enum Message
 {
+    // Ball
     BallIsPossessed,
     BallIsUnpossessed,
+    BallWentOutOfBounds,
+
+    // Game flow
     StartCountdown,
     CountdownFinished,
+    PlayerAssignedPlayerNumber,
+    TeamsChanged,
+
+    // Game events
     GoalScored,
     ScoreChanged,
     SlowMoEntered,
     SlowMoExited,
-    BallSetNeutral,
-    BallPossessedWhileNeutral,
-    BallCharged,
-    BallPossessedWhileCharged,
     NullChargePrevention,
-    StolenFrom,
     TronWallDestroyed,
+    BallWasStolen,
     TronWallDestroyedWhileLaying,
+    ChargeChanged,
+    ResetAfterGoal,
 
+    // Input
     InputDeviceAssigned,
-
     PlayerStick,
-
     PlayerPressedA,
     PlayerReleasedA,
-
     PlayerPressedLeftBumper,
     PlayerReleasedLeftBumper,
-
     PlayerPressedRightBumper,
     PlayerReleasedRightBumper,
-
     PlayerPressedB,
     PlayerReleasedB,
-
     PlayerPressedX,
     PlayerReleasedX,
-
     PlayerPressedY,
     PlayerReleasedY,
-
     PlayerPressedBack,
     PlayerReleasedBack,
-
     PlayerPressedDash,
     PlayerReleasedDash,
     PlayerPressedShoot,
@@ -65,6 +62,7 @@ public enum Message
     PlayerPressedWall,
     PlayerReleasedWall,
 
+    // Tutorial
     RecordingInterrupt,
     RecordingFinished,
 };
@@ -73,83 +71,128 @@ public class NotificationManager
 {
 
     // PlayerState addons
-    private SortedDictionary<State, PlayerCallback> onAnyPlayerStartSubscribers =
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerEnterStateSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    private SortedDictionary<State, PlayerCallback> onAnyPlayerEndSubscribers =
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerExitStateSubscribers =
         new SortedDictionary<State, PlayerCallback>();
-    private PlayerTransitionCallback onAnyChangeSubscribers = delegate { };
+
+    // The following to callbacks are ones that get called early. This may be useful
+    // for things like managers, etc. which may need to set their state so that later
+    // components that have subscribed to the same event can get the correct state
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerEnterStateSubscribers_early =
+    new SortedDictionary<State, PlayerCallback>();
+    private SortedDictionary<State, PlayerCallback> onAnyPlayerExitStateSubscribers_early =
+        new SortedDictionary<State, PlayerCallback>();
+
+    // Useful for publishing "system-wide" events that are meant to stick around
+    // for a while/be maintainable. You must add a new event name to the Message
+    // enum, then ensure something is calling NotifyMessage appropriately.
+    private SortedDictionary<Message, EventCallback> onMessage =
+        new SortedDictionary<Message, EventCallback>();
+    private SortedDictionary<Message, EventCallback> onMessage_early =
+    new SortedDictionary<Message, EventCallback>();
 
     public NotificationManager()
     {
         foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
         {
-            onAnyPlayerStartSubscribers[state] = delegate { };
-            onAnyPlayerEndSubscribers[state] = delegate { };
+            onAnyPlayerEnterStateSubscribers[state] = delegate { };
+            onAnyPlayerExitStateSubscribers[state] = delegate { };
+            onAnyPlayerEnterStateSubscribers_early[state] = delegate { };
+            onAnyPlayerExitStateSubscribers_early[state] = delegate { };
         }
 
         foreach (Message event_type in (Message[])System.Enum.GetValues(typeof(Message)))
         {
             onMessage[event_type] = delegate { };
+            onMessage_early[event_type] = delegate { };
         }
     }
 
     public void RegisterPlayer(PlayerStateManager player)
     {
         Player playerComponent = player.GetComponent<Player>();
-        foreach (State state in (State[])System.Enum.GetValues(typeof(State)))
+
+        player.OnStateChange += (oldState, newState) =>
         {
-            player.CallOnStateEnter(
-                state, () => onAnyPlayerStartSubscribers[state](playerComponent));
-            player.CallOnStateExit(
-                state, () => onAnyPlayerEndSubscribers[state](playerComponent));
-            player.CallOnAnyStateChange(
-                (State start, State end) => onAnyChangeSubscribers(playerComponent, start, end));
+            onAnyPlayerEnterStateSubscribers_early[newState](playerComponent);
+            onAnyPlayerExitStateSubscribers_early[oldState](playerComponent);
+            onAnyPlayerEnterStateSubscribers[newState](playerComponent);
+            onAnyPlayerExitStateSubscribers[oldState](playerComponent);
+        };
+    }
+
+    public void CallOnStateStart(State state, PlayerCallback callback, bool early = false)
+    {
+        if (early)
+        {
+            onAnyPlayerEnterStateSubscribers_early[state] += callback;
+        } else
+        {
+            onAnyPlayerEnterStateSubscribers[state] += callback;
         }
     }
 
-    public void CallOnStateStart(State state, PlayerCallback callback)
+    public void CallOnStateEnd(State state, PlayerCallback callback, bool early = false)
     {
-        onAnyPlayerStartSubscribers[state] += callback;
+        if (early)
+        {
+            onAnyPlayerExitStateSubscribers_early[state] += callback;
+        }
+        else
+        {
+            onAnyPlayerExitStateSubscribers[state] += callback;
+        }
+
     }
 
-    public void CallOnStateEnd(State state, PlayerCallback callback)
+    public void CallOnMessageWithSender(Message event_type, EventCallback callback, bool early = false)
     {
-        onAnyPlayerEndSubscribers[state] += callback;
+        if (early)
+        {
+            onMessage_early[event_type] += callback;
+        } else
+        {
+            onMessage[event_type] += callback;
+        }
     }
 
-    public void CallOnStateTransition(PlayerTransitionCallback callback)
+    public void CallOnMessage(Message event_type, Callback callback, bool early = false)
     {
-        onAnyChangeSubscribers += callback;
-    }
-
-    // Enum-based callback system
-    //
-    // Useful for publishing "system-wide" events that are meant to stick around
-    // for a while/be maintainable. You must add a new event name to the Message
-    // enum, then ensure something is calling NotifyMessage appropriately.
-    private SortedDictionary<Message, EventCallback> onMessage =
-        new SortedDictionary<Message, EventCallback>();
-
-    public void CallOnMessageWithSender(Message event_type, EventCallback callback)
-    {
-        onMessage[event_type] += callback;
-    }
-
-    public void CallOnMessage(Message event_type, Callback callback)
-    {
-        onMessage[event_type] += (object o) => callback();
+        if (early)
+        {
+            onMessage_early[event_type] += (object o) => callback();
+        }
+        else
+        {
+            onMessage[event_type] += (object o) => callback();
+        }
     }
 
     public void CallOnMessageIf(Message event_type, EventCallback callback,
-                                EventPredicate predicate)
+                                EventPredicate predicate, bool early = false)
     {
-        onMessage[event_type] += (object o) =>
+        if (early)
         {
-            if (predicate(o))
+            onMessage_early[event_type] += (object o) =>
             {
-                callback(o);
-            }
-        };
+                if (predicate(o))
+                {
+                    callback(o);
+                }
+            };
+        }
+        else
+        {
+            onMessage[event_type] += (object o) =>
+            {
+                if (predicate(o))
+                {
+                    callback(o);
+                }
+            };
+        }
+
     }
 
     public void CallOnMessageIfSameObject(Message event_type, Callback callback, GameObject thing)
@@ -159,12 +202,20 @@ public class NotificationManager
 
     public void NotifyMessage(Message event_type, object sender)
     {
+        onMessage_early[event_type](sender);
         onMessage[event_type](sender);
     }
 
-    public void UnsubscribeMessage(Message event_type, EventCallback callback)
+    public void UnsubscribeMessage(Message event_type, EventCallback callback, bool early = false)
     {
-        onMessage[event_type] -= callback;
+        if (early)
+        {
+            onMessage_early[event_type] -= callback;
+        }
+        else
+        {
+            onMessage[event_type] -= callback;
+        }
     }
 
     // String-based event system

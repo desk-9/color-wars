@@ -110,15 +110,15 @@ public class TutorialLiveClips : MonoBehaviour
 
     private void StartListeningForPlayers()
     {
-        GameManager.instance.notificationManager.CallOnMessageWithSender(
+        GameManager.NotificationManager.CallOnMessageWithSender(
             Message.PlayerPressedX, CheckinPlayer);
-        GameManager.instance.notificationManager.CallOnMessage(
+        GameManager.NotificationManager.CallOnMessage(
             Message.PlayerPressedLeftBumper, () => nextSlideForceCheat = true);
     }
 
     private List<GameObject> GetPlayers()
     {
-        return (from player in GameManager.instance.GetHumanPlayers()
+        return (from player in GameManager.Instance.GetHumanPlayers()
                 select player.gameObject).ToList();
     }
 
@@ -172,17 +172,17 @@ public class TutorialLiveClips : MonoBehaviour
         currentSubclipIndex = 0;
         SceneManager.LoadScene(clipName, LoadSceneMode.Additive);
         SetCurrentSubclip();
-        foreach (TeamManager team in GameManager.instance.teams)
-        {
-            team.ResetScore();
-        }
+        //foreach (TeamManager team in GameManager.instance.teams)
+        //{
+        //    team.ResetScore();
+        //}
     }
 
     private IEnumerator Clips()
     {
         runningLiveClips = true;
         StartListeningForPlayers();
-        GameManager.instance.notificationManager.CallOnMessage(Message.RecordingFinished,
+        GameManager.NotificationManager.CallOnMessage(Message.RecordingFinished,
                                             () =>
                                             {
                                                 if (!clipReloadThisFrame)
@@ -192,7 +192,7 @@ public class TutorialLiveClips : MonoBehaviour
                                                     this.FrameDelayCall(() => clipReloadThisFrame = false, 3);
                                                 }
                                             });
-        GameManager.instance.notificationManager.CallOnMessage(Message.RecordingInterrupt,
+        GameManager.NotificationManager.CallOnMessage(Message.RecordingInterrupt,
                                             SubclipInterrupt);
         yield return null;
         ySkip.StartListening();

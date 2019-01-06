@@ -16,9 +16,9 @@ public class ShootBallMechanic : MonoBehaviour
 
     private float elapsedTime = 0.0f;
     private CircularTimer circularTimer;
-    private Coroutine shootTimer;
+    private Coroutine shootTimerCoroutine;
     private ShotChargeIndicator shotChargeIndicator;
-    private Coroutine chargeShot;
+    private Coroutine chargeShotCoroutine;
     private PlayerMovement playerMovement;
     private PlayerStateManager stateManager;
     private BallCarrier ballCarrier;
@@ -32,16 +32,11 @@ public class ShootBallMechanic : MonoBehaviour
         stateManager = this.EnsureComponent<PlayerStateManager>();
         player = this.EnsureComponent<Player>();
 
-        stateManager.CallOnStateEnter(State.Posession, StartTimer);
-        stateManager.CallOnStateExit(
-            State.Posession, () => StopShootBallCoroutines());
-
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerPressedShoot, OnShootPressed, gameObject);
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
             Message.PlayerReleasedShoot, OnShootReleased, gameObject);
-
-        Ball ball = GameObject.FindObjectOfType<Ball>();
+        stateManager.OnStateChange += HandleNewPlayerState;
 
         InitializeCircularIndicators(); // This is for team selection screen
 
@@ -52,6 +47,37 @@ public class ShootBallMechanic : MonoBehaviour
         {
             maxChargeShotTime = forcedShotTime;
         }
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        if (newState == State.Possession)
+        {
+            StartPossessionTimer();
+        } else if (newState == State.ChargeShot)
+        {
+            StartChargeShot();
+        }
+
+        if ((oldState == State.Possession && newState != State.ChargeShot) ||
+            (oldState == State.ChargeShot))
+        {
+            StopShootBallCoroutines();
+        }
+    }
+
+    private void StartChargeShot()
+    {
+        shotChargeIndicator.Show();
+        chargeShotCoroutine = StartCoroutine(TransitionUtility.LerpFloat((value) =>
+            {
+                this.shotSpeed = value;
+                shotChargeIndicator.FillAmount = value;
+            },
+            startValue: baseShotSpeed, endValue: maxShotSpeed,
+            duration: maxChargeShotTime,
+            useGameTime: true, animationCurve: chargeShotCurve)
+            );
     }
 
     // Initialize the circular timer (forced shot timeout) and the
@@ -72,12 +98,12 @@ public class ShootBallMechanic : MonoBehaviour
         }
 
         // Circular timer
-        GameObject circularTimerPrefab = GameManager.instance.neutralResources.circularTimerPrefab;
+        GameObject circularTimerPrefab = GameManager.Instance.neutralResources.circularTimerPrefab;
         circularTimer = Instantiate(
             circularTimerPrefab, transform).GetComponent<CircularTimer>();
 
         // ShotCharge indicator
-        GameObject shotChargeIndicatorPrefab = GameManager.instance.neutralResources.shotChargeIndicatorPrefab;
+        GameObject shotChargeIndicatorPrefab = GameManager.Instance.neutralResources.shotChargeIndicatorPrefab;
         shotChargeIndicator = Instantiate(
             shotChargeIndicatorPrefab, transform).GetComponent<ShotChargeIndicator>();
 
@@ -88,16 +114,14 @@ public class ShootBallMechanic : MonoBehaviour
         shotChargeIndicator.maxFillAmount = maxShotSpeed;
     }
 
-    private void StartTimer()
+    private void StartPossessionTimer()
     {
-        bool shootTimerRunning = shootTimer != null;
-        bool alreadyChargingShot = chargeShot != null;
-        if (shootTimerRunning || alreadyChargingShot ||
-            !stateManager.IsInState(State.Posession))
+        bool shootTimerRunning = shootTimerCoroutine != null;
+        bool alreadyChargingShot = chargeShotCoroutine != null;
+        if (!shootTimerRunning || !alreadyChargingShot || stateManager.CurrentState == State.Possession)
         {
-            return;
+            shootTimerCoroutine = StartCoroutine(ShootTimer());
         }
-        shootTimer = StartCoroutine(ShootTimer());
     }
 
     private IEnumerator ShootTimer()
@@ -118,65 +142,54 @@ public class ShootBallMechanic : MonoBehaviour
     // includes dash
     private void OnShootPressed()
     {
-        bool shootTimerRunning = shootTimer != null;
-        bool alreadyChargingShot = chargeShot != null;
-        if (stateManager.IsInState(State.Posession)
+        bool shootTimerRunning = shootTimerCoroutine != null;
+        bool alreadyChargingShot = chargeShotCoroutine != null;
+        if (stateManager.CurrentState == State.Possession
             && shootTimerRunning && !alreadyChargingShot)
         {
-
-            shotChargeIndicator.Show();
-            chargeShot = StartCoroutine(TransitionUtility.LerpFloat((value) =>
-            {
-                this.shotSpeed = value;
-                shotChargeIndicator.FillAmount = value;
-            },
-                    startValue: baseShotSpeed, endValue: maxShotSpeed,
-                    duration: maxChargeShotTime,
-                    useGameTime: true, animationCurve: chargeShotCurve));
+            stateManager.TransitionToState(State.ChargeShot);
         }
     }
 
     private void OnShootReleased()
     {
-        bool shootTimerRunning = shootTimer != null;
-        bool alreadyChargingShot = chargeShot != null;
-        if (alreadyChargingShot)
+        bool shootTimerRunning = shootTimerCoroutine != null;
+        bool alreadyChargingShot = chargeShotCoroutine != null;
+        if (stateManager.CurrentState == State.ChargeShot && alreadyChargingShot)
         {
             Debug.Assert(shootTimerRunning == true);
             Shoot();
         }
     }
 
-    public void Shoot()
+    private void Shoot()
     {
-        AudioManager.instance.ShootBallSound.Play(.5f);
-        Ball ball = ballCarrier.Ball;
-        if (ball != null)
-        {
-            Vector3 shotDirection = ball.transform.position - transform.position;
-            Rigidbody2D ballRigidBody = ball.EnsureComponent<Rigidbody2D>();
-            ballRigidBody.velocity = shotDirection.normalized * shotSpeed;
-        }
+        // Set the information
+        Ball ball = ballCarrier.Ball.ThrowIfNull("Tried to shoot ball while [ballCarrier.Ball] is null");
+        NormalMovementInformation shootBallInfo = stateManager.GetStateInformationForWriting<NormalMovementInformation>(State.NormalMovement);
+        shootBallInfo.ShotBall = true;
+        shootBallInfo.BallStartPosition = ball.CurrentPosition;
+        shootBallInfo.Velocity = (ball.CurrentPosition - (Vector2)transform.position).normalized * shotSpeed;
+
+        // Cleanup and transition states
         StopShootBallCoroutines();
-        stateManager.CurrentStateHasFinished();
+        stateManager.TransitionToState(State.NormalMovement, shootBallInfo);
     }
 
     private void StopShootBallCoroutines()
     {
-        if (shootTimer != null)
+        if (shootTimerCoroutine != null)
         {
             circularTimer?.StopTimer();
-            StopCoroutine(shootTimer);
-            shootTimer = null;
+            StopCoroutine(shootTimerCoroutine);
+            shootTimerCoroutine = null;
         }
-        if (chargeShot != null)
+        if (chargeShotCoroutine != null)
         {
             shotChargeIndicator.Stop();
-            StopCoroutine(chargeShot);
-            chargeShot = null;
+            StopCoroutine(chargeShotCoroutine);
+            chargeShotCoroutine = null;
         }
-
-        playerMovement.freezeRotation = false;
     }
 
 }

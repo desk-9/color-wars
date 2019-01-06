@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UtilityExtensions;
 
 public class LaserGuide : MonoBehaviour
 {
@@ -17,9 +18,11 @@ public class LaserGuide : MonoBehaviour
     // => Should *not* be public
     private Gradient aimLaserGradient;
     private Gradient aimLaserToGoalGradient;
+    private PlayerMovement playerMovement;
 
     private void Start()
     {
+        playerMovement = this.EnsureComponent<PlayerMovement>();
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
         rayCastMask = LayerMask.GetMask(new string[] { "Wall", "Goal", "TronWall" });
@@ -50,7 +53,7 @@ public class LaserGuide : MonoBehaviour
 
     public void SetLaserGradients()
     {
-        TeamManager team = GetComponent<Player>()?.team;
+        TeamManager team = GetComponent<Player>()?.Team;
         if (team != null)
         {
             aimLaserGradient = team.resources.aimLaserGradient;
@@ -75,7 +78,6 @@ public class LaserGuide : MonoBehaviour
         }
     }
 
-    // Returns true if the laser was reflected, false otherwise
     private IEnumerator DrawAimingLaser()
     {
         yield return null;
@@ -85,7 +87,7 @@ public class LaserGuide : MonoBehaviour
             List<Vector3> points = new List<Vector3>();
             points.Add(transform.position);
             Vector3 laserStart = transform.position;
-            Vector3 laserDirection = transform.right;
+            Vector3 laserDirection = playerMovement.Forward;
             float drawDistanceRemaining = drawDistanceAfterCollision;
 
             RaycastHit2D raycastHit = Physics2D.Raycast(laserStart + laserDirection * epsilon,

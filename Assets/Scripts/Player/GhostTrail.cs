@@ -20,7 +20,7 @@ public class GhostTrail : MonoBehaviour
             return;
         }
         renderer = this.EnsureComponent<SpriteRenderer>();
-        NotificationManager notificationManager = GameManager.instance.notificationManager;
+        NotificationManager notificationManager = GameManager.NotificationManager;
         notificationManager.CallOnMessage(Message.BallIsPossessed, StartGhost);
         notificationManager.CallOnMessage(Message.BallIsUnpossessed, StopGhost);
     }
@@ -54,6 +54,7 @@ public class GhostTrail : MonoBehaviour
     {
         while (true)
         {
+            // TODO dkonik: Pool these
             GameObject newGhostObject = GameObject.Instantiate(ghostObject, transform.position, transform.rotation);
             newGhostObject.transform.localScale = transform.localScale;
             newGhostObject.GetComponent<Ghost>().Initialize(renderer, ghostLifeLength, startingAlpha);

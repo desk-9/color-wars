@@ -38,7 +38,7 @@ public class TeamResourceManager
         this.team = team;
         if (team != null)
         {
-            teamDirectory = string.Format("Teams/{0}", team.teamColor.name);
+            teamDirectory = string.Format("Teams/{0}", team.TeamColor.name);
         }
         SetupResources();
     }
@@ -102,7 +102,7 @@ public class TeamResourceManager
         scoreIndicatorEmptySprite = MakeAllTeamResource<Sprite>("ScoreIndicatorEmpty");
         scoreIndicatorFullSprite = MakeAllTeamResource<Sprite>("ScoreIndicatorFull");
 
-        teamColor = (team == null) ? Color.white : this.team.teamColor.color;
+        teamColor = (team == null) ? Color.white : this.team.TeamColor.color;
 
         aimLaserGradient = aimLaserGradient != null ?
             aimLaserGradient : TeamAimLaserGradient();

@@ -20,8 +20,19 @@ public class EffectSpawner : MonoBehaviour
     private void Start()
     {
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        stateManager.CallOnStateEnter(triggerState, StateStart);
-        stateManager.CallOnStateExit(triggerState, StateEnd);
+        stateManager.OnStateChange += HandleNewPlayerState;
+    }
+
+    private void HandleNewPlayerState(State oldState, State newState)
+    {
+        if (newState == triggerState)
+        {
+            StateStart();
+        }
+        if (oldState == triggerState)
+        {
+            StateEnd();
+        }
     }
 
     private void StateStart()

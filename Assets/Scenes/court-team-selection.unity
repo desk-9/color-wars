@@ -3303,6 +3303,21 @@ PrefabInstance:
       propertyPath: tutorialType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1403289670529041876, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 3}
+      propertyPath: viewIdField
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1403289670529041876, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 3}
+      propertyPath: InstantiationId
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114459257248822156, guid: e03ac4bb9f3ea4765985db4922a04b7a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e03ac4bb9f3ea4765985db4922a04b7a, type: 3}
 --- !u!1 &1229941008
@@ -3513,13 +3528,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa589d0baa6d2499e9e8f8f5c0aaf36e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goalSwitchInterval: 10
-  goalSwitchNotificationLength: 3
-  goalSwitchWarningVolume: 0.02
-  timedSwitching: 0
-  playerPassSwitching: 1
   respondToSwitchColliders: 0
-  resetTimerOnSwitchToSameTeam: 0
+  playerBlocker: {fileID: 0}
+  ballBlocker: {fileID: 0}
+  fillRenderer: {fileID: 0}
 --- !u!60 &1299703925
 PolygonCollider2D:
   m_ObjectHideFlags: 0

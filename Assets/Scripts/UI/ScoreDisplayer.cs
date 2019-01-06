@@ -18,6 +18,8 @@ public class ScoreDisplayer : MonoBehaviour
         };
         matchTimeText = transform.FindComponent<Text>("MatchTimeText");
         StartCoroutine(InitScores());
+
+        GameManager.NotificationManager.CallOnMessage(Message.ScoreChanged, UpdateScores);
     }
 
     private IEnumerator InitScores()
@@ -52,14 +54,14 @@ public class ScoreDisplayer : MonoBehaviour
         }
     }
 
-    public void UpdateScores()
+    private void UpdateScores()
     {
-        for (int i = 0; i < teams.Count && i < GameManager.instance.teams.Count; i++)
+        for (int i = 0; i < teams.Count && i < GameManager.Instance.Teams.Count; i++)
         {
             Text text = teams[i];
-            TeamManager team = GameManager.instance.teams[i];
-            text.text = string.Format("{0} Team: {1}", team.teamColor.name, team.score);
-            text.color = team.teamColor;
+            TeamManager team = GameManager.Instance.Teams[i];
+            text.text = string.Format("{0} Team: {1}", team.TeamColor.name, team.Score);
+            text.color = team.TeamColor;
         }
     }
 }

@@ -3,22 +3,16 @@ using UnityEngine;
 using IC = InControl;
 using UtilityExtensions;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(PlayerMovement))]
 public class PlayerDashBehavior : MonoBehaviour
 {
     public GameObject dashEffectPrefab;
     public GameObject dashAimerPrefab;
-    public IC.InputControlType dashButton = IC.InputControlType.Action2;
-    public bool onlyStunBallCarriers = true;
     public bool onlyStealOnBallHit = false;
     public string[] stopDashOnCollisionWith;
     public float maxChargeTime = 1.0f;
     public float chargeRate = 1.0f;
     public float dashSpeed = 50.0f;
     public float cooldown = 0.5f;
-    public float stealShakeAmount = .7f;
-    public float stealShakeDuration = .05f;
     public float stealKnockbackAmount = 100f;
     public float stealKnockbackLength = .5f;
     public float wallHitStunTime = 0.05f;
@@ -28,61 +22,70 @@ public class PlayerDashBehavior : MonoBehaviour
     private Rigidbody2D rb;
     private Coroutine chargeCoroutine;
     private Coroutine dashCoroutine;
-    private PlayerTronMechanic tronMechanic;
-    private BallCarrier carrier;
     private GameObject dashEffect;
     private GameObject dashAimer;
     private float lastDashTime;
-    private CameraShake cameraShake;
     private float chargeAmount = 0;
+    private Ball ball;
 
     private void Start()
     {
+        player = this.EnsureComponent<Player>();
         playerMovement = this.EnsureComponent<PlayerMovement>();
         rb = this.EnsureComponent<Rigidbody2D>();
         stateManager = this.EnsureComponent<PlayerStateManager>();
-        carrier = this.EnsureComponent<BallCarrier>();
-        tronMechanic = this.EnsureComponent<PlayerTronMechanic>();
-        cameraShake = GameObject.FindObjectOfType<CameraShake>();
 
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
-            Message.PlayerPressedDash, DashPressed, this.gameObject);
-        GameManager.instance.notificationManager.CallOnMessageIfSameObject(
-            Message.PlayerReleasedDash, ChargeReleased, this.gameObject);
+        // TODO dkonik: Revisit this, this might not be true in in like team selection
+        // stage
+        ball = FindObjectOfType<Ball>().ThrowIfNull("Could not find ball");
+
+        stateManager.OnStateChange += HandleNewPlayerState;
+
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
+            Message.PlayerPressedDash, DashButtonPressed, this.gameObject);
+        GameManager.NotificationManager.CallOnMessageIfSameObject(
+            Message.PlayerReleasedDash, DashButtonReleased, this.gameObject);
     }
 
-    private void Awake()
+    private void HandleNewPlayerState(State oldState, State newState)
     {
-        player = this.EnsureComponent<Player>();
+        // Cleanup for old state
+        if (oldState == State.ChargeDash)
+        {
+            StopChargeDash();
+        } else if (oldState == State.Dash)
+        {
+            StopDash();
+        }
+
+        // Handle new state
+        if (newState == State.Dash)
+        {
+            if (oldState != State.ChargeDash)
+            {
+                Debug.LogError("Entered Dash state but previous state was not ChargeDash. How?!");
+            }
+            StartDash();
+        } else if (newState == State.ChargeDash)
+        {
+            StartChargeDash();
+        }
     }
 
     public void SetPrefabColors()
     {
-        if (player.team != null)
+        if (player.Team != null)
         {
             EffectSpawner chargeEffectSpawner = this.FindEffect(EffectType.DashCharge);
-            dashEffectPrefab = player.team.resources.dashEffectPrefab;
-            chargeEffectSpawner.effectPrefab = player.team.resources.dashChargeEffectPrefab;
-            dashAimerPrefab = player.team.resources.dashAimerPrefab;
-        }
-    }
-
-    private void DashPressed()
-    {
-        if (Time.time - lastDashTime >= cooldown)
-        {
-            stateManager.AttemptDashCharge(StartChargeDash, StopChargeDash);
+            dashEffectPrefab = player.Team.resources.dashEffectPrefab;
+            chargeEffectSpawner.effectPrefab = player.Team.resources.dashChargeEffectPrefab;
+            dashAimerPrefab = player.Team.resources.dashAimerPrefab;
         }
     }
 
     private void StartChargeDash()
     {
-        chargeCoroutine = StartCoroutine(Charge());
-
-        // Lock Player at current position when charging.
-        playerMovement.FreezePlayer();
-
-        dashAimer = Instantiate(dashAimerPrefab, transform.position, transform.rotation, transform);
+        chargeCoroutine = StartCoroutine(ChargeDash());
     }
 
     private void StopChargeDash()
@@ -91,44 +94,47 @@ public class PlayerDashBehavior : MonoBehaviour
         {
             StopCoroutine(chargeCoroutine);
             chargeCoroutine = null;
-            playerMovement.UnFreezePlayer();
-
             Destroy(dashAimer);
         }
     }
 
-    private void ChargeReleased()
+    private void DashButtonPressed()
     {
-        if (stateManager.IsInState(State.ChargeDash))
+        if (Time.time - lastDashTime >= cooldown && stateManager.CurrentState == State.NormalMovement)
         {
-            stateManager.AttemptDash(() => StartDash(chargeAmount), StopDash);
+            stateManager.TransitionToState(State.ChargeDash);
         }
     }
 
-    private IEnumerator Charge()
+    private void DashButtonReleased()
     {
-        float startChargeTime = Time.time;
+        if (stateManager.CurrentState == State.ChargeDash)
+        {
+            DashInformation info = stateManager.GetStateInformationForWriting<DashInformation>(State.Dash);
+            info.StartPosition = playerMovement.CurrentPosition;
+            info.Velocity = (Quaternion.AngleAxis(playerMovement.CurrentRigidBodyRotation, Vector3.forward) * Vector3.right).normalized * dashSpeed * (1.0f + chargeAmount);
+            stateManager.TransitionToState(State.Dash, info);
+        }
+    }
+
+    private IEnumerator ChargeDash()
+    {
+        // TODO dkonik: Reuse this, don't instantiate every time
+        dashAimer = Instantiate(dashAimerPrefab, playerMovement.CurrentPosition, playerMovement.CurrentRotation, transform);
+
         chargeAmount = 0.0f;
 
         while (true)
         {
             chargeAmount += chargeRate * Time.deltaTime;
-
-            // Continue updating direction to indicate charge direction.
-            playerMovement.RotatePlayer();
-
             yield return null;
         }
     }
 
-    private void StartDash(float chargeAmount)
+    private void StartDash()
     {
-        dashCoroutine = StartCoroutine(Dash(chargeAmount));
+        dashCoroutine = StartCoroutine(Dash());
         lastDashTime = Time.time;
-        if (tronMechanic.layWallOnDash)
-        {
-            tronMechanic.PlaceWallAnchor();
-        }
     }
 
     private void StopDash()
@@ -141,14 +147,18 @@ public class PlayerDashBehavior : MonoBehaviour
         }
     }
 
-    private IEnumerator Dash(float chargeAmount)
+    private IEnumerator Dash()
     {
-        float dashDuration = Mathf.Min(chargeAmount, 0.5f);
+        DashInformation information = stateManager.CurrentStateInformation_Exn<DashInformation>();
+
+        // TODO dkonik: Revisit this math, why do we do this?
+        float dashDuration = Mathf.Min((information.Velocity.magnitude / dashSpeed) - 1f, 0.5f);
         AudioManager.instance.DashSound.Play();
 
 
         // Set duration of particle system for each dash trail.
-        dashEffect = Instantiate(dashEffectPrefab, transform.position, transform.rotation, transform);
+        // TODO dkonik: Do not instantiate every time
+        dashEffect = Instantiate(dashEffectPrefab, playerMovement.CurrentPosition, playerMovement.CurrentRotation, transform);
 
         foreach (ParticleSystem ps in dashEffect.GetComponentsInChildren<ParticleSystem>())
         {
@@ -158,13 +168,9 @@ public class PlayerDashBehavior : MonoBehaviour
             ps.Play();
         }
 
-        Vector2 direction = (Vector2)(Quaternion.AngleAxis(rb.rotation, Vector3.forward) * Vector3.right);
         float startTime = Time.time;
-
         while (Time.time - startTime <= dashDuration)
         {
-            rb.velocity = direction * dashSpeed * (1.0f + chargeAmount);
-
             yield return null;
         }
 
@@ -173,27 +179,7 @@ public class PlayerDashBehavior : MonoBehaviour
             ps.Stop();
         }
 
-        stateManager.CurrentStateHasFinished();
-    }
-
-    private Ball TrySteal(Player otherPlayer)
-    {
-        BallCarrier otherCarrier = otherPlayer.gameObject.GetComponent<BallCarrier>();
-        return otherCarrier?.Ball;
-    }
-
-    private void Stun(Player otherPlayer)
-    {
-        PlayerStun otherStun = otherPlayer.GetComponent<PlayerStun>();
-        PlayerStateManager otherStateManager = otherPlayer.GetComponent<PlayerStateManager>();
-        if (otherStun != null && otherStateManager != null)
-        {
-            cameraShake.shakeAmount = stealShakeAmount;
-            cameraShake.shakeDuration = stealShakeDuration;
-            otherStateManager.AttemptStun(
-                                          () => otherStun.StartStun(rb.velocity.normalized * stealKnockbackAmount, stealKnockbackLength),
-                otherStun.StopStunned);
-        }
+        stateManager.TransitionToState(State.NormalMovement);
     }
 
     private void StunAndSteal(GameObject otherGameObject)
@@ -201,23 +187,24 @@ public class PlayerDashBehavior : MonoBehaviour
         bool hitBall = otherGameObject.GetComponent<Ball>() != null;
         Player otherPlayer = GetAssociatedPlayer(otherGameObject);
         if (otherPlayer != null &&
-            (otherPlayer.team?.teamColor != player.team?.teamColor
-             || otherPlayer.team == null || player.team == null))
+            (otherPlayer.Team?.TeamColor != player.Team?.TeamColor
+             || otherPlayer.Team == null || player.Team == null))
         {
-            Ball ball = TrySteal(otherPlayer);
-
-            bool shouldSteal = ball != null && (!onlyStealOnBallHit || hitBall);
-            if (shouldSteal || (ball == null && !onlyStunBallCarriers))
+            if (GameManager.PossessionManager.PossessingPlayer == otherPlayer && hitBall)
             {
-                Stun(otherPlayer);
-            }
+                // Stun other player
+                otherPlayer.StateManager.StunNetworked(
+                    otherPlayer.PlayerMovement.CurrentPosition,
+                    playerMovement.CurrentVelocity.normalized * stealKnockbackAmount,
+                    stealKnockbackLength,
+                    true);
 
-            if (shouldSteal)
-            {
-                GameManager.instance.notificationManager.NotifyMessage(Message.StolenFrom, otherPlayer.gameObject);
+                // Fill out info and transition states
                 AudioManager.instance.StealSound.Play(.5f);
-                stateManager.AttemptPossession(
-                    () => carrier.StartCarryingBall(ball), carrier.DropBall);
+                PossessBallInformation info = stateManager.GetStateInformationForWriting<PossessBallInformation>(State.Possession);
+                info.StoleBall = true;
+                info.VictimPlayerNumber = otherPlayer.playerNumber;
+                stateManager.TransitionToState(State.Possession, info);
             }
         }
     }
@@ -227,7 +214,7 @@ public class PlayerDashBehavior : MonoBehaviour
         Ball ball = gameObject.GetComponent<Ball>();
         if (ball != null)
         {
-            return (ball.Owner == null) ? null : ball.Owner.GetComponent<Player>();
+            return ball.Owner;
         }
         return gameObject.GetComponent<Player>();
     }
@@ -244,7 +231,7 @@ public class PlayerDashBehavior : MonoBehaviour
 
     private void HandleCollision(GameObject other)
     {
-        if (!stateManager.IsInState(State.Dash))
+        if (stateManager.CurrentState != State.Dash)
         {
             return;
         }
@@ -252,13 +239,7 @@ public class PlayerDashBehavior : MonoBehaviour
         int layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
         if (layerMask == (layerMask | 1 << other.layer))
         {
-            this.TimeDelayCall(() =>
-            {
-                if (stateManager.IsInState(State.Dash))
-                {
-                    stateManager.CurrentStateHasFinished();
-                }
-            }, 0.1f);
+            stateManager.TransitionToState(State.NormalMovement);
         }
         else
         {

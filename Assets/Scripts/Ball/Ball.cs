@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using System;
 using System.Collections;
 using UnityEngine;
 using UtilityExtensions;
@@ -6,25 +7,22 @@ using UtilityExtensions;
 public class Ball : MonoBehaviourPunCallbacks
 {
     public new SpriteRenderer renderer;
-    public new Rigidbody2D rigidbody;
+
     [SerializeField]
     private GameObject implosionPrefab;
 
-    private CircleCollider2D circleCollider;
-    private Goal goal;
-    private Vector2 start_location;
-    private BallFillColor ballFill;
+    private Vector2 startLocation;
     private NotificationManager notificationManager;
-    private TrailRenderer trailRenderer;
     private float speedOnShoot;
-    private Color neutralColor = Color.white;
     private int relevantCollisionLayers;
+    private new Rigidbody2D rigidbody;
+    private PhysicsTransformView physicsTransformView;
 
     /// <summary>
     /// The owner before the current one, or just the last owner if there is no
     /// current owner
     /// </summary>
-    public BallCarrier LastOwner { get; private set; }
+    public Player LastOwner { get; private set; }
 
     /// <summary>
     /// In certain situations (like after a goal is scored, or while the ball
@@ -32,11 +30,30 @@ public class Ball : MonoBehaviourPunCallbacks
     /// </summary>
     public bool Ownable { get; set; } = true;
 
+    public Vector2 CurrentPosition
+    {
+        get { return transform.position; }
+    }
+
+    private float _radius = -1f;
+    public float Radius
+    {
+        get
+        {
+            if (_radius == -1f)
+            {
+                _radius = GetComponent<CircleCollider2D>().bounds.extents.x;
+            }
+            return _radius;
+        }
+    }
+
+
     /// <summary>
     /// The current owner of the ball if there is one, null otherwise
     /// </summary>
-    private BallCarrier owner_;
-    public BallCarrier Owner
+    private Player owner_;
+    public Player Owner
     {
         get { return owner_; }
         set
@@ -44,111 +61,84 @@ public class Ball : MonoBehaviourPunCallbacks
             if (owner_ != null)
             {
                 LastOwner = owner_;
+                physicsTransformView.enabled = true;
+            } else {
+                physicsTransformView.enabled = false;
             }
             owner_ = value;
             rigidbody.mass = owner_ == null ? 0.1f : 1000;
-            Message message = owner_ == null ? Message.BallIsUnpossessed : Message.BallIsPossessed;
+
             rigidbody.angularVelocity = 0f;
-            notificationManager.NotifyMessage(message, gameObject);
+
             if (!this.isActiveAndEnabled)
             {
                 return;
             }
-            if (owner_ != null)
-            {
-                this.FrameDelayCall(AdjustSpriteToCurrentTeam, 2);
-            }
-            else
-            {
-                trailRenderer.enabled = false;
-            }
         }
     }
 
-    private void SetColor(Color to_, bool fill)
+    public void TakeOwnership()
     {
-        Gradient gradient = new Gradient();
-        gradient.SetKeys(
-            new GradientColorKey[] {
-                new GradientColorKey(to_, 0.0f),
-                new GradientColorKey(to_, 1.0f)
-            },
-            new GradientAlphaKey[] {
-                new GradientAlphaKey(1f, 0.0f),
-                new GradientAlphaKey(0f, 1.0f)
-            });
+        photonView.RequestOwnership();
+    }
 
-        trailRenderer.colorGradient = gradient;
-        this.FrameDelayCall(EnableTrail, 5);
-        if (fill)
+    public void MoveTo(Vector2 newPosition)
+    {
+        rigidbody.MovePosition(newPosition);
+    }
+
+    private void HandlePlayerShotBall(Player player)
+    {
+        NormalMovementInformation information = player.StateManager.CurrentStateInformation_Exn<NormalMovementInformation>();
+        // If we didn't shoot the ball, just return
+        if (!information.ShotBall)
         {
-            renderer.color = to_;
-            ballFill.EnableAndSetColor(to_);
-        }
-        else
-        {
-            renderer.color = Color.Lerp(to_, Color.white, .6f);
-            ballFill.DisableFill();
-        }
-    }
-
-    private void EnableTrail()
-    {
-        trailRenderer.enabled = true;
-    }
-
-    // This is for resets
-    private void SetSpriteToNeutral()
-    {
-        SetColor(neutralColor, false);
-    }
-
-    private Color ColorFromBallCarrier(BallCarrier carrier)
-    {
-        TeamManager carrierTeam = carrier.EnsureComponent<Player>().team;
-        return carrierTeam != null ? carrierTeam.teamColor.color : Color.white;
-    }
-
-    private void AdjustSpriteToCurrentTeam()
-    {
-        // Happens if player shoots a frame after pickup
-        if (Owner == null)
-        {
-            Debug.Assert(LastOwner != null);
-            Color lastOwnerColor = ColorFromBallCarrier(LastOwner);
-            bool fill = goal?.currentTeam != null && goal?.currentTeam.teamColor == lastOwnerColor;
-            SetColor(lastOwnerColor, fill);
             return;
         }
 
-        Color currentOwnerColor = ColorFromBallCarrier(Owner);
+        AudioManager.instance.ShootBallSound.Play(.5f);
 
-        if (goal?.currentTeam != null &&
-            goal?.currentTeam.teamColor == currentOwnerColor)
+        if (photonView.IsMine)
         {
-            SetColor(currentOwnerColor, true);
-        }
-        else
-        {
-            SetColor(currentOwnerColor, false);
+            // TODO dkonik: Do more here, interp based on the timestamp and ball start
+            // pos, but I am being lazy right now just to see how this works
+            rigidbody.velocity = information.Velocity;
         }
     }
 
     private void Start()
     {
-        notificationManager = GameManager.instance.notificationManager;
-        start_location = transform.position;
-        trailRenderer = this.EnsureComponent<TrailRenderer>();
+        notificationManager = GameManager.NotificationManager;
+        startLocation = transform.position;
         renderer = GetComponentInChildren<SpriteRenderer>();
-        circleCollider = this.EnsureComponent<CircleCollider2D>();
         rigidbody = this.EnsureComponent<Rigidbody2D>();
-        goal = GameObject.FindObjectOfType<Goal>();
-        ballFill = this.GetComponentInChildren<BallFillColor>();
         relevantCollisionLayers = LayerMask.GetMask("Wall", "TronWall", "Goal", "PlayerBlocker");
+        physicsTransformView = this.EnsureComponent<PhysicsTransformView>();
 
-        GameManager.instance.notificationManager.CallOnMessage(
+        notificationManager.CallOnMessage(
             Message.BallIsUnpossessed, HandleUnpossesion
         );
+        notificationManager.CallOnMessage(
+            Message.GoalScored, HandleGoalScore
+        );
+        notificationManager.CallOnMessage(Message.BallWentOutOfBounds, () => ResetBall(false));
+        notificationManager.CallOnMessage(Message.ResetAfterGoal, () => ResetBall(true));
+        notificationManager.CallOnStateStart(State.Possession, HandlePossession);
+        notificationManager.CallOnStateEnd(State.Possession, HandlePossessionLost);
+        notificationManager.CallOnStateStart(State.NormalMovement, HandlePlayerShotBall);
+    }
+
+    private void HandlePossessionLost(Player player)
+    {
+        Owner = null;
+    }
+
+    private void HandlePossession(Player player)
+    {
+        // TODO dkonik: Probably more to do here
+        rigidbody.velocity = Vector2.zero;
+        rigidbody.angularVelocity = 0;
+        Owner = player;
     }
 
     private void HandleUnpossesion()
@@ -162,30 +152,24 @@ public class Ball : MonoBehaviourPunCallbacks
         });
     }
 
-    public void HandleGoalScore(Color color)
+    private void HandleGoalScore()
     {
-        TrailRenderer trailRenderer = GetComponent<TrailRenderer>();
-        trailRenderer.enabled = false;
         Ownable = false;
     }
 
-    public void ResetBall(float? lengthOfEffect = null)
+    private void ResetBall(bool doSpawnAnimation)
     {
-        // Reset values 
-        circleCollider.enabled = true;
-        renderer.enabled = true;
-        SetSpriteToNeutral();
-        transform.position = start_location;
-        trailRenderer.enabled = false;
+        // Reset values
+        transform.position = startLocation;
         Ownable = true;
         rigidbody.velocity = Vector2.zero;
         Owner = null;
         LastOwner = null;
 
         // Start Spawn effect
-        if (lengthOfEffect != null)
+        if (doSpawnAnimation)
         {
-            StartCoroutine(ImplosionEffect(lengthOfEffect.Value));
+            StartCoroutine(ImplosionEffect(GameManager.Settings.LengthOfBallSpawnAnimation));
         }
     }
 

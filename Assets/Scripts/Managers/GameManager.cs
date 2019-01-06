@@ -8,44 +8,45 @@ using UtilityExtensions;
 
 public class GameManager : MonoBehaviour
 {
+    #region Managers
+    // Static accessors to be less tedious to access all of the time
+    public static NotificationManager NotificationManager { get { return Instance.notificationManager; } }
+    public static PossessionManager PossessionManager { get { return Instance.possessionManager; } }
+    public static SlowMoManager SlowMoManager { get { return Instance.slowMoManager; } }
+
+    // The actual managers
+    private NotificationManager notificationManager;
+    private PossessionManager possessionManager;
+    private SlowMoManager slowMoManager;
+    #endregion
 
     public static bool playerTeamsAlreadySelected = false;
     public static Dictionary<int, int> playerTeamAssignments = new Dictionary<int, int>();
     public static bool cheatForcePlayerAssignment = false;
-    public static GameManager instance;
+    public static GameManager Instance;
     public ScoreDisplayer scoreDisplayer;
     public NamedColor[] teamColors;
-    public List<TeamManager> teams { get; set; }
+    public List<TeamManager> Teams { get; set; }
     public TeamResourceManager neutralResources;
-    // public GameEndController end_controller {get; set;}
-    public float matchLength = 5f;
-    public NotificationManager notificationManager;
     public bool gameOver { get; private set; } = false;
-    public TeamManager winner { get; private set; } = null;
+    public TeamManager Winner { get; private set; } = null;
     public GameObject meta;
-    public float pauseAfterGoalScore = 3f;
-    public float pauseAfterReset = 2f;
+
+
     public List<Player> players = new List<Player>();
 
     [SerializeField]
     private GameSettings gameSettings;
-    public GameSettings Settings { get { return gameSettings; } }
+    public static GameSettings Settings { get
+        {
+            Instance.ThrowIfNull("Instance was null when trying to acquire GameSettings");
+            return Instance.gameSettings;
+        }
+    }
 
     public GameObject blowbackPrefab;
 
-    public enum WinCondition
-    {
-        Time, FirstToX, TennisRules
-    }
-
-    public WinCondition winCondition = WinCondition.TennisRules;
-
     public Callback OnGameOver = delegate { };
-
-    public BackgroundScroller backgroundScroller;
-    private string[] countdownSoundNames = new string[]
-    {"ten", "nine", "eight", "seven", "six", "five", "four", "three", "two", "one"};
-    private float matchLengthSeconds;
 
     private Ball ball
     {
@@ -62,13 +63,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private CameraShake cameraShake;
-
     private void Awake()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             Initialization();
         }
         else
@@ -79,81 +78,47 @@ public class GameManager : MonoBehaviour
 
     private void Initialization()
     {
+        notificationManager = new NotificationManager();
+        possessionManager = this.EnsureComponent<PossessionManager>();
+        slowMoManager = this.EnsureComponent<SlowMoManager>();
+
         if (!PlayerTutorial.runTutorial && !playerTeamsAlreadySelected)
         {
             cheatForcePlayerAssignment = true;
         }
         gameOver = false;
         InitializeTeams();
-        matchLengthSeconds = 60 * matchLength;
-        if (!PlayerTutorial.runTutorial && winCondition == WinCondition.Time)
-        {
-            this.TimeDelayCall(() => StartCoroutine(EndGameCountdown()), matchLengthSeconds - (countdownSoundNames.Length + 1));
-        }
-        notificationManager = new NotificationManager();
-    }
-
-    private void BlowBack(Player player)
-    {
-        // TODO dkonik: This shouldn't be instantiated every time, it should be reused
-        Utility.BlowbackFromPlayer(player.gameObject, Settings.BlowbackRadius, Settings.BlowbackSpeed, false,
-                                   Settings.BlowbackStunTime);
-        GameObject.Instantiate(blowbackPrefab, player.transform.position, player.transform.rotation);
     }
 
     private void Start()
     {
         SceneStateManager.instance.UnPauseTime();
-        cameraShake = GameObject.FindObjectOfType<CameraShake>();
-        if (winCondition == WinCondition.Time)
-        {
-            scoreDisplayer.StartMatchLengthUpdate(matchLengthSeconds);
-        }
-        // if (pushAwayOtherPlayers) {
-        //     nc.CallOnStateStart(State.Posession, BlowBack);
-        // }
+
         meta = SceneStateManager.instance.gameObject;
         if (meta == null)
         {
             Debug.LogWarning("Meta object is null!!!!");
         }
 
-        // Set up countdown messaging through nc (3-2-1-GO at beginning of scene)
-        if (!PlayerTutorial.runTutorial && SceneManager.GetActiveScene().name == "court")
-        {
-            notificationManager.CallOnMessage(Message.CountdownFinished, StartGameAfterBallAnimation);
-            this.FrameDelayCall(
-                () => { foreach (TeamManager team in teams) { team.ResetTeam(); } },
-                3);
-        }
+        NotificationManager.CallOnMessage(Message.ScoreChanged, HandleGoalScored);
     }
 
-    private IEnumerator EndGameCountdown()
+    public TeamManager GetWinningTeam()
     {
-        foreach (string count in countdownSoundNames)
-        {
-            AudioManager.Play("countdown/" + count);
-            yield return new WaitForSeconds(1f);
-        }
-        EndGame();
-    }
-
-    private TeamManager TopTeam()
-    {
-        return teams.Aggregate(
+        return Teams.Aggregate(
             (bestSoFar, next) =>
             {
-                if (bestSoFar == null || bestSoFar.score == next.score)
+                if (bestSoFar == null || bestSoFar.Score == next.Score)
                 {
                     return null;
                 }
-                return next.score > bestSoFar.score ? next : bestSoFar;
+                return next.Score > bestSoFar.Score ? next : bestSoFar;
             });
     }
 
     private void EndGame()
     {
-        winner = TopTeam();
+        Winner = GetWinningTeam();
         gameOver = true;
         OnGameOver();
     }
@@ -163,154 +128,86 @@ public class GameManager : MonoBehaviour
     {
         if (GameManager.playerTeamsAlreadySelected)
         {
-            return teams[playerTeamAssignments[caller.playerNumber]];
+            return Teams[playerTeamAssignments[caller.playerNumber]];
         }
         else if (GameManager.cheatForcePlayerAssignment)
         {
-            return teams[caller.playerNumber % teams.Count];
+            return Teams[caller.playerNumber % Teams.Count];
+        }
+        return null;
+    }
+
+    // Used for pre-player object initialization, i.e. figuring out where to
+    // spawn in new player objects during the "court pre-period". This period is
+    // where no player objects exist, but all information about which objects
+    // should exist, which teams they're on, and where they should spawn, is all
+    // available through various static/room property maps of ints to ints.
+    public TeamManager GetTeamAssignment(int playerNumber)
+    {
+        if (GameManager.playerTeamsAlreadySelected)
+        {
+            return Teams[playerTeamAssignments[playerNumber]];
+        }
+        else if (GameManager.cheatForcePlayerAssignment)
+        {
+            return Teams[playerNumber % Teams.Count];
         }
         return null;
     }
 
     private void InitializeTeams()
     {
-        teams = new List<TeamManager>();
+        Teams = new List<TeamManager>();
         neutralResources = new TeamResourceManager(null);
 
         for (int i = 0; i < teamColors.Length; ++i)
         {
             // Add 1 so we get Team 1 and Team 2
-            teams.Add(new TeamManager(i + 1, teamColors[i]));
+            Teams.Add(new TeamManager(i + 1, teamColors[i]));
         }
     }
 
-    private void ScoreChanged()
+    private void HandleGoalScored()
     {
-        if (winCondition == WinCondition.FirstToX || winCondition == WinCondition.TennisRules)
+        TeamManager topTeam = GetWinningTeam();
+        if (topTeam != null && topTeam.Score >= Settings.WinningScore)
         {
-            CheckForWinner();
-        }
-    }
-
-    private void CheckForWinner()
-    {
-        TeamManager topTeam = TopTeam();
-        if (topTeam != null && topTeam.score >= Settings.WinningScore)
+            EndGame();
+        } else
         {
-            if (winCondition == WinCondition.TennisRules)
-            {
-                int secondBestScore =
-                    (from team in teams
-                     where team != topTeam
-                     select team.score).Max();
-                if (Mathf.Abs(secondBestScore - topTeam.score) >= Settings.RequiredWinMargin)
-                {
-                    EndGame();
-                }
-            }
-            else if (winCondition == WinCondition.FirstToX)
-            {
-                EndGame();
-            }
+            this.TimeDelayCall(ResetGameAfterGoal, Settings.PauseAfterGoalScore);
         }
-    }
-
-    public int AmountOneTeamAhead()
-    {
-        // Returns the amount the winning team is ahead by
-        Debug.Assert(teams.Count >= 2);
-        return Mathf.Abs(teams[0].score - teams[1].score);
-    }
-
-    public void GoalScoredForTeam(TeamManager scored)
-    {
-        ball.HandleGoalScore(scored.teamColor);
-        goal?.StopTeamSwitching();
-        foreach (TeamManager team in teams)
-        {
-            if ((Color)team.teamColor == scored.teamColor)
-            {
-                team.IncrementScore();
-                TeamManager winningTeam = TopTeam();
-                if (winningTeam != null)
-                {
-                    backgroundScroller.SetBackground(winningTeam.resources);
-                }
-                else
-                {
-                    backgroundScroller.SetBackground(neutralResources);
-                }
-                ScoreChanged();
-            }
-            else
-            {
-                team.MakeInvisibleAfterGoal();
-            }
-        }
-        if (!TutorialLiveClips.runningLiveClips)
-        {
-            UtilityExtensionsContainer.TimeDelayCall(
-                this, ResetGameAfterGoal, pauseAfterGoalScore);
-        }
-        cameraShake.shakeAmount = Settings.GoalShakeAmount;
-        cameraShake.shakeDuration = Settings.GoalShakeDuration;
     }
 
     private void ResetGameAfterGoal()
     {
-        if (gameOver)
+        if (!gameOver)
         {
-            return;
-        }
-        foreach (TeamManager team in teams)
-        {
-            team.ResetTeam();
-        }
-        ball.ResetBall(pauseAfterReset);
-        notificationManager.NotifyMessage(Message.StartCountdown, this);
-        GameObject.FindObjectOfType<RoundStartBlocker>()?.Reset();
-        foreach (TronWall wall in GameObject.FindObjectsOfType<TronWall>())
-        {
-            wall.KillSelf();
+            NotificationManager.NotifyMessage(Message.ResetAfterGoal, this);
+            NotificationManager.NotifyMessage(Message.StartCountdown, this);
         }
 
-        goal?.SwitchToNextTeam(false);
-        goal?.ResetNeutral();
-
-        // Reset music.
-        StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
-    }
-
-    private void StartGameAfterBallAnimation()
-    {
-        // goal?.RestartTeamSwitching(); // <-- (Empty function body)
-        foreach (TeamManager team in teams)
-        {
-            team.BeginMovement();
-        }
-
-
-    }
-    public void GoalScoredOnTeam(TeamManager scoredOn)
-    {
-        foreach (TeamManager team in teams)
-        {
-            if ((Color)team.teamColor != scoredOn.teamColor)
-            {
-                team.IncrementScore();
-                ScoreChanged();
-            }
-        }
     }
 
     public List<Player> GetPlayersWithTeams()
     {
         List<Player> result = new List<Player>();
-        foreach (TeamManager team in teams)
+        foreach (TeamManager team in Teams)
         {
             result.AddRange(team.teamMembers);
         }
         return result;
+    }
+
+    // Networking info: frequently we need to work with/store player numbers
+    // rather than player objects, due to network-synced data structures. This
+    // utility function allows easy access to players given their player number,
+    // but should potentially (and very easily could) be replaced with something
+    // more efficient if it ends up being used in a tight loop.
+    public Player GetPlayerFromNumber(int playerNumber) {
+        return (from player in players
+                where player.playerNumber == playerNumber
+                select player).FirstOrDefault();
     }
 
     public List<Player> GetAllPlayers()
@@ -321,75 +218,6 @@ public class GameManager : MonoBehaviour
     public List<Player> GetHumanPlayers()
     {
         return players.Where(player => player.playerNumber >= 0).ToList();
-    }
-
-    private IEnumerator PitchShifter(float target, float time)
-    {
-        AudioSource backgroundMusic = GameObject.Find("BGM")?.GetComponent<AudioSource>();
-
-        if (backgroundMusic == null) yield break;
-
-        float start = backgroundMusic.pitch;
-        float t = 0.0f;
-
-        while (backgroundMusic.pitch != target && t <= time)
-        {
-            t += Time.deltaTime;
-            backgroundMusic.pitch = Mathf.Lerp(start, target, t / time);
-            yield return null;
-        }
-
-        backgroundMusic.pitch = target;
-    }
-
-    public bool IsSlowMo()
-    {
-        return slowMoCount > 0;
-    }
-
-    private int slowMoCount = 0;
-    public void SlowMo()
-    {
-        Utility.ChangeTimeScale(Settings.SlowMoFactor);
-        foreach (Player player in GetAllPlayers())
-        {
-            PlayerMovement movement = player.GetComponent<PlayerMovement>();
-            if (movement != null)
-            {
-                movement.instantRotation = false;
-            }
-        }
-        // Ensure slowMo doesn't stop until ALL balls are dropped
-        slowMoCount += 1;
-        notificationManager.NotifyMessage(Message.SlowMoEntered, this);
-        if (!TutorialLiveClips.runningLiveClips)
-        {
-            StartCoroutine(PitchShifter(Settings.SlowedPitch, Settings.PitchShiftTime));
-        }
-    }
-
-    public void ResetSlowMo()
-    {
-        // Ensure slowMo doesn't stop until ALL balls are dropped
-        slowMoCount -= 1;
-        if (slowMoCount == 0)
-        {
-            Utility.ChangeTimeScale(1);
-            IEnumerable<PlayerMovement> movements = (from player in GetAllPlayers()
-                                                     where player.GetComponent<PlayerMovement>() != null
-                                                     select player.GetComponent<PlayerMovement>());
-            foreach (PlayerMovement movement in movements)
-            {
-                movement.instantRotation = true;
-            }
-
-            // Pitch-shift BGM back to normal.
-            if (!TutorialLiveClips.runningLiveClips)
-            {
-                StartCoroutine(PitchShifter(1.0f, Settings.PitchShiftTime));
-            }
-            notificationManager.NotifyMessage(Message.SlowMoExited, this);
-        }
     }
 
     public void FlashScreen(float flashLength = 0.1f, Color? flashColor = null)

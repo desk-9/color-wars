@@ -34,7 +34,6 @@ public class PlayerControls : MonoBehaviourPunCallbacks
     public void AskForDevice() {
         var player = GetComponent<Player>();
         var photonView = GetComponent<PhotonView>();
-        Utility.Print("Checking if should control", player.playerNumber, "Ownership:", photonView.IsMine, LogLevel.Error);
         if (photonView.IsMine) {
             PlayerInputManager.instance.AddToInputQueue(GetComponent<Player>().playerNumber,
                                                         GivenInputDevice,
@@ -45,7 +44,7 @@ public class PlayerControls : MonoBehaviourPunCallbacks
     private void GivenInputDevice(IC.InputDevice device)
     {
         inputDevice = device;
-        GameManager.instance.notificationManager.NotifyMessage(Message.InputDeviceAssigned, gameObject);
+        GameManager.NotificationManager.NotifyMessage(Message.InputDeviceAssigned, gameObject);
         PlayerPuppet puppet = GetComponent<PlayerPuppet>();
         if (puppet == null || !puppet.doPuppeting)
         {
@@ -60,15 +59,17 @@ public class PlayerControls : MonoBehaviourPunCallbacks
 
     private void InputDeviceDisconnectedCallback()
     {
-        PlayerMovement movement = GetComponent<PlayerMovement>();
-        movement?.StopAllMovement();
+        // TODO dkonik: Since we are making a public game now, we need to do more on
+        // controller disconnect than just stopping movement and stuff.
+        //PlayerMovement movement = GetComponent<PlayerMovement>();
+        //movement?.StopAllMovement();
 
         if (broadcast != null)
         {
             StopCoroutine(broadcast);
         }
         broadcast = null;
-        stateManager?.AttemptStartState(delegate { }, delegate { });
+        stateManager.TransitionToState(State.StartupState);
         inputDevice = null;
     }
 
@@ -135,11 +136,11 @@ public class PlayerControls : MonoBehaviourPunCallbacks
     {
         if (pressed && pressedEvent.HasValue)
         {
-            GameManager.instance.notificationManager.NotifyMessage(pressedEvent.Value, player);
+            GameManager.NotificationManager.NotifyMessage(pressedEvent.Value, player);
         }
         if (released && releasedEvent.HasValue)
         {
-            GameManager.instance.notificationManager.NotifyMessage(releasedEvent.Value, player);
+            GameManager.NotificationManager.NotifyMessage(releasedEvent.Value, player);
         }
     }
 
@@ -151,7 +152,7 @@ public class PlayerControls : MonoBehaviourPunCallbacks
         {
             return;
         }
-        GameManager.instance.notificationManager.NotifyMessage(
+        GameManager.NotificationManager.NotifyMessage(
             Message.PlayerStick,
             Tuple.Create(new Vector2(stickX, stickY), player));
 

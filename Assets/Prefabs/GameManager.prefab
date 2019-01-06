@@ -17,6 +17,12 @@ GameObject:
   - component: {fileID: 5301962616944538659}
   - component: {fileID: 1403289670529041876}
   - component: {fileID: 1325572632197481605}
+  - component: {fileID: 4234837731021330579}
+  - component: {fileID: 7444753961910310332}
+  - component: {fileID: 3189841601692809775}
+  - component: {fileID: 2587163288284336422}
+  - component: {fileID: 7630974732043695949}
+  - component: {fileID: 8228536620802389943}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -56,28 +62,20 @@ MonoBehaviour:
     name: Pink
   - color: {r: 0.014705896, g: 0.9184584, b: 1, a: 1}
     name: Blue
-  matchLength: 99999
   meta: {fileID: 0}
-  pauseAfterGoalScore: 3
-  pauseAfterReset: 2
   players: []
   gameSettings:
     PushAwayOtherPlayers: 1
-    BlowbackRadius: 9
-    BlowbackSpeed: 30
-    BlowbackStunTime: 0.1
     SlowMoFactor: 0.4
     PitchShiftTime: 0.3
     SlowedPitch: 0.5
-    GoalShakeAmount: 1.5
-    GoalShakeDuration: 0.4
     RespectSoundEffectSlowMo: 1
     WinningScore: 4
     RequiredWinMargin: 1
+    PauseAfterGoalScore: 3
+    LengthOfBallSpawnAnimation: 2
   blowbackPrefab: {fileID: 1010691673323716, guid: 5a5eb56d9336c4c23906a3b6aad98b9a,
     type: 3}
-  winCondition: 2
-  backgroundScroller: {fileID: 0}
 --- !u!114 &114211205889215070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,7 +111,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1217675377384306}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 08f7fb940a3a942dd8739912240d2198, type: 3}
   m_Name: 
@@ -165,7 +163,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 0}
-  viewIdField: 7
+  viewIdField: 0
   InstantiationId: 7
   isRuntimeInstantiated: 0
 --- !u!114 &1325572632197481605
@@ -178,5 +176,81 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe72489c4067f4cfd93ccd83af0288b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4234837731021330579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fac94dae22bc08409aa002e97f2fb4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7444753961910310332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15506a52d1536341877473b6ca12768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3189841601692809775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a6dc06c2dfa62e4a8256b0bc22c1025, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stealShakeAmount: 0.7
+  stealShakeDuration: 0.05
+  GoalShakeAmount: 1.5
+  GoalShakeDuration: 0.4
+--- !u!114 &2587163288284336422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4379ef8320643b8ad7b8d32f139f83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7630974732043695949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5db7da1130502406ab691886a66549bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8228536620802389943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1217675377384306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d509d0fe8a05844eda7bd3b705cbc477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
