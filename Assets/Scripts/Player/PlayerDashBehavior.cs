@@ -239,13 +239,7 @@ public class PlayerDashBehavior : MonoBehaviour
         int layerMask = LayerMask.GetMask(stopDashOnCollisionWith);
         if (layerMask == (layerMask | 1 << other.layer))
         {
-            // TODO this is a time delay call because the team selection
-            // colliders check for if the player is in the dash state, but
-            // collision moves them out of that state. Dash team selection is
-            // messed up and needs to be fixed/this needs to be removed, but
-            // required until then.
-            this.TimeDelayCall(() => stateManager.TransitionToState(
-                                    State.NormalMovement), 0.1f);
+            stateManager.TransitionToState(State.NormalMovement);
         }
         else
         {
